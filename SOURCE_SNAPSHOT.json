@@ -11,9 +11,9 @@
   "files": 659,
   "source_status": "release",
   "sanitation": "bounded maintainer-path and credential-marker scan passed on new/changed files",
-  "sanitation_inspected_files": 7,
-  "sanitation_reused_files": 655,
-  "sanitation_reuse": "First changed release-metadata inspection; accepted single-repository migration payload and vendor checks reused",
+  "sanitation_inspected_files": 8,
+  "sanitation_reused_files": 654,
+  "sanitation_reuse": "First changed release-metadata and package build-number default inspection; accepted migration payload and vendor checks reused",
   "lumen_source_gate": "unchanged vendor evidence reused; pinned Settings.swift update uses its separate one-file receipt",
   "lumen_settings_donor": "46b7dc04458991093301dc9c05ca35c82f69a7ea",
   "private_evidence_excluded": [
