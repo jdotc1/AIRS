@@ -50,6 +50,8 @@ def render_coverage_text(inventory: dict, *, maximum_bytes: int = MAX_REPORT_BYT
         line("Reason selection (does not filter denominators)", inventory["reason_selection"])
     else:
         append("Reason selection: all inventory reasons\n")
+    if "reason_limit" in inventory:
+        line("Reason limit (does not filter denominators)", inventory["reason_limit"])
     append("Reports (all supplied inputs, including duplicates and conflicts)\n")
     for record in sorted(inventory["reports"], key=lambda row: row["index"]):
         line("Report", record)
