@@ -76,7 +76,9 @@ struct AIRSApp: App {
                 message: { Text(fileOpen.errorMessage ?? "") }
             } else {
                 #if DEBUG
-                if let fixture = ProcessInfo.processInfo.environment["AIRS_COMPARISON_REVIEW_FIXTURE"] {
+                if ProcessInfo.processInfo.environment["AIRS_SIDEBAR_REVIEW"] == "1", let settingsReview {
+                    SidebarReviewLauncher(workspace: workspace, root: settingsReview.root)
+                } else if let fixture = ProcessInfo.processInfo.environment["AIRS_COMPARISON_REVIEW_FIXTURE"] {
                     ComparisonReviewLauncher(workspace: workspace, fixture: URL(fileURLWithPath: fixture))
                 } else {
                     SettingsReviewLauncher()

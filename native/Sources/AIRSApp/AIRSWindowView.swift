@@ -174,17 +174,18 @@ private struct AIRSSidebar: View {
     @Bindable var fileOpen: AIRSFileOpen
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                LumenSidebarSection("Unwind") {
-                    rows([.audit, .auditBatch, .auditHistory, .auditLibrary])
-                }
-                LumenSidebarSection("Entitlements") {
-                    rows([.entitlements, .entitlementBatch, .entitlementHistory, .entitlementLibrary, .entitlementRecovery])
-                }
-            }
-        }
-        .lumenSidebarBackground()
+        // Use the complete source list, including Lumen's toolbar-safe scroll layout
+        // and row input handling, rather than wrapping display rows in custom buttons.
+        LumenSourceList(sections: [
+            section("Unwind", [.audit, .auditBatch, .auditHistory, .auditLibrary]),
+            section("Entitlements", [.entitlements, .entitlementBatch, .entitlementHistory,
+                                      .entitlementLibrary, .entitlementRecovery])
+        ], selection: Binding(
+            get: { navigation.destination(audit: audit, entitlements: entitlements).rawValue },
+            set: { value in
+                guard let value, let destination = AIRSDestination(rawValue: value) else { return }
+                navigation.select(destination, audit: audit, entitlements: entitlements, fileOpen: fileOpen)
+            }))
         .disabled(!navigation.canSelectDestination(audit: audit, entitlements: entitlements, fileOpen: fileOpen))
         .safeAreaInset(edge: .bottom) {
             Label("AIRS · Local evidence", systemImage: "internaldrive")
@@ -193,22 +194,10 @@ private struct AIRSSidebar: View {
         }
     }
 
-    private func rows(_ destinations: [AIRSDestination]) -> some View {
-        VStack(spacing: Lumen.Space.s1) {
-            ForEach(destinations) { destination in
-                let item = LumenSidebarItem(id: destination.rawValue, title: destination.title,
-                                           systemImage: destination.symbol)
-                Button {
-                    navigation.select(destination, audit: audit, entitlements: entitlements, fileOpen: fileOpen)
-                } label: {
-                    LumenListRow(item.title, systemImage: item.systemImage, hue: item.hue,
-                        isSelected: navigation.destination(audit: audit, entitlements: entitlements) == destination,
-                        context: .sidebar) { EmptyView() }
-                }
-                .buttonStyle(.plain)
-                .disabled(audit.hasUnsavedBatchHistory && destination != .auditBatch)
-            }
-        }.padding(Lumen.Space.s2)
+    private func section(_ title: String, _ destinations: [AIRSDestination]) -> LumenSourceListSection {
+        LumenSourceListSection(title, items: destinations.map {
+            LumenSourceListItem(id: $0.rawValue, title: $0.title, systemImage: $0.symbol)
+        })
     }
 }
 
