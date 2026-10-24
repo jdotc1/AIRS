@@ -24,24 +24,41 @@ OUTPUT = output_root()
 REPO=Path(__file__).resolve().parents[1]
 
 
+# Fixed-control neighbor remains unmodeled; valid W SDIV was added in v42.
+# This is a decoder refusal fixture, not a general ISA-validity classification.
+
+
 class DecodeInventoryTests(unittest.TestCase):
+    def test_current_signed_word_is_admitted_but_control_neighbor_declines(self):
+        image, _, _ = fixture((0x1ac10c00, 0x3ac10c00, RET))
+        report = decode_inventory(image)
+        row = report['functions'][0]
+        self.assertEqual(report['decoder_model'], ANALYSIS_MODEL_VERSION)
+        self.assertEqual((row['observed_word_count'], row['decoder_admitted_word_count'], row['decline_count']),
+                         (3, 2, 1))
+        self.assertEqual([(b['address'], b['word'], b['reason']) for b in row['blockers']],
+                         [('0x1004', '0x3ac10c00', 'unsupported_instruction')])
+        self.assertTrue(row['word_scan_complete'])
+        self.assertNotIn('verdict', row)
+        self.assertNotIn('checked_pcs', row)
+
     def test_collects_later_refusals_and_keeps_admitted_words_separate(self):
         # B skips two refusals at runtime; inventory deliberately makes no path claim.
-        image,_,_=fixture((0x14000003,0x1ac10c00,0x93000000,0x9ac10c00,RET))
+        image,_,_=fixture((0x14000003,0x3ac10c00,0x93000000,0x9ac10c00,RET))
         report=decode_inventory(image)
         row=report['functions'][0]
         self.assertEqual(report['report_kind'],'airs.decode_inventory')
         self.assertEqual(report['decoder_model'],ANALYSIS_MODEL_VERSION)
         self.assertEqual((row['observed_word_count'],row['decoder_admitted_word_count'],row['decline_count']),(5,3,2))
         self.assertEqual([b['address'] for b in row['blockers']],['0x1004','0x1008'])
-        self.assertEqual([b['word'] for b in row['blockers']],['0x1ac10c00','0x93000000'])
+        self.assertEqual([b['word'] for b in row['blockers']],['0x3ac10c00','0x93000000'])
         self.assertEqual([b['reason'] for b in row['blockers']],['unsupported_instruction','invalid_bitfield_encoding'])
         self.assertTrue(row['word_scan_complete']);self.assertTrue(row['blockers_complete'])
         self.assertNotIn('verdict',row);self.assertNotIn('checked_pcs',row)
         with self.assertRaises(InputError):validate_report(report)
 
     def test_function_and_total_word_caps_preserve_every_function(self):
-        image,first,_=fixture((0x1ac10c00,RET,0x1ac10c00,RET))
+        image,first,_=fixture((0x3ac10c00,RET,0x3ac10c00,RET))
         first=replace(first,end=BASE+8)
         second=replace(first,start=BASE+8,end=BASE+16,name='second')
         image=replace(image,functions=(first,second))
@@ -52,7 +69,7 @@ class DecodeInventoryTests(unittest.TestCase):
         self.assertEqual(report['status'],'partial')
 
     def test_evidence_caps_retain_exact_observed_decline_counts(self):
-        image,_,_=fixture((0x1ac10c00,0x93000000,RET))
+        image,_,_=fixture((0x3ac10c00,0x93000000,RET))
         for cap in (0,1):
             result=decode_inventory(image,replace(Limits(),max_evidence_per_function=cap,max_total_evidence=cap))
             row=result['functions'][0]
@@ -82,7 +99,7 @@ class DecodeInventoryTests(unittest.TestCase):
         self.assertEqual(empty['status'],'no_functions')
 
     def test_new_macho_cli_json_and_source_overwrite_protection(self):
-        data=build_macho(struct.pack('<III',0x1ac10c00,0x93000000,RET))
+        data=build_macho(struct.pack('<III',0x3ac10c00,0x93000000,RET))
         with tempfile.TemporaryDirectory(dir=OUTPUT) as directory:
             source=Path(directory)/'owned.macho';source.write_bytes(data)
             dest=Path(directory)/'inventory.json'
@@ -104,7 +121,7 @@ class DecodeInventoryTests(unittest.TestCase):
 
 class DecodeInventoryBootstrapTests(unittest.TestCase):
     def test_isolated_bootstrap_emits_decode_only_identity_bound_json(self):
-        data=build_macho(struct.pack('<III',0xd503201f,0x1ac10c00,0xd65f03c0))
+        data=build_macho(struct.pack('<III',0xd503201f,0x3ac10c00,0xd65f03c0))
         with tempfile.TemporaryDirectory(dir=OUTPUT) as directory:
             source=Path(directory)/'owned.macho';source.write_bytes(data)
             output=Path(directory)/'blockers.json'

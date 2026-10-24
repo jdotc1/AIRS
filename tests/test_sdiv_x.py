@@ -1,4 +1,5 @@
 """X SDIV arithmetic and recovery; adapted from accepted UDIV controls."""
+# Unsupported sentinels use a fixed-control neighbor; W SDIV is supported in v42.
 from dataclasses import replace
 import unittest
 from airs.arm64 import ModelError, Value, original
@@ -172,7 +173,7 @@ class SDIVBoundaryTests(unittest.TestCase):
         self.assertEqual(result.checked_pcs,(BASE+12,))
 
     def test_unreachable_unsupported_and_small_work_limits_stay_unresolved(self):
-        result=audit_current_function(*fixture((0x14000002,0x1ac10c00,*WITNESS)))
+        result=audit_current_function(*fixture((0x14000002,0x3ac10c00,*WITNESS)))
         self.assertEqual(result.verdict,'unresolved');self.assertEqual(result.checked_pcs,())
         for limits,reason in ((replace(Limits(),max_cfg_steps_per_function=0),'cfg_work_limit'),
                               (replace(Limits(),max_instructions_per_function=1),'function_instruction_limit')):
