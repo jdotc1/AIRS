@@ -100,3 +100,16 @@ its row-label refinement. One isolated-bootstrap CLI invocation passed. Accepted
 summary/coverage and unchanged engine/native/runtime results were reused. This is
 source-only development; no GUI, binary, installation or release change is claimed.
 See SUMMARY_FUNCTION_NAME_FILTER.md for the contract and evidence scope.
+
+
+## Post-build-12 source development: minimum coverage reason count
+
+`coverage --minimum-count N` selects reason detail by inclusive supplied-report
+count before ordering and limiting. Explicit metadata and text expose omissions;
+full denominators and duplicate/conflict context are preserved. This does not
+measure representative prevalence or change any finding verdict.
+
+Six new focused methods and one isolated-bootstrap CLI invocation passed. Accepted
+aggregation, summary/coverage, protected output and unchanged native/runtime results
+were reused. No installed-app, settings, stores or release operations were made.
+See COVERAGE_MINIMUM_COUNT.md for the contract and evidence scope.
