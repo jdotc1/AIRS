@@ -21,9 +21,9 @@ See [the diagnosis and acceptance scope](SIDEBAR_NAVIGATION.md).
 - All nine physical pointer checks again in the installed build 12, preserving
   settings and stores. The bounded installed-process query found no AttributeGraph,
   publishing-during-update or fatal-error messages.
-- Existing engine, helper, private Python, Settings, comparison and build 10 isolated
-  download/translocation results retain their own scope. They are not repeated
-  build 12 browser-download or App Translocation qualification.
+- Existing engine, helper, private Python, Settings and comparison results retain
+  their own scope. The separate post-publication build 12 download acceptance below
+  adds its own received-file and isolated-launch evidence.
 
 The exact accepted signed/stapled app ZIP is reused. No rebuild, re-signing,
 re-notarization, unchanged payload hashing or repeated qualification is performed.
@@ -32,12 +32,43 @@ bundle metadata; unchanged runtime and resource receipts are reused. The public
 source migration already inspected its changed payload. This release's changed
 source/release metadata receives its own first inspection. No fresh CI pass is claimed.
 
+## Accepted public-download and App Translocation follow-up
+
+A bounded check of the published build 12 completed on October 24, 2026. Chrome
+received the ZIP directly from the public GitHub release asset. The first received
+transfer digest matched the accepted archive identity, and Chrome quarantine remained
+on the ZIP and on the app after Archive Utility extraction. The extracted app was
+not moved or altered, and quarantine was not removed.
+
+An exact-path NSWorkspace launch created a separate app instance with a fresh
+acceptance profile, activation and recents disabled, and running-app substitution
+refused. The launch receipt and the profile's independent receipt agreed on an actual
+AppTranslocation executable. Production controllers, restoration, system panels and
+external-open routing were disabled by the existing acceptance profile.
+
+The real isolated native report overview displayed the accepted owned-image fixture:
+3 functions, 2 agreements, 0 inconsistencies, 1 unresolved function and 5 modeled PC
+observations. Closing the sole window terminated the isolated process normally.
+The bounded isolated-process diagnostic query found no AttributeGraph,
+publishing-during-update or fatal-error messages. Before/after metadata matched for
+the installed app, production stores, preferences, saved state and application recents.
+
+This updates the original publication-time download/translocation gap. See the
+[sanitized qualification supplement](qualification/BUILD12_DOWNLOAD_ACCEPTANCE.json).
+The original publication qualification and checksums remain immutable; the release
+also carries a separate download-acceptance supplement and its own checksum file.
+No build, engine analysis, comparison-sheet or sidebar workflow was rerun. Existing
+accepted results and the exact-path launch helper were reused.
+
 ## Scope and limitations
 
 This is an Apple silicon preview with a macOS 14 deployment target. Clean-machine,
-minimum-macOS, Intel-app and offline qualification remain incomplete. Build 12 has
-not received a new public-host browser download or App Translocation check. The
-engine model, report formats and conservative unresolved/refusal boundaries are
+minimum-macOS, Intel-app and offline qualification remain incomplete. This bounded
+acceptance ran on the existing development Mac, not a clean environment. No fresh
+first-open confirmation dialog was observed on this previously used host. The
+isolated profile is app-owned isolation, not an OS sandbox; successful quarantined
+launch does not establish clean-host Gatekeeper acceptance. The engine model,
+report formats and conservative unresolved/refusal boundaries are
 unchanged. Prior receipts do not establish broader engine or platform coverage.
 
 The public repository is the single source of truth. The release tag and source ZIP
