@@ -1,16 +1,17 @@
 {
+  "baseline": "cf4477d1ca0f9c269831213dfec31bf083108c57",
   "inspected": [
     "README.md",
     "RELEASE_NOTES.md",
     "SOURCE_EXPORT_SCOPE.json",
     "SOURCE_FILES.txt",
     "SOURCE_SNAPSHOT.json",
-    "docs/RELEASE_0_3_3_BUILD9.md",
+    "docs/ISOLATED_ACCEPTANCE_PROFILE.md",
+    "docs/RELEASE_0_3_3_BUILD10.md",
     "native/Sources/AIRSApp/AIRSApp.swift",
+    "native/Sources/AIRSApp/AcceptanceProfile.swift",
     "native/Sources/AIRSApp/ComparisonView.swift",
-    "native/Sources/AIRSApp/EngineSettingsView.swift",
-    "native/Sources/AIRSApp/SettingsReviewConfiguration.swift",
-    "native/Tests/AIRSAppTests/ComparisonSheetLayoutTests.swift",
+    "native/Tests/AIRSAppTests/AcceptanceProfileTests.swift",
     "scripts/package-app.sh"
   ],
   "reused": [
@@ -34,6 +35,7 @@
     "docs/PRIVATE_PYTHON.md",
     "docs/PROJECT_FORMAT.md",
     "docs/RBIT_X.md",
+    "docs/RELEASE_0_3_3_BUILD9.md",
     "docs/REVIEW_POLICY_FORMAT.md",
     "docs/SAVED_REPORT_COMMAND_EXAMPLES.md",
     "docs/SAVED_REPORT_SUMMARY.md",
@@ -146,6 +148,7 @@
     "native/Sources/AIRSApp/CoverageReviewView.swift",
     "native/Sources/AIRSApp/DecodeInventoryView.swift",
     "native/Sources/AIRSApp/DesignSystem/AppDesignSystem.swift",
+    "native/Sources/AIRSApp/EngineSettingsView.swift",
     "native/Sources/AIRSApp/Entitlements/EntitlementBatchHistoryView.swift",
     "native/Sources/AIRSApp/Entitlements/EntitlementBatchManifestReviewView.swift",
     "native/Sources/AIRSApp/Entitlements/EntitlementBatchRecoveryView.swift",
@@ -197,6 +200,7 @@
     "native/Sources/AIRSApp/ProjectReviewView.swift",
     "native/Sources/AIRSApp/ReportLibraryView.swift",
     "native/Sources/AIRSApp/ReportViews.swift",
+    "native/Sources/AIRSApp/SettingsReviewConfiguration.swift",
     "native/Sources/AIRSApp/SettledProjectExportPreview.swift",
     "native/Sources/AIRSApp/SettledProjectExportPreviewView.swift",
     "native/Sources/AIRSApp/SignatureEvidenceReviewView.swift",
@@ -276,6 +280,7 @@
     "native/Tests/AIRSAppTests/BatchHistoryWorkspaceTests.swift",
     "native/Tests/AIRSAppTests/BoundReviewWorkspaceTests.swift",
     "native/Tests/AIRSAppTests/BundleDiscoveryWorkspaceTests.swift",
+    "native/Tests/AIRSAppTests/ComparisonSheetLayoutTests.swift",
     "native/Tests/AIRSAppTests/ComponentInventoryWorkspaceTests.swift",
     "native/Tests/AIRSAppTests/ComponentReviewWorkspaceTests.swift",
     "native/Tests/AIRSAppTests/CoverageWorkspaceTests.swift",
@@ -656,6 +661,5 @@
     "third_party/gimli/README.md",
     "third_party/gimli/cfi-control-excerpts.rs"
   ],
-  "baseline": "c633a13c2d1e4f3888bdbb07d9207ca22f07cbed",
-  "policy": "Only new/changed payload inspected; unchanged committed payload retained without repeated scan or hash"
+  "policy": "Incremental allowlist; unchanged accepted payload retained without repeated scans, hashes or tests"
 }

@@ -6,6 +6,7 @@ import AIRSCore
 struct ComparisonView: View {
     let document: ComparisonDocument
     @ObservedObject var workspace: AuditWorkspace
+    var permitsExport = true
     @Environment(\.dismiss) private var dismiss
     @State private var showUnchanged = false
     @State private var showJSON = false
@@ -24,8 +25,8 @@ struct ComparisonView: View {
                         .font(.callout).foregroundStyle(.secondary)
                 }
                 Spacer()
-                Button("Export JSON…") { workspace.exportComparison(document) }
-                    .disabled(workspace.isBusy)
+                Button("Export JSON…") { if permitsExport { workspace.exportComparison(document) } }
+                    .disabled(workspace.isBusy || !permitsExport)
                 Button("Done") { dismiss() }.keyboardShortcut(.defaultAction)
             }
             .padding(AppDesign.Space.page)
