@@ -50,6 +50,8 @@ def render_coverage_text(inventory: dict, *, maximum_bytes: int = MAX_REPORT_BYT
         line("Reason selection (does not filter denominators)", inventory["reason_selection"])
     else:
         append("Reason selection: all inventory reasons\n")
+    if "reason_frequency_selection" in inventory:
+        line("Reason frequency selection (does not filter denominators)", inventory["reason_frequency_selection"])
     if "reason_order" in inventory:
         line("Reason order", inventory["reason_order"])
     if "reason_limit" in inventory:
