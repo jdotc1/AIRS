@@ -1,25 +1,25 @@
 {
-  "source_revision": "396001619fa0a42f20f181563ee399a89a90870d",
+  "source_revision": "28bfcb53620e2efd08f58ddd4aaf163b28f6c8b3",
   "published_baseline": {
     "version": "0.3.3",
-    "build": "7",
-    "tag": "v0.3.3",
-    "public_revision": "c633a13c2d1e4f3888bdbb07d9207ca22f07cbed"
+    "build": "9",
+    "tag": "v0.3.3-build9",
+    "public_revision": "1e4a76f4f4d710bf88afd643345d04ee21d8b9a0"
   },
   "release_identity_assigned": true,
   "export_policy": "allowlist; no history, runtime, private evidence or corpus locations",
-  "files": 650,
+  "files": 654,
   "source_status": "release-candidate",
   "sanitation": "bounded maintainer-path and credential-marker scan passed on new/changed files",
   "sanitation_inspected_files": 12,
-  "sanitation_reused_files": 641,
-  "sanitation_reuse": "Accepted c633a13 public payload retained unchanged except listed native changes, package build metadata and sanitized release documentation; no repeated scans or hashes of unchanged payload",
+  "sanitation_reused_files": 645,
+  "sanitation_reuse": "Accepted build9 public payload retained except listed acceptance profile changes and sanitized release metadata; unchanged scans and hashes reused",
   "lumen_source_gate": "unchanged vendor evidence reused; pinned Settings.swift update uses its separate one-file receipt",
   "limitation": "Pattern inspection is not proof that arbitrary confidential text cannot exist",
   "distribution_actions_performed": false,
   "release_version": "0.3.3",
-  "release_build": 9,
-  "native_change_revision": "4bb7f81123da9e947cf68fb9b35a8950c58fa0a2",
-  "binary_reuse": "Existing accepted signed/notarized/stapled build9 candidate; no rebuild, re-sign or notarization repeat",
+  "release_build": 10,
+  "native_change_revision": "4999a93adc3c8211717937f1361f572abc466f57",
+  "binary_reuse": "Accepted signed, notarized and stapled build10 candidate; no rebuild, re-sign or notarization repeat",
   "source_metadata_note": "Historical release snapshot; vendor comment/sample cleanup is documented separately and does not alter accepted binary identities."
 }

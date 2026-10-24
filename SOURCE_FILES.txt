@@ -16,10 +16,12 @@ docs/DEVELOPMENT_STATUS.md
 docs/DIFF_TEXT.md
 docs/INSPECTION_ARCHIVE_FORMAT.md
 docs/INSPECTION_DOCUMENT_FORMAT.md
+docs/ISOLATED_ACCEPTANCE_PROFILE.md
 docs/MACSCOPE_BOUND_CONTRACT.md
 docs/PRIVATE_PYTHON.md
 docs/PROJECT_FORMAT.md
 docs/RBIT_X.md
+docs/RELEASE_0_3_3_BUILD10.md
 docs/RELEASE_0_3_3_BUILD9.md
 docs/REVIEW_POLICY_FORMAT.md
 docs/SAVED_REPORT_COMMAND_EXAMPLES.md
@@ -119,6 +121,7 @@ native/Sources/AIRSApp/AIRSApp.swift
 native/Sources/AIRSApp/AIRSFileOpen.swift
 native/Sources/AIRSApp/AIRSNavigation.swift
 native/Sources/AIRSApp/AIRSWindowView.swift
+native/Sources/AIRSApp/AcceptanceProfile.swift
 native/Sources/AIRSApp/AppIntake.swift
 native/Sources/AIRSApp/AppIntakeView.swift
 native/Sources/AIRSApp/ArchiveReviewView.swift
@@ -259,6 +262,7 @@ native/Sources/AIRSEntitlements/PortableSettledBatchReexport.swift
 native/Sources/AIRSEntitlements/PortableSettledProjectCommand.swift
 native/Sources/AIRSEntitlements/ReviewPolicy.swift
 native/Sources/AIRSEntitlements/ReviewPolicyCommand.swift
+native/Tests/AIRSAppTests/AcceptanceProfileTests.swift
 native/Tests/AIRSAppTests/AppIntakeTests.swift
 native/Tests/AIRSAppTests/ArchitectureSelectionTests.swift
 native/Tests/AIRSAppTests/ArchiveFileOpenTests.swift
