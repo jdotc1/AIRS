@@ -1,9 +1,8 @@
 # Development scope and retained evidence
 
 The single active source repository is AIRS-app. Current source includes the v41
-engine baseline and the accepted build 12 sidebar corrections. The latest published
-binary is 0.3.3/build 10; build 12's accepted local installation and GUI receipts do
-not themselves publish a new release. See [sidebar acceptance](SIDEBAR_NAVIGATION.md).
+engine baseline and the accepted build 12 sidebar corrections. The current preview binary is 0.3.3/build 12, published from its accepted signed
+candidate and retained results. See [release scope](RELEASE_0_3_3_BUILD12.md). See [sidebar acceptance](SIDEBAR_NAVIGATION.md).
 
 The table below retains historical, boundary-specific qualification; later release
 records and their named artifact scopes must be read separately. SOURCE_SNAPSHOT.json
