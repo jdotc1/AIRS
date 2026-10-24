@@ -6,14 +6,14 @@
     "tag": "v0.3.3-build10",
     "public_revision": "31d9ef4741ff975942aa14368dd0381f6180cd26"
   },
-  "release_identity_assigned": false,
+  "release_identity_assigned": true,
   "export_policy": "allowlist; no history, runtime, private evidence or corpus locations",
-  "files": 658,
-  "source_status": "active-public-development",
+  "files": 659,
+  "source_status": "release",
   "sanitation": "bounded maintainer-path and credential-marker scan passed on new/changed files",
-  "sanitation_inspected_files": 14,
-  "sanitation_reused_files": 647,
-  "sanitation_reuse": "Accepted build10 payload and vendor receipts reused; first bounded inspection of changed migration payload only",
+  "sanitation_inspected_files": 7,
+  "sanitation_reused_files": 655,
+  "sanitation_reuse": "First changed release-metadata inspection; accepted single-repository migration payload and vendor checks reused",
   "lumen_source_gate": "unchanged vendor evidence reused; pinned Settings.swift update uses its separate one-file receipt",
   "limitation": "Pattern inspection is not proof that arbitrary confidential text cannot exist",
   "distribution_actions_performed": false,
@@ -24,5 +24,11 @@
     "build": "12",
     "binary_publication_performed": false
   },
+  "release_version": "0.3.3",
+  "release_build": 12,
+  "release_tag": "v0.3.3-build12",
+  "public_implementation_baseline": "a0c00ad731634353e812093b496e6a1e2fcb367e",
+  "native_change_revision": "50de8bd69b1293b2e3d03acb5e09fcead527b3cd",
+  "binary_reuse": "Exact accepted signed, notarized and stapled build12 ZIP; no rebuild, re-sign or notarization repeat",
   "source_metadata_note": "Historical release snapshot; vendor comment/sample cleanup is documented separately and does not alter accepted binary identities."
 }
