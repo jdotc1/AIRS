@@ -3,7 +3,6 @@ import SwiftUI
 import LumenTokens
 import LumenUI
 
-@main
 @MainActor
 struct AIRSApp: App {
     @NSApplicationDelegateAdaptor(AIRSApplicationDelegate.self) private var applicationDelegate
