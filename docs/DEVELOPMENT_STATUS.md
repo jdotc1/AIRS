@@ -113,3 +113,17 @@ Six new focused methods and one isolated-bootstrap CLI invocation passed. Accept
 aggregation, summary/coverage, protected output and unchanged native/runtime results
 were reused. No installed-app, settings, stores or release operations were made.
 See COVERAGE_MINIMUM_COUNT.md for the contract and evidence scope.
+
+
+## Post-build-12 development: connected saved-report triage example
+
+Minimum-count filtering is merged through PR #16. SAVED_REPORT_TRIAGE.md now
+connects reason inventory to selected original findings, explains each projection's
+counts and limitations, and records the boundary for proposing semantic work.
+The companion scripts/saved-report-triage-example.py runs two bounded commands on
+saved sample JSON into a fresh output directory, stops on failure and retains logs.
+
+Its first composition check passed: nine full functions, four unresolved functions,
+four inventory reasons and the original selected finding ID. Existing component
+results were reused; no image audit, native build/GUI, packaging, installed-app or
+release qualification was repeated. Settings and stores remain untouched.

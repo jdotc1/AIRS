@@ -13,17 +13,17 @@ preview and is not replaced by source-only increments.
 
 ## Current bounded increment
 
-Coverage reason limit/order and summary function-name filtering are merged through
-PRs #13–15, with their accepted results reused. The current source increment adds
-`coverage --minimum-count N` for focusing on repeated reasons in supplied saved
-reports: code selection, inclusive count selection, ordering, then explicit limit.
-Full inventory counts and duplicate/conflict context remain intact. No engine,
-native UI or installation changes. See [frequency contract and focused checks](COVERAGE_MINIMUM_COUNT.md).
+Coverage reason limit/order, summary function-name filtering and minimum-count
+selection are merged through PRs #13–16, with accepted results reused. The current
+increment connects them in a [saved-report triage guide](SAVED_REPORT_TRIAGE.md)
+and executable sample. Its first bounded two-command composition passed while
+retaining the full source denominators and original finding identity. No engine,
+native UI or installation changes.
 
 ## Next candidates, one bounded item at a time
 
-1. Add another saved-report triage affordance only when it answers a concrete review
-   question; retain original counts and uncertainty rather than re-auditing images.
+1. Use the documented saved-report workflow to identify a concrete unresolved
+   behavior worth improving; avoid adding filters without a specific review need.
 2. Select a next semantic extension from an explicit owned example and independently
    derived recovery expectation. Reason frequency in supplied reports is prioritization
    input, not representative prevalence or automatic permission to widen support.
