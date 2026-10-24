@@ -86,3 +86,17 @@ Seven new focused Python methods and one literal isolated-bootstrap invocation
 passed. The merged reason-limit results and unchanged engine/native/runtime checks
 were reused. No binary, GUI, installation or release changes were made. See
 COVERAGE_REASON_ORDERING.md for scope and interpretation limits.
+
+
+## Post-build-12 source development: literal summary function-name filtering
+
+`summary --name-contains TEXT` narrows saved finding detail using a literal,
+case-sensitive substring without Unicode normalization. It composes after existing
+verdict/reason selection and before ordering/limiting. Selection metadata exposes
+the stage counts while preserving full report denominators and evidence context.
+
+Eight new focused methods passed, with only the affected text method repeated after
+its row-label refinement. One isolated-bootstrap CLI invocation passed. Accepted
+summary/coverage and unchanged engine/native/runtime results were reused. This is
+source-only development; no GUI, binary, installation or release change is claimed.
+See SUMMARY_FUNCTION_NAME_FILTER.md for the contract and evidence scope.
