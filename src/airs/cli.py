@@ -19,6 +19,7 @@ from .report_summary_selection import validate_summary_verdicts, validate_summar
 from .report_summary_text import render_summary_text
 from .report_summary_limit import validate_summary_limit, limit_summary_findings
 from .report_summary_ordering import validate_summary_order, order_summary_findings
+from .report_summary_names import validate_summary_name, select_summary_names
 from .diff_text import render_diff_text
 from .coverage_text import render_coverage_text
 from .coverage_limit import validate_coverage_limit, limit_coverage_reasons
@@ -54,6 +55,7 @@ def _parser() -> argparse.ArgumentParser:
     summary.add_argument("--report", type=Path, required=True)
     summary.add_argument("--verdict", action="append", help="Select finding detail by verdict; full source counts remain unchanged")
     summary.add_argument("--reason", action="append", help="Select finding detail containing a literal reason code (repeatable)")
+    summary.add_argument("--name-contains", help="Select finding detail by literal case-sensitive function-name substring (1 to 256 UTF-8 bytes)")
     summary.add_argument("--sort", choices=("source", "verdict"), default="source", help="Keep saved order or group inconsistencies, unresolved findings, then agreements")
     summary.add_argument("--limit", type=int, help="Limit finding detail rows while retaining full source counts (0 to 200000)")
     summary.add_argument("--format", choices=("json", "text"), default="json")
@@ -98,9 +100,12 @@ def main(argv: list[str] | None = None) -> int:
             reasons = validate_summary_reasons(args.reason)
             limit = validate_summary_limit(args.limit)
             order = validate_summary_order(args.sort)
+            name_query = validate_summary_name(args.name_contains)
             report = summarize_report(load_report(args.report))
             if requested is not None or reasons is not None:
                 report = select_summary_findings(report, requested, reason_codes=reasons)
+            if name_query is not None:
+                report = select_summary_names(report, name_query)
             if order != "source":
                 report = order_summary_findings(report, order)
             if limit is not None:
