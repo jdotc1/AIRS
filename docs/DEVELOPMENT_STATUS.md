@@ -73,3 +73,16 @@ Seven new focused Python methods and one isolated-bootstrap CLI invocation passe
 unchanged aggregation, engine, native and runtime receipts were reused. No binary,
 GUI, installation or release change is claimed. See COVERAGE_REASON_LIMIT.md and
 ROADMAP.md for contract, evidence scope and remaining work.
+
+
+## Post-build-12 source development: literal coverage reason ordering
+
+`coverage --sort reason` orders selected saved-inventory reason rows by literal code
+before an optional limit. JSON and text agree; default count ranking and complete
+summary, duplicate/conflict and selection context remain intact. This is a CLI-only
+projection, not a change to the native complete-inventory admission contract.
+
+Seven new focused Python methods and one literal isolated-bootstrap invocation
+passed. The merged reason-limit results and unchanged engine/native/runtime checks
+were reused. No binary, GUI, installation or release changes were made. See
+COVERAGE_REASON_ORDERING.md for scope and interpretation limits.

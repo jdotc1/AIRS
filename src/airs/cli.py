@@ -22,6 +22,7 @@ from .report_summary_ordering import validate_summary_order, order_summary_findi
 from .diff_text import render_diff_text
 from .coverage_text import render_coverage_text
 from .coverage_limit import validate_coverage_limit, limit_coverage_reasons
+from .coverage_ordering import validate_coverage_order, order_coverage_reasons
 from .types import InputError
 
 
@@ -60,6 +61,7 @@ def _parser() -> argparse.ArgumentParser:
     inventory = commands.add_parser("coverage", help="Inventory unresolved reasons in saved reports without re-auditing images")
     inventory.add_argument("--report", type=Path, action="append", required=True)
     inventory.add_argument("--reason", action="append", help="Select a final reason row by code (repeatable; at most 32 codes)")
+    inventory.add_argument("--sort", choices=("count", "reason"), default="count", help="Rank reason rows by count or order literal reason codes before limiting")
     inventory.add_argument("--limit", type=int, help="Limit ranked reason detail rows while retaining full inventory counts (0 to 200000)")
     inventory.add_argument("--format", choices=("json", "text"), default="json")
     inventory.add_argument("--output", type=Path)
@@ -107,11 +109,14 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "coverage":
             selected_reasons = validate_reason_selection(args.reason)
             reason_limit = validate_coverage_limit(args.limit)
+            reason_order = validate_coverage_order(args.sort)
             if len(args.report) > 128:
                 raise InputError("inventory_limit", "At most 128 reports may be inventoried")
             if sum(path.stat().st_size for path in args.report) > 128 * 1024 * 1024:
                 raise InputError("inventory_limit", "Combined saved reports exceed 128 MiB")
             report = coverage_inventory([load_report(path) for path in args.report], reason_codes=selected_reasons)
+            if reason_order != "count":
+                report = order_coverage_reasons(report, reason_order)
             if reason_limit is not None:
                 report = limit_coverage_reasons(report, reason_limit)
             output, protected, exit_code = (render_coverage_text(report) if args.format == "text" else dumps(report)), tuple(args.report), 0
