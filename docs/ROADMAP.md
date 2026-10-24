@@ -13,12 +13,12 @@ preview and is not replaced by source-only increments.
 
 ## Current bounded increment
 
-`coverage --limit N` and `coverage --sort reason` are merged through PRs #13
-and #14, with their accepted results reused. The next source increment adds
-`summary --name-contains TEXT` for literal, case-sensitive function-name review:
-verdict/reason selection, name selection, ordering, then explicit limit. Full
-source counts remain intact. No engine semantics, native UI or installation
-changes. See [name-filter contract and focused checks](SUMMARY_FUNCTION_NAME_FILTER.md).
+Coverage reason limit/order and summary function-name filtering are merged through
+PRs #13–15, with their accepted results reused. The current source increment adds
+`coverage --minimum-count N` for focusing on repeated reasons in supplied saved
+reports: code selection, inclusive count selection, ordering, then explicit limit.
+Full inventory counts and duplicate/conflict context remain intact. No engine,
+native UI or installation changes. See [frequency contract and focused checks](COVERAGE_MINIMUM_COUNT.md).
 
 ## Next candidates, one bounded item at a time
 
