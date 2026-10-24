@@ -59,3 +59,17 @@ parser defaults, exact FDE selection, overlap and global opaque-work accounting
 remain preserved. Existing vendor/runtime/dependency and original PR receipts
 were reused; no full suite or corpus was rerun. New GUI acceptance, wheel/sdist,
 optimized packaging, signing/notarization and installed updates remain separate.
+
+## Post-build-12 source development: bounded coverage reason detail
+
+The public roadmap now records the current baseline and next bounded candidates.
+`coverage --limit N` limits ranked reason detail after optional reason selection,
+while preserving full inventory counts, report records, duplicate/conflict context
+and unmatched selections. JSON/text disclose explicit omissions; default output
+retains its existing shape. Limited/selected projections remain CLI-only and are
+not admitted by the unchanged complete-inventory native importer.
+
+Seven new focused Python methods and one isolated-bootstrap CLI invocation passed;
+unchanged aggregation, engine, native and runtime receipts were reused. No binary,
+GUI, installation or release change is claimed. See COVERAGE_REASON_LIMIT.md and
+ROADMAP.md for contract, evidence scope and remaining work.
