@@ -127,3 +127,24 @@ Its first composition check passed: nine full functions, four unresolved functio
 four inventory reasons and the original selected finding ID. Existing component
 results were reused; no image audit, native build/GUI, packaging, installed-app or
 release qualification was repeated. Settings and stores remain untouched.
+
+
+## Post-build-12 semantic development: bounded W SDIV v42
+
+Source inspection confirmed W signed division was refused in v41. The deliberately
+owned W SDIV witness now uses shared X transfer and zero-extending W write under
+arm64-bounded-w-sdiv-v42. Unknown and stack provenance, frame-body destinations,
+required original-register recovery and possible-path uncertainty stay conservative.
+Historical model identities remain distinct; W UDIV remains refused.
+
+Eleven distinct new Python methods, seven affected existing selectors and three
+new native admission methods passed in composed receipts. The real AIRSApp debug
+target built. Independent read-only semantic review found no actionable defect;
+its recommended divisor-truncation and unknown-precedence cases were added and
+passed. The native fixture reuses the first new engine emission over typed owned
+parser substitutes; no fresh whole-image parse or prevalence gain is claimed.
+
+The test build reported an existing unused Bool warning at
+FileOpenRoutingTests.swift:212. No GUI, installed app, settings, stores, packaging,
+signing or release operations were performed. See SDIV_W.md and
+SDIV_W_RESULTS.md for exact boundaries and fresh/reused evidence.

@@ -24,9 +24,9 @@ def decode_instruction(word: int, address: int = 0) -> Instruction:
     # X-only UDIV: Rn/Rm/Rd31 are ZR, never SP.
     if word & 0xffe0fc00 == 0x9ac00800:
         return Instruction(address,word,'xudiv',word&31,(word>>5)&31,(word>>16)&31)
-    # Same owned two-source mapping; exact scalar X signed form only.
-    if word & 0xffe0fc00 == 0x9ac00c00:
-        return Instruction(address,word,'xsdiv',word&31,(word>>5)&31,(word>>16)&31)
+    # Same owned mapping; exact scalar W/X signed forms, sf selects width.
+    if word & 0x7fe0fc00 == 0x1ac00c00:
+        return Instruction(address,word,'xsdiv' if word & (1<<31) else 'wsdiv',word&31,(word>>5)&31,(word>>16)&31)
     # Scalar W/X RBIT: fix every nonoperand bit except sf; Rn/Rd31 are ZR.
     if word & 0x7ffffc00 == 0x5ac00000:
         return Instruction(address,word,'xrbit' if word&(1<<31) else 'wrbit',word&31,(word>>5)&31)
@@ -247,18 +247,20 @@ class PathState(MachineState):
                 value=Value('constant',0 if divisor == 0 else numerator//divisor)
             self._write_register(instruction.rd,value)
             return
-        if kind == 'xsdiv':
+        if kind in ('wsdiv','xsdiv'):
             left,right=self.read_register(instruction.rn),self.read_register(instruction.rt2)
             if left.kind == 'stack' or right.kind == 'stack':
                 raise ModelError('sdiv_stack_address_not_modeled','SDIV source is a derived stack address',address)
             value=Value('unknown','Both SDIV sources must be concrete')
             if left.kind == right.kind == 'constant':
-                mask=(1<<64)-1
-                numerator,divisor=_signed(int(left.value)&mask,64),_signed(int(right.value)&mask,64)
+                width=32 if kind == 'wsdiv' else 64
+                mask=(1<<width)-1
+                numerator,divisor=_signed(int(left.value)&mask,width),_signed(int(right.value)&mask,width)
                 quotient=0 if divisor == 0 else abs(numerator)//abs(divisor)
                 if (numerator<0)!=(divisor<0): quotient=-quotient
                 value=Value('constant',quotient&mask)
-            self._write_register(instruction.rd,value)
+            if kind == 'wsdiv': self.write_w(instruction.rd,value)
+            else: self._write_register(instruction.rd,value)
             return
         if kind in ('wrbit','xrbit'):
             raw=self.read_register(instruction.rn)
