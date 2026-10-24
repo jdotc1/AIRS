@@ -1,19 +1,19 @@
 {
-  "source_revision": "28bfcb53620e2efd08f58ddd4aaf163b28f6c8b3",
+  "source_revision": "50de8bd69b1293b2e3d03acb5e09fcead527b3cd",
   "published_baseline": {
     "version": "0.3.3",
-    "build": "9",
-    "tag": "v0.3.3-build9",
-    "public_revision": "1e4a76f4f4d710bf88afd643345d04ee21d8b9a0"
+    "build": "10",
+    "tag": "v0.3.3-build10",
+    "public_revision": "31d9ef4741ff975942aa14368dd0381f6180cd26"
   },
-  "release_identity_assigned": true,
+  "release_identity_assigned": false,
   "export_policy": "allowlist; no history, runtime, private evidence or corpus locations",
-  "files": 654,
-  "source_status": "release-candidate",
+  "files": 658,
+  "source_status": "active-public-development",
   "sanitation": "bounded maintainer-path and credential-marker scan passed on new/changed files",
-  "sanitation_inspected_files": 12,
-  "sanitation_reused_files": 645,
-  "sanitation_reuse": "Accepted build9 public payload retained except listed acceptance profile changes and sanitized release metadata; unchanged scans and hashes reused",
+  "sanitation_inspected_files": 14,
+  "sanitation_reused_files": 647,
+  "sanitation_reuse": "Accepted build10 payload and vendor receipts reused; first bounded inspection of changed migration payload only",
   "lumen_source_gate": "unchanged vendor evidence reused; pinned Settings.swift update uses its separate one-file receipt",
   "lumen_settings_donor": "46b7dc04458991093301dc9c05ca35c82f69a7ea",
   "private_evidence_excluded": [
@@ -27,8 +27,11 @@
   ],
   "limitation": "Pattern inspection is not proof that arbitrary confidential text cannot exist",
   "distribution_actions_performed": false,
-  "release_version": "0.3.3",
-  "release_build": 10,
-  "native_change_revision": "4999a93adc3c8211717937f1361f572abc466f57",
-  "binary_reuse": "Accepted signed, notarized and stapled build10 candidate; no rebuild, re-sign or notarization repeat"
+  "canonical_repository": "https://github.com/jdotc1/AIRS-app",
+  "repository_policy": "Single active public repository; private history is not imported or required",
+  "accepted_local_build": {
+    "version": "0.3.3",
+    "build": "12",
+    "binary_publication_performed": false
+  }
 }

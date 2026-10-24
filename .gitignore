@@ -9,3 +9,11 @@ build/
 dist/
 local-reports/
 .coverage
+
+# Local evidence and signing credentials are never source inputs.
+local-evidence/
+.env
+.env.*
+!.env.example
+*.p12
+*.p8

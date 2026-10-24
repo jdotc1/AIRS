@@ -2,6 +2,7 @@ import AppKit
 import Foundation
 import SwiftUI
 import AIRSCore
+import AIRSEntitlements
 import LumenUI
 
 /// Explicit opt-in inspection of the real Settings scene, with no production stores.
@@ -78,6 +79,32 @@ struct SettingsReviewLauncher: View {
 }
 
 #if DEBUG
+/// Exercises the real persistent shell using only stores owned by the strict review profile.
+struct SidebarReviewLauncher: View {
+    @ObservedObject var workspace: AuditWorkspace
+    @State private var entitlements: EntitlementsWorkspace
+    @State private var navigation = AIRSNavigation()
+    @State private var fileOpen: AIRSFileOpen
+
+    init(workspace: AuditWorkspace, root: URL) {
+        self.workspace = workspace
+        _entitlements = State(initialValue: EntitlementsWorkspace(
+            library: EntitlementReportLibrary(root: root.appendingPathComponent("entitlement-reports")),
+            batchHistory: EntitlementBatchHistory(root: root.appendingPathComponent("entitlement-history")),
+            recovery: EntitlementBatchRecovery(root: root.appendingPathComponent("entitlement-recovery")),
+            inspectionLibrary: InspectionLibrary(root: root.appendingPathComponent("inspection"))))
+        _fileOpen = State(initialValue: AIRSFileOpen(hasModal: { false },
+            projectStore: InspectionProjectStore(root: root.appendingPathComponent("projects"))))
+    }
+
+    var body: some View {
+        AIRSWindowView(audit: workspace, entitlements: entitlements, navigation: navigation, fileOpen: fileOpen)
+            .lumenPaletteRoot().lumenMetrics(.standard).lumenDensityRoot()
+            .frame(minWidth: 1000, minHeight: 660)
+            .onAppear { NSApplication.shared.setActivationPolicy(.regular) }
+    }
+}
+
 /// Uses the strict isolated-review workspace above; never a production launch path.
 struct ComparisonReviewLauncher: View {
     @ObservedObject var workspace: AuditWorkspace
