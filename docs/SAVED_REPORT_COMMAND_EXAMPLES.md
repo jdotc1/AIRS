@@ -1,5 +1,8 @@
 # Saved-report command examples
 
+For a connected inventory-to-finding workflow and an executable saved-sample
+example, see [saved-report triage](SAVED_REPORT_TRIAGE.md).
+
 Run these commands from the AIRS checkout with Python 3.11 or newer. Replace
 `report.audit.json`, `before.audit.json` and `after.audit.json` with existing
 saved audit reports. Each command reads saved JSON; it does not open, execute

@@ -1,3 +1,10 @@
+Current source model: `arm64-bounded-w-sdiv-v42` adds scalar W signed division
+through the existing X transfer and zero-extending W write. Raw stack provenance,
+unknown inputs and recovery boundaries remain conservative. Exact Python/native
+model admission includes v42 while retaining historical identities. See
+[the W SDIV contract](SDIV_W.md) and [qualification scope](SDIV_W_RESULTS.md).
+The following checkpoints are historical and retain their original meanings.
+
 Current integrated model: `arm64-bounded-cfi-control-v41` adds bounded
 fixed-width location advances and remembered recovery state through explicit
 engine opt-in. Historical direct-parser defaults preserve v40 refusal, structural

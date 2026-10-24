@@ -113,3 +113,38 @@ Six new focused methods and one isolated-bootstrap CLI invocation passed. Accept
 aggregation, summary/coverage, protected output and unchanged native/runtime results
 were reused. No installed-app, settings, stores or release operations were made.
 See COVERAGE_MINIMUM_COUNT.md for the contract and evidence scope.
+
+
+## Post-build-12 development: connected saved-report triage example
+
+Minimum-count filtering is merged through PR #16. SAVED_REPORT_TRIAGE.md now
+connects reason inventory to selected original findings, explains each projection's
+counts and limitations, and records the boundary for proposing semantic work.
+The companion scripts/saved-report-triage-example.py runs two bounded commands on
+saved sample JSON into a fresh output directory, stops on failure and retains logs.
+
+Its first composition check passed: nine full functions, four unresolved functions,
+four inventory reasons and the original selected finding ID. Existing component
+results were reused; no image audit, native build/GUI, packaging, installed-app or
+release qualification was repeated. Settings and stores remain untouched.
+
+
+## Post-build-12 semantic development: bounded W SDIV v42
+
+Source inspection confirmed W signed division was refused in v41. The deliberately
+owned W SDIV witness now uses shared X transfer and zero-extending W write under
+arm64-bounded-w-sdiv-v42. Unknown and stack provenance, frame-body destinations,
+required original-register recovery and possible-path uncertainty stay conservative.
+Historical model identities remain distinct; W UDIV remains refused.
+
+Eleven distinct new Python methods, seven affected existing selectors and three
+new native admission methods passed in composed receipts. The real AIRSApp debug
+target built. Independent read-only semantic review found no actionable defect;
+its recommended divisor-truncation and unknown-precedence cases were added and
+passed. The native fixture reuses the first new engine emission over typed owned
+parser substitutes; no fresh whole-image parse or prevalence gain is claimed.
+
+The test build reported an existing unused Bool warning at
+FileOpenRoutingTests.swift:212. No GUI, installed app, settings, stores, packaging,
+signing or release operations were performed. See SDIV_W.md and
+SDIV_W_RESULTS.md for exact boundaries and fresh/reused evidence.
