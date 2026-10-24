@@ -1,8 +1,9 @@
 # Bounded reason detail for saved-report coverage
 
 `coverage --limit N` retains the first N ranked reason rows after optional literal
-`--reason` selection. Existing ranking remains descending count, then literal reason
-code for ties. N is an integer from 0 through 200000; invalid numeric bounds are
+`--reason` selection and optional `--sort reason` ordering. The default ranking
+remains descending count, then literal reason code for ties. Nondefault reason
+ordering happens before limiting; see COVERAGE_REASON_ORDERING.md. N is an integer from 0 through 200000; invalid numeric bounds are
 rejected before any report file I/O. Omitting the flag preserves the existing JSON
 shape and terminal presentation without adding limit metadata or an extra projection.
 
@@ -32,7 +33,7 @@ example list; no new sampling or evidence inference is introduced.
 
 This is a CLI presentation projection. The native coverage importer requires the
 complete inventory contract and rejects additional selection/limit fields. Use
-`coverage` without `--reason` or `--limit` to generate a native-importable inventory.
+`coverage` without `--reason`, `--limit` or `--sort reason` to generate a native-importable inventory.
 The native importer is unchanged; truncated inventories must not masquerade as full
 coverage. Saved reports are read as data; no Mach-O is opened, executed or re-audited.
 The existing protected output writer still rejects overwriting any supplied report.

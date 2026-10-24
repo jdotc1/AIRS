@@ -8,15 +8,16 @@ preview and is not replaced by source-only increments.
 | --- | --- | --- |
 | Native evidence review and saved workflows | Build 12 includes accepted Settings, comparison and persistent sidebar corrections | Qualify each changed user interaction after pending work settles |
 | Conservative ARM64/CFI model | Integrated v41 bounded model; historical model identities and refusal accounting preserved | New instruction/rule families require distinct positive and refusal evidence and independent review |
-| Saved-report coverage triage | Reason selection, terminal-safe output and bounded reason detail implemented | Additional triage tools must preserve full denominators, overlap, duplicate/conflict and exact identity context |
+| Saved-report coverage triage | Reason selection, terminal-safe output, bounded detail and literal code ordering implemented | Additional triage tools must preserve full denominators, overlap, duplicate/conflict and exact identity context |
 | Public distribution | Single repository; build 12 signed/notarized/stapled release, public browser download and actual App Translocation accepted on the development Mac | Clean-machine, minimum-macOS, Intel-app and offline qualification remain incomplete |
 
 ## Current bounded increment
 
-Add `coverage --limit N` as a presentation bound on ranked saved-report reason rows.
-Reuse the existing aggregation, reason selection, summary-limit pattern and protected
-writer. Preserve full counts and show omissions explicitly. No engine semantics,
-native UI or installation changes. See [contract and focused checks](COVERAGE_REASON_LIMIT.md).
+`coverage --limit N` is merged through PR #13, with its accepted results reused.
+The next source increment adds `coverage --sort reason` for code-oriented review:
+selection first, ordering second, explicit limit last. Default count ranking and
+full evidence context remain intact. No engine semantics, native UI or installation
+changes. See [ordering contract and focused checks](COVERAGE_REASON_ORDERING.md).
 
 ## Next candidates, one bounded item at a time
 
