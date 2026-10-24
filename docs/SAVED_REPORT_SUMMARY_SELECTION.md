@@ -22,7 +22,9 @@ verdict, when both selectors are provided. Reason-only selection records an empt
 `requested` verdict list and explicit `requested_reasons`.
 
 The CLI validates selectors before file I/O, admits the saved report once,
-selects details, optionally orders them, then applies an explicit detail limit.
+selects verdict/reason details, optionally selects literal function names, orders
+them, then applies an explicit detail limit. Name selection is a separate helper;
+see SUMMARY_FUNCTION_NAME_FILTER.md for its contract and count metadata.
 Default operations are skipped to avoid redundant copies of an already detached
 summary. JSON or text output still uses the protected writer.
 

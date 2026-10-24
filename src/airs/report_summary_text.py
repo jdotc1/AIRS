@@ -117,6 +117,10 @@ def render_summary_text(summary: dict, *, maximum_bytes: int = MAX_REPORT_BYTES)
         lines.append('Finding selection (full source counts above remain unchanged): ' +
                      lines.quoted(summary['finding_selection']))
         row_label = 'selected rows'
+    if 'finding_name_selection' in summary:
+        lines.append('Finding-name selection (full source counts unchanged): ' +
+                     lines.quoted(summary['finding_name_selection']))
+        row_label = 'selected rows'
     if 'finding_limit' in summary:
         lines.append('Finding detail limit (full source counts above remain unchanged): ' +
                      lines.quoted(summary['finding_limit']))
