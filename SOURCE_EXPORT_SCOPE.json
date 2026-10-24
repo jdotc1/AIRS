@@ -7,7 +7,8 @@
     "SOURCE_FILES.txt",
     "SOURCE_SNAPSHOT.json",
     "docs/DEVELOPMENT_STATUS.md",
-    "docs/RELEASE_0_3_3_BUILD12.md"
+    "docs/RELEASE_0_3_3_BUILD12.md",
+    "scripts/package-app.sh"
   ],
   "reused": [
     ".github/workflows/verify.yml",
@@ -548,7 +549,6 @@
     "scripts/evaluate-owned-cfi.py",
     "scripts/generate-examples.py",
     "scripts/generate-schemas.py",
-    "scripts/package-app.sh",
     "scripts/prepare-private-python.py",
     "scripts/sign-distribution.py",
     "scripts/verify-macos.sh",
@@ -666,6 +666,6 @@
     "third_party/gimli/README.md",
     "third_party/gimli/cfi-control-excerpts.rs"
   ],
-  "policy": "Release metadata only; accepted source and vendor sanitation reused",
+  "policy": "Release metadata and package build-number default only; accepted executable and source evidence reused",
   "binary_publication": true
 }
