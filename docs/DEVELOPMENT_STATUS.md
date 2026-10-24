@@ -1,14 +1,14 @@
-Release candidate0.3.3/build7 packages this source. Its build, GUI acceptance,
-signing/notarization and distribution receipts are recorded separately from the
-reused development evidence below. The earlier published baseline remains
-0.3.2/build6 until release publication completes.
-
 # Development scope and retained evidence
 
-The public baseline is v0.3.2/build 6. This development source uses model
-`arm64-bounded-cfi-control-v41`, while the existing downloadable app and its frozen
-source retain their own identities. SOURCE_SNAPSHOT.json records the source
-revision and changed/reused export scope. No next binary release is assigned.
+The single active source repository is AIRS-app. Current source includes the v41
+engine baseline and the accepted build 12 sidebar corrections. The latest published
+binary is 0.3.3/build 10; build 12's accepted local installation and GUI receipts do
+not themselves publish a new release. See [sidebar acceptance](SIDEBAR_NAVIGATION.md).
+
+The table below retains historical, boundary-specific qualification; later release
+records and their named artifact scopes must be read separately. SOURCE_SNAPSHOT.json
+records the final private-to-public migration. No private source history is required
+for future development.
 
 | Boundary | Retained evidence | Scope limit |
 | --- | --- | --- |

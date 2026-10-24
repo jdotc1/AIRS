@@ -50,7 +50,10 @@ struct AppPageHeader<Actions: View>: View {
             }
             if !subtitle.isEmpty {
                 Text(subtitle).font(metrics.typography.callout).foregroundStyle(palette[.fgSecondary])
-                    .fixedSize(horizontal: false, vertical: true)
+                    // Split views probe near-zero widths when measuring their minimum.
+                    // A raw fixedSize wraps this into a page-sized minimum height and
+                    // displaces the whole shell, including its persistent sidebar.
+                    .lumenWrapsWithoutTruncating()
             }
         }.foregroundStyle(palette[.fgPrimary]).frame(maxWidth: .infinity, alignment: .leading)
     }

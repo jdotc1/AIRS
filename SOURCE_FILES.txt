@@ -1,5 +1,6 @@
 .github/workflows/verify.yml
 .gitignore
+CONTRIBUTING.md
 LICENSE
 Makefile
 README.md
@@ -28,6 +29,7 @@ docs/SAVED_REPORT_COMMAND_EXAMPLES.md
 docs/SAVED_REPORT_SUMMARY.md
 docs/SAVED_REPORT_SUMMARY_SELECTION.md
 docs/SAVED_REPORT_SUMMARY_TEXT.md
+docs/SIDEBAR_NAVIGATION.md
 docs/SIGNATURE_EVIDENCE.md
 docs/UDIV.md
 docs/X_STACK_SLOTS.md
@@ -295,6 +297,7 @@ native/Tests/AIRSAppTests/InspectionLayoutTests.swift
 native/Tests/AIRSAppTests/InspectionLibraryPreferencesTests.swift
 native/Tests/AIRSAppTests/InspectionSummaryTests.swift
 native/Tests/AIRSAppTests/InterfaceLayoutReviewTests.swift
+native/Tests/AIRSAppTests/PageHeaderSizingTests.swift
 native/Tests/AIRSAppTests/PolicyWorkspaceTests.swift
 native/Tests/AIRSAppTests/PortableEntitlementManifestWorkspaceTests.swift
 native/Tests/AIRSAppTests/PortableProjectWorkspaceTests.swift
@@ -305,6 +308,7 @@ native/Tests/AIRSAppTests/ReportLibraryWorkspaceTests.swift
 native/Tests/AIRSAppTests/SecondaryDialogLayoutTests.swift
 native/Tests/AIRSAppTests/SettingsReviewIsolationTests.swift
 native/Tests/AIRSAppTests/SettledProjectExportWorkspaceTests.swift
+native/Tests/AIRSAppTests/SettledSidebarNavigationTests.swift
 native/Tests/AIRSAppTests/SignatureEvidenceWorkspaceTests.swift
 native/Tests/AIRSAppTests/SourceWorkspaceTests.swift
 native/Tests/AIRSAppTests/StandaloneEntitlementsTests.swift
