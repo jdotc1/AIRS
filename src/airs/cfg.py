@@ -27,6 +27,10 @@ def decode_instruction(word: int, address: int = 0) -> Instruction:
     # Same owned mapping; exact scalar W/X signed forms, sf selects width.
     if word & 0x7fe0fc00 == 0x1ac00c00:
         return Instruction(address,word,'xsdiv' if word & (1<<31) else 'wsdiv',word&31,(word>>5)&31,(word>>16)&31)
+    # MacScope one-source mapping: exact full-width byte REV only.
+    # W uses opc2, X uses opc3; REV16 and X REV32 are deliberately excluded.
+    if word & 0xfffffc00 in (0x5ac00800,0xdac00c00):
+        return Instruction(address,word,'xrev' if word & (1<<31) else 'wrev',word&31,(word>>5)&31)
     # Scalar W/X RBIT: fix every nonoperand bit except sf; Rn/Rd31 are ZR.
     if word & 0x7ffffc00 == 0x5ac00000:
         return Instruction(address,word,'xrbit' if word&(1<<31) else 'wrbit',word&31,(word>>5)&31)
@@ -262,6 +266,22 @@ class PathState(MachineState):
                 if (numerator<0)!=(divisor<0): quotient=-quotient
                 value=Value('constant',quotient&mask)
             if kind == 'wsdiv': self.write_w(instruction.rd,value)
+            else: self._write_register(instruction.rd,value)
+            return
+        if kind in ('wrev','xrev'):
+            raw=self.read_register(instruction.rn)
+            if raw.kind == 'stack':
+                raise ModelError('rev_stack_address_not_modeled','REV source is a derived stack address',address)
+            value=Value('unknown','REV source must be concrete')
+            if raw.kind == 'constant':
+                width=32 if kind == 'wrev' else 64
+                bits=int(raw.value)&((1<<width)-1)
+                reversed_bytes=0
+                for _ in range(width//8):
+                    reversed_bytes=(reversed_bytes<<8)|(bits&0xff)
+                    bits>>=8
+                value=Value('constant',reversed_bytes)
+            if kind == 'wrev': self.write_w(instruction.rd,value)
             else: self._write_register(instruction.rd,value)
             return
         if kind in ('wrbit','xrbit'):
