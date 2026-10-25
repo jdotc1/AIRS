@@ -1,3 +1,10 @@
+Current source model: `arm64-bounded-w-udiv-v43` adds scalar W unsigned division
+through the existing X transfer and zero-extending W write. Exact controls,
+raw-stack refusal, unknown-state and recovery boundaries remain conservative.
+Python/native model admission registers exact v43 and retains historical labels.
+See [W UDIV](UDIV_W.md) and [qualification scope](UDIV_W_RESULTS.md).
+Earlier checkpoint statements below retain their historical meanings.
+
 Current source model: `arm64-bounded-w-sdiv-v42` adds scalar W signed division
 through the existing X transfer and zero-extending W write. Raw stack provenance,
 unknown inputs and recovery boundaries remain conservative. Exact Python/native
