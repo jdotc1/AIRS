@@ -34,7 +34,7 @@ class REV32Tests(unittest.TestCase):
             self.assertNotEqual(changed.kind, 'xrev32')
         self.assertEqual(decode_instruction(word() ^ (1 << 31), BASE).kind, 'wrev')
         self.assertEqual(decode_instruction(word() | (1 << 10), BASE).kind, 'xrev')
-        for refused in (0x5ac00c20, 0xdac01420, 0x4e200820):
+        for refused in (0x5ac00c20, 0xfac01420, 0x4e200820):
             with self.subTest(word=hex(refused)), self.assertRaises(ModelError):
                 decode_instruction(refused, BASE)
 

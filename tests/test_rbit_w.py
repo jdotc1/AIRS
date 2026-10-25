@@ -52,7 +52,7 @@ class RBITWTests(unittest.TestCase):
             try:instruction=decode_instruction(rbit()^(1<<bit))
             except ModelError:continue
             self.assertNotEqual(instruction.kind,'wrbit')
-        for word in (0x7ac00420,0x5ac00c20,0x5ac01420,0x93000000):
+        for word in (0x7ac00420,0x5ac00c20,0x7ac01420,0x93000000):
             with self.assertRaises(ModelError):decode_instruction(word)
     def test_prepared_body_sequences_as_typed_data(self):
         for words in ((0xd2800020,0x5ac00000,RET),(0x5ac00008,0x5ac01100,RET),(0x5ac003e0,RET),(0xdac00008,0xdac01100,RET)):

@@ -254,3 +254,22 @@ real parsing and engine emission, and first reports seed native fixtures. The
 real AIRSApp debug target built. Independent read-only semantic review found no
 actionable issue. See REV32_RESULTS.md for native and fresh/reused scope. No GUI,
 packaging, installation, release or installed-app/settings/stores operations occurred.
+
+
+## Post-v46 semantic development: scalar CLS W/X v47
+
+REV32 v46 is merged through PR #23. The next bounded family adds count-leading-
+sign bits under arm64-bounded-cls-v47, reusing owned one-source mapping and CLZ
+state handling. The sign bit is excluded; zero/all-ones differ from CLZ counts.
+Raw-stack, unknown, frame and recovery boundaries remain conservative, and historical
+CLZ behavior/error codes are retained.
+
+Fourteen new Python methods, thirteen affected CLZ/RBIT/decoder methods and four
+new native methods passed
+in composed receipts. One loader selector named the wrong class; only that selector
+was corrected and executed, without replaying passed methods. Six new complete
+owned images qualify correct/missing/unknown recovery, and first reports supply
+native fixtures. The real AIRSApp debug target built. Independent read-only review
+found no actionable issue. See CLS_RESULTS.md for native and exact fresh/reused
+scope. No GUI, packaging, installation, release or installed-app/settings/stores
+operations occurred.

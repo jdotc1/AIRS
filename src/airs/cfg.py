@@ -40,6 +40,9 @@ def decode_instruction(word: int, address: int = 0) -> Instruction:
     # Scalar W/X RBIT: fix every nonoperand bit except sf; Rn/Rd31 are ZR.
     if word & 0x7ffffc00 == 0x5ac00000:
         return Instruction(address,word,'xrbit' if word&(1<<31) else 'wrbit',word&31,(word>>5)&31)
+    # Owned one-source dispatch; scalar W/X CLS has exact controls.
+    if word & 0x7ffffc00 == 0x5ac01400:
+        return Instruction(address,word,'xcls' if word & (1<<31) else 'wcls',word&31,(word>>5)&31)
     # Owned MacScope one-source sf/opcode2/opcode dispatch; CLZ only.
     # Fix every nonoperand bit, including S and opcode2; Rn/Rd31 mean ZR.
     if word & 0x7ffffc00 == 0x5ac01000:
@@ -313,14 +316,22 @@ class PathState(MachineState):
             if kind == 'wrbit': self.write_w(instruction.rd,value)
             else: self._write_register(instruction.rd,value)
             return
-        if kind in ('wclz','xclz'):
+        if kind in ('wclz','xclz','wcls','xcls'):
             raw=self.read_register(instruction.rn)
+            operation='CLS' if kind in ('wcls','xcls') else 'CLZ'
             if raw.kind == 'stack':
-                raise ModelError('clz_stack_address_not_modeled','CLZ source is a derived stack address',address)
-            width=32 if kind == 'wclz' else 64
-            value=Value('unknown','CLZ source must be concrete')
+                raise ModelError(operation.lower()+'_stack_address_not_modeled',operation+' source is a derived stack address',address)
+            width=32 if kind in ('wclz','wcls') else 64
+            value=Value('unknown',operation+' source must be concrete')
             if raw.kind == 'constant':
-                value=Value('constant',width-(int(raw.value)&((1<<width)-1)).bit_length())
+                mask=(1<<width)-1
+                bits=int(raw.value)&mask
+                if operation == 'CLS':
+                    normalized=bits^(mask if bits&(1<<(width-1)) else 0)
+                    count=width-1-normalized.bit_length()
+                else:
+                    count=width-bits.bit_length()
+                value=Value('constant',count)
             if width == 32: self.write_w(instruction.rd,value)
             else: self._write_register(instruction.rd,value)
             return
