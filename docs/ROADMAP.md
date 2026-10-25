@@ -148,10 +148,15 @@ required singleton-side selections and ambiguous labels after validated manual
 pins. See DUPLICATE_SYMBOL_GROUPS.md. Singleton one-sided matching outcomes and
 source completeness remain separate; native workflows are not activated.
 
-The local singleton one-sided symbol-row validator checks added/removed claims
+The singleton one-sided symbol-row validator, merged in public PR11, checks added/removed claims
 against post-manual source groups and deterministic body consumption. Missing
 body metadata refuses only outcomes the option could change. See
 ONE_SIDED_SYMBOL_ROWS.md. Omitted groups and unmatched/future bases remain separate.
+
+The local unmatched-row validator binds side-specific added/removed claims to
+admitted source IDs, unusable host names and unconsumed endpoints. See
+UNMATCHED_ROWS.md. Omitted groups, future bases and completeness remain separate;
+matching defaults and native workflows are unchanged.
 
 Next reuse sequence:
 
