@@ -204,3 +204,20 @@ arithmetic, model-admission, app build and unrelated results are reused; no unch
 image was re-audited or rehashed. No production code, model identity, GUI, installed
 app, settings, stores or release operations changed. See W_SDIV_OWNED_IMAGES.md for
 the native result and exact fresh/reused scope.
+
+
+## Post-v43 semantic development: scalar REV v44
+
+Complete owned-image W SDIV qualification is merged through PR #20. The next
+bounded family adds full-width scalar byte REV W/X under arm64-bounded-rev-v44,
+reusing owned MacScope decode mapping and AIRS state, W write, frame classification
+and recovery helpers. Partial/vector reversals remain refused. Raw-stack, unknown,
+preserved-register and uncertain-recovery behavior stays conservative.
+
+Fourteen new Python methods, two affected RBIT neighbor methods and four new native
+methods passed. Six new complete owned images qualify correct/missing/unknown
+recovery at both widths without parser mocks; first reports supply native fixtures.
+The real AIRSApp debug target built. Independent read-only semantic review found
+no actionable issue. Unrelated accepted results were reused; no corpus, GUI,
+packaging, installation or release operation occurred. Installed app, settings and
+stores remain untouched. See REV.md and REV_RESULTS.md for exact scope.
