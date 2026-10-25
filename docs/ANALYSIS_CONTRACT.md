@@ -1,3 +1,8 @@
+Current source model: `arm64-bounded-compare-branch-v49` adds CBZ/CBNZ W/X
+through existing bounded paths, loops and shared teardowns. Raw stack values
+refuse and uncertain edges retain uncertainty. See COMPARE_BRANCH.md and
+COMPARE_BRANCH_RESULTS.md. Earlier checkpoints retain their meaning.
+
 Current source model: `arm64-bounded-movk-v48` adds exact W/X MOVK with
 conservative retained-bit provenance and existing frame/recovery guards. See
 MOVK.md and MOVK_RESULTS.md. Earlier checkpoints retain their meaning.
