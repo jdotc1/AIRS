@@ -1,0 +1,117 @@
+{
+  "record_type": "release-history-and-source-archive-reconciliation",
+  "record_date": "2026-10-25",
+  "repository": "https://github.com/jdotc1/AIRS",
+  "evidence_basis": "Retained cleanup commit map, original and cleaned tag records, and original and cleaned release checksum records. Values transcribed from those records; no new archive hashing, content scan, build, test, signing or notarization check.",
+  "scope": "Reconciles five regenerated source archives and rewritten release identities. Original qualification records remain historical receipts for the accepted app artifacts and original source identities. A mapped commit is not byte identity or fresh execution evidence.",
+  "releases": [
+    {
+      "tag": "v0.3.2",
+      "original_source_revision": "3a30d7a7872cebd48babe4485bbe47ccb908c1eb",
+      "rewritten_source_revision": "25bfbf1a162be3c4b5d98477082bb42fe31e9070",
+      "original_tag_object": "b3aec2b314e37c08307f485d4ec73d087d03caef",
+      "rewritten_tag_object": "88751f34f6fd783e0fc56d898d671260d0a68824",
+      "source_archive": {
+        "name": "AIRS-0.3.2-source.zip",
+        "original_sha256": "b0dec51a2d8747f90aa585a6c1962e456fd4b75f9178e6a76e70a5abe142cff6",
+        "regenerated_sha256": "f8dd05da717a29d44f1c0388fe3feba4daca4ca0f872bd81f616082d3c273f13",
+        "original_byte_identity_retained": false
+      },
+      "app_archive": {
+        "name": "AIRS-0.3.2-macOS-arm64.zip",
+        "accepted_sha256": "5ff00eb64d128a753a8252d41b99ccbd961402d9de06aee33a665688c0ab33a6",
+        "cleanup_checksum_record_unchanged": true
+      },
+      "unchanged_qualification_checksum_records": {}
+    },
+    {
+      "tag": "v0.3.3",
+      "original_source_revision": "b61f26e52ca9b42789943b4d7f7f0c360ee3c1c9",
+      "rewritten_source_revision": "a49974fd1262e37ec1052ae0f00d396fa7f30150",
+      "original_tag_object": "b6c0e41106d0abc087dfd5d063fc4d1b15e5b7d1",
+      "rewritten_tag_object": "a24c1abbe915c71729987f58f908429edaa56978",
+      "source_archive": {
+        "name": "AIRS-0.3.3-source.zip",
+        "original_sha256": "ce2227cd5e1a4288999186caa16d86902cddc88d446d66f37330460fec07859b",
+        "regenerated_sha256": "5dce00a65237467d23e29691e3079fa51537d05f671c4bf065242ee5391466d0",
+        "original_byte_identity_retained": false
+      },
+      "app_archive": {
+        "name": "AIRS-0.3.3-macOS-arm64.zip",
+        "accepted_sha256": "3959fe7ddc4215593398d650db080411154a454afa4816d8dbc55f3468bb3109",
+        "cleanup_checksum_record_unchanged": true
+      },
+      "unchanged_qualification_checksum_records": {}
+    },
+    {
+      "tag": "v0.3.3-build9",
+      "original_source_revision": "1e4a76f4f4d710bf88afd643345d04ee21d8b9a0",
+      "rewritten_source_revision": "3bb60d39be330e8345db50168eb692a2fd38cf00",
+      "original_tag_object": "1e4a76f4f4d710bf88afd643345d04ee21d8b9a0",
+      "rewritten_tag_object": "3bb60d39be330e8345db50168eb692a2fd38cf00",
+      "source_archive": {
+        "name": "AIRS-0.3.3-build9-source.zip",
+        "original_sha256": "df07ed6f13556c5354755a8122ac33d15f404a11ade5102bb2800ebe81b7d557",
+        "regenerated_sha256": "07c322c24e126b3f6226f3782e96986e18a7544ec3a605e003cd012a8e8bd705",
+        "original_byte_identity_retained": false
+      },
+      "app_archive": {
+        "name": "AIRS-0.3.3-build9-macOS-arm64.zip",
+        "accepted_sha256": "1ff35066dabaca7aa7e5e1add6425208301a33ae34132e1292da856db6be65da",
+        "cleanup_checksum_record_unchanged": true
+      },
+      "unchanged_qualification_checksum_records": {
+        "AIRS-0.3.3-build9-qualification.json": "c0e44cf7cbc2d2c6e411f009e2d264f3d7d1d5e0e1e4a6b88fd47b81dcf5eea7"
+      }
+    },
+    {
+      "tag": "v0.3.3-build10",
+      "original_source_revision": "31d9ef4741ff975942aa14368dd0381f6180cd26",
+      "rewritten_source_revision": "e8db379e7af95c11dedd620f5f660afde00e81a7",
+      "original_tag_object": "7b2e4564c5bdf67486e9960600b9f20a7144493e",
+      "rewritten_tag_object": "f6d74e7ee3932ac125702c00bcd6e5cb964720a4",
+      "source_archive": {
+        "name": "AIRS-0.3.3-build10-source.zip",
+        "original_sha256": "607f9d0f1d54d3f8873c2e3d4a13105b101da762d62cd74cbcedcf4c6341423e",
+        "regenerated_sha256": "2937422dc52b67460752b7d055c2835d838c6a7ae5b61532570d497c3baba25c",
+        "original_byte_identity_retained": false
+      },
+      "app_archive": {
+        "name": "AIRS-0.3.3-build10-macOS-arm64.zip",
+        "accepted_sha256": "1c5610ef5928600361ca3e2e8c441be01ce5c57611268a9b8dd3ca1cbc6f42b4",
+        "cleanup_checksum_record_unchanged": true
+      },
+      "unchanged_qualification_checksum_records": {
+        "AIRS-0.3.3-build10-qualification.json": "e6791261ae65305815bc63f1221eb570aded2979f9bde9fb9bfb9de081a00c05"
+      }
+    },
+    {
+      "tag": "v0.3.3-build12",
+      "original_source_revision": "9babe4f7bfc6132e6eb97cfec40af500efb7bd1c",
+      "rewritten_source_revision": "0c2993fdf98ddf2d6a34b2b15fa27238bfa01c06",
+      "original_tag_object": "458d7c4ec6751f4407d952f56d1d868e0d7b2b5d",
+      "rewritten_tag_object": "d9e79e57ad845dbf396fcd97fcfc5ac09d1f5567",
+      "source_archive": {
+        "name": "AIRS-0.3.3-build12-source.zip",
+        "original_sha256": "144e2d77ce565ad08e02f5288264df916c4b3fa9cc2e54f5154f29fd9c01deb1",
+        "regenerated_sha256": "a908bba9d14353031b4263a12a21cec272ea5875a9eea04333f5e29d7427ac54",
+        "original_byte_identity_retained": false
+      },
+      "app_archive": {
+        "name": "AIRS-0.3.3-build12-macOS-arm64.zip",
+        "accepted_sha256": "74a0b8ab5ba6ece7933c167eb9da4b1e6a717d766166e5725342f6a4a9183d66",
+        "cleanup_checksum_record_unchanged": true
+      },
+      "unchanged_qualification_checksum_records": {
+        "AIRS-0.3.3-build12-qualification.json": "cde351831244e4b799ea47dc8b2bef4cf2d7297f1b577463b2170b8fc88600c9"
+      }
+    }
+  ],
+  "limitations": [
+    "The regenerated source archives are changed artifacts, not the original qualified source ZIP bytes.",
+    "Accepted app payload qualification retains its original scope; it does not qualify changed source-path behavior.",
+    "Cleanup included source path substitutions; their semantic repair and changed-boundary qualification remain separate work.",
+    "Earlier repository and pull-request URLs may no longer identify the original objects after repository recreation.",
+    "This local reconciliation does not claim a new remote publication or verification of currently hosted asset bytes."
+  ]
+}
