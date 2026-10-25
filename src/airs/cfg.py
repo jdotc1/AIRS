@@ -21,9 +21,9 @@ def decode_instruction(word: int, address: int = 0) -> Instruction:
     if not 0 <= word <= 0xffffffff:
         raise ModelError('invalid_instruction_word','Instruction is not a 32-bit word',address)
     # Owned MacScope two-source field mapping; fix all nonoperand bits.
-    # X-only UDIV: Rn/Rm/Rd31 are ZR, never SP.
-    if word & 0xffe0fc00 == 0x9ac00800:
-        return Instruction(address,word,'xudiv',word&31,(word>>5)&31,(word>>16)&31)
+    # Scalar W/X UDIV: sf selects width; Rn/Rm/Rd31 are ZR, never SP.
+    if word & 0x7fe0fc00 == 0x1ac00800:
+        return Instruction(address,word,'xudiv' if word & (1<<31) else 'wudiv',word&31,(word>>5)&31,(word>>16)&31)
     # Same owned mapping; exact scalar W/X signed forms, sf selects width.
     if word & 0x7fe0fc00 == 0x1ac00c00:
         return Instruction(address,word,'xsdiv' if word & (1<<31) else 'wsdiv',word&31,(word>>5)&31,(word>>16)&31)
@@ -236,16 +236,18 @@ class PathState(MachineState):
 
     def apply(self, instruction: Instruction) -> None:
         kind,address = instruction.kind,instruction.address
-        if kind == 'xudiv':
+        if kind in ('wudiv','xudiv'):
             left,right=self.read_register(instruction.rn),self.read_register(instruction.rt2)
             if left.kind == 'stack' or right.kind == 'stack':
                 raise ModelError('udiv_stack_address_not_modeled','UDIV source is a derived stack address',address)
             value=Value('unknown','Both UDIV sources must be concrete')
             if left.kind == right.kind == 'constant':
-                mask=(1<<64)-1
+                width=32 if kind == 'wudiv' else 64
+                mask=(1<<width)-1
                 numerator,divisor=int(left.value)&mask,int(right.value)&mask
                 value=Value('constant',0 if divisor == 0 else numerator//divisor)
-            self._write_register(instruction.rd,value)
+            if kind == 'wudiv': self.write_w(instruction.rd,value)
+            else: self._write_register(instruction.rd,value)
             return
         if kind in ('wsdiv','xsdiv'):
             left,right=self.read_register(instruction.rn),self.read_register(instruction.rt2)

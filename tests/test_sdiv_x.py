@@ -116,14 +116,14 @@ class SDIVXTests(unittest.TestCase):
             try:ins=decode_instruction(word() ^ (1<<bit),BASE)
             except ModelError:continue
             self.assertNotEqual(ins.kind,'xsdiv')
-        for neighbor in (0x1ac10800,):
+        for neighbor in (0x3ac10800,):
             with self.assertRaises(ModelError):decode_instruction(neighbor,BASE)
 
     def test_tiny_owned_signed_leaf_has_bounded_agreement(self):
         result=audit_current_function(*fixture(WITNESS))
         self.assertEqual((result.verdict,result.coverage,result.scope),('agreement','compact','modeled_leaf_body'))
         self.assertEqual(result.checked_pcs,(BASE,));self.assertEqual(result.instruction_count,2)
-        for neighbor in (0x1ac10800,):
+        for neighbor in (0x3ac10800,):
             result=audit_current_function(*fixture((neighbor,RET)))
             self.assertEqual(result.verdict,'unresolved');self.assertEqual(result.checked_pcs,())
 

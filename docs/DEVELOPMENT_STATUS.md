@@ -163,3 +163,27 @@ sentinel identified by independent read-only review. Accepted W SDIV, native bui
 model admission and unrelated results were reused. No full suite, corpus, GUI,
 packaging, installation or release operations were performed. See
 V42_REFUSAL_FIXTURES.md for the initial failure, exact correction and evidence scope.
+
+
+## Post-v42 semantic development: W UDIV v43
+
+V42 refusal-fixture hardening is merged through PR #18. The next bounded source
+increment adds scalar W unsigned division under arm64-bounded-w-udiv-v43, reusing
+X unsigned transfer and W writes. Raw stack sources, unknown inputs, frame-body
+writes and uncertain/unknown recovery remain conservative. Python/native exact
+admission retains v42 and earlier model identities.
+
+Twelve distinct new Python methods and fourteen affected existing methods passed
+in composed receipts. Two new complete owned Mach-O variants exercise real parsing
+and engine emission with correct versus missing-X19 recovery metadata; their first
+reports are retained, and the mismatch report seeds the native fixture directly.
+The real AIRSApp debug target built, and three new native methods passed.
+Independent semantic review found no actionable correctness issue.
+
+Affected refusal tests were aligned with W UDIV admission. Historical v42 import
+checks remain literal, while current-producer assertions and evidence destinations
+track the current model. The historical CFI emission test's analogous assertion/
+receipt-name repair was source-reviewed only; its accepted image workflow was not
+replayed. Unrelated results were reused. No full suite, corpus, GUI, packaging,
+signing, installation or release operations were performed. Installed settings and
+stores remain untouched. See UDIV_W.md and UDIV_W_RESULTS.md for exact scope.
