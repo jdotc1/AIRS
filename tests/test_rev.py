@@ -1,4 +1,4 @@
-"""Bounded full-register byte reversal; halfword/vector forms stay outside scope."""
+"""Bounded full-register byte reversal; REV16 has separate v45 coverage; X REV32/vector forms stay outside scope."""
 from dataclasses import replace
 import unittest
 
@@ -33,7 +33,7 @@ class REVTests(unittest.TestCase):
                 except ModelError:
                     continue
                 self.assertNotIn(changed.kind, ('wrev', 'xrev'))
-        for refused in (0x5ac00420, 0xdac00420, 0xdac00820, 0x5ac00c20, 0x4e200820):
+        for refused in (0x7ac00420, 0xfac00420, 0xdac00820, 0x5ac00c20, 0x4e200820):
             with self.subTest(word=hex(refused)), self.assertRaises(ModelError):
                 decode_instruction(refused, BASE)
 
