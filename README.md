@@ -12,7 +12,7 @@ repository is not a development dependency; its history is not imported.
 
 Current source includes the accepted **0.3.3/build 12 sidebar corrections**.
 The current release is the
-[AIRS 0.3.3/build 12 preview](https://github.com/jdotc1/AIRS-app/releases/tag/v0.3.3-build12),
+[AIRS 0.3.3/build 12 preview](https://github.com/jdotc1/AIRS/releases/tag/v0.3.3-build12),
 using the accepted signed, notarized and stapled candidate. See
 [build 12 evidence and limits](docs/RELEASE_0_3_3_BUILD12.md) and
 [sidebar acceptance](docs/SIDEBAR_NAVIGATION.md).
