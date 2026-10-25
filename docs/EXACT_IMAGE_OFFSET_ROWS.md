@@ -82,6 +82,6 @@ host/donor attribution and conservative group handling. Detailed logs remain
 private; generated native build products are removed after retaining receipts.
 Build success is not GUI or installed-app acceptance.
 
-No packaging, signing, installation, publication, production settings/store change
-or MacScope mutation is claimed by this local increment. Installed app, settings
-and stores remain unchanged; public integration remains separate.
+No packaging, signing, installation, production settings/store change or MacScope
+mutation is claimed by this qualification. Installed app, settings and stores
+remain unchanged; public integration does not activate native workflows.

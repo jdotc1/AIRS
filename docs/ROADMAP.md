@@ -128,7 +128,7 @@ manual checks, then verifies all other selected pairs with the same observation
 signature. See MATCHED_CHANGE_LABELS.md. Matching-basis semantics, source
 completeness and native GUI activation remain separate.
 
-The next local exact-image validator checks host offset authority and declared
+The exact-image validator checks host offset authority and declared
 numeric offset groups, rejecting guessed selections from duplicate groups. See
 EXACT_IMAGE_OFFSET_ROWS.md. Source completeness and cross-image symbol/body
 matching semantics remain separate; no native workflow is activated.
