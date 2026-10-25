@@ -1,3 +1,7 @@
+Later qualification: [complete owned-image checks](W_SDIV_OWNED_IMAGES.md) add
+real parser/engine/codec evidence for signed division under cumulative model v43.
+The original typed v42 fixture and its narrower receipt remain unchanged.
+
 Historical v42 checkpoint: W UDIV is added separately in source v43; see
 [the W UDIV contract](UDIV_W.md). The v42 subset and receipts below retain their
 original meaning.

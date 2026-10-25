@@ -187,3 +187,20 @@ receipt-name repair was source-reviewed only; its accepted image workflow was no
 replayed. Unrelated results were reused. No full suite, corpus, GUI, packaging,
 signing, installation or release operations were performed. Installed settings and
 stores remain untouched. See UDIV_W.md and UDIV_W_RESULTS.md for exact scope.
+
+
+## Post-v43 qualification: signed division through complete owned images
+
+W UDIV v43 is merged through PR #19. The next bounded qualification increment
+adds three new complete owned Mach-O signed-division examples using the unchanged
+owned layout builder and explicit checked instruction replacements. Real parsing
+and engine emission distinguish correct recovery agreement, missing-X19 concrete
+inconsistency and unknown recovery without supported checked PCs. All preserve
+the two-function denominator and original call-site PC.
+
+Three new Python methods and three new native codec methods passed once. First
+reports directly seed the three new native codec fixtures. Independent read-only review found no actionable concern. Accepted
+arithmetic, model-admission, app build and unrelated results are reused; no unchanged
+image was re-audited or rehashed. No production code, model identity, GUI, installed
+app, settings, stores or release operations changed. See W_SDIV_OWNED_IMAGES.md for
+the native result and exact fresh/reused scope.
