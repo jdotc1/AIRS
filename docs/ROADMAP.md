@@ -173,10 +173,16 @@ current finding, otherwise the selected baseline finding, using exact source tex
 See SELECTED_FUNCTION_NAMES.md. Unselected group labels, complete output and native
 workflow activation remain separate; names do not establish identity.
 
-The local unselected-symbol name validator binds zero-endpoint ambiguity labels
+The unselected-symbol name validator, merged in public PR16, binds zero-endpoint ambiguity labels
 to the exact admitted source-group name. See UNSELECTED_SYMBOL_NAMES.md. Its
 AIRSApp build and 13 focused tests passed; independent review found no actionable
 defect. Unselected offset-group labels and native activation remain separate.
+
+The local unselected-offset name validator binds zero-endpoint exact-image
+ambiguity labels to the producer's first recorded current member, otherwise its
+first baseline member. See UNSELECTED_OFFSET_NAMES.md. Its AIRSApp build and 14
+focused tests passed; independent review found no actionable defect. Source-order
+authenticity, complete-output reconstruction and native activation remain separate.
 
 Next reuse sequence:
 
