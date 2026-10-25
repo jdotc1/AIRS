@@ -1,9 +1,8 @@
 """Bounded terminal presentation of an existing supplied-report inventory."""
 from __future__ import annotations
 
-import json
-
 from .report import MAX_REPORT_BYTES
+from .report_summary_text import _BoundedText
 from .types import InputError
 
 MAX_REASON_ROWS = 32
@@ -21,7 +20,6 @@ def render_coverage_text(inventory: dict, *, maximum_bytes: int = MAX_REPORT_BYT
     maximum_bytes = min(maximum_bytes, MAX_REPORT_BYTES)
     chunks: list[str] = []
     used = 0
-    encoder = json.JSONEncoder(ensure_ascii=True, sort_keys=True)
 
     def append(chunk: str) -> None:
         nonlocal used
@@ -33,9 +31,14 @@ def render_coverage_text(inventory: dict, *, maximum_bytes: int = MAX_REPORT_BYT
 
     def line(label: str, value: object) -> None:
         append(label + ": ")
-        for chunk in encoder.iterencode(value):
-            # JSON escapes C0 controls; escape DEL as well for terminal safety.
-            append(chunk.replace("\x7f", "\\u007f"))
+        # Reuse the summary renderer's escaped-size preflight. iterencode can
+        # allocate an entire expanded string before yielding its first chunk.
+        try:
+            quoted = _BoundedText(maximum_bytes - used).quoted(value)
+        except InputError as exc:
+            raise InputError("generated_report_size_limit",
+                             "Generated coverage text exceeds the report size limit; no partial report was written") from exc
+        append(quoted)
         append("\n")
 
     append("AIRS saved-report coverage inventory\n")
