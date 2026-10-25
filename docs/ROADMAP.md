@@ -90,11 +90,17 @@ typed report round trips, validates exact shape and qualifying context, and leav
 missing evidence unavailable. It does not enable fingerprint production or
 matching in the app. See NATIVE_BODY_FINGERPRINT_CODEC.md for qualification.
 
-The local comparison-context codec now preserves configuration-change status,
+The comparison-context codec, merged in PR40, preserves configuration-change status,
 exact-body opt-in status and manual-pair records. Missing facts stay unavailable;
 malformed or conflicting selection metadata rejects. See NATIVE_COMPARISON_CONTEXT.md
 for eleven focused passing methods and a successful real app build. No native
 matching or GUI activation is included.
+
+The next local helper explicitly binds recorded manual endpoints and row facts
+to two selected source audit reports. It validates declared identities/flags and
+source-side ID membership without authenticating reports or recomputing change
+classification/configuration identity. See MANUAL_PAIR_SOURCE_BINDING.md for ten
+new passing methods and a successful real app build. No app workflow is activated.
 
 Next reuse sequence:
 
