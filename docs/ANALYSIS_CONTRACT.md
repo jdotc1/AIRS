@@ -668,3 +668,13 @@ remain ambiguous. Relative addresses preserve sign and exact free-form strings
 retain wire distinctions. Names and explanatory prose are not change evidence.
 This does not authenticate selected reports, validate nonmanual rows or summaries,
 activate matching, establish function identity, or change engine model semantics.
+
+
+## 20. Explicit comparison row accounting
+
+The opt-in row accounting validator (COMPARISON_ROW_ACCOUNTING.md) checks category
+shapes, per-side selected endpoint uniqueness and exact summary totals over bounded
+recorded rows. A selected ambiguous pair counts as matched; unselected ambiguity
+groups do not invent matches. Typed endpoint facts follow selected IDs. This is
+neither source completeness nor identity/matching/signature verification. Existing
+decoding, native workflow activation and engine model semantics remain unchanged.
