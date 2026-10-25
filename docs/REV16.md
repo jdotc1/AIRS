@@ -1,3 +1,7 @@
+Later source v46 adds scalar X REV32 separately; see [REV32](REV32.md).
+Earlier subset descriptions and receipts below retain their historical meaning.
+Vector forms remain excluded.
+
 # Bounded scalar REV16
 
 Source model `arm64-bounded-rev16-v45` adds exact scalar REV16 W/X, swapping
