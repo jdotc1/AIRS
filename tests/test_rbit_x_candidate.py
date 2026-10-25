@@ -175,8 +175,8 @@ class RBITXCandidateStateTests(unittest.TestCase):
         self.assertEqual(state.sp, Value("stack", displacement=-16))
 
     def test_other_unimplemented_families_stay_unsupported(self):
-        # W RBIT, W SDIV and scalar REV/REV16/REV32 were adopted; retain other families/control refusals.
-        words = (0xFAC00408, 0xFAC00808, 0x5AC00C08, 0xDAC01408, 0x3AC10C00)
+        # Scalar counts and reversals were adopted; retain other families/control refusals.
+        words = (0xFAC00408, 0xFAC00808, 0x5AC00C08, 0xFAC01408, 0x3AC10C00)
         for word in words:
             with self.subTest(word=hex(word)), self.assertRaises(ModelError):
                 decode_instruction(word, BASE)
@@ -261,7 +261,7 @@ class RBITXCandidateRecoveryTests(unittest.TestCase):
         self.assertNotIn(BASE + 16, result.checked_pcs)
 
     def test_unreachable_unsupported_neighbor_still_invalidates_the_function(self):
-        words = (0x14000002, 0xDAC01408, *CTZ_WITNESS)
+        words = (0x14000002, 0xFAC01408, *CTZ_WITNESS)
         result = audit_current_function(*fixture(words))
         self.assertEqual(result.verdict, "unresolved")
         self.assertEqual(result.checked_pcs, ())

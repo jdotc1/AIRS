@@ -35,7 +35,7 @@ class REV16Tests(unittest.TestCase):
                     continue
                 self.assertNotIn(changed.kind, ('wrev16', 'xrev16'))
         self.assertEqual(decode_instruction(word(32) | (1 << 31), BASE).kind, 'xrev16')
-        for refused in (0xfac00820, 0x5ac00c20, 0x5ac01420, 0x4e200820):
+        for refused in (0xfac00820, 0x5ac00c20, 0x7ac01420, 0x4e200820):
             with self.subTest(word=hex(refused)), self.assertRaises(ModelError):
                 decode_instruction(refused, BASE)
 
