@@ -108,7 +108,7 @@ manual rows must stay ambiguous. See MANUAL_PAIR_COMPATIBILITY.md for eleven new
 passing methods and a real app build. Change-signature verification and native
 workflow activation remain separate.
 
-The next local increment verifies manual changed/unchanged labels against selected
+Manual-row change verification checks changed/unchanged labels against selected
 source finding signatures, reusing the donor comparator's separation of matching
 and audit observations. See MANUAL_PAIR_CHANGES.md for bounded native qualification.
 Nonmanual rows, summary integrity and automatic workflow activation remain separate.
