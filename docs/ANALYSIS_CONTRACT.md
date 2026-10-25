@@ -608,3 +608,13 @@ encoded immediates and is not relocation-insensitive or function-identity proof.
 It cannot affect findings, checked PCs, analysis budgets or comparison signatures.
 Imported annotations receive structural validation, not byte verification. The
 native app keeps this option off; automatic matching is not part of this producer.
+
+
+## 14. Optional exact-body candidate selection
+
+Saved-report API/CLI comparison can opt into unique remaining exact-body review
+candidates (EXACT_BODY_CANDIDATES.md). Established manual/symbol matches and exact
+image offsets retain precedence; ambiguous symbol groups and duplicate body keys
+are not guessed. Imported digests are structurally admitted but unauthenticated.
+Model/configuration differences remain ambiguous and body equality cannot override
+changed finding signatures. This comparison phase does not change unwind findings.

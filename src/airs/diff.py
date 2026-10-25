@@ -64,7 +64,50 @@ def _validated_pairs(pairs, baseline: dict, current: dict, same_image: bool) -> 
     return ordered
 
 
-def compare_reports(baseline: dict, current: dict, *, manual_pairs=()) -> dict:
+def _body_candidates(groups: dict) -> set:
+    """Adapt MacScope's snapshot-based unique-key phase without guessing ties.
+
+    Established pairs and ambiguous symbol groups retain precedence. Count all
+    remaining fingerprints, including blocked ambiguous groups, before selecting
+    any candidate. A single bounded phase deliberately avoids fixpoint expansion.
+    """
+    buckets = defaultdict(lambda: {'before': [], 'after': []})
+    eligible = set()
+    for group in groups.values():
+        if len(group['before']) == len(group['after']) == 1:
+            continue
+        standalone = len(group['before']) + len(group['after']) == 1
+        for side in ('before', 'after'):
+            for finding in group[side]:
+                fingerprint = finding['function'].get('body_fingerprint')
+                if fingerprint is None:
+                    continue
+                key = (fingerprint['kind'], fingerprint['sha256'], fingerprint['instruction_count'])
+                buckets[key][side].append(finding)
+                if standalone: eligible.add((side, finding['id']))
+    selected, ambiguous = {}, set()
+    consumed = {'before': set(), 'after': set()}
+    for key, group in buckets.items():
+        if len(group['before']) == len(group['after']) == 1:
+            old, new = group['before'][0], group['after'][0]
+            if ('before', old['id']) not in eligible or ('after', new['id']) not in eligible:
+                continue
+            selected['body:'+':'.join(map(str, key))] = group
+            consumed['before'].add(old['id']); consumed['after'].add(new['id'])
+        elif group['before'] and group['after']:
+            ambiguous.update((side, finding['id']) for side in ('before', 'after') for finding in group[side])
+    for key in list(groups):
+        group = groups[key]
+        for side in ('before', 'after'):
+            group[side] = [finding for finding in group[side] if finding['id'] not in consumed[side]]
+        if not group['before'] and not group['after']: del groups[key]
+    groups.update(selected)
+    return ambiguous
+
+
+def compare_reports(baseline: dict, current: dict, *, manual_pairs=(), match_exact_bodies: bool = False) -> dict:
+    if type(match_exact_bodies) is not bool:
+        raise InputError('invalid_matching_option', 'Exact-body matching requires a boolean opt-in')
     validate_report(baseline)
     validate_report(current)
     same_image = baseline["image"]["slice_sha256"] == current["image"]["slice_sha256"] and baseline["image"]["architecture"] == current["image"]["architecture"]
@@ -90,6 +133,12 @@ def compare_reports(baseline: dict, current: dict, *, manual_pairs=()) -> dict:
                 key = f"unmatched:{side}:{finding['id']}"
             groups[key][side].append(finding)
 
+    body_ambiguities = set()
+    if (match_exact_bodies and not same_image
+            and baseline['image']['architecture'] == current['image']['architecture']
+            and baseline['image']['cpu_subtype'] == current['image']['cpu_subtype']):
+        body_ambiguities = _body_candidates(groups)
+
     summary = {"matched_count": 0, "changed_count": 0, "unchanged_count": 0, "added_count": 0, "removed_count": 0, "ambiguous_count": 0}
     changes: list[dict] = []
     for key in sorted(groups):
@@ -97,7 +146,7 @@ def compare_reports(baseline: dict, current: dict, *, manual_pairs=()) -> dict:
         before = before_group[0] if len(before_group) == 1 else None
         after = after_group[0] if len(after_group) == 1 else None
         notes: list[str] = []
-        basis = "manual_review" if key.startswith("manual:") else "exact_image_offset" if key.startswith("offset:") else "unique_symbol" if key.startswith("symbol:") else "unmatched"
+        basis = "manual_review" if key.startswith("manual:") else "exact_image_offset" if key.startswith("offset:") else "unique_symbol" if key.startswith("symbol:") else "exact_body_candidate" if key.startswith("body:") else "unmatched"
         if len(before_group) > 1 or len(after_group) > 1:
             change = "ambiguous"
             notes.append(f"This key has {len(before_group)} baseline and {len(after_group)} current candidates; none was selected automatically.")
@@ -111,6 +160,8 @@ def compare_reports(baseline: dict, current: dict, *, manual_pairs=()) -> dict:
                 notes.append("Analysis configuration differs or is missing from one report. Reanalyze both inputs with one configuration before interpreting a finding change.")
             else:
                 change = "unchanged" if _signature(before) == _signature(after) else "changed"
+            if basis == 'exact_body_candidate':
+                notes.append('Unique exact-byte body fingerprint is a review candidate; it does not prove source-function identity or a regression/fix. Imported digests are not authenticated and relocations may change encoded bytes.')
             if basis == 'manual_review':
                 notes.append('User-selected finding pair is a review candidate; it does not prove source-function identity or a regression/fix.')
             if basis == "unique_symbol":
@@ -121,6 +172,9 @@ def compare_reports(baseline: dict, current: dict, *, manual_pairs=()) -> dict:
         else:
             change = "removed"
             notes.append("No accepted current match; absence is not a fixed finding.")
+        if any((side, finding['id']) in body_ambiguities
+               for side, members in (('before', before_group), ('after', after_group)) for finding in members):
+            notes.append('Exact-body fingerprint is not unique on both remaining sides; no body pair was selected.')
         summary[change + "_count"] += 1
         representative = after or before or (after_group or before_group)[0]
         row = {"key": key, "match_basis": basis, "function_name": representative["function"]["name"], "change": change, "notes": notes}
@@ -142,4 +196,8 @@ def compare_reports(baseline: dict, current: dict, *, manual_pairs=()) -> dict:
         result['comparison']['manual_pairs'] = [
             {'baseline_id': old, 'current_id': new} for old, new in pairs]
         result['limitations'].append('Manual pairs record user selection, not independently established cross-build function identity.')
+    if match_exact_bodies:
+        result['comparison']['exact_body_candidates'] = True
+        result['comparison']['matching_policy'] += '_then_exact_body_candidate'
+        result['limitations'].append('Exact-body candidates require unique eligible evidence on both remaining sides and equal CPU subtype; existing pairs and ambiguous symbol groups retain precedence. A digest match is review evidence, not source-function identity.')
     return result
