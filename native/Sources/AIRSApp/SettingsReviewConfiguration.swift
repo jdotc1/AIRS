@@ -8,8 +8,16 @@ import LumenUI
 /// Explicit opt-in inspection of the real Settings scene, with no production stores.
 struct SettingsReviewConfiguration {
     static var reviewParent: URL {
-        FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Work", isDirectory: true)
+        FileManager.default.temporaryDirectory.resolvingSymlinksInPath()
+    }
+
+    /// Resolve only the supplied environment; partial or invalid overrides fail closed.
+    static func reviewParent(environment: [String: String]) throws -> URL {
+        guard let path = environment["AIRS_REVIEW_PARENT"] else { return reviewParent }
+        guard path.hasPrefix("/") else { throw ReviewError.invalidConfiguration }
+        let parent = URL(fileURLWithPath: path, isDirectory: true).standardizedFileURL
+        guard parent.resolvingSymlinksInPath() == parent else { throw ReviewError.invalidConfiguration }
+        return parent
     }
 
     let root: URL
@@ -24,7 +32,8 @@ struct SettingsReviewConfiguration {
         }
         let root = URL(fileURLWithPath: path, isDirectory: true).standardizedFileURL
         let prefix = "AIRS-settings-visual-"
-        guard root.deletingLastPathComponent().path == reviewParent.standardizedFileURL.path,
+        let parent = try reviewParent(environment: environment)
+        guard root.deletingLastPathComponent().path == parent.path,
               root.lastPathComponent.hasPrefix(prefix),
               let id = UUID(uuidString: String(root.lastPathComponent.dropFirst(prefix.count))),
               suite == "dev.airs.settings-review.\(id.uuidString.lowercased()).preferences",

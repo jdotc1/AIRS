@@ -13,9 +13,16 @@ Launch a new instance with these arguments, in order:
 --acceptance-comparison /absolute/<owned-comparison.json>
 ```
 
-Use the current user's actual home path. The profile directory must already exist,
-be empty, be a physical directory immediately inside `Codex`, and have
-a UUID suffix. Fixture paths must be physical regular files under that parent.
+The profile parent defaults to the operating system's temporary directory, with
+symlinks resolved. Set `AIRS_REVIEW_PARENT` to an absolute physical directory to
+choose another local parent; this environment value is shared by downloaded-app
+acceptance and Settings review. Parsing uses the supplied environment and rejects
+relative or symlinked overrides. Keep machine-specific values in the local launch
+environment, never in tracked files or public CI settings.
+
+The profile directory must already exist, be empty, be a physical directory
+immediately inside that parent, and have a UUID suffix. Fixture paths must be
+physical regular files under the same parent.
 Partial, duplicated, malformed, conflicting legacy-review, or reused configuration
 fails closed with exit 64; it never falls back to the ordinary app. The profile
 claims its root exclusively before copying bounded, decoded fixtures into Inputs.
@@ -39,3 +46,10 @@ file panels, restoration, installation, or minimum-macOS compatibility.
 acceptance additionally records the actual PID/path and production-data metadata
 before and after this isolated run. Accepted engine/comparison/signing results for
 unchanged inputs are reused; only new profile behavior receives fresh checks.
+
+Settings review retains its existing `AIRS_SETTINGS_REVIEW=1`, UUID-bound root,
+bundle identifier and isolated preferences requirements. Changing the parent does
+not relax those checks, permit an already-used root, or enable production stores.
+Native navigation tests use `AIRS_TEST_OUTPUT_ROOT` when supplied and otherwise
+create uniquely named scratch directories under the operating system temporary
+directory; test teardown removes only its owned scratch directory.
