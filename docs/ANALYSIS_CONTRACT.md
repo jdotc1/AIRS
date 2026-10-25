@@ -767,3 +767,15 @@ Validated manual pins and eligible body pairs consume endpoints independently of
 imported row omissions. Missing body status remains unavailable when consumption
 could affect the row. Native source-name admission, omitted groups, future bases,
 completeness, binary authenticity, GUI activation and engine semantics are unchanged.
+
+
+## 29. Explicit recorded matching-policy consistency
+
+The opt-in matching-policy validator (MATCHING_POLICY.md) composes declared-row
+checks and requires a known host basis vocabulary. Canonical policy metadata follows
+validated nonempty manual selections and explicit true body opt-in; missing status
+remains unavailable, not an invented false value. Body opt-in stays recorded when
+same-image or subtype authority prevents selection. Unknown policy/basis strings
+reject only at this explicit boundary. Complete producer reconstruction, remaining
+field semantics, source identity, binary authenticity and GUI activation are not
+established; generic decoding and matching defaults remain unchanged.

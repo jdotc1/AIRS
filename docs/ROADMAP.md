@@ -153,10 +153,15 @@ against post-manual source groups and deterministic body consumption. Missing
 body metadata refuses only outcomes the option could change. See
 ONE_SIDED_SYMBOL_ROWS.md. Omitted groups and unmatched/future bases remain separate.
 
-The local unmatched-row validator binds side-specific added/removed claims to
+The unmatched-row validator, merged in public PR12, binds side-specific added/removed claims to
 admitted source IDs, unusable host names and unconsumed endpoints. See
 UNMATCHED_ROWS.md. Omitted groups, future bases and completeness remain separate;
 matching defaults and native workflows are unchanged.
+
+The local recorded matching-policy validator checks canonical producer metadata
+against validated manual pins and explicit body status, and rejects unsupported
+basis names at this opt-in boundary. See MATCHING_POLICY.md. Generic decoding,
+producer defaults, full-output reconstruction and native workflows remain separate.
 
 Next reuse sequence:
 
