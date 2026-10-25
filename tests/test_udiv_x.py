@@ -104,14 +104,14 @@ class UDIVXTests(unittest.TestCase):
             try:ins=decode_instruction(word() ^ (1<<bit),BASE)
             except ModelError:continue
             self.assertNotEqual(ins.kind,'xudiv')
-        for neighbor in (0x1ac10800,0x3ac10c00):
+        for neighbor in (0x3ac10800,0x3ac10c00):
             with self.assertRaises(ModelError):decode_instruction(neighbor,BASE)
 
     def test_complete_retained_function_has_bounded_leaf_agreement(self):
         result=audit_current_function(*fixture(WITNESS))
         self.assertEqual((result.verdict,result.coverage,result.scope),('agreement','compact','modeled_leaf_body'))
         self.assertEqual(result.checked_pcs,(BASE,));self.assertEqual(result.instruction_count,2)
-        for neighbor in (0x1ac10800,0x3ac10c00):
+        for neighbor in (0x3ac10800,0x3ac10c00):
             result=audit_current_function(*fixture((neighbor,RET)))
             self.assertEqual(result.verdict,'unresolved');self.assertEqual(result.checked_pcs,())
 

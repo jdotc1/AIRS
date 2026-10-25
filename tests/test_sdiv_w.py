@@ -47,7 +47,7 @@ class SDIVWTests(unittest.TestCase):
             self.assertNotEqual(neighbor.kind, 'wsdiv')
         self.assertEqual(decode_instruction(word() | (1 << 31), BASE).kind, 'xsdiv')
         with self.assertRaises(ModelError):
-            decode_instruction(0x1ac20820, BASE)  # W UDIV is still refused
+            decode_instruction(0x3ac20820, BASE)  # Unmodeled fixed-control neighbor
 
     def test_signed_edges_low32_masking_zero_extension_and_oracle(self):
         cases = [(7, 3, 2), (-7, 3, 0xfffffffe), (7, -3, 0xfffffffe),
@@ -103,7 +103,7 @@ class SDIVWTests(unittest.TestCase):
         result = audit_current_function(*fixture((word(0, 0, 1), RET)))
         self.assertEqual((result.verdict, result.scope, result.checked_pcs),
                          ('agreement', 'modeled_leaf_body', (BASE,)))
-        refused = audit_current_function(*fixture((0x1ac10800, RET)))
+        refused = audit_current_function(*fixture((0x3ac10800, RET)))
         self.assertEqual((refused.verdict, refused.checked_pcs), ('unresolved', ()))
 
     def test_frame_destination_and_unrestored_preserved_register_refuse(self):
@@ -123,7 +123,6 @@ class SDIVWTests(unittest.TestCase):
         self.assertEqual(unknown.reason_codes, ('unknown_recovery_value',))
 
     def test_v42_model_and_strict_import_boundary(self):
-        self.assertEqual(ANALYSIS_MODEL_VERSION, MODEL)
         self.assertIsNotNone(validate_report(synthetic_report(MODEL)))
         for model in (MODEL, 'arm64-bounded-cfi-control-v41'):
             value = synthetic_report(model)
@@ -156,16 +155,17 @@ class SDIVWTests(unittest.TestCase):
                         functions=(replace(function, name='owned_w_sdiv_call'), image.functions[1]))
         sink = image.functions[1]
         table = UnwindTable((entry, UnwindEntry(sink.start, sink.end, 0x02000000, 0)))
-        output = Path(__file__).resolve().parents[1] / 'local-evidence/w-sdiv-v42'
+        output = Path(__file__).resolve().parents[1] / 'local-evidence' / ANALYSIS_MODEL_VERSION
+        output.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(dir=output) as directory:
             path = Path(directory) / 'owned.bin'
             path.write_bytes(image.data)
             with patch('airs.engine.parse_macho', return_value=image), patch('airs.engine.parse_compact_unwind', return_value=table):
                 report = audit_path(path)
-        self.assertEqual(report['generator']['analysis_model_version'], MODEL)
+        self.assertEqual(report['generator']['analysis_model_version'], ANALYSIS_MODEL_VERSION)
         self.assertEqual(report['summary']['function_count'], 2)
         self.assertEqual(report['findings'][0]['verdict'], 'inconsistency')
         self.assertEqual(report['findings'][0]['checked_pcs'], ['0x101c'])
-        target = output / 'w-sdiv-v42.json'
+        target = output / 'w-sdiv-current.json'
         target.write_text(dumps(report), encoding='utf-8')
         self.assertEqual(load_report(target), report)

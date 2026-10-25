@@ -11,6 +11,7 @@ import struct
 import tempfile
 import unittest
 
+from airs import ANALYSIS_MODEL_VERSION
 from airs.engine import audit_path
 from airs.report import dumps, load_report, validate_report
 from airs.types import InputError, Limits
@@ -68,9 +69,9 @@ def dwarf_admission(model=MODEL):
 
 
 class CFIControlV41EmissionTests(unittest.TestCase):
-    def test_complete_macho_emits_v41_and_round_trips(self):
+    def test_complete_macho_emits_current_model_and_round_trips(self):
         report = report_for()
-        self.assertEqual(report['generator']['analysis_model_version'], MODEL)
+        self.assertEqual(report['generator']['analysis_model_version'], ANALYSIS_MODEL_VERSION)
         self.assertEqual(report['analysis_config']['limits']['max_cfi_state_depth'], 64)
         finding = report['findings'][0]
         self.assertEqual((finding['verdict'], finding['coverage'], finding['scope']),
@@ -80,7 +81,7 @@ class CFIControlV41EmissionTests(unittest.TestCase):
         self.assertEqual((report['summary']['function_count'], report['summary']['agreement_count']), (1, 1))
         artifact_root = os.environ.get('AIRS_TEST_OUTPUT_ROOT')
         if artifact_root:
-            witness = Path(artifact_root) / 'v41-emitted-audit.json'
+            witness = Path(artifact_root) / f'{ANALYSIS_MODEL_VERSION}-cfi-emitted-audit.json'
             if witness.exists():
                 raise AssertionError('First emitted witness already exists; refuse overwrite')
             witness.write_text(dumps(report))
