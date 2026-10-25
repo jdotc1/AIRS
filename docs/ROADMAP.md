@@ -30,11 +30,14 @@ Coverage-text escaped-allocation preflight is merged in PR #27 with
 Exact refusal-instruction evidence is merged in PR #28 with
 [accepted results](REFUSAL_INSTRUCTION_EVIDENCE.md) reused.
 
-The current bounded analysis improvement retains statically encoded preferred VM
-targets on refused direct branches/calls. It extends the same bounded evidence
-annotation after existing analysis; no target is followed and no supported subset
-expands. Verdicts, scope, checked PCs, model v47 and evidence budgets are unchanged.
-See [target diagnostic qualification](REFUSED_BRANCH_TARGETS.md).
+Refused direct-edge target diagnostics are merged in PR #29 with
+[accepted results](REFUSED_BRANCH_TARGETS.md) reused.
+
+The current bounded analysis improvement retains the first unknown CFG recovery's
+register, preferred VM observation PC, expected identity and unknown value in the
+existing summary evidence row. Full counting, unresolved precedence, path certainty
+and evidence budgets remain intact. It adds no semantic support or checked PCs.
+See [unknown recovery qualification](CFG_UNKNOWN_RECOVERY_EVIDENCE.md).
 Installation and release remain unchanged.
 
 ## Next candidates, one bounded item at a time
