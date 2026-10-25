@@ -1,3 +1,9 @@
+Current source model: `arm64-bounded-rev32-v46` adds exact scalar X byte reversal
+inside 32-bit lanes through shared REV handling. W REV remains its existing form.
+Raw-stack/unknown, frame and synchronous-recovery boundaries remain conservative.
+Exact Python/native admission retains historical labels. See [REV32](REV32.md)
+and [bounded qualification](REV32_RESULTS.md). Earlier checkpoints retain meaning.
+
 Current source model: `arm64-bounded-rev16-v45` adds scalar byte swaps within
 16-bit lanes through the existing REV state path. Raw-stack, unknown/provenance,
 frame and synchronous-recovery boundaries remain conservative. Exact Python/native

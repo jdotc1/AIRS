@@ -30,8 +30,11 @@ def decode_instruction(word: int, address: int = 0) -> Instruction:
     # Same owned one-source mapping; REV16 swaps bytes inside each halfword.
     if word & 0x7ffffc00 == 0x5ac00400:
         return Instruction(address,word,'xrev16' if word & (1<<31) else 'wrev16',word&31,(word>>5)&31)
+    # Scalar REV32 is X-only; the sf=0 encoding is the existing full W REV.
+    if word & 0xfffffc00 == 0xdac00800:
+        return Instruction(address,word,'xrev32',word&31,(word>>5)&31)
     # MacScope one-source mapping: exact full-width byte REV only.
-    # W uses opc2, X uses opc3; X REV32 is deliberately excluded.
+    # W uses opc2, X uses opc3; X REV32 is handled separately above.
     if word & 0xfffffc00 in (0x5ac00800,0xdac00c00):
         return Instruction(address,word,'xrev' if word & (1<<31) else 'wrev',word&31,(word>>5)&31)
     # Scalar W/X RBIT: fix every nonoperand bit except sf; Rn/Rd31 are ZR.
@@ -271,7 +274,7 @@ class PathState(MachineState):
             if kind == 'wsdiv': self.write_w(instruction.rd,value)
             else: self._write_register(instruction.rd,value)
             return
-        if kind in ('wrev','xrev','wrev16','xrev16'):
+        if kind in ('wrev','xrev','wrev16','xrev16','xrev32'):
             raw=self.read_register(instruction.rn)
             if raw.kind == 'stack':
                 raise ModelError('rev_stack_address_not_modeled','REV source is a derived stack address',address)
@@ -279,9 +282,12 @@ class PathState(MachineState):
             if raw.kind == 'constant':
                 width=32 if kind in ('wrev','wrev16') else 64
                 bits=int(raw.value)&((1<<width)-1)
-                if kind in ('wrev16','xrev16'):
+                if kind in ('wrev16','xrev16','xrev32'):
                     lane_low=0x00ff00ff if width == 32 else 0x00ff00ff00ff00ff
                     reversed_bytes=((bits&lane_low)<<8)|((bits>>8)&lane_low)
+                    if kind == 'xrev32':
+                        halfword_low=0x0000ffff0000ffff
+                        reversed_bytes=((reversed_bytes&halfword_low)<<16)|((reversed_bytes>>16)&halfword_low)
                 else:
                     reversed_bytes=0
                     for _ in range(width//8):
