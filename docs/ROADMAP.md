@@ -85,10 +85,16 @@ See EXACT_BODY_CANDIDATES.md for fourteen new API, four isolated CLI, one fresh
 pipeline and twenty-five affected passing methods. Default/native-app matching
 is unchanged; no identity proof or new analysis semantics is claimed.
 
-The local native codec increment preserves optional fingerprint fields through
+The native codec increment, merged in PR39, preserves optional fingerprint fields through
 typed report round trips, validates exact shape and qualifying context, and leaves
 missing evidence unavailable. It does not enable fingerprint production or
 matching in the app. See NATIVE_BODY_FINGERPRINT_CODEC.md for qualification.
+
+The local comparison-context codec now preserves configuration-change status,
+exact-body opt-in status and manual-pair records. Missing facts stay unavailable;
+malformed or conflicting selection metadata rejects. See NATIVE_COMPARISON_CONTEXT.md
+for eleven focused passing methods and a successful real app build. No native
+matching or GUI activation is included.
 
 Next reuse sequence:
 
@@ -121,7 +127,7 @@ and release publication distinct. Runtime evidence and user data stay outside so
 Completed worktrees and merged feature branches can be pruned after preserving
 unique source/evidence. Rebuildable caches and intermediate packaged app copies
 need not remain alongside the active public checkout. See WORKSPACE_FOOTPRINT.md.
-The saved native fingerprint-codec draft has been resumed locally. Typed native
+The saved native fingerprint-codec draft was completed and merged in PR39. Typed native
 preservation and structural admission now have nine focused passing tests and a
 successful real AIRSApp build. See NATIVE_BODY_FINGERPRINT_CODEC.md. Build products
 are removed after retaining logs. Fingerprint production/matching activation and
