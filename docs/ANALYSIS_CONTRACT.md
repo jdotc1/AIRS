@@ -1,3 +1,9 @@
+Current source model: `arm64-bounded-cls-v47` adds scalar W/X count-leading-sign
+bits through existing CLZ state handling. The sign bit itself is excluded. Raw-stack,
+unknown/provenance, frame and synchronous-recovery boundaries remain conservative.
+Exact Python/native admission retains historical labels. See [CLS](CLS.md) and
+[bounded qualification](CLS_RESULTS.md). Earlier checkpoints retain meaning.
+
 Current source model: `arm64-bounded-rev32-v46` adds exact scalar X byte reversal
 inside 32-bit lanes through shared REV handling. W REV remains its existing form.
 Raw-stack/unknown, frame and synchronous-recovery boundaries remain conservative.
