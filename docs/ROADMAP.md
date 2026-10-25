@@ -143,10 +143,15 @@ fingerprint buckets against the post-manual source snapshot, retaining symbol
 precedence and duplicate blockers. See BODY_CANDIDATE_PAIRS.md. It does not
 activate matching or prove body authenticity, identity or source completeness.
 
-The local duplicate-symbol group validator checks actual source-name multiplicity,
+The duplicate-symbol group validator, merged in public PR10, checks actual source-name multiplicity,
 required singleton-side selections and ambiguous labels after validated manual
 pins. See DUPLICATE_SYMBOL_GROUPS.md. Singleton one-sided matching outcomes and
 source completeness remain separate; native workflows are not activated.
+
+The local singleton one-sided symbol-row validator checks added/removed claims
+against post-manual source groups and deterministic body consumption. Missing
+body metadata refuses only outcomes the option could change. See
+ONE_SIDED_SYMBOL_ROWS.md. Omitted groups and unmatched/future bases remain separate.
 
 Next reuse sequence:
 

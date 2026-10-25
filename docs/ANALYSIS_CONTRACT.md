@@ -745,3 +745,14 @@ singleton sides; body matching cannot consume these blocked groups. Unselected
 ambiguity without multiplicity rejects, while incompatible selected unique pairs
 retain their prior ambiguous labels. Singleton one-sided matching outcomes,
 completeness, binary authenticity and GUI activation remain separate.
+
+
+## 27. Explicit singleton symbol outcomes
+
+The opt-in one-sided symbol validator (ONE_SIDED_SYMBOL_ROWS.md) composes prior
+validation and binds declared singleton added/removed rows to exact source groups
+after manual pins and eligible body selection. Omitted body rows cannot restore
+consumed endpoints. Missing body status remains unavailable: affected outcomes
+refuse, while outcomes independent of that status can be checked. Established
+symbol pairs cannot hide one endpoint. Completeness, unmatched/future matching,
+binary authenticity, GUI activation and engine semantics remain separate.
