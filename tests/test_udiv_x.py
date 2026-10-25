@@ -1,4 +1,5 @@
 """Bounded X UDIV: retained bytes and independent arithmetic/recovery controls."""
+# Unsupported sentinels use a fixed-control neighbor; W SDIV is supported in v42.
 from dataclasses import replace
 import unittest
 from airs.arm64 import ModelError, Value, original
@@ -103,14 +104,14 @@ class UDIVXTests(unittest.TestCase):
             try:ins=decode_instruction(word() ^ (1<<bit),BASE)
             except ModelError:continue
             self.assertNotEqual(ins.kind,'xudiv')
-        for neighbor in (0x1ac10800,0x1ac10c00):
+        for neighbor in (0x1ac10800,0x3ac10c00):
             with self.assertRaises(ModelError):decode_instruction(neighbor,BASE)
 
     def test_complete_retained_function_has_bounded_leaf_agreement(self):
         result=audit_current_function(*fixture(WITNESS))
         self.assertEqual((result.verdict,result.coverage,result.scope),('agreement','compact','modeled_leaf_body'))
         self.assertEqual(result.checked_pcs,(BASE,));self.assertEqual(result.instruction_count,2)
-        for neighbor in (0x1ac10800,0x1ac10c00):
+        for neighbor in (0x1ac10800,0x3ac10c00):
             result=audit_current_function(*fixture((neighbor,RET)))
             self.assertEqual(result.verdict,'unresolved');self.assertEqual(result.checked_pcs,())
 
@@ -160,7 +161,7 @@ class UDIVBoundaryTests(unittest.TestCase):
         self.assertEqual(result.checked_pcs,(BASE+12,))
 
     def test_unreachable_unsupported_and_small_work_limits_stay_unresolved(self):
-        result=audit_current_function(*fixture((0x14000002,0x1ac10c00,*WITNESS)))
+        result=audit_current_function(*fixture((0x14000002,0x3ac10c00,*WITNESS)))
         self.assertEqual(result.verdict,'unresolved');self.assertEqual(result.checked_pcs,())
         for limits,reason in ((replace(Limits(),max_cfg_steps_per_function=0),'cfg_work_limit'),
                               (replace(Limits(),max_instructions_per_function=1),'function_instruction_limit')):
