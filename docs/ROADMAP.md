@@ -133,7 +133,7 @@ numeric offset groups, rejecting guessed selections from duplicate groups. See
 EXACT_IMAGE_OFFSET_ROWS.md. Source completeness and cross-image symbol/body
 matching semantics remain separate; no native workflow is activated.
 
-The next local unique-symbol pair validator checks raw source names, generated-name
+The unique-symbol pair validator checks raw source names, generated-name
 exclusions and post-manual singleton groups for selected two-sided claims. See
 UNIQUE_SYMBOL_PAIRS.md. One-sided symbol groups, body matching and completeness
 remain separate; no matching producer or GUI workflow is activated.
