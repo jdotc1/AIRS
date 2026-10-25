@@ -9,7 +9,7 @@
     "Historical review-profile source uses the already-qualified portable temporary-directory getter",
     "Policy detector and synthetic fixture source literals preserve the same executable AST and test bytes"
   ],
-  "evidence": "Existing build, test, signing, notarization and functional results reused within original scope. Changed source objects and new archives inspected; only newly generated source ZIPs receive new hashes. No claim that old release binaries were rebuilt from rewritten source.",
+  "evidence": "Existing build, test, signing, notarization and functional results reused within original scope. Changed source objects and new archives inspected; new hashes are limited to newly generated source ZIPs and reconciliation metadata. No claim that old release binaries were rebuilt from rewritten source.",
   "historical_records": "Original qualification/download JSON and the earlier release-history reconciliation are retained. Their source references are historical; this mapping gives the next source lineage step.",
   "releases": [
     {

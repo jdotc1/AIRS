@@ -7,8 +7,8 @@ retained; accepted application results are reused within their original scope.
 
 The [structured record](qualification/PUBLIC_SOURCE_RECONCILIATION_2026_10_25.json)
 contains full tag/source IDs, old/new source archive checksums and the accepted app
-archive identities copied from existing checksum records. Only newly generated
-source ZIPs were hashed. The [earlier reconciliation](RELEASE_HISTORY_RECONCILIATION.md)
+archive identities copied from existing checksum records. New hashes are limited to regenerated
+source ZIPs and the new reconciliation supplement. The [earlier reconciliation](RELEASE_HISTORY_RECONCILIATION.md)
 remains a historical step in the lineage chain.
 
 | Release | Previous source | Rewritten source |
