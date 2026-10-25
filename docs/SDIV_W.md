@@ -1,3 +1,7 @@
+Historical v42 checkpoint: W UDIV is added separately in source v43; see
+[the W UDIV contract](UDIV_W.md). The v42 subset and receipts below retain their
+original meaning.
+
 # Bounded scalar W SDIV
 
 The new source model is `arm64-bounded-w-sdiv-v42`; schema remains 1. V41 and

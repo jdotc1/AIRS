@@ -1,3 +1,7 @@
+Current source v43 extends the historical X UDIV subset below with scalar W UDIV.
+W/X SDIV was added separately. See [W UDIV](UDIV_W.md); historical checkpoint
+limitations below describe their original models, not the current decoder.
+
 # Bounded scalar X UDIV
 
 UDIV was introduced under model `arm64-bounded-udiv-v34`, following v33 RBIT.
