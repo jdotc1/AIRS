@@ -789,3 +789,14 @@ baseline/current selected IDs under the host's canonical namespace. Pin membersh
 source facts, compatibility and observation labels remain prerequisites. Keys do
 not establish identity, authenticity or complete output. Earlier APIs retain their
 existing key scope; generic decoding, producer defaults and GUI behavior are unchanged.
+
+
+## 31. Explicit selected function-name facts
+
+The opt-in selected-name validator (SELECTED_FUNCTION_NAMES.md) composes canonical
+manual keys and prior declared-row checks. A selected current source name takes
+precedence over a selected baseline name; exact UTF-8 labels preserve empty and
+generated names without normalization or display fallbacks. Rows with neither
+endpoint selected retain an unverified representative label. This checks saved
+presentation facts, not authenticated symbols, source-function identity or complete
+producer output. Earlier APIs, decoding, matching and GUI behavior are unchanged.
