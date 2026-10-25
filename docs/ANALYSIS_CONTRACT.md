@@ -689,3 +689,14 @@ source finding. Unknown IDs fail rather than disappearing. Omitted ambiguity
 endpoints do not imply source completeness. Matching semantics, configuration
 identity, nonmanual signatures, binary authenticity and GUI activation remain
 separate; engine model semantics are unchanged.
+
+
+## 22. Explicit observation labels for all selected pairs
+
+The opt-in matched-label validator (MATCHED_CHANGE_LABELS.md) composes selected
+source facts and manual verification, then applies the shared host observation
+signature to other two-endpoint rows. Comparable pairs require changed/unchanged;
+model/configuration differences require ambiguous. Unselected groups and one-sided
+rows do not invent pairs. This does not verify matching-basis semantics, source
+completeness, source-function identity, original binary bytes or GUI behavior.
+Default decoding, matching and engine model semantics remain unchanged.
