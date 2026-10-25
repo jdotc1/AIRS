@@ -178,11 +178,17 @@ to the exact admitted source-group name. See UNSELECTED_SYMBOL_NAMES.md. Its
 AIRSApp build and 13 focused tests passed; independent review found no actionable
 defect. Unselected offset-group labels and native activation remain separate.
 
-The local unselected-offset name validator binds zero-endpoint exact-image
+The unselected-offset name validator, merged in public PR17, binds zero-endpoint exact-image
 ambiguity labels to the producer's first recorded current member, otherwise its
 first baseline member. See UNSELECTED_OFFSET_NAMES.md. Its AIRSApp build and 14
 focused tests passed; independent review found no actionable defect. Source-order
 authenticity, complete-output reconstruction and native activation remain separate.
+
+The local canonical row-order validator checks strictly ascending raw UTF-8
+complete keys after the existing declared-row proofs. See CANONICAL_ROW_ORDER.md.
+Its AIRSApp build and 16 focused tests passed; independent review found no
+actionable defect. Input is not reordered; complete-output reconstruction,
+authenticity, identity and native activation remain separate.
 
 Next reuse sequence:
 

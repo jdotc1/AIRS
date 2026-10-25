@@ -823,3 +823,14 @@ are exact UTF-8 presentation facts, including empty/generated names. Numeric
 offsets, source membership and multiplicity remain prerequisites from composition.
 Recorded source order is not authenticated; complete output, identity and native
 activation remain separate. Earlier APIs and defaults retain their scope.
+
+
+## 34. Explicit canonical declared-row ordering
+
+The opt-in row-order validator (CANONICAL_ROW_ORDER.md) composes all prior
+declared-row/name checks and requires strictly ascending complete row keys in
+raw UTF-8 lexical order. This matches the producer's Unicode scalar sorting,
+preserving spelling and avoiding numeric, localized or display-name sorting.
+It does not reorder input. Empty, singleton and ordered partial comparisons
+remain possible; completeness, authenticity, identity and native activation
+remain separate. Earlier APIs, decoding and matching defaults retain their scope.
