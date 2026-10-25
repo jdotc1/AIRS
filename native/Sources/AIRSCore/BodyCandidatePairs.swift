@@ -18,10 +18,8 @@ public extension ComparisonReport {
         }
         let oldPins = Set((comparison.manualPairs ?? []).map(\.baselineID))
         let newPins = Set((comparison.manualPairs ?? []).map(\.currentID))
-        let oldGroups = admittedSymbolCandidateGroups(baseline.findings, excluding: oldPins)
-        let newGroups = admittedSymbolCandidateGroups(current.findings, excluding: newPins)
-        let oldBuckets = bodyCandidateBuckets(baseline.findings, excluding: oldPins, own: oldGroups, other: newGroups)
-        let newBuckets = bodyCandidateBuckets(current.findings, excluding: newPins, own: newGroups, other: oldGroups)
+        let pairs = admittedBodyCandidatePairs(baseline: baseline.findings, current: current.findings,
+                                              baselinePins: oldPins, currentPins: newPins)
         var oldByID: [String: Finding] = [:], newByID: [String: Finding] = [:]
         for finding in baseline.findings { oldByID[finding.id] = finding }
         for finding in current.findings { newByID[finding.id] = finding }
@@ -33,12 +31,34 @@ public extension ComparisonReport {
             }
             let key = BodyCandidateKey(old)
             guard Data(row.key.utf8) == Data(key.rowKey.utf8),
-                  let before = oldBuckets[key], before.count == 1, before.eligible, before.selectedID == oldID,
-                  let after = newBuckets[key], after.count == 1, after.eligible, after.selectedID == newID else {
+                  let pair = pairs[Data(key.rowKey.utf8)],
+                  pair.baselineID == oldID, pair.currentID == newID else {
                 throw ReportError.invalidContents("Body pair is not an eligible unique source bucket after manual and symbol precedence.")
             }
         }
     }
+}
+
+/// Internal snapshot projection only. Sources must already be admitted and pins
+/// validated. Callers own opt-in, cross-image and architecture/subtype authority.
+struct AdmittedBodyCandidatePair {
+    let baselineID: String
+    let currentID: String
+}
+
+func admittedBodyCandidatePairs(baseline: [Finding], current: [Finding],
+                                baselinePins: Set<String>, currentPins: Set<String>) -> [Data: AdmittedBodyCandidatePair] {
+    let oldGroups = admittedSymbolCandidateGroups(baseline, excluding: baselinePins)
+    let newGroups = admittedSymbolCandidateGroups(current, excluding: currentPins)
+    let oldBuckets = bodyCandidateBuckets(baseline, excluding: baselinePins, own: oldGroups, other: newGroups)
+    let newBuckets = bodyCandidateBuckets(current, excluding: currentPins, own: newGroups, other: oldGroups)
+    var pairs: [Data: AdmittedBodyCandidatePair] = [:]
+    for (key, before) in oldBuckets {
+        guard before.count == 1, before.eligible, let oldID = before.selectedID,
+              let after = newBuckets[key], after.count == 1, after.eligible, let newID = after.selectedID else { continue }
+        pairs[Data(key.rowKey.utf8)] = AdmittedBodyCandidatePair(baselineID: oldID, currentID: newID)
+    }
+    return pairs
 }
 
 private struct BodyCandidateKey: Hashable {
