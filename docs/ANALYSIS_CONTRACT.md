@@ -545,7 +545,9 @@ current model are ambiguous rather than silently equivalent.
 
 For exact bytes, numeric offsets identify the same function range. Equivalent
 hexadecimal formatting must not create added/removed rows. Across builds,
-unique symbol names are review candidates only. Unnamed and duplicate-name
+unique eligible symbol names are review candidates only. Generic entry/section
+labels and generated address-shaped labels provide no cross-build symbol evidence
+(see GENERATED_SYMBOL_MATCHING.md). Unnamed and duplicate-name
 functions need future identity work; no nearest-address heuristic is used.
 
 Every handoff preserves the evidence's source model and address space. The
