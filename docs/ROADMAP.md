@@ -118,10 +118,15 @@ uniqueness and exact six-field summary totals. See COMPARISON_ROW_ACCOUNTING.md
 for focused native qualification. It is separate from source binding, matching
 truth and signature verification; native app activation remains unchanged.
 
-Selected-source fact binding extends side-specific ID/verdict/scope
+Selected-source fact binding, merged in public PR5, extends side-specific ID/verdict/scope
 binding to every selected row, including nonmanual and one-sided rows. See
 COMPARISON_SOURCE_FACTS.md. This does not verify matching semantics, source
 completeness, configuration identity or nonmanual finding signatures.
+
+The matched-label validator composes selected-source/accounting and
+manual checks, then verifies all other selected pairs with the same observation
+signature. See MATCHED_CHANGE_LABELS.md. Matching-basis semantics, source
+completeness and native GUI activation remain separate.
 
 Next reuse sequence:
 

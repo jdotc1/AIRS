@@ -14,7 +14,7 @@ public extension ComparisonReport {
         guard comparison.modelCompatible == exactModels else {
             throw ReportError.invalidContents("Model compatibility contradicts exact source model labels.")
         }
-        let configurationsDiffer = try manualChangeConfiguration(baselineData) != manualChangeConfiguration(currentData)
+        let configurationsDiffer = try admittedComparisonConfigurationsDiffer(baselineData: baselineData, currentData: currentData)
         var oldByID: [String: Finding] = [:], newByID: [String: Finding] = [:]
         for finding in before.findings { oldByID[finding.id] = finding }
         for finding in after.findings { newByID[finding.id] = finding }
@@ -27,13 +27,18 @@ public extension ComparisonReport {
             if !exactModels || configurationsDiffer {
                 expected = "ambiguous"
             } else {
-                expected = try ManualFindingSignature(old) == ManualFindingSignature(new) ? "unchanged" : "changed"
+                expected = try FindingObservationSignature(old) == FindingObservationSignature(new) ? "unchanged" : "changed"
             }
             guard row.change == expected else {
                 throw ReportError.invalidContents("Manual row change label contradicts its selected source finding signatures.")
             }
         }
     }
+}
+
+/// Internal reuse only: both inputs must already pass configuration admission.
+func admittedComparisonConfigurationsDiffer(baselineData: Data, currentData: Data) throws -> Bool {
+    try manualChangeConfiguration(baselineData) != manualChangeConfiguration(currentData)
 }
 
 private func manualChangeConfiguration(_ data: Data) throws -> NSDictionary? {
@@ -71,22 +76,22 @@ private func manualEvidenceText(_ value: JSONValue?) throws -> Data? {
 
 /// Adapts the donor comparator's observation signature while preserving AIRS's
 /// raw encoding text, negative relative evidence addresses and exact wire strings.
-private struct ManualFindingSignature: Equatable {
-    struct EvidenceSignature: Equatable {
+struct FindingObservationSignature: Equatable {
+    private struct EvidenceSignature: Equatable {
         let code: Data
         let expected: Data?
         let observed: Data?
         let address: ManualRelativeAddress?
     }
 
-    let verdict: AuditVerdict
-    let coverage: String
-    let mode: String
-    let scope: String
-    let encoding: Data?
-    let reasons: [Data]
-    let checkedPCs: [ManualRelativeAddress]
-    let evidence: [EvidenceSignature]
+    private let verdict: AuditVerdict
+    private let coverage: String
+    private let mode: String
+    private let scope: String
+    private let encoding: Data?
+    private let reasons: [Data]
+    private let checkedPCs: [ManualRelativeAddress]
+    private let evidence: [EvidenceSignature]
 
     init(_ finding: Finding) throws {
         let start = try manualAddress(finding.function.address)
