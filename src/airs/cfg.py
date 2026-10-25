@@ -935,7 +935,16 @@ def audit_cfg_function(image: MachOImage, function: FunctionRange, entry: Unwind
             result = replace(result, evidence=(evidence,))
         return result
     if mismatch_count and not known_witness:
-        return unresolved('cfg_path_feasibility_unknown','A recovery discrepancy exists only on paths with uncertain reachability',scope=scope)
+        result = unresolved('cfg_path_feasibility_unknown','A recovery discrepancy exists only on paths with uncertain reachability',scope=scope)
+        if result.evidence and mismatches:
+            # Every retained discrepancy here is possible-only. Keep its values
+            # in the existing summary row without claiming supported checked PCs.
+            detail = mismatches[0]
+            summary = result.evidence[0]
+            summary = replace(summary, address=detail.address, expected=detail.expected,
+                              observed=detail.observed, message=summary.message + '; ' + detail.message)
+            result = replace(result, evidence=(summary,))
+        return result
     if not observations or not terminals:
         return unresolved('no_supported_observation','No complete supported CFG path/observation exists')
     if not limits.max_evidence_per_function:
