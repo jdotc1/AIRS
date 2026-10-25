@@ -18,11 +18,14 @@ PRs #13–20; scalar REV/REV16/REV32 through PRs #21–23. Accepted results are 
 Scalar [CLS W/X v47](CLS.md) is merged in PR #24 with accepted
 [qualification results](CLS_RESULTS.md) reused.
 
-The next bounded hardening increment consolidates exact historical model-admission
-identities in Python and native validators. This prevents duplicated admission
-lists from drifting during future semantic additions. It preserves v47, historical
-policy differences, exact-label matching and generic unknown-model import behavior;
-it adds no instruction support. See [qualification](MODEL_ADMISSION_REGISTRY.md).
+Exact model-admission registry hardening is merged in PR #25; its accepted
+[qualification](MODEL_ADMISSION_REGISTRY.md) is reused.
+
+The current bounded increment closes decoder-level historical/unknown-model test
+coverage. It checks legacy masked subtype admission, v1 refusal of evaluated CFI,
+v2's strict evaluated-CFI subtype requirement, and generic unknown-label admission
+without bypassing structural checks. No production behavior or model identity
+changes. See [boundary qualification](MODEL_ADMISSION_BOUNDARIES.md).
 Installation and release remain unchanged.
 
 ## Next candidates, one bounded item at a time
