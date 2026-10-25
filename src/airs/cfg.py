@@ -17,7 +17,9 @@ from .types import AuditResult, Evidence, FunctionRange, InputError, Limits, Mac
 
 MASK32 = (1 << 32) - 1
 COMPARE_BRANCHES = frozenset(('wcbz','wcbnz','xcbz','xcbnz'))
-CONDITIONAL_BRANCHES = COMPARE_BRANCHES | frozenset(('bcond',))
+TEST_BIT_BRANCHES = frozenset(('wtbz','wtbnz','xtbz','xtbnz'))
+REGISTER_BRANCHES = COMPARE_BRANCHES | TEST_BIT_BRANCHES
+CONDITIONAL_BRANCHES = REGISTER_BRANCHES | frozenset(('bcond',))
 BRANCHES = CONDITIONAL_BRANCHES | frozenset(('b',))
 
 
@@ -190,6 +192,12 @@ def decode_instruction(word: int, address: int = 0) -> Instruction:
             raise ModelError('cfg_condition_not_modeled','Only condition codes EQ through LE (0–13) are supported',address)
         operation = ('csel','csinc','csinv','csneg')[((word>>30)&1)*2+((word>>10)&1)]
         return Instruction(address,word,('x' if word&(1<<31) else 'w')+operation,word&31,(word>>5)&31,(word>>16)&31,addressing=str(condition))
+    # Owned MacScope decodeTestAndBranch: b5 is both bit-index high bit and sf.
+    if word & 0x7e000000 == 0x36000000:
+        bit = ((word>>19)&31) | ((word>>26)&32)
+        kind = ('x' if bit >= 32 else 'w')+('tbnz' if word & (1<<24) else 'tbz')
+        return Instruction(address,word,kind,rn=word&31,
+                           immediate=_signed((word>>5)&0x3fff,14)*4,addressing=str(bit))
     # Owned MacScope decodeCompareAndBranch; Rt31 is ZR, no NZCV effects.
     if word & 0x7e000000 == 0x34000000:
         kind = ('x' if word & (1<<31) else 'w')+('cbnz' if word & (1<<24) else 'cbz')
@@ -254,15 +262,17 @@ class PathState(MachineState):
     def branch_condition(self, instruction: Instruction) -> bool | None:
         if instruction.kind == 'bcond':
             return self.condition(int(instruction.addressing))
-        if instruction.kind not in COMPARE_BRANCHES:
+        if instruction.kind not in REGISTER_BRANCHES:
             raise ModelError('cfg_condition_not_modeled','Not a supported conditional branch',instruction.address)
         source = self.read_register(instruction.rn)
         if source.kind == 'stack':
-            raise ModelError('compare_branch_stack_address_not_modeled','Compare-branch source is a derived stack address',instruction.address)
+            family = 'test_bit_branch' if instruction.kind in TEST_BIT_BRANCHES else 'compare_branch'
+            raise ModelError(family+'_stack_address_not_modeled','Register-tested branch source is a derived stack address',instruction.address)
         if source.kind != 'constant': return None
         mask = (1<<(32 if instruction.kind.startswith('w') else 64))-1
-        zero = (int(source.value)&mask) == 0
-        return not zero if instruction.kind.endswith('cbnz') else zero
+        value = int(source.value)&mask
+        zero = (value & (1<<int(instruction.addressing))) == 0 if instruction.kind in TEST_BIT_BRANCHES else value == 0
+        return not zero if instruction.kind.endswith(('cbnz','tbnz')) else zero
 
     def resume_after_call(self) -> None:
         super().resume_after_call()
@@ -1021,6 +1031,9 @@ def audit_cfg_function(image: MachOImage, function: FunctionRange, entry: Unwind
     compare_count=sum(instructions[index].kind in COMPARE_BRANCHES for index in shared_edges)
     if compare_count:
         evidence.append(Evidence('cfg_compare_branch_teardown',f'{compare_count} register-tested restore-prefix transfers have recognized taken and fallthrough teardown successors; unknown values fork separate states'))
+    test_bit_count=sum(instructions[index].kind in TEST_BIT_BRANCHES for index in shared_edges)
+    if test_bit_count:
+        evidence.append(Evidence('cfg_test_bit_branch_teardown',f'{test_bit_count} bit-tested restore-prefix transfers have recognized taken and fallthrough teardown successors; unknown values fork separate states'))
     evidence.extend(cfi_evidence)
     evidence.extend(call_evidence)
     evidence.append(Evidence('cfg_paths_checked',f'{terminals} terminal paths checked; {speculative_terminals} with uncertain reachability; {steps} state visits; {len(observations)} path-state observations; states retained separately at reconvergence'+(f'; {no_call_terminals} paths without call observations' if allow_calls else '')))

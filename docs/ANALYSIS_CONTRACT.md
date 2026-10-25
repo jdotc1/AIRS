@@ -1,3 +1,8 @@
+Current source model: `arm64-bounded-test-bit-branch-v50` adds exact TBZ/TBNZ
+through the existing bounded conditional-edge machinery. Unknown predicates fork
+and raw stack sources refuse. See TEST_BIT_BRANCH.md and TEST_BIT_BRANCH_RESULTS.md.
+Historical checkpoints below retain their meaning.
+
 Current source model: `arm64-bounded-compare-branch-v49` adds CBZ/CBNZ W/X
 through existing bounded paths, loops and shared teardowns. Raw stack values
 refuse and uncertain edges retain uncertainty. See COMPARE_BRANCH.md and
