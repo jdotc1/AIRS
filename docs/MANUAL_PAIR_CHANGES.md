@@ -78,5 +78,4 @@ logs are retained privately; generated build products are removed afterward.
 Accepted compatibility, endpoint, codec, Python comparison, GUI and distribution
 results are reused within their original scopes. No fresh GUI acceptance,
 packaging, signing, installation, publication or MacScope mutation is claimed.
-Installed app, settings and stores remain unchanged. This increment is local
-until separately authorized for public integration.
+Installed app, settings and stores remain unchanged. The helper remains opt-in; public integration does not activate native workflows.
