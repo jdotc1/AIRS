@@ -75,6 +75,6 @@ build products are removed after qualification. Accepted accounting, manual
 changes, compatibility, endpoint, codec, Python, GUI and distribution results are
 reused within their original scopes. Build success is not GUI acceptance.
 
-This local increment performs no packaging, signing, installation, publication,
-production settings/store change or MacScope mutation. Installed app and existing
-settings/stores remain unchanged. Public integration remains separate.
+This qualification performs no packaging, signing, installation, production
+settings/store change or MacScope mutation. Installed app and existing settings/
+stores remain unchanged. Public integration does not activate native workflows.
