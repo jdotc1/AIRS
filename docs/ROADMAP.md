@@ -7,7 +7,7 @@ preview and is not replaced by source-only increments.
 | Milestone | Current position | Remaining boundary |
 | --- | --- | --- |
 | Native evidence review and saved workflows | Build 12 includes accepted Settings, comparison and persistent sidebar corrections | Qualify each changed user interaction after pending work settles |
-| Conservative ARM64/CFI model | Merged W SDIV/W UDIV and scalar reversals through v46 plus local CLS v47; historical identities and refusal accounting preserved | New instruction/rule families require distinct positive and refusal evidence and independent review |
+| Conservative ARM64/CFI model | Merged W SDIV/W UDIV and scalar reversals through CLS v47 (PR #24); historical identities and refusal accounting preserved | New instruction/rule families require distinct positive and refusal evidence and independent review |
 | Saved-report coverage triage | Reason selection, terminal-safe output, bounded detail and literal code ordering implemented | Additional triage tools must preserve full denominators, overlap, duplicate/conflict and exact identity context |
 | Public distribution | Single repository; build 12 signed/notarized/stapled release, public browser download and actual App Translocation accepted on the development Mac | Clean-machine, minimum-macOS, Intel-app and offline qualification remain incomplete |
 
@@ -15,11 +15,15 @@ preview and is not replaced by source-only increments.
 
 Coverage triage, W SDIV/W UDIV and owned-image qualification are merged through
 PRs #13–20; scalar REV/REV16/REV32 through PRs #21–23. Accepted results are reused.
-The current bounded semantic increment adds [scalar CLS W/X v47](CLS.md), sharing
-CLZ state handling while excluding the sign bit from the count. Six new complete
-images distinguish correct, missing and unknown recovery at both widths.
-[Qualification](CLS_RESULTS.md) records fresh/reused scope and the corrected test
-selector. Installation and release remain unchanged.
+Scalar [CLS W/X v47](CLS.md) is merged in PR #24 with accepted
+[qualification results](CLS_RESULTS.md) reused.
+
+The next bounded hardening increment consolidates exact historical model-admission
+identities in Python and native validators. This prevents duplicated admission
+lists from drifting during future semantic additions. It preserves v47, historical
+policy differences, exact-label matching and generic unknown-model import behavior;
+it adds no instruction support. See [qualification](MODEL_ADMISSION_REGISTRY.md).
+Installation and release remain unchanged.
 
 ## Next candidates, one bounded item at a time
 
