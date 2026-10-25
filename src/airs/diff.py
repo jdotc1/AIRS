@@ -10,6 +10,24 @@ def _identity(report: dict) -> dict:
     return {key: report["image"].get(key) for key in ("display_name", "uuid", "slice_sha256", "architecture")}
 
 
+def _usable_symbol(name: str) -> bool:
+    """Adapt MacScope FunctionVersionFingerprinting.isGeneratedName.
+
+    Preserve AIRS's broader historical sub_/address/placeholder exclusions.
+    Other donor prefixes are excluded only with a nonempty hexadecimal suffix.
+    This withholds matching evidence; it never establishes function identity.
+    """
+    if not name or name in ('_entry', '__text') or name.startswith(('sub_', '<', '0x', '0X')):
+        return False
+    for prefix in ('loc_', 'unk_', 'off_', 'nullsub_'):
+        if name.startswith(prefix):
+            suffix = name[len(prefix):]
+            if suffix.startswith(('0x', '0X')): suffix = suffix[2:]
+            if suffix and all(char in '0123456789abcdefABCDEF' for char in suffix):
+                return False
+    return True
+
+
 def _signature(finding: dict) -> tuple:
     start = int(finding["function"]["address"], 16)
     evidence = tuple((e["code"], e.get("expected"), e.get("observed"), int(e["address"], 16) - start if e.get("address") else None) for e in finding["evidence"])
@@ -29,7 +47,7 @@ def compare_reports(baseline: dict, current: dict) -> dict:
             function = finding["function"]
             if same_image:
                 key = "offset:" + hex(int(function["image_offset"], 16))
-            elif function["name"] and not function["name"].startswith(("sub_", "<", "0x")):
+            elif _usable_symbol(function["name"]):
                 key = "symbol:" + function["name"]
             else:
                 # A stripped function has no reliable cross-build join key yet.
@@ -77,7 +95,7 @@ def compare_reports(baseline: dict, current: dict) -> dict:
             row.update(after_verdict=after["verdict"], after_scope=after["scope"])
         changes.append(row)
 
-    limitations = ["Different build addresses are never joined solely because they are equal.", "Cross-build symbol matches are candidates for review, not guaranteed source identity.", "Added/removed unmatched functions are not automatically regressions/fixes.", "An agreement still has the scope and limitations of its source report."]
+    limitations = ["Different build addresses are never joined solely because they are equal.", "Cross-build symbol matches are candidates for review, not guaranteed source identity.", "Generated address labels and generic entry/section labels provide no cross-build matching evidence.", "Added/removed unmatched functions are not automatically regressions/fixes.", "An agreement still has the scope and limitations of its source report."]
     if configuration_changed:
         limitations.append("Analysis configuration differs or is missing from one report; budget-related scope changes require review.")
     return {"schema_version": 1, "report_kind": "airs.diff", "comparison": {"baseline_image": _identity(baseline), "current_image": _identity(current), "same_image": same_image, "model_compatible": compatible, "analysis_configuration_changed": configuration_changed, "matching_policy": "exact_digest_then_unique_symbol"}, "summary": summary, "changes": changes, "limitations": limitations}

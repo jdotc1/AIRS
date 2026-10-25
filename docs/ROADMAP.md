@@ -7,7 +7,7 @@ preview and is not replaced by source-only increments.
 | Milestone | Current position | Remaining boundary |
 | --- | --- | --- |
 | Native evidence review and saved workflows | Build 12 includes accepted Settings, comparison and persistent sidebar corrections | Qualify each changed user interaction after pending work settles |
-| Conservative ARM64/CFI model | Merged through CLS v47; MOVK v48 and CBZ/CBNZ v49 merged in PR32; local TBZ/TBNZ v50 has bounded source/native qualification; historical identities remain distinct | New instruction/rule families require distinct positive and refusal evidence and independent review |
+| Conservative ARM64/CFI model | Merged through CLS v47; MOVK v48 and CBZ/CBNZ v49 merged in PR32; TBZ/TBNZ v50 merged in PR33 with bounded source/native qualification; historical identities remain distinct | New instruction/rule families require distinct positive and refusal evidence and independent review |
 | Saved-report coverage triage | Reason selection, terminal-safe output, bounded detail and literal code ordering implemented | Additional triage tools must preserve full denominators, overlap, duplicate/conflict and exact identity context |
 | Public distribution | Single repository; build 12 signed/notarized/stapled release, public browser download and actual App Translocation accepted on the development Mac | Clean-machine, minimum-macOS, Intel-app and offline qualification remain incomplete |
 
@@ -55,9 +55,16 @@ Recent multiply/CMN literal boundary cases are adapted as three passing regressi
 methods; existing AIRS arithmetic needed no change. Function matching and proof
 fact recording remain subsequent work, not claimed implemented by this increment.
 
-TBZ/TBNZ v50 is the next local model, with separate owned positive/refusal
+TBZ/TBNZ v50 is merged in PR33, with separate owned positive/refusal
 evidence. See TEST_BIT_BRANCH.md and TEST_BIT_BRANCH_RESULTS.md. Binary release
 and installation remain separate.
+
+The first local function-matching reuse increment adapts MacScope's generated-name
+guard to saved-report comparison. Generic entry/section and address-shaped donor
+labels no longer create cross-build symbol joins. Exact-image matching and model/
+configuration checks remain authoritative. See GENERATED_SYMBOL_MATCHING.md for
+behavior and eight new plus three affected passing methods. No fingerprint
+matcher or new analysis model is claimed.
 
 Next reuse sequence:
 
