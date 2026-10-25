@@ -238,3 +238,19 @@ and first reports supply native fixtures. The real AIRSApp debug target built.
 Independent read-only review found no corrective issue. See REV16_RESULTS.md for
 the native result and exact fresh/reused scope. No GUI, packaging, installation,
 release or installed-app/settings/stores operations were performed.
+
+
+## Post-v45 semantic development: scalar REV32 X v46
+
+REV16 v45 is merged through PR #22. The next bounded family adds scalar byte
+reversal within 32-bit words under arm64-bounded-rev32-v46. The shared REV path
+retains full-REV and REV16 behavior; the sf=0 neighbor stays existing W REV.
+Raw-stack, unknown, frame and uncertain-recovery behavior remain conservative.
+
+Fourteen new Python methods, ten affected REV/REV16/RBIT methods and four new
+native methods passed.
+Three complete new owned images qualify correct/missing/unknown recovery through
+real parsing and engine emission, and first reports seed native fixtures. The
+real AIRSApp debug target built. Independent read-only semantic review found no
+actionable issue. See REV32_RESULTS.md for native and fresh/reused scope. No GUI,
+packaging, installation, release or installed-app/settings/stores operations occurred.

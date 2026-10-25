@@ -1,4 +1,4 @@
-"""Bounded scalar byte swaps within halfwords; X REV32/vector forms remain outside scope."""
+"""Bounded scalar byte swaps within halfwords; REV32 has separate coverage; vector forms remain outside scope."""
 from dataclasses import replace
 import unittest
 
@@ -35,7 +35,7 @@ class REV16Tests(unittest.TestCase):
                     continue
                 self.assertNotIn(changed.kind, ('wrev16', 'xrev16'))
         self.assertEqual(decode_instruction(word(32) | (1 << 31), BASE).kind, 'xrev16')
-        for refused in (0xdac00820, 0x5ac00c20, 0x5ac01420, 0x4e200820):
+        for refused in (0xfac00820, 0x5ac00c20, 0x5ac01420, 0x4e200820):
             with self.subTest(word=hex(refused)), self.assertRaises(ModelError):
                 decode_instruction(refused, BASE)
 
@@ -95,7 +95,7 @@ class REV16Tests(unittest.TestCase):
             result = audit_current_function(*fixture((word(width, 0, 0), RET)))
             self.assertEqual((result.verdict, result.scope, result.checked_pcs),
                              ('agreement', 'modeled_leaf_body', (BASE,)))
-        result = audit_current_function(*fixture((0xdac00820, RET)))
+        result = audit_current_function(*fixture((0xfac00820, RET)))
         self.assertEqual((result.verdict, result.checked_pcs), ('unresolved', ()))
 
     def test_frame_and_unrestored_preserved_writes_remain_unresolved(self):
