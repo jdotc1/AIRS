@@ -123,7 +123,7 @@ binding to every selected row, including nonmanual and one-sided rows. See
 COMPARISON_SOURCE_FACTS.md. This does not verify matching semantics, source
 completeness, configuration identity or nonmanual finding signatures.
 
-The next local matched-label validator composes selected-source/accounting and
+The matched-label validator composes selected-source/accounting and
 manual checks, then verifies all other selected pairs with the same observation
 signature. See MATCHED_CHANGE_LABELS.md. Matching-basis semantics, source
 completeness and native GUI activation remain separate.
