@@ -598,3 +598,13 @@ and cannot preserve full-X identity by assumption; partial stack writes
 invalidate overlapping saved words. Calls, loops, indirect edges and DWARF CFG
 remain unresolved. Scope stays modeled_leaf_body; no async/all-PC claim follows.
 Historical model versions remain separately interpreted.
+
+
+## 13. Optional exact-body review evidence
+
+Explicit API/CLI opt-in can add bounded exact-byte fingerprints to existing
+supported functions; see FUNCTION_BODY_FINGERPRINTS.md. This evidence preserves
+encoded immediates and is not relocation-insensitive or function-identity proof.
+It cannot affect findings, checked PCs, analysis budgets or comparison signatures.
+Imported annotations receive structural validation, not byte verification. The
+native app keeps this option off; automatic matching is not part of this producer.

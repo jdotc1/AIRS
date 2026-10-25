@@ -254,6 +254,29 @@
               "boundary_source": {
                 "type": "string",
                 "maxLength": 65536
+              },
+              "body_fingerprint": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "const": "arm64-exact-bytes-v1"
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  "instruction_count": {
+                    "type": "integer",
+                    "minimum": 3,
+                    "maximum": 16384
+                  }
+                },
+                "required": [
+                  "kind",
+                  "sha256",
+                  "instruction_count"
+                ],
+                "additionalProperties": false
               }
             },
             "required": [
