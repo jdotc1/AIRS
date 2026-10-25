@@ -146,6 +146,17 @@ public struct AuditReport: Codable, Sendable {
                   coverage.contains(finding.coverage), scopes.contains(finding.scope) else {
                 throw ReportError.invalidContents("Invalid function extent, coverage, or scope.")
             }
+            if let fingerprint = finding.function.bodyFingerprint {
+                // Imported review evidence: validate its context, never rehash bytes.
+                guard image.architecture == "arm64", [0, 1].contains(image.cpuSubtype),
+                      finding.function.boundarySource == "lc_function_starts",
+                      start % 4 == 0,
+                      finding.function.size == UInt64(fingerprint.instructionCount) * 4,
+                      finding.instructionCount == fingerprint.instructionCount,
+                      finding.verdict != .unresolved else {
+                    throw ReportError.invalidContents("Body fingerprint contradicts its bounded ARM64 function context.")
+                }
+            }
             for pc in finding.checkedPCs {
                 let address = try Self.address(pc)
                 guard address >= start, address < end else {
@@ -386,12 +397,63 @@ public struct FunctionInfo: Codable, Sendable {
     public let imageOffset: String
     public let size: UInt64
     public let boundarySource: String
+    public let bodyFingerprint: FunctionBodyFingerprint?
 
     enum CodingKeys: String, CodingKey {
         case name, address, size
         case endAddress = "end_address"
         case imageOffset = "image_offset"
         case boundarySource = "boundary_source"
+        case bodyFingerprint = "body_fingerprint"
+    }
+
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        name = try values.decodeIfPresent(String.self, forKey: .name)
+        address = try values.decode(String.self, forKey: .address)
+        endAddress = try values.decode(String.self, forKey: .endAddress)
+        imageOffset = try values.decode(String.self, forKey: .imageOffset)
+        size = try values.decode(UInt64.self, forKey: .size)
+        boundarySource = try values.decode(String.self, forKey: .boundarySource)
+        // Absence withholds evidence. Explicit null is malformed, as in Python.
+        bodyFingerprint = values.contains(.bodyFingerprint)
+            ? try values.decode(FunctionBodyFingerprint.self, forKey: .bodyFingerprint) : nil
+    }
+}
+
+/// MacScope-style optional fingerprint facts, adapted to AIRS's exact-byte kind.
+/// Structural admission is not digest authentication or source-function identity.
+public struct FunctionBodyFingerprint: Codable, Equatable, Sendable {
+    public let kind: String
+    public let sha256: String
+    public let instructionCount: Int
+
+    enum CodingKeys: String, CodingKey {
+        case kind, sha256
+        case instructionCount = "instruction_count"
+    }
+
+    private struct FieldKey: CodingKey {
+        let stringValue: String
+        var intValue: Int? { nil }
+        init?(stringValue: String) { self.stringValue = stringValue }
+        init?(intValue: Int) { return nil }
+    }
+
+    public init(from decoder: Decoder) throws {
+        let fields = try decoder.container(keyedBy: FieldKey.self)
+        guard Set(fields.allKeys.map(\.stringValue)) == Set(["kind", "sha256", "instruction_count"]) else {
+            throw ReportError.invalidContents("Body fingerprint must contain exactly kind, sha256 and instruction_count.")
+        }
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        kind = try values.decode(String.self, forKey: .kind)
+        sha256 = try values.decode(String.self, forKey: .sha256)
+        instructionCount = try values.decode(Int.self, forKey: .instructionCount)
+        guard kind == "arm64-exact-bytes-v1", (3...16_384).contains(instructionCount),
+              sha256.utf8.count == 64,
+              sha256.utf8.allSatisfy({ (48...57).contains($0) || (97...102).contains($0) }) else {
+            throw ReportError.invalidContents("Invalid bounded exact-body fingerprint kind, digest or instruction count.")
+        }
     }
 }
 

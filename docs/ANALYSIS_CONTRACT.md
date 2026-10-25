@@ -618,3 +618,12 @@ image offsets retain precedence; ambiguous symbol groups and duplicate body keys
 are not guessed. Imported digests are structurally admitted but unauthenticated.
 Model/configuration differences remain ambiguous and body equality cannot override
 changed finding signatures. This comparison phase does not change unwind findings.
+
+
+## 15. Native fingerprint preservation
+
+Native FunctionInfo can retain optional exact-byte body fingerprints through its
+typed codec (NATIVE_BODY_FINGERPRINT_CODEC.md). Missing evidence remains absent;
+null, extra fields and contradictory context reject. Imported digests are not
+rehashed or authenticated. Native production/matching defaults and analysis
+semantics remain unchanged; numeric normalization is explicitly qualified.
