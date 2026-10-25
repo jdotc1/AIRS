@@ -7,8 +7,7 @@ import AIRSEntitlements
 final class SettledSidebarNavigationTests: XCTestCase {
     @MainActor
     func testEveryDestinationSurvivesPendingWorkSettlementAndRoundTrips() async throws {
-        let root = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("AIRS-navigation-test-\(UUID().uuidString)")
+        let root = sidebarNavigationScratchRoot(environment: ProcessInfo.processInfo.environment)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: root) }
         let suite = "dev.airs.navigation-test.\(UUID().uuidString)"
@@ -44,4 +43,11 @@ final class SettledSidebarNavigationTests: XCTestCase {
             }
         }
     }
+}
+
+/// Shared by navigation checks and bounded path-policy tests.
+func sidebarNavigationScratchRoot(environment: [String: String]) -> URL {
+    let parent = environment["AIRS_TEST_OUTPUT_ROOT"].map { URL(fileURLWithPath: $0, isDirectory: true) }
+        ?? FileManager.default.temporaryDirectory
+    return parent.appendingPathComponent("AIRS-navigation-test-\(UUID().uuidString)", isDirectory: true)
 }

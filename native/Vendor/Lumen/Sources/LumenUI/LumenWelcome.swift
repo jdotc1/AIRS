@@ -2,8 +2,8 @@ import AppKit
 import SwiftUI
 import LumenTokens
 
-// The welcome window: the one place a Lumen app spends its personality (Nova's launcher, with its
-// lightspeed starfield, is the model). Working surfaces stay quiet; this is the edge.
+// The welcome window gives the application a distinctive entrance.
+// Working surfaces stay quiet; this is the edge.
 
 // MARK: Starfield
 
