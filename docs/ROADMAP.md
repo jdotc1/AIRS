@@ -33,11 +33,14 @@ Exact refusal-instruction evidence is merged in PR #28 with
 Refused direct-edge target diagnostics are merged in PR #29 with
 [accepted results](REFUSED_BRANCH_TARGETS.md) reused.
 
-The current bounded analysis improvement retains the first unknown CFG recovery's
-register, preferred VM observation PC, expected identity and unknown value in the
-existing summary evidence row. Full counting, unresolved precedence, path certainty
-and evidence budgets remain intact. It adds no semantic support or checked PCs.
-See [unknown recovery qualification](CFG_UNKNOWN_RECOVERY_EVIDENCE.md).
+Unknown CFG recovery evidence is merged in PR #30 with
+[accepted results](CFG_UNKNOWN_RECOVERY_EVIDENCE.md) reused.
+
+The current bounded analysis improvement retains one possible-path recovery
+discrepancy's register, PC and values in the existing unresolved summary row.
+It preserves explicit uncertain-reachability wording, no checked PCs, unknown
+precedence and evidence budgets. It adds no supported subset or model change.
+See [possible-path diagnostic qualification](CFG_POSSIBLE_DISCREPANCY_EVIDENCE.md).
 Installation and release remain unchanged.
 
 ## Next candidates, one bounded item at a time
