@@ -168,10 +168,15 @@ selected baseline/current IDs in producer order. See MANUAL_PAIR_KEYS.md. Earlie
 APIs, matching defaults, complete-output reconstruction and native workflows retain
 their existing scope.
 
-The local selected function-name validator binds recorded labels to the selected
+The selected function-name validator, merged in public PR15, binds recorded labels to the selected
 current finding, otherwise the selected baseline finding, using exact source text.
 See SELECTED_FUNCTION_NAMES.md. Unselected group labels, complete output and native
 workflow activation remain separate; names do not establish identity.
+
+The local unselected-symbol name validator binds zero-endpoint ambiguity labels
+to the exact admitted source-group name. See UNSELECTED_SYMBOL_NAMES.md. Its
+AIRSApp build and 13 focused tests passed; independent review found no actionable
+defect. Unselected offset-group labels and native activation remain separate.
 
 Next reuse sequence:
 

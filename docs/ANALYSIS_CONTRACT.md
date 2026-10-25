@@ -800,3 +800,14 @@ generated names without normalization or display fallbacks. Rows with neither
 endpoint selected retain an unverified representative label. This checks saved
 presentation facts, not authenticated symbols, source-function identity or complete
 producer output. Earlier APIs, decoding, matching and GUI behavior are unchanged.
+
+
+## 32. Explicit unselected symbol-group names
+
+The opt-in unselected-symbol name validator (UNSELECTED_SYMBOL_NAMES.md) composes
+selected-name and prior declared-row proofs. Symbol rows with no selected endpoint
+must retain the exact UTF-8 source-group name established by canonical key and
+post-pin membership validation. Unselected exact-offset representative labels
+remain outside this boundary. This is presentation consistency, not identity,
+binary authentication or complete-output reconstruction; earlier APIs and native
+workflows retain their scope.
