@@ -722,3 +722,14 @@ groups after validated manual pins. Missing or generated names and hidden duplic
 cannot provide symbol evidence. One-sided groups, body/other bases, source
 completeness, source-function identity and binary authenticity remain separate.
 Default matching/decoding, GUI activation and engine model semantics are unchanged.
+
+
+## 25. Explicit exact-body pair evidence
+
+The opt-in native body-pair validator (BODY_CANDIDATE_PAIRS.md) composes prior
+source, accounting, observation, offset and symbol checks. Selected body rows
+require explicit opt-in, matching architecture/subtype, equal admitted fingerprint
+tuples and canonical keys. Post-manual source buckets exclude established symbol
+pairs but retain ambiguous-group blockers; only unique standalone endpoints select.
+Imported digests remain unauthenticated, omitted candidates remain unverified,
+and matching defaults, engine semantics and native GUI workflows are unchanged.

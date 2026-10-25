@@ -10,8 +10,8 @@ public extension ComparisonReport {
         let current = try AuditReport.decode(currentData)
         let oldPins = Set((comparison.manualPairs ?? []).map(\.baselineID))
         let newPins = Set((comparison.manualPairs ?? []).map(\.currentID))
-        let oldGroups = symbolCandidateGroups(baseline.findings, excluding: oldPins)
-        let newGroups = symbolCandidateGroups(current.findings, excluding: newPins)
+        let oldGroups = admittedSymbolCandidateGroups(baseline.findings, excluding: oldPins)
+        let newGroups = admittedSymbolCandidateGroups(current.findings, excluding: newPins)
         var oldByID: [String: Finding] = [:], newByID: [String: Finding] = [:]
         for finding in baseline.findings { oldByID[finding.id] = finding }
         for finding in current.findings { newByID[finding.id] = finding }
@@ -33,12 +33,12 @@ public extension ComparisonReport {
     }
 }
 
-private struct SymbolCandidateGroup {
+struct SymbolCandidateGroup {
     var count = 0
     var selectedID: String?
 }
 
-private func symbolCandidateGroups(_ findings: [Finding], excluding pins: Set<String>) -> [Data: SymbolCandidateGroup] {
+func admittedSymbolCandidateGroups(_ findings: [Finding], excluding pins: Set<String>) -> [Data: SymbolCandidateGroup] {
     var groups: [Data: SymbolCandidateGroup] = [:]
     // Only validated manual pins precede the host symbol phase. Imported body or
     // other selected rows must not hide a duplicate source-name blocker.
@@ -54,7 +54,7 @@ private func symbolCandidateGroups(_ findings: [Finding], excluding pins: Set<St
 
 /// The host's broader generated-name exclusions remain authoritative. Raw UTF-8
 /// prefixes preserve Python code-point behavior at combining-character boundaries.
-private func usableComparisonSymbol(_ name: String) -> Bool {
+func usableComparisonSymbol(_ name: String) -> Bool {
     let bytes = Array(name.utf8)
     guard !bytes.isEmpty, bytes != Array("_entry".utf8), bytes != Array("__text".utf8) else { return false }
     for prefix in ["sub_", "<", "0x", "0X"] where bytes.starts(with: prefix.utf8) { return false }
