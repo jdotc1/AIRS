@@ -72,6 +72,9 @@ Saved-report comparison can separately opt into `diff --match-exact-bodies` for
 [unique exact-body review candidates](docs/EXACT_BODY_CANDIDATES.md), preserving
 manual/symbol precedence, duplicate ambiguity and compatibility limits.
 
+See [workspace footprint guidance](docs/WORKSPACE_FOOTPRINT.md) for preserving
+qualification evidence while removing obsolete build products and worktrees.
+
 ## Build and verification
 
 macOS 14 or newer, Apple silicon; Swift 6.1 or newer. Python source requires
