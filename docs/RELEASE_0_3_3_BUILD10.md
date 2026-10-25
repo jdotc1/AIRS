@@ -1,5 +1,10 @@
 # AIRS 0.3.3 Preview — build 10
 
+> October 25, 2026 reconciliation: source history and source ZIPs were rewritten
+> during cleanup. The app acceptance below retains its original scope; source
+> identity and unchanged-source claims describe the original publication. See
+> [the reconciliation supplement](RELEASE_HISTORY_RECONCILIATION.md).
+
 Build 10 adds an explicitly opted-in acceptance profile before the ordinary app
 initializes. It uses fresh profile storage and separate preferences for AIRS and
 Lumen, non-recording document recents, and a native window without restoration or

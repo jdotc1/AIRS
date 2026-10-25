@@ -22,7 +22,7 @@ struct AcceptanceProfile {
               !environment.keys.contains(where: { $0.hasPrefix("AIRS_SETTINGS_REVIEW") || $0 == "AIRS_COMPARISON_REVIEW_FIXTURE" }) else {
             throw Failure.invalidArguments
         }
-        let parent = SettingsReviewConfiguration.reviewParent.standardizedFileURL
+        let parent = try SettingsReviewConfiguration.reviewParent(environment: environment)
         let root = URL(fileURLWithPath: arguments[2], isDirectory: true).standardizedFileURL
         let prefix = "AIRS-acceptance-"
         guard arguments[2].hasPrefix("/"), root.deletingLastPathComponent() == parent,
