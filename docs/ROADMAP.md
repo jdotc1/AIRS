@@ -128,10 +128,15 @@ manual checks, then verifies all other selected pairs with the same observation
 signature. See MATCHED_CHANGE_LABELS.md. Matching-basis semantics, source
 completeness and native GUI activation remain separate.
 
-The exact-image validator checks host offset authority and declared
+Exact-image offset validation, merged in public PR7, checks host offset authority and declared
 numeric offset groups, rejecting guessed selections from duplicate groups. See
 EXACT_IMAGE_OFFSET_ROWS.md. Source completeness and cross-image symbol/body
 matching semantics remain separate; no native workflow is activated.
+
+The next local unique-symbol pair validator checks raw source names, generated-name
+exclusions and post-manual singleton groups for selected two-sided claims. See
+UNIQUE_SYMBOL_PAIRS.md. One-sided symbol groups, body matching and completeness
+remain separate; no matching producer or GUI workflow is activated.
 
 Next reuse sequence:
 
