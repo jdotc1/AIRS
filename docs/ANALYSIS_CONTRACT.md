@@ -711,3 +711,14 @@ side groups select IDs, multiplicity stays ambiguous, and unique one-sided group
 remain added/removed. This checks declared groups against admitted source reports,
 not original bytes, source completeness or cross-image matching semantics. Default
 matching/decoding, GUI activation and engine model semantics remain unchanged.
+
+
+## 24. Explicit unique-symbol pair evidence
+
+The opt-in unique-symbol pair validator (UNIQUE_SYMBOL_PAIRS.md) composes existing
+source/accounting/observation and exact-image rules. Selected cross-image symbol
+pairs require exact usable wire names, canonical symbol keys and singleton source
+groups after validated manual pins. Missing or generated names and hidden duplicates
+cannot provide symbol evidence. One-sided groups, body/other bases, source
+completeness, source-function identity and binary authenticity remain separate.
+Default matching/decoding, GUI activation and engine model semantics are unchanged.
