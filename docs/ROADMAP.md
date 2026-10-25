@@ -27,12 +27,14 @@ Historical/unknown-model decoder boundary tests are merged in PR #26; their
 Coverage-text escaped-allocation preflight is merged in PR #27 with
 [accepted results](COVERAGE_TEXT_PREFLIGHT.md) reused.
 
-The current bounded analysis improvement records the exact selected ARM64 word
-on retained unsupported-instruction, control-flow and pointer-authentication
-refusals. Existing historical sample evidence identified the diagnostic gap;
-it does not establish current instruction prevalence or justify support expansion.
-Verdicts, checked PCs, scope, reason codes and model v47 remain unchanged.
-See [refusal diagnostic qualification](REFUSAL_INSTRUCTION_EVIDENCE.md).
+Exact refusal-instruction evidence is merged in PR #28 with
+[accepted results](REFUSAL_INSTRUCTION_EVIDENCE.md) reused.
+
+The current bounded analysis improvement retains statically encoded preferred VM
+targets on refused direct branches/calls. It extends the same bounded evidence
+annotation after existing analysis; no target is followed and no supported subset
+expands. Verdicts, scope, checked PCs, model v47 and evidence budgets are unchanged.
+See [target diagnostic qualification](REFUSED_BRANCH_TARGETS.md).
 Installation and release remain unchanged.
 
 ## Next candidates, one bounded item at a time
