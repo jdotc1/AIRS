@@ -32,6 +32,11 @@ Do not print matching credential bytes in reports. Use repository-relative names
 neutral fixture paths or generic wording in public material. Preserve required
 licenses and legitimate third-party attribution.
 
+Review documentation comments, preview/sample labels and vendor provenance as
+part of the source surface. Personal review remarks and nonpublic branch/checkout
+references are development context. Keep useful technical attribution, required
+licenses, public upstream version pins and accurately scoped release records.
+
 ## Preserve local functionality
 
 Machine-specific locations belong in ignored local configuration or the execution
