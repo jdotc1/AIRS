@@ -908,7 +908,13 @@ def audit_cfg_function(image: MachOImage, function: FunctionRange, entry: Unwind
                     state.resume_after_call()
                 index+=1
     except ModelError as error:
-        return unresolved(error.code,str(error),error.address)
+        result = unresolved(error.code,str(error),error.address)
+        if error.code == 'cfg_work_limit' and result.evidence:
+            evidence = replace(result.evidence[0],
+                               expected=f'configured CFG state-visit limit {limits.max_cfg_steps_per_function}',
+                               observed=f'{steps} completed CFG state visits; next visit refused')
+            result = replace(result, evidence=(evidence,))
+        return result
     expected={'SP':Value('stack'),**{f'x{reg}':Value('original',reg) for reg in range(19,31)}}
     mismatches=[];mismatch_count=0;known_witness=False;unknown_count=0
     first_unknown = None

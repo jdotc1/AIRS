@@ -36,11 +36,14 @@ Refused direct-edge target diagnostics are merged in PR #29 with
 Unknown CFG recovery evidence is merged in PR #30 with
 [accepted results](CFG_UNKNOWN_RECOVERY_EVIDENCE.md) reused.
 
-The current bounded analysis improvement retains one possible-path recovery
-discrepancy's register, PC and values in the existing unresolved summary row.
-It preserves explicit uncertain-reachability wording, no checked PCs, unknown
-precedence and evidence budgets. It adds no supported subset or model change.
-See [possible-path diagnostic qualification](CFG_POSSIBLE_DISCREPANCY_EVIDENCE.md).
+Possible-path discrepancy evidence is merged in PR #31 with
+[accepted results](CFG_POSSIBLE_DISCREPANCY_EVIDENCE.md) reused.
+
+The current bounded analysis improvement retains configured and completed CFG
+state-visit counts in the existing work-budget exhaustion evidence row. Limits
+still stop exploration immediately and retain unresolved status without checked
+PCs; no supported subset or model change is added.
+See [work-budget qualification](CFG_WORK_BUDGET_EVIDENCE.md).
 Installation and release remain unchanged.
 
 ## Next candidates, one bounded item at a time
