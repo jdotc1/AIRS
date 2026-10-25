@@ -48,6 +48,8 @@ def _parser() -> argparse.ArgumentParser:
     diff.add_argument("--output", type=Path)
     diff.add_argument("--pair", action="append", default=[], metavar="BASELINE_ID=CURRENT_ID",
                       help="Pair two saved finding IDs for review; repeat for one-to-one pairs")
+    diff.add_argument("--match-exact-bodies", action="store_true",
+                      help="Suggest unique remaining exact-body matches for review; imported digests are not identity proof")
     handoff = commands.add_parser("handoff", help="Export a selected finding using the proposed MacScope adapter contract")
     handoff.add_argument("--report", type=Path, required=True)
     handoff.add_argument("--finding-id", required=True)
@@ -98,7 +100,8 @@ def main(argv: list[str] | None = None) -> int:
             output, protected, exit_code = dumps(report), (source, args.input), (0 if report["status"] == "complete" else 1)
         elif args.command == "diff":
             report = compare_reports(load_report(args.baseline), load_report(args.current),
-                                     manual_pairs=[value.split("=") for value in args.pair])
+                                     manual_pairs=[value.split("=") for value in args.pair],
+                                     match_exact_bodies=args.match_exact_bodies)
             output, protected, exit_code = (render_diff_text(report) if args.format == "text" else dumps(report)), (args.baseline, args.current), 0
         elif args.command == "symbols":
             report = attach_dsym(load_report(args.report), args.dsym)
