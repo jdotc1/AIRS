@@ -78,7 +78,7 @@ See FUNCTION_BODY_FINGERPRINTS.md for bounds and twelve new plus fourteen affect
 passing methods. Default/native-app output is unchanged. Fingerprints do not
 perform matching or change unwind findings.
 
-The next local increment adds explicit API/CLI opt-in exact-body candidate
+Exact-body candidate matching, merged in PR37, adds explicit API/CLI opt-in
 matching after manual/unique-symbol matches. Duplicate evidence and ambiguous
 symbol groups are not guessed; compatibility guards remain authoritative.
 See EXACT_BODY_CANDIDATES.md for fourteen new API, four isolated CLI, one fresh
@@ -89,8 +89,8 @@ Next reuse sequence:
 
 1. FunctionVersionMatcher adaptation for cross-build review candidates, beginning
    with separately qualified native preservation/activation or additional explicit
-   evidence. Manual pairs and body production are merged; exact-body candidate
-   selection is local. Historical reports lack fingerprints; CFG fingerprints
+   evidence. Manual pairs, body production and exact-body candidate
+   selection are merged. Historical reports lack fingerprints; CFG fingerprints
    and call-graph propagation are not implemented. Structural
    matches must never replace exact image identity or model/configuration checks.
 2. Structured refusal facts where they remove duplicated diagnostic handling;
@@ -109,3 +109,13 @@ Next reuse sequence:
 Reuse accepted results for unchanged inputs. Run only changed-boundary checks and
 keep source tests, native GUI acceptance, packaging, signing/notarization, installation
 and release publication distinct. Runtime evidence and user data stay outside source.
+
+
+## Local workspace maintenance
+
+Completed worktrees and merged feature branches can be pruned after preserving
+unique source/evidence. Rebuildable caches and intermediate packaged app copies
+need not remain alongside the active public checkout. See WORKSPACE_FOOTPRINT.md.
+The native fingerprint-codec follow-up remains unimplemented; its initial local
+test/design draft was saved outside the checkout when storage cleanup took
+priority. No native activation or new acceptance claim follows from cleanup.
