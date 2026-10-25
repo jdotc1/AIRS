@@ -1,0 +1,191 @@
+{
+  "record_type": "public-source-sanitization-and-release-reconciliation",
+  "record_date": "2026-10-25",
+  "repository": "https://github.com/jdotc1/AIRS",
+  "scope": "Second source sanitation pass across affected history and ten release source snapshots. Replaces source ZIPs/checksum entries, not signed app payloads or original qualification records.",
+  "changes": [
+    "Neutral technical comments and sample labels replace personal review context",
+    "Internal development branch/donor references removed while legal attribution is retained",
+    "Historical review-profile source uses the already-qualified portable temporary-directory getter",
+    "Policy detector and synthetic fixture source literals preserve the same executable AST and test bytes"
+  ],
+  "evidence": "Existing build, test, signing, notarization and functional results reused within original scope. Changed source objects and new archives inspected; only newly generated source ZIPs receive new hashes. No claim that old release binaries were rebuilt from rewritten source.",
+  "historical_records": "Original qualification/download JSON and the earlier release-history reconciliation are retained. Their source references are historical; this mapping gives the next source lineage step.",
+  "releases": [
+    {
+      "tag": "v0.3.3-build12",
+      "old_tag_object": "d9e79e57ad845dbf396fcd97fcfc5ac09d1f5567",
+      "old_source_revision": "0c2993fdf98ddf2d6a34b2b15fa27238bfa01c06",
+      "rewritten_tag_object": "9fc02c6d9b3e293201d9044f21a955eb9dee34b9",
+      "rewritten_source_revision": "058c8471d3ea94d7fb0be3aea55d21cb6f4b6b84",
+      "source_asset_name": "AIRS-0.3.3-build12-source.zip",
+      "previous_source_zip_sha256": "a908bba9d14353031b4263a12a21cec272ea5875a9eea04333f5e29d7427ac54",
+      "source_zip_sha256": "0af375e15aa3693bb1a7a5fad73db36ac3f585a063c164023e9a18d9975c00f4",
+      "source_zip_bytes": 6840348,
+      "accepted_app_archives_unchanged": [
+        {
+          "name": "AIRS-0.3.3-build12-macOS-arm64.zip",
+          "accepted_sha256": "74a0b8ab5ba6ece7933c167eb9da4b1e6a717d766166e5725342f6a4a9183d66"
+        }
+      ]
+    },
+    {
+      "tag": "v0.3.3-build10",
+      "old_tag_object": "f6d74e7ee3932ac125702c00bcd6e5cb964720a4",
+      "old_source_revision": "e8db379e7af95c11dedd620f5f660afde00e81a7",
+      "rewritten_tag_object": "5f3d4fa8f4fb7f2828c7f59c3ae7faa0ec830402",
+      "rewritten_source_revision": "e3feae89dab3bbc99f66cc84e3b25feae65c01bb",
+      "source_asset_name": "AIRS-0.3.3-build10-source.zip",
+      "previous_source_zip_sha256": "2937422dc52b67460752b7d055c2835d838c6a7ae5b61532570d497c3baba25c",
+      "source_zip_sha256": "c9f58d18b110d7b4b953e3321396b750f9a51eff4b952452dd46d2a681a76cd0",
+      "source_zip_bytes": 6825968,
+      "accepted_app_archives_unchanged": [
+        {
+          "name": "AIRS-0.3.3-build10-macOS-arm64.zip",
+          "accepted_sha256": "1c5610ef5928600361ca3e2e8c441be01ce5c57611268a9b8dd3ca1cbc6f42b4"
+        }
+      ]
+    },
+    {
+      "tag": "v0.3.3-build9",
+      "old_tag_object": "3bb60d39be330e8345db50168eb692a2fd38cf00",
+      "old_source_revision": "3bb60d39be330e8345db50168eb692a2fd38cf00",
+      "rewritten_tag_object": "b1dd4aeef2af11fd21944f7a052b124bc70f0c5f",
+      "rewritten_source_revision": "b1dd4aeef2af11fd21944f7a052b124bc70f0c5f",
+      "source_asset_name": "AIRS-0.3.3-build9-source.zip",
+      "previous_source_zip_sha256": "07c322c24e126b3f6226f3782e96986e18a7544ec3a605e003cd012a8e8bd705",
+      "source_zip_sha256": "55521b8cfc0b44b883580bbc6ca2bad06c27bab2bf7a4834965ca7c63e0bf44b",
+      "source_zip_bytes": 6806446,
+      "accepted_app_archives_unchanged": [
+        {
+          "name": "AIRS-0.3.3-build9-macOS-arm64.zip",
+          "accepted_sha256": "1ff35066dabaca7aa7e5e1add6425208301a33ae34132e1292da856db6be65da"
+        }
+      ]
+    },
+    {
+      "tag": "v0.3.3",
+      "old_tag_object": "a24c1abbe915c71729987f58f908429edaa56978",
+      "old_source_revision": "a49974fd1262e37ec1052ae0f00d396fa7f30150",
+      "rewritten_tag_object": "26fe8ae52eb207432a3be1cf052d512ab95269d0",
+      "rewritten_source_revision": "13aa965165d6e5b0217b6f4cc8b700f83ca265c6",
+      "source_asset_name": "AIRS-0.3.3-source.zip",
+      "previous_source_zip_sha256": "5dce00a65237467d23e29691e3079fa51537d05f671c4bf065242ee5391466d0",
+      "source_zip_sha256": "e5d058ae613e0e785f6155ffe441e1426306a6ee19b13f07e0fea9be28c191c1",
+      "source_zip_bytes": 6794040,
+      "accepted_app_archives_unchanged": [
+        {
+          "name": "AIRS-0.3.3-macOS-arm64.zip",
+          "accepted_sha256": "3959fe7ddc4215593398d650db080411154a454afa4816d8dbc55f3468bb3109"
+        }
+      ]
+    },
+    {
+      "tag": "v0.3.2",
+      "old_tag_object": "88751f34f6fd783e0fc56d898d671260d0a68824",
+      "old_source_revision": "25bfbf1a162be3c4b5d98477082bb42fe31e9070",
+      "rewritten_tag_object": "6c661083f442423a63a204676b32926113172a8f",
+      "rewritten_source_revision": "4cc173820fff9c7b43a73f174dc89b12f9922391",
+      "source_asset_name": "AIRS-0.3.2-source.zip",
+      "previous_source_zip_sha256": "f8dd05da717a29d44f1c0388fe3feba4daca4ca0f872bd81f616082d3c273f13",
+      "source_zip_sha256": "49f74d8c909cab232a1e173efbf49155e9c2d4e3c7548e50947243329835d9c2",
+      "source_zip_bytes": 6508900,
+      "accepted_app_archives_unchanged": [
+        {
+          "name": "AIRS-0.3.2-macOS-arm64.zip",
+          "accepted_sha256": "5ff00eb64d128a753a8252d41b99ccbd961402d9de06aee33a665688c0ab33a6"
+        }
+      ]
+    },
+    {
+      "tag": "v0.3.1",
+      "old_tag_object": "1251af9b272488d2a68dfd4e614e7d97cb4017ab",
+      "old_source_revision": "1251af9b272488d2a68dfd4e614e7d97cb4017ab",
+      "rewritten_tag_object": "b1d97530e782eda1c396b7d367dc645c4ddafaa2",
+      "rewritten_source_revision": "b1d97530e782eda1c396b7d367dc645c4ddafaa2",
+      "source_asset_name": "AIRS-0.3.1-source.zip",
+      "previous_source_zip_sha256": "079aaab658bc759c3f2a9fa150459df2da7af1490d3874e75b48449e73f74713",
+      "source_zip_sha256": "cd5870b6221c634865ebcb79c814505d30f270ff836056bc123b07a04c85a96f",
+      "source_zip_bytes": 6125914,
+      "accepted_app_archives_unchanged": [
+        {
+          "name": "AIRS-0.3.1-macOS-arm64.zip",
+          "accepted_sha256": "b87a293600df8f15f49c95bced2cd8bdcfffbef547a857580bec9e31ef3de87e"
+        }
+      ]
+    },
+    {
+      "tag": "v0.3.0",
+      "old_tag_object": "958e7312851ac17c87e53ba6c59518f6c7ccf40f",
+      "old_source_revision": "958e7312851ac17c87e53ba6c59518f6c7ccf40f",
+      "rewritten_tag_object": "51f6e4c331f2e3d7eebe7bce23173164e9f217d6",
+      "rewritten_source_revision": "51f6e4c331f2e3d7eebe7bce23173164e9f217d6",
+      "source_asset_name": "AIRS-0.3.0-build4-source.zip",
+      "previous_source_zip_sha256": "5c0d8451e3b21c52d3d8b749bfed305ada96b25b9c7a124e9195ea72d642734d",
+      "source_zip_sha256": "4f65366be83e639afd92162f42621e934f4c77e860f47f7ee35210a2cf6cbdbc",
+      "source_zip_bytes": 5998415,
+      "accepted_app_archives_unchanged": [
+        {
+          "name": "AIRS-0.3.0-build4-macOS-arm64.zip",
+          "accepted_sha256": "fdf4964ef5981ac9aae33298cfd36476d9e53fbbe94a330c84b235154cd875d3"
+        }
+      ]
+    },
+    {
+      "tag": "v0.2.0",
+      "old_tag_object": "644c58002adb5f695cf9482a04a1386e6ac7b9eb",
+      "old_source_revision": "644c58002adb5f695cf9482a04a1386e6ac7b9eb",
+      "rewritten_tag_object": "bdeebcfde236404698ee76618d797c6286789187",
+      "rewritten_source_revision": "bdeebcfde236404698ee76618d797c6286789187",
+      "source_asset_name": "AIRS-0.2.0-build3-source.zip",
+      "previous_source_zip_sha256": "b89f6a1a71125af5a660c3598bbfbca4233796dabd8e88adbe8bf4b9884a3c7d",
+      "source_zip_sha256": "28063e66ef54c78a7e61e3a1d83fac2599d4493026f2a7f731e6d2f14910b225",
+      "source_zip_bytes": 5772833,
+      "accepted_app_archives_unchanged": [
+        {
+          "name": "AIRS-0.2.0-build3-macOS-arm64.zip",
+          "accepted_sha256": "8e01b97c9abd6ef73f57b80b97a3921ca859bc234442504129cfcd5fb7fc9185"
+        }
+      ]
+    },
+    {
+      "tag": "v0.1.1",
+      "old_tag_object": "33d3bdcfe70c537dba48f90db2e75065c2d1c64f",
+      "old_source_revision": "33d3bdcfe70c537dba48f90db2e75065c2d1c64f",
+      "rewritten_tag_object": "329ce8764d72319d27587d38c85f2206f40c0609",
+      "rewritten_source_revision": "329ce8764d72319d27587d38c85f2206f40c0609",
+      "source_asset_name": "AIRS-0.1.1-source.zip",
+      "previous_source_zip_sha256": "b155241c100b4f3e97eabc332cad965a93f624710429eb06a9faa7c5a03aa1ec",
+      "source_zip_sha256": "571e1d058d8755ef35a42904b329e7cb972dc8ce6da90efd13ada88d3e3b96a4",
+      "source_zip_bytes": 4995751,
+      "accepted_app_archives_unchanged": [
+        {
+          "name": "AIRS-0.1.1-macOS-arm64.zip",
+          "accepted_sha256": "28fa4da620a3c02019a3eaed84c81c05a008d966a501318b0a24f6eaec392f04"
+        }
+      ]
+    },
+    {
+      "tag": "v0.1.0",
+      "old_tag_object": "5572d44e8c0d03e59c14eae58cea79122c9a9695",
+      "old_source_revision": "5572d44e8c0d03e59c14eae58cea79122c9a9695",
+      "rewritten_tag_object": "f0f1c5e55dcf85d58c21c916ccc97e9238337a37",
+      "rewritten_source_revision": "f0f1c5e55dcf85d58c21c916ccc97e9238337a37",
+      "source_asset_name": "AIRS-0.1.0-source.zip",
+      "previous_source_zip_sha256": "766a67c0699a278a749a90a1854e5423ad29b8d1bac807457f899c44cb1f8322",
+      "source_zip_sha256": "e9e960edfec007b94caabb3decb572fad55ae1c9f705d805bea33d2533bcdf49",
+      "source_zip_bytes": 4984754,
+      "accepted_app_archives_unchanged": [
+        {
+          "name": "AIRS-0.1.0-macOS-arm64.zip",
+          "accepted_sha256": "9c767ecb5d571aeddacb51cfc5741a5e548ed35f2496a73711643d4cde7fb5de"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "A source lineage map is not byte identity or reproducible-build proof",
+    "No new GUI, clean-machine, minimum-OS or signing acceptance is asserted",
+    "Historical GitHub caches or old pull-request refs may retain previous objects outside current branch/tag targets"
+  ]
+}

@@ -1,5 +1,9 @@
 # Release history reconciliation — October 25, 2026
 
+This is the earlier historical reconciliation. The subsequent
+[public source reconciliation](PUBLIC_SOURCE_RECONCILIATION.md) records the next
+source/tag/archive mapping for all ten releases; original receipts below remain unchanged.
+
 The repository cleanup rewrote release source identities and regenerated the source
 archives for five releases. The current repository is `jdotc1/AIRS`. Original
 qualification and download-acceptance receipts remain historical evidence; their
