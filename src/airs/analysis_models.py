@@ -51,6 +51,7 @@ CFG_MODELS = frozenset((
     'arm64-bounded-rev32-v46',
     'arm64-bounded-cls-v47',
     'arm64-bounded-movk-v48',
+    'arm64-bounded-compare-branch-v49',
     'arm64-bounded-cfi-control-v36',
 ))
 KNOWN_MODELS = CFG_MODELS | frozenset(("arm64-linear-v1", "arm64-linear-dwarf-v2"))

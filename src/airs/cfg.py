@@ -16,6 +16,9 @@ from .audit import MODEL_LIMITATIONS, LEAF_LIMITATION, CALL_LIMITATION, _body_wi
 from .types import AuditResult, Evidence, FunctionRange, InputError, Limits, MachOImage, UnwindEntry
 
 MASK32 = (1 << 32) - 1
+COMPARE_BRANCHES = frozenset(('wcbz','wcbnz','xcbz','xcbnz'))
+CONDITIONAL_BRANCHES = COMPARE_BRANCHES | frozenset(('bcond',))
+BRANCHES = CONDITIONAL_BRANCHES | frozenset(('b',))
 
 
 def decode_instruction(word: int, address: int = 0) -> Instruction:
@@ -187,6 +190,11 @@ def decode_instruction(word: int, address: int = 0) -> Instruction:
             raise ModelError('cfg_condition_not_modeled','Only condition codes EQ through LE (0–13) are supported',address)
         operation = ('csel','csinc','csinv','csneg')[((word>>30)&1)*2+((word>>10)&1)]
         return Instruction(address,word,('x' if word&(1<<31) else 'w')+operation,word&31,(word>>5)&31,(word>>16)&31,addressing=str(condition))
+    # Owned MacScope decodeCompareAndBranch; Rt31 is ZR, no NZCV effects.
+    if word & 0x7e000000 == 0x34000000:
+        kind = ('x' if word & (1<<31) else 'w')+('cbnz' if word & (1<<24) else 'cbz')
+        return Instruction(address,word,kind,rn=word&31,
+                           immediate=_signed((word>>5)&0x7ffff,19)*4)
     if word & 0xfc000000 == 0x14000000:
         return Instruction(address,word,'b',immediate=_signed(word&0x3ffffff,26)*4)
     if word & 0xff000010 == 0x54000000:
@@ -242,6 +250,19 @@ class PathState(MachineState):
         # Base tests for even condition codes; each odd code is its inverse.
         base=(z,c,n,v,c and not z,n==v,not z and n==v)[condition>>1]
         return not base if condition & 1 else base
+
+    def branch_condition(self, instruction: Instruction) -> bool | None:
+        if instruction.kind == 'bcond':
+            return self.condition(int(instruction.addressing))
+        if instruction.kind not in COMPARE_BRANCHES:
+            raise ModelError('cfg_condition_not_modeled','Not a supported conditional branch',instruction.address)
+        source = self.read_register(instruction.rn)
+        if source.kind == 'stack':
+            raise ModelError('compare_branch_stack_address_not_modeled','Compare-branch source is a derived stack address',instruction.address)
+        if source.kind != 'constant': return None
+        mask = (1<<(32 if instruction.kind.startswith('w') else 64))-1
+        zero = (int(source.value)&mask) == 0
+        return not zero if instruction.kind.endswith('cbnz') else zero
 
     def resume_after_call(self) -> None:
         super().resume_after_call()
@@ -651,7 +672,7 @@ class PathState(MachineState):
                            else Value('unknown','low32 from a modeled 64-bit store'))
                 self.write_w(instruction.rd,value)
             return
-        if kind in ('b','bcond'):
+        if kind in BRANCHES:
             raise ModelError('cfg_edge_requires_dispatch','Branches require CFG successor dispatch',address)
         super().apply(instruction)
 
@@ -670,7 +691,7 @@ def _natural_loops(instructions, targets, body_indices):
         raise ModelError('cfg_loop_shape_not_modeled','At most two sequential natural-loop backedges are supported',instructions[backward[2][0]].address)
     successors={index: (() if ins.kind=='ret' else
                        (targets[index],) if ins.kind=='b' else
-                       (targets[index],index+1) if ins.kind=='bcond' else
+                       (targets[index],index+1) if ins.kind in CONDITIONAL_BRANCHES else
                        (index+1,)) for index,ins in enumerate(instructions)}
     predecessors={index:set() for index in successors}
     for index,edges in successors.items():
@@ -678,7 +699,7 @@ def _natural_loops(instructions, targets, body_indices):
             if target in predecessors:predecessors[target].add(index)
     loops={}
     for source,header in sorted(backward,key=lambda edge:edge[1]):
-        if (header>=source or instructions[source].kind!='bcond'
+        if (header>=source or instructions[source].kind not in CONDITIONAL_BRANCHES
                 or source not in body_indices or header not in body_indices):
             raise ModelError('cfg_loop_shape_not_modeled','Only non-self conditional body backedges are supported',instructions[source].address)
         # A path to the latch that avoids the header disproves dominance.
@@ -794,11 +815,11 @@ def audit_cfg_function(image: MachOImage, function: FunctionRange, entry: Unwind
         # already been classified. Reverse order supports chains without rescans.
         for index in range(returns[-1]-1,body_start-1,-1):
             ins=instructions[index]
-            if ins.kind not in ('b','bcond'): continue
+            if ins.kind not in BRANCHES: continue
             target=ins.address+ins.immediate
             target_index=(target-function.start)//4
             if target%4 or target<=ins.address or target_index not in teardown_indices: continue
-            if ins.kind=='bcond' and index+1 not in teardown_indices: continue
+            if ins.kind in CONDITIONAL_BRANCHES and index+1 not in teardown_indices: continue
             start=index
             for previous in range(index-1,body_start-1,-1):
                 part=instructions[previous]
@@ -821,7 +842,7 @@ def audit_cfg_function(image: MachOImage, function: FunctionRange, entry: Unwind
                     if ins.kind=='ret': remaining[index]=(0,0)
                     elif index in shared_edges:
                         low,high=remaining[shared_edges[index]]
-                        if ins.kind=='bcond':
+                        if ins.kind in CONDITIONAL_BRANCHES:
                             other_low,other_high=remaining[index+1]
                             low,high=min(low,other_low),max(high,other_high)
                         remaining[index]=(low,high)
@@ -848,7 +869,7 @@ def audit_cfg_function(image: MachOImage, function: FunctionRange, entry: Unwind
                 call_targets[index]=target
             if index in body_indices and (ins.changes_sp or ins.changes_fp):
                 raise ModelError('cfg_frame_transition_not_modeled','Frame transitions inside CFG body are not supported',ins.address)
-            if ins.kind in ('b','bcond'):
+            if ins.kind in BRANCHES:
                 target=ins.address+ins.immediate
                 target_index=(target-function.start)//4
                 if (target%4 or not 0<=target_index<len(instructions) or (index not in body_indices and index not in shared_edges)
@@ -900,8 +921,8 @@ def audit_cfg_function(image: MachOImage, function: FunctionRange, entry: Unwind
                     no_call_terminals+=path_calls==0
                     break
                 if ins.kind=='b': index=targets[index];continue
-                if ins.kind=='bcond':
-                    condition=state.condition(int(ins.addressing))
+                if ins.kind in CONDITIONAL_BRANCHES:
+                    condition=state.branch_condition(ins)
                     if condition is None:
                         if created_paths>=limits.max_cfg_paths_per_function:
                             raise ModelError('cfg_path_limit','CFG created-path budget exhausted',ins.address)
@@ -997,6 +1018,9 @@ def audit_cfg_function(image: MachOImage, function: FunctionRange, entry: Unwind
     conditional_count=sum(instructions[index].kind=='bcond' for index in shared_edges)
     if conditional_count:
         evidence.append(Evidence('cfg_conditional_teardown',f'{conditional_count} EQ–LE restore-prefix transfers have recognized taken and fallthrough teardown successors; unknown conditions fork separate states'))
+    compare_count=sum(instructions[index].kind in COMPARE_BRANCHES for index in shared_edges)
+    if compare_count:
+        evidence.append(Evidence('cfg_compare_branch_teardown',f'{compare_count} register-tested restore-prefix transfers have recognized taken and fallthrough teardown successors; unknown values fork separate states'))
     evidence.extend(cfi_evidence)
     evidence.extend(call_evidence)
     evidence.append(Evidence('cfg_paths_checked',f'{terminals} terminal paths checked; {speculative_terminals} with uncertain reachability; {steps} state visits; {len(observations)} path-state observations; states retained separately at reconvergence'+(f'; {no_call_terminals} paths without call observations' if allow_calls else '')))
@@ -1011,7 +1035,7 @@ def audit_cfg_function(image: MachOImage, function: FunctionRange, entry: Unwind
 def _with_refusal_instruction(image: MachOImage, function: FunctionRange,
                               result: AuditResult) -> AuditResult:
     """Annotate retained instruction refusals; never follow targets or add rows."""
-    target_kinds = {'cfg_edge_not_modeled': ('b', 'bcond'),
+    target_kinds = {'cfg_edge_not_modeled': BRANCHES,
                     'cfg_call_target_not_modeled': ('bl',)}
     codes = {'unsupported_instruction', 'unsupported_control_flow', 'unsupported_pauth'} | target_kinds.keys()
     if (result.verdict != 'unresolved' or image.architecture != 'arm64'
