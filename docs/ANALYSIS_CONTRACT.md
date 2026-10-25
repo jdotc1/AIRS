@@ -678,3 +678,14 @@ recorded rows. A selected ambiguous pair counts as matched; unselected ambiguity
 groups do not invent matches. Typed endpoint facts follow selected IDs. This is
 neither source completeness nor identity/matching/signature verification. Existing
 decoding, native workflow activation and engine model semantics remain unchanged.
+
+
+## 21. Explicit selected-source facts across comparison rows
+
+The opt-in selected-source validator (COMPARISON_SOURCE_FACTS.md) composes row
+accounting and existing source-context/manual-endpoint checks, then binds every
+selected baseline/current ID and its verdict/scope to the corresponding admitted
+source finding. Unknown IDs fail rather than disappearing. Omitted ambiguity
+endpoints do not imply source completeness. Matching semantics, configuration
+identity, nonmanual signatures, binary authenticity and GUI activation remain
+separate; engine model semantics are unchanged.
