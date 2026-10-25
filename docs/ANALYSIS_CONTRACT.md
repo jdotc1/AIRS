@@ -637,3 +637,13 @@ Absence remains unavailable, explicit false/empty values retain meaning, and
 malformed selections reject. Import does not bind IDs to source reports,
 authenticate evidence, recompute matches or change row classifications. Native
 production/matching defaults and analysis semantics remain unchanged.
+
+
+## 17. Explicit native manual-endpoint binding
+
+An opt-in Data API can bind recorded manual endpoints and row verdict/scope facts
+to two admitted audit reports (MANUAL_PAIR_SOURCE_BINDING.md). Declared image/model
+flags must agree, and pair rows must correspond one-to-one. This is not digest
+authentication, configuration-identity verification, change-signature computation
+or validation of other match bases. It supplies no automatic native activation
+or full comparison-readiness claim.
