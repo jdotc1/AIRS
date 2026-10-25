@@ -184,11 +184,17 @@ first baseline member. See UNSELECTED_OFFSET_NAMES.md. Its AIRSApp build and 14
 focused tests passed; independent review found no actionable defect. Source-order
 authenticity, complete-output reconstruction and native activation remain separate.
 
-The local canonical row-order validator checks strictly ascending raw UTF-8
+The canonical row-order validator, merged in public PR18, checks strictly ascending raw UTF-8
 complete keys after the existing declared-row proofs. See CANONICAL_ROW_ORDER.md.
 Its AIRSApp build and 16 focused tests passed; independent review found no
 actionable defect. Input is not reordered; complete-output reconstruction,
 authenticity, identity and native activation remain separate.
+
+The local same-image row-coverage validator detects omitted offset groups from
+the union of two admitted saved reports. See SAME_IMAGE_ROW_COVERAGE.md. Its
+AIRSApp build and 17 focused tests passed; independent review found no actionable
+defect. Cross-image use refuses; original-binary coverage, remaining producer
+fields, authenticity, identity and native activation remain separate.
 
 Next reuse sequence:
 

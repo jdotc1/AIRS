@@ -834,3 +834,16 @@ preserving spelling and avoiding numeric, localized or display-name sorting.
 It does not reorder input. Empty, singleton and ordered partial comparisons
 remain possible; completeness, authenticity, identity and native activation
 remain separate. Earlier APIs, decoding and matching defaults retain their scope.
+
+
+## 35. Explicit same-image saved-report group coverage
+
+The opt-in same-image coverage validator (SAME_IMAGE_ROW_COVERAGE.md) composes
+all prior declared-row/name/order proofs and explicitly requires same-image
+authority. Declared canonical keys must cover the union of numeric offset groups
+in both admitted saved reports. Duplicate findings and alternate source spellings
+contribute one group each. Empty same-image snapshots may have empty coverage;
+cross-image use refuses even when empty. Coverage does not establish original
+binary-function completeness, authenticity, identity or exact remaining producer
+fields. Earlier APIs retain partial-output scope; defaults and GUI behavior are
+unchanged.
