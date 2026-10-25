@@ -4,6 +4,7 @@ from __future__ import annotations
 from collections import defaultdict
 
 from .report import validate_report
+from .types import InputError
 
 
 def _identity(report: dict) -> dict:
@@ -34,10 +35,42 @@ def _signature(finding: dict) -> tuple:
     return (finding["verdict"], finding["coverage"], finding["mode"], finding["scope"], finding.get("encoding"), tuple(sorted(finding["reason_codes"])), tuple(int(pc, 16) - start for pc in finding["checked_pcs"]), evidence)
 
 
-def compare_reports(baseline: dict, current: dict) -> dict:
+def _validated_pairs(pairs, baseline: dict, current: dict, same_image: bool) -> tuple:
+    """Adapt MacScope validatedPins: known endpoints, deduplication, bijection."""
+    def invalid(message):
+        raise InputError('invalid_manual_pair', message)
+
+    if not isinstance(pairs, (list, tuple)) or len(pairs) > 50_000:
+        invalid('Manual pairs must be a list or tuple of at most 50,000 ID pairs')
+    old_ids = {finding['id'] for finding in baseline['findings']}
+    new_ids = {finding['id'] for finding in current['findings']}
+    unique = set()
+    for item in pairs:
+        if (not isinstance(item, (list, tuple)) or len(item) != 2
+                or not all(isinstance(endpoint, str) for endpoint in item)):
+            invalid('Each manual pair requires baseline and current finding IDs')
+        old, new = item
+        if old not in old_ids or new not in new_ids:
+            invalid('Manual pair endpoints must exist in their respective selected reports')
+        unique.add((old, new))
+    ordered = tuple(sorted(unique))
+    if ordered and same_image:
+        invalid('Exact-image offset matching is authoritative; manual pairs require different images')
+    used_old, used_new = set(), set()
+    for old, new in ordered:
+        if old in used_old or new in used_new:
+            invalid('Manual pairs must be one-to-one; conflicting endpoints are not accepted')
+        used_old.add(old); used_new.add(new)
+    return ordered
+
+
+def compare_reports(baseline: dict, current: dict, *, manual_pairs=()) -> dict:
     validate_report(baseline)
     validate_report(current)
     same_image = baseline["image"]["slice_sha256"] == current["image"]["slice_sha256"] and baseline["image"]["architecture"] == current["image"]["architecture"]
+    pairs = _validated_pairs(manual_pairs, baseline, current, same_image)
+    manual_before = {old: f'manual:{old}:{new}' for old, new in pairs}
+    manual_after = {new: f'manual:{old}:{new}' for old, new in pairs}
     compatible = baseline["generator"]["analysis_model_version"] == current["generator"]["analysis_model_version"] and baseline["image"]["architecture"] == current["image"]["architecture"]
     configuration_changed = baseline.get("analysis_config") != current.get("analysis_config")
     groups: dict[str, dict[str, list]] = defaultdict(lambda: {"before": [], "after": []})
@@ -45,7 +78,10 @@ def compare_reports(baseline: dict, current: dict) -> dict:
     for side, report in (("before", baseline), ("after", current)):
         for finding in report["findings"]:
             function = finding["function"]
-            if same_image:
+            manual = manual_before if side == 'before' else manual_after
+            if finding['id'] in manual:
+                key = manual[finding['id']]
+            elif same_image:
                 key = "offset:" + hex(int(function["image_offset"], 16))
             elif _usable_symbol(function["name"]):
                 key = "symbol:" + function["name"]
@@ -61,7 +97,7 @@ def compare_reports(baseline: dict, current: dict) -> dict:
         before = before_group[0] if len(before_group) == 1 else None
         after = after_group[0] if len(after_group) == 1 else None
         notes: list[str] = []
-        basis = "exact_image_offset" if key.startswith("offset:") else "unique_symbol" if key.startswith("symbol:") else "unmatched"
+        basis = "manual_review" if key.startswith("manual:") else "exact_image_offset" if key.startswith("offset:") else "unique_symbol" if key.startswith("symbol:") else "unmatched"
         if len(before_group) > 1 or len(after_group) > 1:
             change = "ambiguous"
             notes.append(f"This key has {len(before_group)} baseline and {len(after_group)} current candidates; none was selected automatically.")
@@ -75,6 +111,8 @@ def compare_reports(baseline: dict, current: dict) -> dict:
                 notes.append("Analysis configuration differs or is missing from one report. Reanalyze both inputs with one configuration before interpreting a finding change.")
             else:
                 change = "unchanged" if _signature(before) == _signature(after) else "changed"
+            if basis == 'manual_review':
+                notes.append('User-selected finding pair is a review candidate; it does not prove source-function identity or a regression/fix.')
             if basis == "unique_symbol":
                 notes.append("Unique symbol-name match is a review candidate; it does not prove source-function identity across builds.")
         elif after is not None:
@@ -98,4 +136,10 @@ def compare_reports(baseline: dict, current: dict) -> dict:
     limitations = ["Different build addresses are never joined solely because they are equal.", "Cross-build symbol matches are candidates for review, not guaranteed source identity.", "Generated address labels and generic entry/section labels provide no cross-build matching evidence.", "Added/removed unmatched functions are not automatically regressions/fixes.", "An agreement still has the scope and limitations of its source report."]
     if configuration_changed:
         limitations.append("Analysis configuration differs or is missing from one report; budget-related scope changes require review.")
-    return {"schema_version": 1, "report_kind": "airs.diff", "comparison": {"baseline_image": _identity(baseline), "current_image": _identity(current), "same_image": same_image, "model_compatible": compatible, "analysis_configuration_changed": configuration_changed, "matching_policy": "exact_digest_then_unique_symbol"}, "summary": summary, "changes": changes, "limitations": limitations}
+    result = {"schema_version": 1, "report_kind": "airs.diff", "comparison": {"baseline_image": _identity(baseline), "current_image": _identity(current), "same_image": same_image, "model_compatible": compatible, "analysis_configuration_changed": configuration_changed, "matching_policy": "exact_digest_then_unique_symbol"}, "summary": summary, "changes": changes, "limitations": limitations}
+    if pairs:
+        result['comparison']['matching_policy'] = 'manual_then_unique_symbol'
+        result['comparison']['manual_pairs'] = [
+            {'baseline_id': old, 'current_id': new} for old, new in pairs]
+        result['limitations'].append('Manual pairs record user selection, not independently established cross-build function identity.')
+    return result

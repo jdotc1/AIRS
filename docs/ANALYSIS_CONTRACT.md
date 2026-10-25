@@ -550,6 +550,12 @@ labels and generated address-shaped labels provide no cross-build symbol evidenc
 (see GENERATED_SYMBOL_MATCHING.md). Unnamed and duplicate-name
 functions need future identity work; no nearest-address heuristic is used.
 
+Saved-report comparisons can explicitly pair cross-build findings through the
+API/CLI (MANUAL_FUNCTION_PAIRS.md). Pairs must be one-to-one and refer to IDs in
+the selected reports. They record user review selection, not proven function
+identity. Exact-image offsets remain authoritative; model/configuration mismatch
+remains ambiguous. Pairing does not change source findings or analysis scope.
+
 Every handoff preserves the evidence's source model and address space. The
 destination must verify exact selected-image identity before applying the range.
 Imported-report validation is not a signature or a claim that the imported

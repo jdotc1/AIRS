@@ -44,6 +44,8 @@ def _parser() -> argparse.ArgumentParser:
     diff.add_argument("--current", type=Path, required=True)
     diff.add_argument("--format", choices=("json", "text"), default="json")
     diff.add_argument("--output", type=Path)
+    diff.add_argument("--pair", action="append", default=[], metavar="BASELINE_ID=CURRENT_ID",
+                      help="Pair two saved finding IDs for review; repeat for one-to-one pairs")
     handoff = commands.add_parser("handoff", help="Export a selected finding using the proposed MacScope adapter contract")
     handoff.add_argument("--report", type=Path, required=True)
     handoff.add_argument("--finding-id", required=True)
@@ -92,7 +94,8 @@ def main(argv: list[str] | None = None) -> int:
             report = decode_inventory_path(source, requested_arch=args.arch)
             output, protected, exit_code = dumps(report), (source, args.input), (0 if report["status"] == "complete" else 1)
         elif args.command == "diff":
-            report = compare_reports(load_report(args.baseline), load_report(args.current))
+            report = compare_reports(load_report(args.baseline), load_report(args.current),
+                                     manual_pairs=[value.split("=") for value in args.pair])
             output, protected, exit_code = (render_diff_text(report) if args.format == "text" else dumps(report)), (args.baseline, args.current), 0
         elif args.command == "symbols":
             report = attach_dsym(load_report(args.report), args.dsym)
