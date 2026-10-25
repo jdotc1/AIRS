@@ -1,3 +1,9 @@
+Current source model: `arm64-bounded-rev-v44` adds exact scalar full-width byte
+REV W/X. Raw-stack and unknown-value refusal, zero-extending W writes, frame
+transitions and synchronous recovery boundaries remain conservative. Python/native
+exact model admission retains historical labels. See [REV](REV.md) and
+[bounded qualification](REV_RESULTS.md). Earlier checkpoints retain their meanings.
+
 Current source model: `arm64-bounded-w-udiv-v43` adds scalar W unsigned division
 through the existing X transfer and zero-extending W write. Exact controls,
 raw-stack refusal, unknown-state and recovery boundaries remain conservative.
