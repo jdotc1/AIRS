@@ -65,6 +65,9 @@ and coverage commands also provide bounded text output. See the
 The source CLI also supports explicit one-to-one finding pairs for stripped or
 renamed cross-build review via repeatable `diff --pair BASELINE_ID=CURRENT_ID`.
 See [manual pairing](docs/MANUAL_FUNCTION_PAIRS.md) for validation and limits.
+Source audit can optionally emit bounded exact-byte function-body evidence with
+`--include-function-fingerprints`; [the fingerprint contract](docs/FUNCTION_BODY_FINGERPRINTS.md)
+explains eligibility and why this does not perform automatic matching.
 
 ## Build and verification
 
