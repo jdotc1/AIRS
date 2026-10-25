@@ -102,11 +102,16 @@ source-side ID membership without authenticating reports or recomputing change
 classification/configuration identity. See MANUAL_PAIR_SOURCE_BINDING.md for ten
 new passing methods and a successful real app build. No app workflow is activated.
 
-The next local increment adds saved-configuration/model prerequisites on top of
+Manual-pair compatibility, merged in public PR2, adds saved-configuration/model prerequisites on top of
 endpoint binding. Explicit status must match original source data, and incompatible
 manual rows must stay ambiguous. See MANUAL_PAIR_COMPATIBILITY.md for eleven new
 passing methods and a real app build. Change-signature verification and native
 workflow activation remain separate.
+
+The next local increment verifies manual changed/unchanged labels against selected
+source finding signatures, reusing the donor comparator's separation of matching
+and audit observations. See MANUAL_PAIR_CHANGES.md for bounded native qualification.
+Nonmanual rows, summary integrity and automatic workflow activation remain separate.
 
 Next reuse sequence:
 

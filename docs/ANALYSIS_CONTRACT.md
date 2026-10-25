@@ -657,3 +657,14 @@ when present, must match source configurations; differing configurations or mode
 require ambiguous manual rows. Two legacy omissions compare equal without
 inventing defaults. This does not authenticate evidence, recompute change
 signatures, qualify nonmanual rows or activate native workflows.
+
+
+## 19. Explicit native manual-row change evidence
+
+The opt-in manual change validator extends source and compatibility prerequisites
+with the host's selected finding signature (MANUAL_PAIR_CHANGES.md). Compatible
+manual rows require the recomputed changed/unchanged label; incompatible rows
+remain ambiguous. Relative addresses preserve sign and exact free-form strings
+retain wire distinctions. Names and explanatory prose are not change evidence.
+This does not authenticate selected reports, validate nonmanual rows or summaries,
+activate matching, establish function identity, or change engine model semantics.
