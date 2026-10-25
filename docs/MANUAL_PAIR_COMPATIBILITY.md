@@ -1,7 +1,7 @@
 # Native manual-pair compatibility prerequisites
 
-Baseline: public main 8ad6dc6, manual endpoint binding merged in PR41 using its
-accepted results. This increment continues the bounded host adaptation of manual
+Endpoint baseline: rewritten public main 7c2c474. The historical endpoint-binding
+qualification is reused; repository recreation invalidated the old PR-history links. This increment continues the bounded host adaptation of manual
 pair review. It reuses AIRS structural NSDictionary configuration comparison
 from its existing batch/reuse code; no donor configuration DTO is assumed.
 MacScope remains read-only.
@@ -50,7 +50,7 @@ test bundles ran zero methods; accepted unchanged suites were not replayed.
 Independent read-only source/test review found no actionable defect and confirmed
 the compatibility-only boundary. The reviewer performed no checks or writes.
 
-Logs are retained under local-evidence/manual-pair-compatibility. Accepted endpoint,
+Detailed qualification logs are retained privately. Accepted endpoint,
 codec, Python matching/analysis and distribution results are reused. Native build
 products are removed after retaining logs. Build success is not GUI acceptance.
 No launch, packaging, release, installation, store/settings change or MacScope
