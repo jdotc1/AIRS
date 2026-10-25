@@ -59,17 +59,24 @@ TBZ/TBNZ v50 is merged in PR33, with separate owned positive/refusal
 evidence. See TEST_BIT_BRANCH.md and TEST_BIT_BRANCH_RESULTS.md. Binary release
 and installation remain separate.
 
-The first local function-matching reuse increment adapts MacScope's generated-name
+The first function-matching reuse increment, merged in PR34, adapts MacScope's generated-name
 guard to saved-report comparison. Generic entry/section and address-shaped donor
 labels no longer create cross-build symbol joins. Exact-image matching and model/
 configuration checks remain authoritative. See GENERATED_SYMBOL_MATCHING.md for
 behavior and eight new plus three affected passing methods. No fingerprint
 matcher or new analysis model is claimed.
 
+The next local matching increment adds validated manual finding pairs to the
+saved-report API and CLI. MacScope's one-to-one pin precedence is adapted without
+copying its framework or adding fingerprints. See MANUAL_FUNCTION_PAIRS.md for
+nine new API, five isolated CLI and eleven affected passing methods. Manual pairs
+remain review candidates and cannot override exact-image or compatibility guards.
+
 Next reuse sequence:
 
 1. FunctionVersionMatcher adaptation for cross-build review candidates, beginning
-   with explicit fingerprint production and ambiguity/manual-pin contracts. Existing
+   with explicit fingerprint production and ambiguity contracts. Manual-pair
+   validation is now implemented locally. Existing
    reports lack the body/CFG fingerprints needed for a drop-in matcher. Structural
    matches must never replace exact image identity or model/configuration checks.
 2. Structured refusal facts where they remove duplicated diagnostic handling;
