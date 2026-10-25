@@ -80,6 +80,6 @@ or installed-app acceptance.
 
 Accepted manual change, compatibility, endpoint, codec, Python comparison, GUI
 and distribution results are reused within their original scopes. No packaging,
-signing, installation, publication or MacScope mutation is claimed by this local
-increment. Installed app, settings and stores remain unchanged. Public integration
-is a separate action.
+signing, installation or MacScope mutation is claimed by this qualification.
+Installed app, settings and stores remain unchanged. Public integration does not
+activate native workflows.
