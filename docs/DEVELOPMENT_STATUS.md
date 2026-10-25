@@ -221,3 +221,20 @@ The real AIRSApp debug target built. Independent read-only semantic review found
 no actionable issue. Unrelated accepted results were reused; no corpus, GUI,
 packaging, installation or release operation occurred. Installed app, settings and
 stores remain untouched. See REV.md and REV_RESULTS.md for exact scope.
+
+
+## Post-v44 semantic development: scalar REV16 v45
+
+REV v44 is merged through PR #21. The next bounded family adds scalar halfword
+byte swaps under arm64-bounded-rev16-v45, reusing owned one-source mapping and the
+existing REV state/guard/write path. Full-width REV retains its byte loop; X REV32
+and vector forms remain refused. Known/unknown, provenance, frame and recovery
+boundaries stay conservative.
+
+Fourteen new Python methods, ten affected full-REV/RBIT methods and four new native
+methods passed. Six new
+complete owned images qualify correct/missing/unknown recovery for both widths,
+and first reports supply native fixtures. The real AIRSApp debug target built.
+Independent read-only review found no corrective issue. See REV16_RESULTS.md for
+the native result and exact fresh/reused scope. No GUI, packaging, installation,
+release or installed-app/settings/stores operations were performed.
