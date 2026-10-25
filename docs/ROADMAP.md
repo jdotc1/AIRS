@@ -113,7 +113,7 @@ source finding signatures, reusing the donor comparator's separation of matching
 and audit observations. See MANUAL_PAIR_CHANGES.md for bounded native qualification.
 Nonmanual rows, summary integrity and automatic workflow activation remain separate.
 
-The next local accounting validator checks bounded row shape, per-side endpoint
+The accounting validator checks bounded row shape, per-side endpoint
 uniqueness and exact six-field summary totals. See COMPARISON_ROW_ACCOUNTING.md
 for focused native qualification. It is separate from source binding, matching
 truth and signature verification; native app activation remains unchanged.
