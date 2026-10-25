@@ -779,3 +779,13 @@ same-image or subtype authority prevents selection. Unknown policy/basis strings
 reject only at this explicit boundary. Complete producer reconstruction, remaining
 field semantics, source identity, binary authenticity and GUI activation are not
 established; generic decoding and matching defaults remain unchanged.
+
+
+## 30. Explicit canonical manual-pair keys
+
+The opt-in manual-key validator (MANUAL_PAIR_KEYS.md) composes recorded-policy
+and prior declared-row checks. Manual review keys require the exact ordered
+baseline/current selected IDs under the host's canonical namespace. Pin membership,
+source facts, compatibility and observation labels remain prerequisites. Keys do
+not establish identity, authenticity or complete output. Earlier APIs retain their
+existing key scope; generic decoding, producer defaults and GUI behavior are unchanged.
