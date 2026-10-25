@@ -1,3 +1,9 @@
+Current source model: `arm64-bounded-rev16-v45` adds scalar byte swaps within
+16-bit lanes through the existing REV state path. Raw-stack, unknown/provenance,
+frame and synchronous-recovery boundaries remain conservative. Exact Python/native
+model admission retains historical labels. See [REV16](REV16.md) and
+[bounded qualification](REV16_RESULTS.md). Earlier checkpoints retain their meanings.
+
 Current source model: `arm64-bounded-rev-v44` adds exact scalar full-width byte
 REV W/X. Raw-stack and unknown-value refusal, zero-extending W writes, frame
 transitions and synchronous recovery boundaries remain conservative. Python/native
