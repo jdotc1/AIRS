@@ -647,3 +647,13 @@ flags must agree, and pair rows must correspond one-to-one. This is not digest
 authentication, configuration-identity verification, change-signature computation
 or validation of other match bases. It supplies no automatic native activation
 or full comparison-readiness claim.
+
+
+## 18. Explicit native manual-pair compatibility
+
+The optional compatibility helper extends endpoint binding with original saved
+configuration comparison (MANUAL_PAIR_COMPATIBILITY.md). Reported change status,
+when present, must match source configurations; differing configurations or models
+require ambiguous manual rows. Two legacy omissions compare equal without
+inventing defaults. This does not authenticate evidence, recompute change
+signatures, qualify nonmanual rows or activate native workflows.
