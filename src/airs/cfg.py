@@ -911,16 +911,29 @@ def audit_cfg_function(image: MachOImage, function: FunctionRange, entry: Unwind
         return unresolved(error.code,str(error),error.address)
     expected={'SP':Value('stack'),**{f'x{reg}':Value('original',reg) for reg in range(19,31)}}
     mismatches=[];mismatch_count=0;known_witness=False;unknown_count=0
+    first_unknown = None
     for pc,recovered,certain in observations:
         for register,want in expected.items():
             got=recovered[register]
-            if not got.known:unknown_count+=1
+            if not got.known:
+                unknown_count += 1
+                if first_unknown is None and limits.max_evidence_per_function:
+                    first_unknown = (pc, register, want, got, certain)
             elif got!=want:
                 mismatch_count+=1;known_witness|=certain
                 if len(mismatches)<limits.max_evidence_per_function:
                     mismatches.append(Evidence('caller_state_mismatch',f'Modeled recovery differs for {register} on a '+('known-reachable' if certain else 'conservative possible')+' CFG path',pc,want.describe(),got.describe()))
     if unknown_count:
-        return unresolved('unknown_recovery_value',f'{unknown_count} required CFG recovery values are unknown',scope=scope)
+        result = unresolved('unknown_recovery_value',f'{unknown_count} required CFG recovery values are unknown',scope=scope)
+        if first_unknown is not None:
+            pc, register, want, got, certain = first_unknown
+            evidence = result.evidence[0]
+            reachability = 'known-reachable' if certain else 'conservative possible'
+            # Keep one summary row and the full count, even with a one-row budget.
+            evidence = replace(evidence, address=pc, expected=want.describe(), observed=got.describe(),
+                               message=evidence.message + f'; first retained unknown is {register} on a {reachability} CFG path')
+            result = replace(result, evidence=(evidence,))
+        return result
     if mismatch_count and not known_witness:
         return unresolved('cfg_path_feasibility_unknown','A recovery discrepancy exists only on paths with uncertain reachability',scope=scope)
     if not observations or not terminals:
