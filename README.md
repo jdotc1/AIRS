@@ -62,6 +62,9 @@ verdict and literal reason selection, stable verdict ordering and explicit detai
 limits. Full source counts and unresolved denominators remain intact. Comparison
 and coverage commands also provide bounded text output. See the
 [saved-report examples](docs/SAVED_REPORT_COMMAND_EXAMPLES.md).
+The source CLI also supports explicit one-to-one finding pairs for stripped or
+renamed cross-build review via repeatable `diff --pair BASELINE_ID=CURRENT_ID`.
+See [manual pairing](docs/MANUAL_FUNCTION_PAIRS.md) for validation and limits.
 
 ## Build and verification
 
