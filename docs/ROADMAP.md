@@ -85,6 +85,11 @@ See EXACT_BODY_CANDIDATES.md for fourteen new API, four isolated CLI, one fresh
 pipeline and twenty-five affected passing methods. Default/native-app matching
 is unchanged; no identity proof or new analysis semantics is claimed.
 
+The local native codec increment preserves optional fingerprint fields through
+typed report round trips, validates exact shape and qualifying context, and leaves
+missing evidence unavailable. It does not enable fingerprint production or
+matching in the app. See NATIVE_BODY_FINGERPRINT_CODEC.md for qualification.
+
 Next reuse sequence:
 
 1. FunctionVersionMatcher adaptation for cross-build review candidates, beginning
@@ -116,6 +121,8 @@ and release publication distinct. Runtime evidence and user data stay outside so
 Completed worktrees and merged feature branches can be pruned after preserving
 unique source/evidence. Rebuildable caches and intermediate packaged app copies
 need not remain alongside the active public checkout. See WORKSPACE_FOOTPRINT.md.
-The native fingerprint-codec follow-up remains unimplemented; its initial local
-test/design draft was saved outside the checkout when storage cleanup took
-priority. No native activation or new acceptance claim follows from cleanup.
+The saved native fingerprint-codec draft has been resumed locally. Typed native
+preservation and structural admission now have nine focused passing tests and a
+successful real AIRSApp build. See NATIVE_BODY_FINGERPRINT_CODEC.md. Build products
+are removed after retaining logs. Fingerprint production/matching activation and
+GUI acceptance remain separate; no installed binary or release changes.
