@@ -756,3 +756,14 @@ consumed endpoints. Missing body status remains unavailable: affected outcomes
 refuse, while outcomes independent of that status can be checked. Established
 symbol pairs cannot hide one endpoint. Completeness, unmatched/future matching,
 binary authenticity, GUI activation and engine semantics remain separate.
+
+
+## 28. Explicit unmatched-row evidence
+
+The opt-in unmatched-row validator (UNMATCHED_ROWS.md) composes prior comparison
+validation. Declared unmatched rows require one exact side-specific source ID,
+a canonical key, the corresponding added/removed label and a host-unusable name.
+Validated manual pins and eligible body pairs consume endpoints independently of
+imported row omissions. Missing body status remains unavailable when consumption
+could affect the row. Native source-name admission, omitted groups, future bases,
+completeness, binary authenticity, GUI activation and engine semantics are unchanged.
