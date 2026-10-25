@@ -175,8 +175,8 @@ class RBITXCandidateStateTests(unittest.TestCase):
         self.assertEqual(state.sp, Value("stack", displacement=-16))
 
     def test_other_unimplemented_families_stay_unsupported(self):
-        # W RBIT (v38) and W SDIV (v42) were adopted; use a control neighbor for refusal.
-        words = (0xDAC00408, 0xDAC00808, 0xDAC00C08, 0xDAC01408, 0x3AC10C00)
+        # W RBIT, W SDIV and scalar REV were adopted; retain other families/control refusals.
+        words = (0xDAC00408, 0xDAC00808, 0x5AC00C08, 0xDAC01408, 0x3AC10C00)
         for word in words:
             with self.subTest(word=hex(word)), self.assertRaises(ModelError):
                 decode_instruction(word, BASE)
