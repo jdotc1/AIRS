@@ -961,8 +961,10 @@ def audit_cfg_function(image: MachOImage, function: FunctionRange, entry: Unwind
 
 def _with_refusal_instruction(image: MachOImage, function: FunctionRange,
                               result: AuditResult) -> AuditResult:
-    """Annotate retained decoder refusals; never infer effects or add evidence rows."""
-    codes = {'unsupported_instruction', 'unsupported_control_flow', 'unsupported_pauth'}
+    """Annotate retained instruction refusals; never follow targets or add rows."""
+    target_kinds = {'cfg_edge_not_modeled': ('b', 'bcond'),
+                    'cfg_call_target_not_modeled': ('bl',)}
+    codes = {'unsupported_instruction', 'unsupported_control_flow', 'unsupported_pauth'} | target_kinds.keys()
     if (result.verdict != 'unresolved' or image.architecture != 'arm64'
             or image.cpu_subtype not in (0, 1)):
         return result
@@ -978,7 +980,18 @@ def _with_refusal_instruction(image: MachOImage, function: FunctionRange,
             except InputError:
                 pass  # Optional diagnostics must not replace the original refusal.
             else:
-                item = replace(item, observed=f'ARM64 instruction word 0x{word:08x}')
+                observed = f'ARM64 instruction word 0x{word:08x}'
+                if item.code in target_kinds:
+                    try:
+                        instruction = decode_instruction(word, address)
+                    except ModelError:
+                        evidence.append(item)
+                        continue
+                    if instruction.kind not in target_kinds[item.code]:
+                        evidence.append(item)
+                        continue
+                    observed += f'; preferred VM target {address + instruction.immediate:#x}'
+                item = replace(item, observed=observed)
         evidence.append(item)
     return replace(result, evidence=tuple(evidence)) if tuple(evidence) != result.evidence else result
 
