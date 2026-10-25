@@ -158,10 +158,15 @@ admitted source IDs, unusable host names and unconsumed endpoints. See
 UNMATCHED_ROWS.md. Omitted groups, future bases and completeness remain separate;
 matching defaults and native workflows are unchanged.
 
-The local recorded matching-policy validator checks canonical producer metadata
+The recorded matching-policy validator, merged in public PR13, checks canonical producer metadata
 against validated manual pins and explicit body status, and rejects unsupported
 basis names at this opt-in boundary. See MATCHING_POLICY.md. Generic decoding,
 producer defaults, full-output reconstruction and native workflows remain separate.
+
+The local canonical manual-pair key validator binds each manual row key to its
+selected baseline/current IDs in producer order. See MANUAL_PAIR_KEYS.md. Earlier
+APIs, matching defaults, complete-output reconstruction and native workflows retain
+their existing scope.
 
 Next reuse sequence:
 
