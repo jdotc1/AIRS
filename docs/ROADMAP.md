@@ -21,11 +21,13 @@ Scalar [CLS W/X v47](CLS.md) is merged in PR #24 with accepted
 Exact model-admission registry hardening is merged in PR #25; its accepted
 [qualification](MODEL_ADMISSION_REGISTRY.md) is reused.
 
-The current bounded increment closes decoder-level historical/unknown-model test
-coverage. It checks legacy masked subtype admission, v1 refusal of evaluated CFI,
-v2's strict evaluated-CFI subtype requirement, and generic unknown-label admission
-without bypassing structural checks. No production behavior or model identity
-changes. See [boundary qualification](MODEL_ADMISSION_BOUNDARIES.md).
+Historical/unknown-model decoder boundary tests are merged in PR #26; their
+[accepted results](MODEL_ADMISSION_BOUNDARIES.md) are reused.
+
+The current bounded fix preflights escaped JSON values in coverage text before
+encoding can allocate oversized strings. It reuses the summary text budget helper,
+retains existing output and evidence counts, and adds no model support or filters.
+See [qualification](COVERAGE_TEXT_PREFLIGHT.md).
 Installation and release remain unchanged.
 
 ## Next candidates, one bounded item at a time
