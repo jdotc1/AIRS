@@ -138,10 +138,15 @@ exclusions and post-manual singleton groups for selected two-sided claims. See
 UNIQUE_SYMBOL_PAIRS.md. One-sided symbol groups, body matching and completeness
 remain separate; no matching producer or GUI workflow is activated.
 
-The locally completed exact-body pair validator checks explicit opt-in and selected
+The exact-body pair validator, merged in public PR9, checks explicit opt-in and selected
 fingerprint buckets against the post-manual source snapshot, retaining symbol
 precedence and duplicate blockers. See BODY_CANDIDATE_PAIRS.md. It does not
 activate matching or prove body authenticity, identity or source completeness.
+
+The local duplicate-symbol group validator checks actual source-name multiplicity,
+required singleton-side selections and ambiguous labels after validated manual
+pins. See DUPLICATE_SYMBOL_GROUPS.md. Singleton one-sided matching outcomes and
+source completeness remain separate; native workflows are not activated.
 
 Next reuse sequence:
 

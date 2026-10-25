@@ -733,3 +733,15 @@ tuples and canonical keys. Post-manual source buckets exclude established symbol
 pairs but retain ambiguous-group blockers; only unique standalone endpoints select.
 Imported digests remain unauthenticated, omitted candidates remain unverified,
 and matching defaults, engine semantics and native GUI workflows are unchanged.
+
+
+## 26. Explicit duplicate-symbol group evidence
+
+The opt-in duplicate-symbol validator (DUPLICATE_SYMBOL_GROUPS.md) composes prior
+source, accounting, observation, offset, symbol-pair and body-pair checks. Declared
+symbol keys must name existing usable source groups after validated manual pins.
+Source-name multiplicity requires ambiguous classification and selects only actual
+singleton sides; body matching cannot consume these blocked groups. Unselected
+ambiguity without multiplicity rejects, while incompatible selected unique pairs
+retain their prior ambiguous labels. Singleton one-sided matching outcomes,
+completeness, binary authenticity and GUI activation remain separate.
