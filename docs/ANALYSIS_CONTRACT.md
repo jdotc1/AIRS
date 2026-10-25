@@ -811,3 +811,15 @@ post-pin membership validation. Unselected exact-offset representative labels
 remain outside this boundary. This is presentation consistency, not identity,
 binary authentication or complete-output reconstruction; earlier APIs and native
 workflows retain their scope.
+
+
+## 33. Explicit unselected exact-offset representative names
+
+The opt-in offset-name validator (UNSELECTED_OFFSET_NAMES.md) composes earlier
+symbol-group and selected-name checks. Exact-image rows without selected endpoints
+must use the first current group member's name in recorded finding order, falling
+back to the first baseline member only when the current group is absent. Names
+are exact UTF-8 presentation facts, including empty/generated names. Numeric
+offsets, source membership and multiplicity remain prerequisites from composition.
+Recorded source order is not authenticated; complete output, identity and native
+activation remain separate. Earlier APIs and defaults retain their scope.
