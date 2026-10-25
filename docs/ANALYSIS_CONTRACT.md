@@ -627,3 +627,13 @@ typed codec (NATIVE_BODY_FINGERPRINT_CODEC.md). Missing evidence remains absent;
 null, extra fields and contradictory context reject. Imported digests are not
 rehashed or authenticated. Native production/matching defaults and analysis
 semantics remain unchanged; numeric normalization is explicitly qualified.
+
+
+## 16. Native comparison-context facts
+
+Native typed comparison records preserve optional configuration/candidate status
+and bounded one-to-one manual-pair metadata (NATIVE_COMPARISON_CONTEXT.md).
+Absence remains unavailable, explicit false/empty values retain meaning, and
+malformed selections reject. Import does not bind IDs to source reports,
+authenticate evidence, recompute matches or change row classifications. Native
+production/matching defaults and analysis semantics remain unchanged.
