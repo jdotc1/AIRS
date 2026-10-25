@@ -1,3 +1,7 @@
+Later source v46 adds scalar X REV32 separately; see [REV32](REV32.md).
+Earlier subset descriptions and receipts below retain their historical meaning.
+Vector forms remain excluded.
+
 Historical v44 subset: source v45 adds scalar REV16 separately through the shared
 state path. See [REV16](REV16.md). The original v44 scope and receipts below retain
 their historical meaning; X REV32 and vector forms remain excluded.

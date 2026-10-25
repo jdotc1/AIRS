@@ -27,7 +27,7 @@ class ModelError(ValueError):
 # explicit below. Adding a decoder family must classify its FP-writing effect.
 _FP_DESTINATION_KINDS = frozenset((
     'add', 'sub', 'mov', 'movz', 'movn', 'xudiv', 'wudiv', 'xsdiv', 'wsdiv',
-    'wrbit', 'xrbit', 'wrev', 'xrev', 'wrev16', 'xrev16', 'wclz', 'xclz', 'wadc', 'wadcs', 'wsbc',
+    'wrbit', 'xrbit', 'wrev', 'xrev', 'wrev16', 'xrev16', 'xrev32', 'wclz', 'xclz', 'wadc', 'wadcs', 'wsbc',
     'wsbcs', 'xadc', 'xadcs', 'xsbc', 'xsbcs', 'wadd',
     'wadds', 'wsubs', 'xadds', 'xsubs', 'wadds_reg', 'wsubs_reg',
     'xadds_reg', 'xsubs_reg', 'wadds_ext', 'wsubs_ext', 'xadds_ext', 'xsubs_ext',
