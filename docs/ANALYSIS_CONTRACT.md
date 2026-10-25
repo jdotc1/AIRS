@@ -700,3 +700,14 @@ model/configuration differences require ambiguous. Unselected groups and one-sid
 rows do not invent pairs. This does not verify matching-basis semantics, source
 completeness, source-function identity, original binary bytes or GUI behavior.
 Default decoding, matching and engine model semantics remain unchanged.
+
+
+## 23. Explicit exact-image offset authority
+
+The opt-in exact-image validator (EXACT_IMAGE_OFFSET_ROWS.md) composes prior source,
+accounting and observation checks. Cross-image rows cannot claim exact-image
+matching; same-image rows require canonical numeric offset groups. Only singleton
+side groups select IDs, multiplicity stays ambiguous, and unique one-sided groups
+remain added/removed. This checks declared groups against admitted source reports,
+not original bytes, source completeness or cross-image matching semantics. Default
+matching/decoding, GUI activation and engine model semantics remain unchanged.
