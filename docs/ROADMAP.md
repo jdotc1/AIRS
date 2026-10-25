@@ -7,19 +7,19 @@ preview and is not replaced by source-only increments.
 | Milestone | Current position | Remaining boundary |
 | --- | --- | --- |
 | Native evidence review and saved workflows | Build 12 includes accepted Settings, comparison and persistent sidebar corrections | Qualify each changed user interaction after pending work settles |
-| Conservative ARM64/CFI model | Merged W SDIV v42 plus local W UDIV v43; historical identities and refusal accounting preserved | New instruction/rule families require distinct positive and refusal evidence and independent review |
+| Conservative ARM64/CFI model | Merged W SDIV v42 and W UDIV v43; historical identities and refusal accounting preserved | New instruction/rule families require distinct positive and refusal evidence and independent review |
 | Saved-report coverage triage | Reason selection, terminal-safe output, bounded detail and literal code ordering implemented | Additional triage tools must preserve full denominators, overlap, duplicate/conflict and exact identity context |
 | Public distribution | Single repository; build 12 signed/notarized/stapled release, public browser download and actual App Translocation accepted on the development Mac | Clean-machine, minimum-macOS, Intel-app and offline qualification remain incomplete |
 
 ## Current bounded increment
 
 Coverage triage tools and the guide are merged through PRs #13–17, alongside
-W SDIV v42. Its [refusal-fixture hardening](V42_REFUSAL_FIXTURES.md) is merged
-through PR #18. Their accepted results are reused. The current bounded increment
-adds [W UDIV v43](UDIV_W.md) through shared X transfer and W writes, including
-the affected refusal/current-producer controls. Two new complete owned Mach-O
-variants qualify parser/engine agreement and discrepancy without parser mocks.
-Native and release scope is recorded in UDIV_W_RESULTS.md; installation is unchanged.
+W SDIV v42. Refusal-fixture hardening and W UDIV v43 are merged through PRs #18–19.
+Accepted results are reused. The current bounded increment adds
+[complete owned-image W SDIV qualification](W_SDIV_OWNED_IMAGES.md): three new
+real parser/engine examples distinguish agreement, concrete discrepancy and
+unknown recovery. It closes the earlier typed-parser emission gap under the
+unchanged cumulative v43 model. Production code and installation are unchanged.
 
 ## Next candidates, one bounded item at a time
 
