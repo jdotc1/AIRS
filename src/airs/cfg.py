@@ -21,6 +21,14 @@ MASK32 = (1 << 32) - 1
 def decode_instruction(word: int, address: int = 0) -> Instruction:
     if not 0 <= word <= 0xffffffff:
         raise ModelError('invalid_instruction_word','Instruction is not a 32-bit word',address)
+    # MacScope decodeMoveWide: MOVK reads its old destination; Rd31 is ZR.
+    if word & 0x7f800000 == 0x72800000:
+        wide = bool(word & (1<<31))
+        shift = ((word>>21)&3)*16
+        if not wide and shift >= 32:
+            raise ModelError('invalid_movk_shift','W MOVK permits only shifts 0 and 16',address)
+        return Instruction(address,word,'xmovk' if wide else 'wmovk',word&31,
+                           immediate=(word>>5)&0xffff,addressing=str(shift))
     # Owned MacScope two-source field mapping; fix all nonoperand bits.
     # Scalar W/X UDIV: sf selects width; Rn/Rm/Rd31 are ZR, never SP.
     if word & 0x7fe0fc00 == 0x1ac00800:
@@ -250,6 +258,19 @@ class PathState(MachineState):
 
     def apply(self, instruction: Instruction) -> None:
         kind,address = instruction.kind,instruction.address
+        if kind in ('wmovk','xmovk'):
+            old = self.read_register(instruction.rd)
+            if old.kind == 'stack':
+                raise ModelError('movk_stack_address_not_modeled','MOVK destination is a derived stack address',address)
+            value = Value('unknown','MOVK retains unknown bits of its old destination')
+            if old.kind == 'constant':
+                shift = int(instruction.addressing)
+                mask = (1<<(64 if kind == 'xmovk' else 32))-1
+                result = (int(old.value)&~(0xffff<<shift)) | (instruction.immediate<<shift)
+                value = Value('constant',result&mask)
+            if kind == 'xmovk': self._write_register(instruction.rd,value)
+            else: self.write_w(instruction.rd,value)
+            return
         if kind in ('wudiv','xudiv'):
             left,right=self.read_register(instruction.rn),self.read_register(instruction.rt2)
             if left.kind == 'stack' or right.kind == 'stack':
