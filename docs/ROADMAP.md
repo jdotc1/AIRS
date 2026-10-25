@@ -24,10 +24,15 @@ Exact model-admission registry hardening is merged in PR #25; its accepted
 Historical/unknown-model decoder boundary tests are merged in PR #26; their
 [accepted results](MODEL_ADMISSION_BOUNDARIES.md) are reused.
 
-The current bounded fix preflights escaped JSON values in coverage text before
-encoding can allocate oversized strings. It reuses the summary text budget helper,
-retains existing output and evidence counts, and adds no model support or filters.
-See [qualification](COVERAGE_TEXT_PREFLIGHT.md).
+Coverage-text escaped-allocation preflight is merged in PR #27 with
+[accepted results](COVERAGE_TEXT_PREFLIGHT.md) reused.
+
+The current bounded analysis improvement records the exact selected ARM64 word
+on retained unsupported-instruction, control-flow and pointer-authentication
+refusals. Existing historical sample evidence identified the diagnostic gap;
+it does not establish current instruction prevalence or justify support expansion.
+Verdicts, checked PCs, scope, reason codes and model v47 remain unchanged.
+See [refusal diagnostic qualification](REFUSAL_INSTRUCTION_EVIDENCE.md).
 Installation and release remain unchanged.
 
 ## Next candidates, one bounded item at a time

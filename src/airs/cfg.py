@@ -7,6 +7,7 @@ a discrepancy needs a known-reachable witness before it is supported.
 from __future__ import annotations
 
 from collections import deque
+from dataclasses import replace
 import struct
 
 from .arm64 import Instruction, MachineState, ModelError, Value, _signed
@@ -958,6 +959,30 @@ def audit_cfg_function(image: MachOImage, function: FunctionRange, entry: Unwind
                        tuple(sorted({pc for pc,_,_ in observations})),tuple(retained),limitations,count,cfg_steps=steps)
 
 
+def _with_refusal_instruction(image: MachOImage, function: FunctionRange,
+                              result: AuditResult) -> AuditResult:
+    """Annotate retained decoder refusals; never infer effects or add evidence rows."""
+    codes = {'unsupported_instruction', 'unsupported_control_flow', 'unsupported_pauth'}
+    if (result.verdict != 'unresolved' or image.architecture != 'arm64'
+            or image.cpu_subtype not in (0, 1)):
+        return result
+    evidence = []
+    for item in result.evidence:
+        address = item.address
+        if (item.code in codes and item.code in result.reason_codes
+                and item.observed is None and address is not None
+                and address % 4 == 0 and function.start <= address
+                and address + 4 <= function.end):
+            try:
+                word = int.from_bytes(image.bytes_at(address, 4), 'little')
+            except InputError:
+                pass  # Optional diagnostics must not replace the original refusal.
+            else:
+                item = replace(item, observed=f'ARM64 instruction word 0x{word:08x}')
+        evidence.append(item)
+    return replace(result, evidence=tuple(evidence)) if tuple(evidence) != result.evidence else result
+
+
 def audit_current_function(image: MachOImage, function: FunctionRange, entry: UnwindEntry | None,
                            limits: Limits = Limits(), *, cfi_table=None) -> AuditResult:
     """Current dispatch retains prior paths and extends only eligible failures."""
@@ -970,12 +995,12 @@ def audit_current_function(image: MachOImage, function: FunctionRange, entry: Un
     result=audit_function(image,function,entry,limits,cfi_table=cfi_table)
     if entry is not None and result.reason_codes in (('unsupported_instruction',),('unsupported_control_flow',),('non_nop_after_return',)):
         if encoding_mode(entry.encoding)=='frameless':
-            return audit_cfg_function(image,function,entry,limits)
-        if encoding_mode(entry.encoding)=='dwarf':
-            return audit_cfg_function(image,function,entry,limits,allow_calls=True,cfi_table=cfi_table)
-        if encoding_mode(entry.encoding)=='frame':
-            return audit_cfg_calls_function(image,function,entry,limits)
-    return result
+            result = audit_cfg_function(image,function,entry,limits)
+        elif encoding_mode(entry.encoding)=='dwarf':
+            result = audit_cfg_function(image,function,entry,limits,allow_calls=True,cfi_table=cfi_table)
+        elif encoding_mode(entry.encoding)=='frame':
+            result = audit_cfg_calls_function(image,function,entry,limits)
+    return _with_refusal_instruction(image, function, result)
 
 
 def audit_cfg_calls_function(image: MachOImage, function: FunctionRange, entry: UnwindEntry | None,
