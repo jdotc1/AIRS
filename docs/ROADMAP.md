@@ -7,19 +7,19 @@ preview and is not replaced by source-only increments.
 | Milestone | Current position | Remaining boundary |
 | --- | --- | --- |
 | Native evidence review and saved workflows | Build 12 includes accepted Settings, comparison and persistent sidebar corrections | Qualify each changed user interaction after pending work settles |
-| Conservative ARM64/CFI model | V41 baseline plus local bounded W SDIV v42 increment; historical model identities and refusal accounting preserved | New instruction/rule families require distinct positive and refusal evidence and independent review |
+| Conservative ARM64/CFI model | Merged W SDIV v42; historical model identities and refusal accounting preserved | New instruction/rule families require distinct positive and refusal evidence and independent review |
 | Saved-report coverage triage | Reason selection, terminal-safe output, bounded detail and literal code ordering implemented | Additional triage tools must preserve full denominators, overlap, duplicate/conflict and exact identity context |
 | Public distribution | Single repository; build 12 signed/notarized/stapled release, public browser download and actual App Translocation accepted on the development Mac | Clean-machine, minimum-macOS, Intel-app and offline qualification remain incomplete |
 
 ## Current bounded increment
 
 Coverage reason limit/order, function-name filtering and minimum-count selection
-are merged through PRs #13–16. A committed local guide connects them into saved-report
-triage. Source inspection identified W SDIV as a current refusal; the historical
-sample report is not treated as current prevalence evidence. The current bounded
-semantic increment adds [W SDIV v42](SDIV_W.md), reusing owned X-division and
-W-register helpers with independent arithmetic/recovery review. Qualification is
-recorded separately in SDIV_W_RESULTS.md; installation and release remain unchanged.
+are merged through PRs #13–16. The triage guide and [W SDIV v42](SDIV_W.md) are
+merged through PR #17. Their accepted results are reused. The current bounded
+hardening increment [aligns older refusal fixtures with v42](V42_REFUSAL_FIXTURES.md):
+valid W SDIV is retained as a positive case, while deliberate refused neighbors
+continue to exercise diagnostics and conservative boundaries. Production behavior,
+model identity, native UI, installation and release are unchanged.
 
 ## Next candidates, one bounded item at a time
 

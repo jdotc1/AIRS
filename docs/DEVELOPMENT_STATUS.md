@@ -148,3 +148,18 @@ The test build reported an existing unused Bool warning at
 FileOpenRoutingTests.swift:212. No GUI, installed app, settings, stores, packaging,
 signing or release operations were performed. See SDIV_W.md and
 SDIV_W_RESULTS.md for exact boundaries and fresh/reused evidence.
+
+
+## Post-v42 hardening: align refusal fixtures
+
+Triage guide and W SDIV v42 are merged through PR #17. Focused source inspection
+found older refusal tests still using the newly admitted W SDIV word. These
+fixtures now use a deliberately unmodeled control neighbor; one new inventory
+method explicitly checks admitted W SDIV alongside the refusal. No engine/model,
+native or installed-app behavior changed.
+
+Twelve focused methods passed in composed receipts, including an additional RBIT
+sentinel identified by independent read-only review. Accepted W SDIV, native build,
+model admission and unrelated results were reused. No full suite, corpus, GUI,
+packaging, installation or release operations were performed. See
+V42_REFUSAL_FIXTURES.md for the initial failure, exact correction and evidence scope.
