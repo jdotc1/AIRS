@@ -12,6 +12,7 @@ import uuid
 
 from .analysis_models import CFG_MODELS, KNOWN_MODELS, EVALUATED_CFI_MODELS
 from .types import InputError
+from .body_fingerprint import KIND as BODY_FINGERPRINT_KIND, MAX_INSTRUCTIONS as MAX_BODY_INSTRUCTIONS
 from . import ANALYSIS_MODEL_VERSION
 
 MAX_REPORT_BYTES = 64 * 1024 * 1024
@@ -175,6 +176,19 @@ def validate_report(report: object) -> dict:
         if generator["analysis_model_version"] == "arm64-linear-v1" and finding["coverage"] == "dwarf_evaluated":
             _bad("Historical v1 has no evaluated DWARF coverage")
         _integer(finding.get("instruction_count"), "instruction_count")
+        if 'body_fingerprint' in function:
+            fingerprint = _object(function['body_fingerprint'], 'function.body_fingerprint')
+            if set(fingerprint) != {'kind', 'instruction_count', 'sha256'}:
+                _bad('Body fingerprint fields are not the exact supported shape')
+            count = _integer(fingerprint['instruction_count'], 'body_fingerprint.instruction_count', minimum=3)
+            digest = _string(fingerprint['sha256'], 'body_fingerprint.sha256', maximum=64)
+            if (fingerprint['kind'] != BODY_FINGERPRINT_KIND or not re.fullmatch(r'[0-9a-f]{64}', digest)
+                    or count > MAX_BODY_INSTRUCTIONS or count*4 != size or start % 4
+                    or finding['instruction_count'] != count
+                    or finding['verdict'] == 'unresolved'
+                    or identity['architecture'] != 'arm64' or identity['cpu_subtype'] not in (0, 1)
+                    or function['boundary_source'] != 'lc_function_starts'):
+                _bad('Body fingerprint contradicts its bounded ARM64 function context')
         _strings(finding.get("reason_codes"), "reason_codes")
         _strings(finding.get("limitations"), "finding.limitations")
         for evidence in _array(finding.get("evidence"), "evidence"):

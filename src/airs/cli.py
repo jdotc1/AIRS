@@ -39,6 +39,8 @@ def _parser() -> argparse.ArgumentParser:
     audit.add_argument("--output", type=Path)
     audit.add_argument("--include-path", action="store_true", help="Include the resolved local path in the report")
     audit.add_argument("--fail-on-inconsistency", action="store_true", help="Exit 1 when supported inconsistencies are present; unresolved is still reported separately")
+    audit.add_argument("--include-function-fingerprints", action="store_true",
+                       help="Include bounded exact-byte body evidence for supported functions; no automatic matching")
     diff = commands.add_parser("diff", help="Compare two saved audit reports using conservative matching")
     diff.add_argument("--baseline", type=Path, required=True)
     diff.add_argument("--current", type=Path, required=True)
@@ -85,7 +87,8 @@ def main(argv: list[str] | None = None) -> int:
             raise InputError("python_version", "AIRS requires Python 3.11 or later")
         if args.command == "audit":
             source = resolve_input(args.input)
-            report = audit_path(source, requested_arch=args.arch, include_path=args.include_path)
+            report = audit_path(source, requested_arch=args.arch, include_path=args.include_path,
+                                include_function_fingerprints=args.include_function_fingerprints)
             output = render_html(report) if args.format == "html" else dumps(report)
             protected = (source, args.input)
             exit_code = 1 if args.fail_on_inconsistency and report["summary"]["inconsistency_count"] else 0
