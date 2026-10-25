@@ -1,5 +1,10 @@
 # AIRS 0.3.3 Preview — build 9
 
+> October 25, 2026 reconciliation: source history and source ZIPs were rewritten
+> during cleanup. The app acceptance below retains its original scope; source
+> identity and unchanged-source claims describe the original publication. See
+> [the reconciliation supplement](RELEASE_HISTORY_RECONCILIATION.md).
+
 This maintenance release improves native Settings sizing and removes the captured
 comparison-sheet AttributeGraph sizing cycle. The engine remains
 `arm64-bounded-cfi-control-v41`; report semantics and export formats are unchanged.

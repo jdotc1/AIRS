@@ -1,5 +1,10 @@
 # AIRS 0.3.3 Preview — build 12
 
+> October 25, 2026 reconciliation: source history and source ZIPs were rewritten
+> during cleanup. The app acceptance below retains its original scope; source
+> identity and unchanged-source claims describe the original publication. See
+> [the reconciliation supplement](RELEASE_HISTORY_RECONCILIATION.md).
+
 Build 12 corrects persistent sidebar sizing and pointer navigation. Page-header
 subtitles use the bounded Lumen wrapping helper so minimum-width measurement does
 not displace the sidebar. The sidebar uses the complete LumenSourceList component
@@ -55,8 +60,10 @@ the installed app, production stores, preferences, saved state and application r
 
 This updates the original publication-time download/translocation gap. See the
 [sanitized qualification supplement](qualification/BUILD12_DOWNLOAD_ACCEPTANCE.json).
-The original publication qualification and checksums remain immutable; the release
-also carries a separate download-acceptance supplement and its own checksum file.
+At the October 24 follow-up, the original publication qualification and checksums
+were retained alongside a separate download-acceptance supplement and its checksum
+file. The later cleanup regenerated source ZIPs and updated their checksum records;
+see the reconciliation supplement for that distinct change.
 No build, engine analysis, comparison-sheet or sidebar workflow was rerun. Existing
 accepted results and the exact-path launch helper were reused.
 
@@ -71,11 +78,11 @@ launch does not establish clean-host Gatekeeper acceptance. The engine model,
 report formats and conservative unresolved/refusal boundaries are
 unchanged. Prior receipts do not establish broader engine or platform coverage.
 
-The public repository is the single source of truth. The release tag and source ZIP
-identify the public source; the signed candidate retains its original implementation
-revision, mapped to the public tree by retained Git object identities. The only
-migration test-source substitution makes a test workspace relative to the current
-user's home. No new execution is claimed for that path substitution.
+The release tag now identifies rewritten public source. The retained signed app
+keeps its original implementation identity. Historical Git-object mapping and the
+original test-path substitution describe the publication-time state; cleanup path
+changes do not inherit those byte-identity or execution claims. The reconciliation
+supplement records the new source identity and outstanding qualification boundary.
 
 Publication does not operate or modify the installed app, settings or stores.
 Earlier release assets remain available.
