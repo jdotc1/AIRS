@@ -123,10 +123,15 @@ binding to every selected row, including nonmanual and one-sided rows. See
 COMPARISON_SOURCE_FACTS.md. This does not verify matching semantics, source
 completeness, configuration identity or nonmanual finding signatures.
 
-The matched-label validator composes selected-source/accounting and
+Matched-change label verification, merged in public PR6, composes selected-source/accounting and
 manual checks, then verifies all other selected pairs with the same observation
 signature. See MATCHED_CHANGE_LABELS.md. Matching-basis semantics, source
 completeness and native GUI activation remain separate.
+
+The next local exact-image validator checks host offset authority and declared
+numeric offset groups, rejecting guessed selections from duplicate groups. See
+EXACT_IMAGE_OFFSET_ROWS.md. Source completeness and cross-image symbol/body
+matching semantics remain separate; no native workflow is activated.
 
 Next reuse sequence:
 
