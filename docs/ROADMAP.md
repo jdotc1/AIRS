@@ -163,10 +163,15 @@ against validated manual pins and explicit body status, and rejects unsupported
 basis names at this opt-in boundary. See MATCHING_POLICY.md. Generic decoding,
 producer defaults, full-output reconstruction and native workflows remain separate.
 
-The local canonical manual-pair key validator binds each manual row key to its
+The canonical manual-pair key validator, merged in public PR14, binds each manual row key to its
 selected baseline/current IDs in producer order. See MANUAL_PAIR_KEYS.md. Earlier
 APIs, matching defaults, complete-output reconstruction and native workflows retain
 their existing scope.
+
+The local selected function-name validator binds recorded labels to the selected
+current finding, otherwise the selected baseline finding, using exact source text.
+See SELECTED_FUNCTION_NAMES.md. Unselected group labels, complete output and native
+workflow activation remain separate; names do not establish identity.
 
 Next reuse sequence:
 
