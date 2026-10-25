@@ -19,7 +19,7 @@ class CompareBranchTests(unittest.TestCase):
                     ins=decode_instruction(branch(width,31,delta,nz),BASE)
                     self.assertEqual((ins.kind,ins.rn,ins.immediate),
                                      (('x' if width == 64 else 'w')+('cbnz' if nz else 'cbz'),31,delta))
-        with self.assertRaises(ModelError): decode_instruction(0x36000040,BASE) # TBZ remains separate.
+        with self.assertRaises(ModelError): decode_instruction(0x54000010,BASE) # Reserved B.cond control remains refused.
 
     def test_predicate_width_zr_and_no_state_effects(self):
         for width in (32,64):
