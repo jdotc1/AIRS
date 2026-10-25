@@ -12,6 +12,7 @@ import stat
 from . import ANALYSIS_MODEL_VERSION, REPORT_SCHEMA_VERSION, __version__
 from .audit import encoding_mode as _mode
 from .cfg import audit_current_function
+from .body_fingerprint import exact_body_fingerprint
 from .compact import parse_compact_unwind
 from .dwarf_cfi import parse_eh_frame
 from .macho import parse_macho
@@ -112,7 +113,7 @@ def _equivalent_compact_entry(image, function, entries, starts, maximum_ranges):
     return replace(initial, end=end), count
 
 
-def audit_path(path: Path | str, *, requested_arch: str = "auto", limits: Limits = Limits(), include_path: bool = False) -> dict:
+def audit_path(path: Path | str, *, requested_arch: str = "auto", limits: Limits = Limits(), include_path: bool = False, include_function_fingerprints: bool = False) -> dict:
     input_path = resolve_input(path)
     try:
         if input_path.stat().st_size > limits.max_file_bytes:
@@ -199,6 +200,10 @@ def audit_path(path: Path | str, *, requested_arch: str = "auto", limits: Limits
             "evidence": [_serialize_evidence(e) for e in outcome.evidence],
             "limitations": list(outcome.limitations),
         }
+        if include_function_fingerprints:
+            fingerprint = exact_body_fingerprint(image, function, outcome)
+            if fingerprint is not None:
+                finding['function']['body_fingerprint'] = fingerprint
         findings.append(finding)
 
     if cfg_budget_exhausted:
@@ -234,5 +239,7 @@ def audit_path(path: Path | str, *, requested_arch: str = "auto", limits: Limits
         "issues": [{k: v for k, v in asdict(issue).items() if v is not None} for issue in issues],
         "metadata_ranges": [{"start": hex(e.start), "end": hex(e.end), "encoding": f"0x{e.encoding:08x}", "mode": _mode(e.encoding)} for e in table.entries],
         "findings": findings,
-        "limitations": GLOBAL_LIMITATIONS,
+        "limitations": GLOBAL_LIMITATIONS + ([
+            "Exact body fingerprints preserve encoded bytes and immediates; they are optional review evidence, not source-function identity or unwind proof. Relocations may change them."
+        ] if include_function_fingerprints else []),
     }

@@ -66,18 +66,24 @@ configuration checks remain authoritative. See GENERATED_SYMBOL_MATCHING.md for
 behavior and eight new plus three affected passing methods. No fingerprint
 matcher or new analysis model is claimed.
 
-The next local matching increment adds validated manual finding pairs to the
+Manual finding pairs, merged in PR35, add validated explicit selections to the
 saved-report API and CLI. MacScope's one-to-one pin precedence is adapted without
 copying its framework or adding fingerprints. See MANUAL_FUNCTION_PAIRS.md for
 nine new API, five isolated CLI and eleven affected passing methods. Manual pairs
 remain review candidates and cannot override exact-image or compatibility guards.
 
+The next local increment produces optional exact-byte body fingerprints through
+an audit API/CLI opt-in, using only already-supported substantial functions.
+See FUNCTION_BODY_FINGERPRINTS.md for bounds and twelve new plus fourteen affected
+passing methods. Default/native-app output is unchanged. Fingerprints do not
+perform matching or change unwind findings.
+
 Next reuse sequence:
 
 1. FunctionVersionMatcher adaptation for cross-build review candidates, beginning
-   with explicit fingerprint production and ambiguity contracts. Manual-pair
-   validation is now implemented locally. Existing
-   reports lack the body/CFG fingerprints needed for a drop-in matcher. Structural
+   with a distinct conservative exact-body candidate phase and ambiguity contracts.
+   Manual-pair validation is merged; opt-in exact-body production is local.
+   Historical reports lack those fingerprints, and CFG fingerprints are not produced. Structural
    matches must never replace exact image identity or model/configuration checks.
 2. Structured refusal facts where they remove duplicated diagnostic handling;
    retain AIRS unknown/discrepancy precedence instead of donor proof precedence.
