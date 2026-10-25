@@ -67,7 +67,10 @@ renamed cross-build review via repeatable `diff --pair BASELINE_ID=CURRENT_ID`.
 See [manual pairing](docs/MANUAL_FUNCTION_PAIRS.md) for validation and limits.
 Source audit can optionally emit bounded exact-byte function-body evidence with
 `--include-function-fingerprints`; [the fingerprint contract](docs/FUNCTION_BODY_FINGERPRINTS.md)
-explains eligibility and why this does not perform automatic matching.
+explains eligibility and why production alone does not perform matching.
+Saved-report comparison can separately opt into `diff --match-exact-bodies` for
+[unique exact-body review candidates](docs/EXACT_BODY_CANDIDATES.md), preserving
+manual/symbol precedence, duplicate ambiguity and compatibility limits.
 
 ## Build and verification
 

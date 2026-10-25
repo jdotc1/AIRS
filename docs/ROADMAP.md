@@ -72,18 +72,26 @@ copying its framework or adding fingerprints. See MANUAL_FUNCTION_PAIRS.md for
 nine new API, five isolated CLI and eleven affected passing methods. Manual pairs
 remain review candidates and cannot override exact-image or compatibility guards.
 
-The next local increment produces optional exact-byte body fingerprints through
+The producer, merged in PR36, emits optional exact-byte body fingerprints through
 an audit API/CLI opt-in, using only already-supported substantial functions.
 See FUNCTION_BODY_FINGERPRINTS.md for bounds and twelve new plus fourteen affected
 passing methods. Default/native-app output is unchanged. Fingerprints do not
 perform matching or change unwind findings.
 
+The next local increment adds explicit API/CLI opt-in exact-body candidate
+matching after manual/unique-symbol matches. Duplicate evidence and ambiguous
+symbol groups are not guessed; compatibility guards remain authoritative.
+See EXACT_BODY_CANDIDATES.md for fourteen new API, four isolated CLI, one fresh
+pipeline and twenty-five affected passing methods. Default/native-app matching
+is unchanged; no identity proof or new analysis semantics is claimed.
+
 Next reuse sequence:
 
 1. FunctionVersionMatcher adaptation for cross-build review candidates, beginning
-   with a distinct conservative exact-body candidate phase and ambiguity contracts.
-   Manual-pair validation is merged; opt-in exact-body production is local.
-   Historical reports lack those fingerprints, and CFG fingerprints are not produced. Structural
+   with separately qualified native preservation/activation or additional explicit
+   evidence. Manual pairs and body production are merged; exact-body candidate
+   selection is local. Historical reports lack fingerprints; CFG fingerprints
+   and call-graph propagation are not implemented. Structural
    matches must never replace exact image identity or model/configuration checks.
 2. Structured refusal facts where they remove duplicated diagnostic handling;
    retain AIRS unknown/discrepancy precedence instead of donor proof precedence.
