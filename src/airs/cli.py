@@ -12,6 +12,7 @@ from .diff import compare_reports
 from .dsym import attach_dsym
 from .coverage import coverage_inventory, validate_reason_selection
 from .decode_inventory import decode_inventory_path
+from .swift_error_flow import recover_swift_error_flow_path
 from .engine import audit_path, resolve_input
 from .report import atomic_write, dumps, load_report, render_html
 from .report_summary import summarize_report
@@ -79,6 +80,10 @@ def _parser() -> argparse.ArgumentParser:
     blockers.add_argument("input", type=Path)
     blockers.add_argument("--arch", choices=("auto", "arm64", "arm64e"), default="auto")
     blockers.add_argument("--output", type=Path)
+    swift_flow = commands.add_parser("swift-error-flow", help="Recover bounded structural synchronous Swift throwing-call return edges")
+    swift_flow.add_argument("input", type=Path)
+    swift_flow.add_argument("--arch", choices=("auto", "arm64", "arm64e"), default="auto")
+    swift_flow.add_argument("--output", type=Path)
     return parser
 
 
@@ -94,6 +99,11 @@ def main(argv: list[str] | None = None) -> int:
             output = render_html(report) if args.format == "html" else dumps(report)
             protected = (source, args.input)
             exit_code = 1 if args.fail_on_inconsistency and report["summary"]["inconsistency_count"] else 0
+        elif args.command == "swift-error-flow":
+            source = resolve_input(args.input)
+            report = recover_swift_error_flow_path(source, requested_arch=args.arch)
+            output, protected = dumps(report), (source, args.input)
+            exit_code = 0 if report["word_scan_complete"] and report["call_details_complete"] else 1
         elif args.command == "decode-blockers":
             source = resolve_input(args.input)
             report = decode_inventory_path(source, requested_arch=args.arch)

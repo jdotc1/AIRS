@@ -115,3 +115,10 @@ Python's upstream licenses accompany the separately packaged runtime. See
 
 Publication, optimized release integration, signing/notarization and release
 acceptance are separate steps. This source snapshot claims none of them.
+
+## Swift throwing-call recovery
+
+The separate `swift-error-flow` CLI recovers bounded synchronous Swift success
+and error return-edge candidates from selected ARM64 images. See
+[the admission contract and owned qualification](docs/SWIFT_ERROR_FLOW.md).
+This first slice does not change unwind verdicts or reconstruct full `do/catch`.
