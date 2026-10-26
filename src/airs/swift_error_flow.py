@@ -11,7 +11,7 @@ from pathlib import Path
 import re
 import struct
 
-from .cfg import decode_instruction
+from .cfg import decode_instruction, BRANCHES
 from .arm64 import ModelError
 from .decode_inventory import DEFAULT_LIMITS
 from .engine import resolve_input
@@ -22,6 +22,8 @@ MODEL = 'swift-sync-error-edges-v1'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v1'
 REGION_WORDS = 16
+INCOMING_MODEL = 'swift-region-direct-entries-v1'
+INCOMING_EVIDENCE_LIMIT = 16
 
 
 def throwing_declaration(symbol: str) -> dict | None:
@@ -177,7 +179,55 @@ def _error_region(data: bytes, function, edge: dict) -> dict:
             'call_return_proven': False, 'join_reachability_proven': False}
 
 
-def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS, *, include_error_regions: bool = False) -> dict:
+def _caller_direct_edges(data: bytes, function) -> dict:
+    """Classify the admitted scan prefix once; retain no target execution claims."""
+    direct = []; unknown = []; unknown_count = 0
+    for offset in range(0, len(data), 4):
+        pc = function.start + offset
+        word = struct.unpack_from('<I', data, offset)[0]
+        try:
+            instruction = decode_instruction(word, pc)
+            if instruction.kind in BRANCHES or instruction.kind == 'bl':
+                target = pc + instruction.immediate
+                if not 0 <= target < (1 << 64):
+                    raise ModelError('direct_target_out_of_range', 'Direct target outside VM address space', pc)
+                direct.append({'source_pc': hex(pc), 'target_pc': hex(target),
+                               'word': f'0x{word:08x}', 'kind': instruction.kind})
+        except ModelError:
+            unknown_count += 1
+            if len(unknown) < INCOMING_EVIDENCE_LIMIT:
+                unknown.append({'pc': hex(pc), 'word': f'0x{word:08x}'})
+    return {'direct_edges': direct, 'unclassified_word_count': unknown_count,
+            'unclassified_words': unknown, 'scanned_word_count': len(data) // 4,
+            'caller_scan_complete': len(data) == function.size}
+
+
+def _region_incoming(scan: dict, region: dict) -> dict:
+    """Only absence of observed unexpected caller-local direct edges is eligible."""
+    start, end = int(region['start_pc'], 16), int(region['end_pc_exclusive'], 16)
+    entries = []; count = 0
+    for edge in scan['direct_edges']:
+        source, target = int(edge['source_pc'], 16), int(edge['target_pc'], 16)
+        if not start <= source < end and start <= target < end:
+            count += 1
+            if len(entries) < INCOMING_EVIDENCE_LIMIT:
+                entries.append(edge)
+    status = ('unexpected_direct_entries' if count else
+              'unresolved' if not scan['caller_scan_complete'] or scan['unclassified_word_count'] else
+              'no_unexpected_direct_entries')
+    return {'status': status, 'scope': 'caller_local_direct_edges',
+            'caller_scan_complete': scan['caller_scan_complete'],
+            'scanned_word_count': scan['scanned_word_count'],
+            'unclassified_word_count': scan['unclassified_word_count'],
+            'unclassified_words': scan['unclassified_words'],
+            'unclassified_details_complete': scan['unclassified_word_count'] == len(scan['unclassified_words']),
+            'unexpected_entry_count': count, 'unexpected_entries': entries,
+            'entry_details_complete': count == len(entries), 'exclusive_entry_proven': False}
+
+
+def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS, *, include_error_regions: bool = False, validate_region_entries: bool = False) -> dict:
+    if validate_region_entries and not include_error_regions:
+        raise InputError('swift_region_option', 'Entry validation requires error-region recovery')
     if image.architecture != 'arm64' or image.cpu_subtype not in (0, 1):
         raise InputError('swift_flow_architecture', 'Only exact ordinary ARM64 subtypes are admitted')
     if len(image.data) > limits.max_file_bytes or len(image.functions) > limits.max_functions:
@@ -200,6 +250,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         word_complete &= count * 4 == function.size
         data = image.bytes_at(function.start, count * 4) if count else b''
         retained_here = 0
+        direct_scan = None
         for offset in range(0, len(data), 4):
             scanned += 1; remaining -= 1; scan['scanned_words'] += 1
             word = struct.unpack_from('<I', data, offset)[0]
@@ -233,6 +284,10 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
                     row.update(_edges(data, function, offset))
                     if include_error_regions and row['status'] == 'recovered_candidate':
                         row['error_region'] = _error_region(data, function, row)
+                        if validate_region_entries and row['error_region']['status'] == 'structural_region_candidate':
+                            if direct_scan is None:
+                                direct_scan = _caller_direct_edges(data, function)
+                            row['error_region']['incoming_validation'] = _region_incoming(direct_scan, row['error_region'])
             if row['status'] == 'declined':
                 reasons[row['reason']] += 1
     recovered = sum(row['status'] == 'recovered_candidate' for row in calls)
@@ -261,10 +316,13 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         report['summary']['recovered_error_region_count'] = sum(r['status'] == 'structural_region_candidate' for r in regions)
         report['summary']['declined_error_region_count'] = sum(r['status'] == 'declined' for r in regions)
         report['limitations'].append('Error intervals are structural candidates; opaque calls may not return and joins are not proven reachable.')
+    if validate_region_entries:
+        report['region_incoming_model_version'] = INCOMING_MODEL
+        report['limitations'].append('Entry validation covers only direct edges in the bounded caller; indirect and external entries, reachability and exclusivity remain unproven.')
     return report
 
 
-def recover_swift_error_flow_path(path: Path | str, *, requested_arch: str = 'auto', limits: Limits = DEFAULT_LIMITS, include_error_regions: bool = False) -> dict:
+def recover_swift_error_flow_path(path: Path | str, *, requested_arch: str = 'auto', limits: Limits = DEFAULT_LIMITS, include_error_regions: bool = False, validate_region_entries: bool = False) -> dict:
     source = resolve_input(path)
     try:
         with source.open('rb') as handle:
@@ -273,4 +331,4 @@ def recover_swift_error_flow_path(path: Path | str, *, requested_arch: str = 'au
         raise InputError('unreadable_input', f'Cannot read Swift-flow input: {error}') from error
     if len(data) > limits.max_file_bytes:
         raise InputError('file_size_limit', 'Input exceeds the bounded Swift flow file limit')
-    return recover_swift_error_flow(parse_macho(data, str(source), limits, requested_arch), limits, include_error_regions=include_error_regions)
+    return recover_swift_error_flow(parse_macho(data, str(source), limits, requested_arch), limits, include_error_regions=include_error_regions, validate_region_entries=validate_region_entries)

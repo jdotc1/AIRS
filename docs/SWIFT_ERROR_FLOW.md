@@ -121,3 +121,60 @@ repeated. It recorded MOV at 0x93c, an opaque BL at 0x940 to 0xaec, and MOVN at
 stub, but the report deliberately assigns no runtime meaning to that target.
 This is source-engine qualification; native presentation, installation and
 release acceptance remain separate.
+
+## Opt-in caller-local direct-entry validation
+
+```
+python3 -I -B airs_cli.py swift-error-flow Example.dylib --include-error-regions --validate-region-entries --output flow.json
+```
+
+`--validate-region-entries` requires `--include-error-regions`. It adds the
+`swift-region-direct-entries-v1` model marker and an `incoming_validation`
+supplement to retained structural region candidates. Declined regions have no
+validation claim; default edge and region reports remain unchanged.
+
+The validator classifies the already bounded caller prefix once per caller using
+the existing decoder. It checks direct B, BL, B.cond, CBZ/CBNZ and TBZ/TBNZ targets.
+A source outside the half-open candidate interval targeting its start or interior
+is an unexpected direct entry. Sources inside the interval are not side entries;
+the proposed join is outside the interval. The expected adjacent error-test
+fallthrough remains allowed by the region layout. The pass does not execute
+code or assume a direct branch is reachable.
+
+Results have three statuses:
+
+- `unexpected_direct_entries`: at least one conflicting direct edge is observed,
+  even when scan coverage is partial or other words are unclassified.
+- `unresolved`: no conflict is observed, but caller coverage is incomplete or
+  at least one word cannot be classified, including unsupported indirect control
+  transfers or invalid direct-target arithmetic.
+- `no_unexpected_direct_entries`: the full caller is scanned, every word is
+  classified, and no conflicting direct target is observed within this scope.
+
+The supplement retains source/target PCs, raw encodings and branch kinds, caller
+scan completeness and word counts. Conflict and unclassified-word details are
+capped separately at 16 entries while retaining exact totals and detail
+completeness fields. Classification shares the existing function/word budgets;
+region inspection does not extend the admitted caller prefix. Existing CLI exit
+status still reports scan/detail completeness rather than semantic approval.
+
+`exclusive_entry_proven` is always false. This check covers caller-local direct
+edges only. It does not exclude indirect or external entries, prove reachability,
+prove that calls return, establish a postdominator or recover catch semantics.
+An observed side entry supplements the candidate; it does not erase the original
+structural region or alter the unwind result. Consumers must inspect validation
+status before using an interval as a structured presentation candidate.
+
+Seventeen new focused methods passed across positive, boundary and review controls.
+They cover all supported direct families, start/interior/join boundaries,
+internal opaque calls, unknown/indirect words, invalid target arithmetic, partial
+scans, conflict precedence, evidence caps, default preservation and API/CLI option
+requirements. Independent semantic review found no blocking correctness issue.
+Accepted edge/region qualification was reused.
+
+Only the new classifier and entry validator analyzed the accepted owned caller
+bytes at 0x920 through 0x958. All 14 words were classified, with zero unexpected
+caller-local direct entries to the accepted interval [0x93c, 0x948). The output
+retains `exclusive_entry_proven: false`. Compiler, disassembly, identity, edge and
+region results were reused without replay. This is source-engine qualification,
+not native UI, installation, distribution or release acceptance.
