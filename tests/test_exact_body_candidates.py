@@ -30,7 +30,7 @@ class ExactBodyCandidateTests(unittest.TestCase):
         before,after=annotated_pair()
         default=compare_reports(before,after)
         self.assertEqual(default['summary']['matched_count'],0)
-        self.assertNotIn('exact_body_candidates',default['comparison'])
+        self.assertIs(default['comparison']['exact_body_candidates'],False)
         for absent in (True,False):
             changed=deepcopy(after)
             if absent:del changed['findings'][0]['function']['body_fingerprint']

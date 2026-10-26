@@ -190,14 +190,13 @@ def compare_reports(baseline: dict, current: dict, *, manual_pairs=(), match_exa
     limitations = ["Different build addresses are never joined solely because they are equal.", "Cross-build symbol matches are candidates for review, not guaranteed source identity.", "Generated address labels and generic entry/section labels provide no cross-build matching evidence.", "Added/removed unmatched functions are not automatically regressions/fixes.", "An agreement still has the scope and limitations of its source report."]
     if configuration_changed:
         limitations.append("Analysis configuration differs or is missing from one report; budget-related scope changes require review.")
-    result = {"schema_version": 1, "report_kind": "airs.diff", "comparison": {"baseline_image": _identity(baseline), "current_image": _identity(current), "same_image": same_image, "model_compatible": compatible, "analysis_configuration_changed": configuration_changed, "matching_policy": "exact_digest_then_unique_symbol"}, "summary": summary, "changes": changes, "limitations": limitations}
+    result = {"schema_version": 1, "report_kind": "airs.diff", "comparison": {"baseline_image": _identity(baseline), "current_image": _identity(current), "same_image": same_image, "model_compatible": compatible, "analysis_configuration_changed": configuration_changed, "matching_policy": "exact_digest_then_unique_symbol", "exact_body_candidates": match_exact_bodies}, "summary": summary, "changes": changes, "limitations": limitations}
     if pairs:
         result['comparison']['matching_policy'] = 'manual_then_unique_symbol'
         result['comparison']['manual_pairs'] = [
             {'baseline_id': old, 'current_id': new} for old, new in pairs]
         result['limitations'].append('Manual pairs record user selection, not independently established cross-build function identity.')
     if match_exact_bodies:
-        result['comparison']['exact_body_candidates'] = True
         result['comparison']['matching_policy'] += '_then_exact_body_candidate'
         result['limitations'].append('Exact-body candidates require unique eligible evidence on both remaining sides and equal CPU subtype; existing pairs and ambiguous symbol groups retain precedence. A digest match is review evidence, not source-function identity.')
     return result

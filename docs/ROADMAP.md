@@ -211,12 +211,18 @@ architecture/subtype gates are reused; unknown/false status and same-image use
 refuse. Original-binary completeness, authenticity, remaining producer fields and
 native activation remain separate.
 
-The local covered comparison decoder provides one bounded native entry point
+The covered comparison decoder, merged in public PR22, provides one bounded native entry point
 for the three saved-report coverage domains. See COVERED_COMPARISON_DECODE.md.
 Its AIRSApp build and 16 focused tests passed; independent review found no
 actionable defect. Generic decode remains broader; cross-image missing body
 status refuses. Native workflow activation, remaining producer fields,
 authenticity and identity remain separate.
+
+The local explicit body-status producer change records false as well as true in
+new comparison metadata. See EXPLICIT_BODY_STATUS.md. Eleven new tests and two
+affected checks passed, including the CLI default path; independent review found
+no actionable defect. Accepted native evidence is reused. Matching remains off
+by default; historical absence stays unknown, and app activation remains separate.
 
 Next reuse sequence:
 

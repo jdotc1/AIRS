@@ -45,7 +45,7 @@ class ExactBodyCandidateCLITests(unittest.TestCase):
         self.assertEqual(result.returncode,0,result.stderr)
         report=json.loads(result.stdout)
         self.assertEqual(report['summary']['matched_count'],0)
-        self.assertNotIn('exact_body_candidates',report['comparison'])
+        self.assertIs(report['comparison']['exact_body_candidates'],False)
 
     def test_manual_pair_retains_precedence_with_flag_enabled(self):
         result=self.invoke(['--match-exact-bodies','--pair',f'{A}={B}'])
