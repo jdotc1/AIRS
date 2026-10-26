@@ -956,3 +956,11 @@ error-fallthrough intervals ending at a forward success entry. Opaque calls and
 raw targets are retained without return, reachability, exclusive-entry or
 postdominator proof. Region refusal preserves the underlying edge result.
 SWIFT_ERROR_FLOW.md specifies the 16-word and already-scanned-prefix limits.
+
+The additional opt-in `swift-region-direct-entries-v1` validator checks only
+caller-local direct B/BL/conditional/register-test branch targets into each
+candidate half-open interval. Unknown words or partial caller coverage prevent
+an absence result; observed conflicts remain visible with exact counts and
+bounded details. It never establishes exclusive entry, indirect/external-entry
+absence, reachability, a postdominator or handler semantics. Default edge/region
+reports and unwind verdicts remain unchanged. See SWIFT_ERROR_FLOW.md.

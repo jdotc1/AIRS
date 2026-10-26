@@ -303,3 +303,10 @@ example and eleven new focused methods. Exclusive entry, catch type, reachable
 join and source-like handler reconstruction remain unimplemented. The next
 semantic step should establish incoming-edge constraints before widening region
 layouts or presenting structured source.
+
+Caller-local direct-entry validation is now implemented as an opt-in supplement,
+with 17 focused passing controls and accepted owned-caller qualification. It
+reports observed side entries or unresolved classification without claiming
+exclusive entry. Next establish a separate structured-presentation eligibility
+contract that consumes these statuses and preserves unresolved indirect/external
+entry limits before presenting source-like handler structure.

@@ -84,6 +84,7 @@ def _parser() -> argparse.ArgumentParser:
     swift_flow.add_argument("input", type=Path)
     swift_flow.add_argument("--arch", choices=("auto", "arm64", "arm64e"), default="auto")
     swift_flow.add_argument("--output", type=Path)
+    swift_flow.add_argument("--validate-region-entries", action="store_true", help="Check caller-local direct entries; requires --include-error-regions")
     swift_flow.add_argument("--include-error-regions", action="store_true", help="Describe bounded structural error intervals; calls remain opaque")
     return parser
 
@@ -102,7 +103,7 @@ def main(argv: list[str] | None = None) -> int:
             exit_code = 1 if args.fail_on_inconsistency and report["summary"]["inconsistency_count"] else 0
         elif args.command == "swift-error-flow":
             source = resolve_input(args.input)
-            report = recover_swift_error_flow_path(source, requested_arch=args.arch, include_error_regions=args.include_error_regions)
+            report = recover_swift_error_flow_path(source, requested_arch=args.arch, include_error_regions=args.include_error_regions, validate_region_entries=args.validate_region_entries)
             output, protected = dumps(report), (source, args.input)
             exit_code = 0 if report["word_scan_complete"] and report["call_details_complete"] else 1
         elif args.command == "decode-blockers":
