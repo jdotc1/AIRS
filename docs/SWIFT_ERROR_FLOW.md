@@ -178,3 +178,58 @@ caller-local direct entries to the accepted interval [0x93c, 0x948). The output
 retains `exclusive_entry_proven: false`. Compiler, disassembly, identity, edge and
 region results were reused without replay. This is source-engine qualification,
 not native UI, installation, distribution or release acceptance.
+
+## Structured-presentation eligibility
+
+```
+python3 -I -B airs_cli.py swift-error-flow Example.dylib --include-error-regions --validate-region-entries --include-structured-presentation --output flow.json
+```
+
+The opt-in `swift-structural-presentation-v1` supplement consumes the in-process
+producer results and creates a bounded display plan. Both region recovery and
+incoming-entry validation options are required. This helper is not an admission
+boundary for arbitrary saved reports. Default reports remain unchanged.
+
+Each retained call receives a `presentation` result:
+
+- `blocked`: the edge or region was not recovered, or unexpected direct entries
+  were observed. Existing instruction and validation evidence remains available.
+- `unresolved`: validation is missing, incomplete, unclassified or inconsistent,
+  or presentation addresses/interval words cannot be bound to the producer facts.
+- `eligible_structural_only`: the recovered interval has complete caller-local
+  direct validation with zero conflicting or unclassified words, and its condition,
+  register, addresses and instruction PCs form a consistent bounded display plan.
+
+Eligible plans retain a structural-candidate label, condition PC and tested
+register, nonzero error condition, error interval with copied raw instruction
+records, and success entry PC. Instructions stay in producer order, with at most
+16 words. Opaque calls retain their raw targets and opaque label. Warnings travel
+with every presentation result. No display plan is emitted for blocked or
+unresolved cases.
+
+The helper requires literal completeness/proof flags and zero integer validation
+counts; missing or contradictory fields cannot silently enable presentation.
+Summary counts partition all retained calls across the three statuses. They do
+not cover omitted calls; original scan/detail completeness and omission counters
+remain authoritative. CLI exit status is unchanged and does not grant semantic
+approval. This is a JSON display plan, not a native renderer or UI activation.
+
+`source_reconstruction_allowed` is always false. Eligibility permits a labeled
+structural diagram only, never a source-like do/catch claim. Caller-local checks
+do not exclude indirect/external entry, prove reachable branches, establish call
+return or exclusive entry, or reconstruct handler meaning.
+
+Seventeen new focused methods passed across positive, boundary and review
+controls. They cover conflicts, unresolved states, missing/inconsistent metadata,
+strict integer/boolean fields, interval/word/register bindings, default shape,
+retained-call accounting, API/CLI prerequisites, opaque warnings and instruction
+copy isolation. Independent semantic review found no blocking correctness issue.
+Accepted edge, region and incoming-validation results were reused.
+
+The new eligibility helper alone consumed the accepted owned example's edge,
+region and incoming-validation records. It produced an eligible structural plan
+for test PC 0x938, x21 nonzero error interval [0x93c, 0x948), and success entry
+0x948. It preserved the opaque call at 0x940 and disabled source reconstruction.
+No binary read/hash/admission, compiler, disassembly, edge, region or incoming
+analysis was repeated for this qualification. Native UI, installation and release
+acceptance remain separate.

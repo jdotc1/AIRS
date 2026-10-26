@@ -310,3 +310,10 @@ reports observed side entries or unresolved classification without claiming
 exclusive entry. Next establish a separate structured-presentation eligibility
 contract that consumes these statuses and preserves unresolved indirect/external
 entry limits before presenting source-like handler structure.
+
+Structured-presentation eligibility now consumes qualified region/direct-entry
+facts and emits bounded labeled display plans only for eligible structural
+candidates. Seventeen new focused controls and the accepted owned-example records
+qualify the source contract. Source reconstruction remains disabled. Next add a
+bounded renderer that preserves blocked/unresolved evidence, raw instructions,
+opaque-call labels and all proof limits; native UI activation remains separate.
