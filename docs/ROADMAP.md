@@ -196,12 +196,20 @@ AIRSApp build and 17 focused tests passed; independent review found no actionabl
 defect. Cross-image use refuses; original-binary coverage, remaining producer
 fields, authenticity, identity and native activation remain separate.
 
-The local body-disabled cross-image coverage validator detects omitted manual,
+The body-disabled cross-image coverage validator, merged in public PR20, detects omitted manual,
 symbol and side-specific unmatched groups after validated pins. See
 BODY_DISABLED_ROW_COVERAGE.md. Its AIRSApp build and 18 focused tests passed;
 independent review found no actionable defect. Explicit false body status is
 required; unknown/enabled status and same-image use refuse. Body-enabled
 coverage, binary completeness, authenticity and native activation remain separate.
+
+The local body-enabled cross-image coverage validator requires every projected
+body pair plus all remaining groups after manual/body consumption. See
+BODY_ENABLED_ROW_COVERAGE.md. Its AIRSApp build and 20 focused tests passed;
+independent review found no actionable defect. Existing candidate precedence and
+architecture/subtype gates are reused; unknown/false status and same-image use
+refuse. Original-binary completeness, authenticity, remaining producer fields and
+native activation remain separate.
 
 Next reuse sequence:
 
