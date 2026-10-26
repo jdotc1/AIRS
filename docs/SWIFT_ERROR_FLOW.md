@@ -370,3 +370,28 @@ retained disassembly words. It now yields error interval 0x938–0x948, success 
 No sealed binary read/hash/admission, compiler or disassembly pass was repeated.
 This is not a new end-to-end real-binary CLI or native-app qualification. No
 packaging, publication, installation or production-store changes were performed.
+
+## Final post-indexed SP restore (region v3)
+
+`swift-sync-error-region-v3` adds one common return-tail shape using the existing
+ARM64 decoder: a final SP-based post-indexed LDP immediately followed by exact
+RET x30. Destination registers must be distinct x19–x30. The positive stack
+increment must be divisible by 16 and at most 496, the aligned signed scaled
+encoding bound. Offset restores may precede it under the existing restrictions.
+
+Both instructions must fit the already scanned prefix and eight-word tail budget.
+Zero/negative/misaligned increments, duplicate or unsupported registers, other
+bases, pre-indexed forms, nonstandard returns and any instruction between the
+pop and RET decline. Direct-entry guards still cover the new tail, and
+restore_state_proven remains false. No stack balance, restored LR or unwind proof
+is inferred from this syntactic shape. Edge v2, incoming v2 and presentation v2
+retain their identities, endpoints and limitations; default output is unchanged.
+
+Eleven new focused methods passed in composed runs, including the first red/green
+case, encoding limits, malformed controls, return/budget/prefix restrictions,
+side-entry blocking, offset-restore composition and one synthetic CLI text case.
+Three changed-boundary region/CLI and legacy-tail controls passed. Accepted
+shared-epilogue results were reused; no unchanged full suite or real binary
+admission, hash, compiler or disassembly pass was repeated. Independent semantic
+review found no blocking issue. This is synthetic source/CLI qualification, not
+real-binary prevalence, native-app or release qualification.

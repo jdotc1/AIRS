@@ -20,7 +20,7 @@ from .types import InputError, Limits, MachOImage
 
 MODEL = 'swift-sync-error-edges-v2'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v2'
+REGION_MODEL = 'swift-sync-error-region-v3'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v2'
 INCOMING_EVIDENCE_LIMIT = 16
@@ -171,6 +171,14 @@ def _shared_epilogue(data: bytes, function, success: int, join: int) -> dict | N
             if (instruction.kind == 'ldp' and instruction.rn == 31 and instruction.addressing == 'offset'
                     and instruction.immediate >= 0 and 19 <= instruction.rd <= 30 and 19 <= instruction.rt2 <= 30):
                 continue
+            if (instruction.kind == 'ldp' and instruction.rn == 31 and instruction.addressing == 'post'
+                    and 0 < instruction.immediate <= 496 and instruction.immediate % 16 == 0
+                    and 19 <= instruction.rd <= 30 and 19 <= instruction.rt2 <= 30
+                    and index + 1 < SHARED_WORDS):
+                following, _ = word_at(pc + 4)
+                if following.kind == 'ret':
+                    continue
+                return None
             if (instruction.kind == 'add' and instruction.rd == instruction.rn == 31
                     and 0 < instruction.immediate <= 4096 and instruction.immediate % 16 == 0):
                 continue
