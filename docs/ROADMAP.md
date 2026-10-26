@@ -238,12 +238,19 @@ zero skips; independent review found no actionable defect. Only baseline-diff wa
 regenerated. Structural validity does not establish semantic coverage, source
 binding, authenticity or GUI activation; accepted runtime evidence is reused.
 
-The local owned producer/native coverage bridge qualifies exact Python-produced
+The owned producer/native coverage bridge, merged in public PR26, qualifies exact Python-produced
 comparison bytes through covered decoding and strict batch acceptance. See
 PRODUCER_COVERAGE_BRIDGE.md. Eight new controls and two mutation refusals passed;
 independent review found no actionable defect. Production behavior and GUI callers
 are unchanged; accepted app/runtime evidence is reused. Packaged transport,
 authenticity, identity and GUI acceptance remain separate.
+
+The local producer/native observation-parity qualification checks reason sorting
+and multiplicity, relative addresses, checked-PC order and raw evidence text. See
+PRODUCER_OBSERVATION_PARITY.md. Seven new controls and two consistent-accounting
+label refusals passed; independent review found no actionable defect. Existing
+coverage controls and production code remain unchanged; accepted app/runtime
+evidence is reused. Binary equivalence, authenticity and GUI acceptance remain separate.
 
 Next reuse sequence:
 

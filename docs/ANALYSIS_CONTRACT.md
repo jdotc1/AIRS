@@ -931,3 +931,15 @@ protocol boundary. Synthetic digests are placeholders; mutations isolate missing
 groups and foreign source endpoints while retaining structural validity. These
 controls do not change matching or GUI activation, authenticate bytes, establish
 analysis truth or prove packaged-engine transport and original-binary completeness.
+
+
+## 43. Owned producer/native observation-label parity
+
+The separate observation controls (PRODUCER_OBSERVATION_PARITY.md) qualify the
+producer/native signature boundary for reason sorting with duplicate preservation,
+relative addresses, checked-PC ordering, raw evidence text and presentation-only
+messages. Expected changed/unchanged labels are independently prescribed; flipped
+labels with consistent accounting must refuse strict acceptance. Existing matching
+and observation implementations remain unchanged. Synthetic saved-report parity
+does not prove machine-code equivalence, analysis truth, regression severity,
+authenticity, packaged transport or GUI acceptance.
