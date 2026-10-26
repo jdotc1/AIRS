@@ -7,8 +7,7 @@ input data and are never loaded or executed by the analyzer.
 ## Development source and the published app
 
 This is the **single active AIRS development repository**. Development branches,
-pull requests, issues and future releases belong here. The retired private
-repository is not a development dependency; its history is not imported.
+pull requests, issues and future releases belong here.
 
 The current release is the
 [AIRS 0.3.4/build 13 preview](https://github.com/jdotc1/AIRS/releases/tag/v0.3.4-build13),
@@ -21,8 +20,8 @@ The [build 12 records](docs/RELEASE_0_3_3_BUILD12.md) and
 
 Build 10 introduced the isolated downloaded-app acceptance profile.
 See [its evidence and limits](docs/RELEASE_0_3_3_BUILD10.md).
-SOURCE_SNAPSHOT.json records the retained baseline and the final migration's
-changed/reused sanitization scope. Subsequent development is committed directly
+SOURCE_SNAPSHOT.json records the retained baseline and its changed/reused
+sanitization scope. Subsequent development is committed directly
 here, with private execution records kept outside the tracked source tree.
 
 The source includes the v40 baseline: bounded X29-relative
