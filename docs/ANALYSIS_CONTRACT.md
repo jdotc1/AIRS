@@ -860,3 +860,17 @@ Missing/enabled body status and same-image use refuse, even for empty sources.
 This adds saved-report omission detection, not original-binary completeness,
 authenticity, identity, exact remaining fields or native activation. Earlier APIs
 retain partial-output scope; defaults are unchanged.
+
+
+## 37. Explicit-body-enabled cross-image saved-report coverage
+
+The opt-in body-enabled coverage validator (BODY_ENABLED_ROW_COVERAGE.md)
+composes declared-row/name/order proofs and requires cross-image sources with
+explicit true body status. The existing body projection, guarded by equal source
+architecture and exact subtype, supplies all required body keys after manual pins.
+Consumed endpoints are excluded per side before rebuilding remaining symbol and
+unmatched groups. Established symbols and duplicate blockers retain precedence.
+Model/configuration incompatibility retains ambiguous labels without suppressing
+coverage. Missing/false status or same-image use refuses, even when empty. Coverage
+is limited to saved-report groups, not original bytes, function identity, complete
+remaining producer fields or GUI activation. Earlier APIs/defaults retain scope.
