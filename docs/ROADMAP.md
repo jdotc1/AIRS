@@ -203,13 +203,20 @@ independent review found no actionable defect. Explicit false body status is
 required; unknown/enabled status and same-image use refuse. Body-enabled
 coverage, binary completeness, authenticity and native activation remain separate.
 
-The local body-enabled cross-image coverage validator requires every projected
+The body-enabled cross-image coverage validator, merged in public PR21, requires every projected
 body pair plus all remaining groups after manual/body consumption. See
 BODY_ENABLED_ROW_COVERAGE.md. Its AIRSApp build and 20 focused tests passed;
 independent review found no actionable defect. Existing candidate precedence and
 architecture/subtype gates are reused; unknown/false status and same-image use
 refuse. Original-binary completeness, authenticity, remaining producer fields and
 native activation remain separate.
+
+The local covered comparison decoder provides one bounded native entry point
+for the three saved-report coverage domains. See COVERED_COMPARISON_DECODE.md.
+Its AIRSApp build and 16 focused tests passed; independent review found no
+actionable defect. Generic decode remains broader; cross-image missing body
+status refuses. Native workflow activation, remaining producer fields,
+authenticity and identity remain separate.
 
 Next reuse sequence:
 
