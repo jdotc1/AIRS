@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from fixture_storage import temporary_directory
 from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
@@ -16,7 +17,7 @@ def load():
 class NativeBuildReuseFirstTests(unittest.TestCase):
     def test_exact_metadata_reuses_only_recorded_build_directory(self):
         tool = load()
-        with tempfile.TemporaryDirectory(dir=ROOT / 'local-evidence/handoff-strict-coverage') as folder:
+        with temporary_directory(ROOT) as folder:
             root = Path(folder); build = root / 'native/.build/owned/release'; build.mkdir(parents=True)
             (build / 'AIRSApp').write_bytes(b'owned'); (build / 'airs-entitlements').write_bytes(b'owned')
             (build / 'Lumen_LumenUI.bundle').mkdir(); (build / 'Lumen_LumenUI.bundle/theme.json').write_text('{}')
@@ -33,7 +34,7 @@ class NativeBuildReuseFirstTests(unittest.TestCase):
 class NativeBuildReuseBoundaryTests(unittest.TestCase):
     def setUp(self):
         self.tool = load()
-        self.temp = tempfile.TemporaryDirectory(dir=ROOT / 'local-evidence/handoff-strict-coverage')
+        self.temp = temporary_directory(ROOT)
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name); self.build = self.root / 'native/.build/owned/release'
         self.build.mkdir(parents=True)

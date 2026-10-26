@@ -6,6 +6,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from fixture_storage import temporary_directory
 from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
@@ -29,7 +30,7 @@ class RuntimeSanitizerFirstTests(unittest.TestCase):
 class RuntimeSanitizerBoundaryTests(unittest.TestCase):
     def setUp(self):
         self.tool = load()
-        self.temp = tempfile.TemporaryDirectory(dir=ROOT / 'local-evidence/handoff-strict-coverage')
+        self.temp = temporary_directory(ROOT)
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         self.stage = self.root / '.airs-package.owned'

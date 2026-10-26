@@ -2,6 +2,7 @@
 import importlib.util
 from pathlib import Path
 import unittest
+from fixture_storage import temporary_directory
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
@@ -28,7 +29,7 @@ class ReleaseCandidateInitialTests(unittest.TestCase):
 class ReleaseCandidateBoundaryTests(unittest.TestCase):
     def setUp(self):
         import tempfile
-        self.temporary = tempfile.TemporaryDirectory(dir=ROOT / 'local-evidence/handoff-strict-coverage')
+        self.temporary = temporary_directory(ROOT)
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
         self.builder = load('build_provenance')
