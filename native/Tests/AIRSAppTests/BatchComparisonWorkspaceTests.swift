@@ -85,6 +85,48 @@ final class BatchComparisonWorkspaceTests: XCTestCase {
         XCTAssertFalse(workspace.isBusy)
     }
     @MainActor
+    func testStrictSavedCoverageRefusesLegacyCrossImageFixtureWithoutStatus() async throws {
+        let (root, before, after, diff) = try fixture()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let history = BatchHistory(root: root.appendingPathComponent("history"))
+        let library = ReportLibrary(root: root.appendingPathComponent("library"))
+        let old = AuditWorkspace(library: library, recents: BatchComparisonRecents(),
+                                 batchAudit: { _ in before }, batchHistory: history)
+        let new = AuditWorkspace(library: library, recents: BatchComparisonRecents(),
+                                 batchAudit: { _ in after }, batchHistory: history)
+        let baselineURL = root.appendingPathComponent("old.bin")
+        let currentURL = root.appendingPathComponent("new.bin")
+        try Data().write(to: baselineURL)
+        try Data().write(to: currentURL)
+        old.startBatch([baselineURL]); try await settle(old)
+        new.startBatch([currentURL]); try await settle(new)
+        let baseline = try XCTUnwrap(old.batchSnapshot)
+        let current = try XCTUnwrap(new.batchSnapshot)
+        let workspace = AuditWorkspace(library: library, recents: BatchComparisonRecents(),
+                                       batchHistory: history, batchCompare: { _, _ in diff })
+        workspace.prepareBatchComparison(baseline: baseline.id, current: current.id)
+        try await settle(workspace)
+        workspace.compareSavedBatches([.init(baselineID: baseline.items[0].id,
+                                             currentID: current.items[0].id)],
+                                      requireSavedReportCoverage: true)
+        try await settle(workspace)
+        let result = try XCTUnwrap(workspace.batchComparisonResult)
+        XCTAssertEqual(result.rows[0].state, "unavailable")
+        XCTAssertNil(result.rows[0].comparison)
+        XCTAssertNil(result.rows[0].comparisonData)
+        let exported = try XCTUnwrap(JSONSerialization.jsonObject(with: result.exportData()) as? [String: Any])
+        let rows = try XCTUnwrap(exported["rows"] as? [[String: Any]])
+        XCTAssertEqual(rows.first?["state"] as? String, "unavailable")
+        XCTAssertNil(rows.first?["comparison"])
+        // A new invocation captures its own policy; the legacy programmatic default stays false.
+        workspace.compareSavedBatches([.init(baselineID: baseline.items[0].id,
+                                             currentID: current.items[0].id)])
+        try await settle(workspace)
+        let legacy = try XCTUnwrap(workspace.batchComparisonResult)
+        XCTAssertEqual(legacy.rows.first?.state, "compared")
+        XCTAssertEqual(legacy.rows.first?.comparisonData, diff)
+    }
+    @MainActor
     func testNewSavedBatchStoreReopensForNativePairingSeed() async throws {
         // Deliberately retained, owned UI seed. This never audits or executes inputs.
         let root = project.appendingPathComponent("build/batch-comparison-evidence/ui-seed")

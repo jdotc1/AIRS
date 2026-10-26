@@ -1,6 +1,6 @@
 # Swift synchronous throwing-call recovery
 
-The independent `swift-sync-error-edges-v1` model identifies bounded structural
+The independent `swift-sync-error-edges-v2` model identifies bounded structural
 success/error return edges in ordinary ARM64 Mach-O images. This is the first
 Swift decompilation slice: it does not reconstruct complete `do/catch` source.
 The existing unwind audit and its model identity remain unchanged.
@@ -14,9 +14,9 @@ python3 -I -B airs_cli.py swift-error-flow Example.dylib --output flow.json
 A direct BL must target an exact LC_FUNCTION_STARTS entry with one public,
 file-backed executable-section symbol. Section-end labels, aliases, private,
 resolver and alternate entries do not supply declarations. The complete supported
-mangling is two length-prefixed ASCII identifiers followed by `yS2iKF`: an
-ordinary synchronous, untyped throwing free function taking one unlabeled
-Swift.Int and returning Swift.Int. Other declarations remain declined, including
+mangling is two length-prefixed ASCII identifiers followed by `yS2iKF` or
+`yySiKF`: an ordinary synchronous, untyped throwing free function taking one
+unlabeled Swift.Int and returning Swift.Int or Swift.Void, respectively. Other declarations remain declined, including
 async, typed throws, generic functions, methods and thunks. Symbol declarations
 are structural evidence, not authenticated runtime targets.
 
@@ -283,3 +283,43 @@ facts and expected blocked-display records, not a replay of the full producer.
 No binary read/hash/admission, compiler, disassembly, edge, region, incoming or
 eligibility analysis was repeated for this fixture. Native UI, installation and
 release acceptance remain separate.
+
+## Int-to-Void declaration extension (edge model v2)
+
+The v2 edge model adds the exact `yySiKF` suffix for ordinary synchronous,
+untyped throwing free functions taking one unlabeled Swift.Int and returning
+Swift.Void. This admits common validation functions such as
+`validate(_ value: Int) throws`. The previous `yS2iKF` mapping remains unchanged;
+v1 reports retain their historical meaning and identity. Renderer model admission
+follows the current producer identity rather than silently relabeling old reports.
+Region, incoming and presentation component models are unchanged.
+
+The exact full-symbol matcher reuses the existing bounded identifier parser,
+Swift declaration facts and x21 convention. No demangler dependency is added.
+Nonthrowing, async, typed-throws, methods, generic declarations, argument-count
+changes, thunk/specialization suffixes and ambiguous symbols still decline. The
+primary grammar reference remains the Swift project's Mangling.rst linked above.
+A development-only Swift demangler independently confirmed the owned spelling as
+`AIRSValidate.validate(Swift.Int) throws -> ()`.
+
+Ten new focused methods passed, covering the declaration, prior scalar mapping,
+full-suffix refusals, identifier/context boundaries, symbol ambiguity, error-test
+width, JSON/text integration and the owned handler-layout refusal. Independent
+semantic review found no blocking correctness issue. Prior accepted unchanged
+edge, region, entry and renderer checks were reused.
+
+One optimized owned Swift dylib was compiled from
+`fixtures/swift-error-flow/OwnedVoidThrows.swift`, independently disassembled and
+analyzed once. The v2 pass scanned 174 words and retained all 14 direct calls:
+one recovered throwing-call candidate and 13 declines. The call at 0x930 targets
+`validate` at 0x890; the x21 test at 0x934 has success successor 0x948 and error
+successor 0x938, matching the disassembly. The image was inspected as data and
+never executed.
+
+The actual error block ends with a B at 0x944 targeting epilogue 0x94c, rather
+than success entry 0x948. Existing region rules deliberately decline that layout
+as `error_region_control_flow_unmodeled`; presentation remains blocked. This
+qualification establishes new declaration/call-edge coverage, not full handler
+recovery. The different-success-entry/epilogue layout is a concrete next bounded
+region extension requiring separate positive and refusal controls. Native app,
+GUI, installation and release qualification remain separate.

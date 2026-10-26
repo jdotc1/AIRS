@@ -18,7 +18,7 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v1'
+MODEL = 'swift-sync-error-edges-v2'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v1'
 REGION_WORDS = 16
@@ -28,7 +28,7 @@ PRESENTATION_MODEL = 'swift-structural-presentation-v1'
 
 
 def throwing_declaration(symbol: str) -> dict | None:
-    """Exact ASCII module/free-name, one unlabeled Int -> Int, untyped throws.
+    """Exact ASCII module/free-name, one unlabeled Int -> Int or Void, untyped throws.
 
     Swift Mangling.rst's identifiers, standard Int substitution and throws suffix;
     qualified methods, specializations, typed/async/generic/thunk forms refuse.
@@ -49,10 +49,11 @@ def throwing_declaration(symbol: str) -> dict | None:
         if len(value) != size or re.fullmatch(r'[A-Za-z_][A-Za-z_0-9]*', value) is None:
             return None
         identifiers.append(value)
-    if name[cursor:] != 'yS2iKF':
+    result = {'yS2iKF': 'Swift.Int', 'yySiKF': 'Swift.Void'}.get(name[cursor:])
+    if result is None:
         return None
     return {'module': identifiers[0], 'name': identifiers[1],
-            'parameters': ['Swift.Int'], 'result': 'Swift.Int',
+            'parameters': ['Swift.Int'], 'result': result,
             'convention': 'swift_sync_untyped_throws', 'error_register': 'x21',
             'source': 'exact_external_symbol_grammar'}
 
@@ -369,7 +370,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
             'functions': scans, 'calls': calls,
             'limitations': ['Structural instruction-word candidates, not runtime reachability or dominance proof.',
                             'Exact symbol declarations are not authenticated runtime targets or function identity.',
-                            'Only ordinary synchronous untyped Swift Int-to-Int free-function declarations are admitted.',
+                            'Only ordinary synchronous untyped Swift Int-to-Int or Int-to-Void free-function declarations are admitted.',
                             'Only bounded 64-bit MOV/NOP and forward CBZ/CBNZ return windows are recovered.',
                             'Embedded-data, relocation and symbol-only function boundaries are excluded by existing admission tags.',
                             'No catch type, handler semantics, source equivalence, unwind verdict or async claim is made.']}

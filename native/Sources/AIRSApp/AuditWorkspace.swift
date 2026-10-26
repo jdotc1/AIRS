@@ -165,7 +165,6 @@ final class AuditWorkspace: ObservableObject {
     private let analysisReuse: AnalysisReuse
     private let recents: any WorkspaceRecentsRecording
     private let batches = ImageBatchRunner()
-    private let batchComparisons = BatchComparisonRunner()
     private let history: BatchHistory
     private let batchCompare: (@Sendable (Data, Data) async throws -> Data)?
     private let batchAudit: (@Sendable (URL) async throws -> Data)?
@@ -402,12 +401,13 @@ final class AuditWorkspace: ObservableObject {
         }
     }
 
-    func compareSavedBatches(_ pairs: [BatchImagePair]) {
+    func compareSavedBatches(_ pairs: [BatchImagePair], requireSavedReportCoverage: Bool = false) {
         guard !isBusy, let plan = batchComparisonPlan else { return }
         do {
             try plan.validate(pairs)
             let configuration = batchCompare == nil ? try EngineConfiguration.resolve(pythonSetting: pythonPath, useExternalPython: usesExternalPython) : nil
             let injectedCompare = batchCompare
+            let batchComparisons = BatchComparisonRunner(requireSavedReportCoverage: requireSavedReportCoverage)
             batchComparisonResult = nil
             perform("Comparing explicitly paired saved reports…", acceptsCancelledResult: true) { [weak self, history, library, batchComparisons, runner] in
                 let old = try await history.metadata(plan.baseline.id)

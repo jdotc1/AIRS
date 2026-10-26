@@ -9,10 +9,15 @@ CONFIGURATION="debug"
 AD_HOC_SIGN=0
 PRIVATE_PYTHON="$PROJECT_DIR/build/private-python-3.15.0"
 EXTERNAL_PYTHON=0
+SOURCE_COMMIT=""
+ACCEPTED_VENDOR_SOURCE=""
+NATIVE_BUILD_RECEIPT=""
+BUNDLE_VERSION="0.3.3"
+BUNDLE_BUILD="12"
 
 usage() {
     cat <<'USAGE'
-Usage: scripts/package-app.sh [--output-dir DIRECTORY] [--debug|--release] [--ad-hoc-sign] [--python-runtime DIRECTORY|--external-python]
+Usage: scripts/package-app.sh [--output-dir DIRECTORY] [--debug|--release] [--ad-hoc-sign] [--python-runtime DIRECTORY|--external-python] [--version VERSION --build NUMBER --source-commit COMMIT] [--accepted-vendor-source COMMIT] [--native-build-receipt FILE]
 
 Build and package AIRS.app for local use on macOS 14 or newer.
 Includes the native airs-entitlements command at Contents/MacOS/airs-entitlements.
@@ -39,6 +44,16 @@ while [ "$#" -gt 0 ]; do
         --python-runtime)
             if [ "$#" -lt 2 ]; then printf '%s\n' 'Missing directory after --python-runtime.' >&2; exit 2; fi
             PRIVATE_PYTHON="$2"; shift 2 ;;
+        --version|--build|--source-commit|--accepted-vendor-source|--native-build-receipt)
+            if [ "$#" -lt 2 ]; then printf 'Missing value for %s\n' "$1" >&2; exit 2; fi
+            case "$1" in
+                --version) BUNDLE_VERSION="$2" ;;
+                --build) BUNDLE_BUILD="$2" ;;
+                --source-commit) SOURCE_COMMIT="$2" ;;
+                --accepted-vendor-source) ACCEPTED_VENDOR_SOURCE="$2" ;;
+                --native-build-receipt) NATIVE_BUILD_RECEIPT="$2" ;;
+            esac
+            shift 2 ;;
         --external-python) EXTERNAL_PYTHON=1; shift ;;
         --debug) CONFIGURATION="debug"; shift ;;
         --release) CONFIGURATION="release"; shift ;;
@@ -47,6 +62,15 @@ while [ "$#" -gt 0 ]; do
         *) printf 'Unknown option: %s\n' "$1" >&2; usage >&2; exit 2 ;;
     esac
 done
+
+python3 -B - "$BUNDLE_VERSION" "$BUNDLE_BUILD" "$SOURCE_COMMIT" <<'PYIDENTITY'
+import re, sys
+version, build, commit = sys.argv[1:]
+if (re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+', version) is None
+        or re.fullmatch(r'[1-9][0-9]{0,9}', build) is None
+        or (commit and re.fullmatch(r'[0-9a-f]{40}', commit) is None)):
+    raise SystemExit('Invalid version, build or exact source commit')
+PYIDENTITY
 
 if [ "$(uname -s)" != "Darwin" ]; then
     printf '%s\n' 'Packaging requires macOS 14+ and the Apple Swift toolchain.' >&2
@@ -80,15 +104,40 @@ if [ "$EXTERNAL_PYTHON" -eq 0 ]; then
 fi
 
 # Release executables must not embed this machine's checkout or build paths.
-BUILD_FLAGS=(--configuration "$CONFIGURATION")
+BUILD_FLAGS=(--configuration "$CONFIGURATION" --jobs 2)
 if [ "$CONFIGURATION" = "release" ]; then
-    python3 -I -B "$SCRIPT_DIR/check-release-content.py" --lumen-source "$PROJECT_DIR/native/Vendor/Lumen"
+    if [ -n "$ACCEPTED_VENDOR_SOURCE" ]; then
+        # Caller supplies a retained accepted source identity. Compare immutable
+        # Git tree identity only; never rescan unchanged vendor content.
+        python3 -B - "$PROJECT_DIR" "$ACCEPTED_VENDOR_SOURCE" <<'PYVENDOR'
+import re, subprocess, sys
+root, accepted = sys.argv[1:]
+if re.fullmatch(r'[0-9a-f]{40}', accepted) is None:
+    raise SystemExit('Expected an exact accepted vendor-source commit')
+def git(*args):
+    return subprocess.check_output(['git', '-C', root, *args], text=True).strip()
+if git('rev-parse', accepted + ':native/Vendor/Lumen') != git('rev-parse', 'HEAD:native/Vendor/Lumen'):
+    raise SystemExit('Vendor source differs from accepted identity')
+if git('status', '--porcelain', '--untracked-files=all', '--', 'native/Vendor/Lumen'):
+    raise SystemExit('Vendor working tree differs from accepted identity')
+if git('ls-files', '--others', '--ignored', '--exclude-standard', '--',
+       'native/Vendor/Lumen/Sources', 'native/Vendor/Lumen/Package.swift'):
+    raise SystemExit('Ignored vendor compiler/resource inputs are not covered by the accepted identity')
+print('Reused accepted immutable Lumen source identity; no source scan repeated.')
+PYVENDOR
+    else
+        python3 -I -B "$SCRIPT_DIR/check-release-content.py" --lumen-source "$PROJECT_DIR/native/Vendor/Lumen"
+    fi
     BUILD_FLAGS+=(-Xswiftc -debug-prefix-map -Xswiftc "$PROJECT_DIR=/AIRS"
                  -Xswiftc -file-prefix-map -Xswiftc "$PROJECT_DIR=/AIRS")
 fi
-swift build --package-path "$PROJECT_DIR/native" "${BUILD_FLAGS[@]}" --product AIRSApp
-swift build --package-path "$PROJECT_DIR/native" "${BUILD_FLAGS[@]}" --product airs-entitlements
-BUILD_DIR="$(swift build --package-path "$PROJECT_DIR/native" --configuration "$CONFIGURATION" --show-bin-path)"
+if [ -n "$NATIVE_BUILD_RECEIPT" ]; then
+    BUILD_DIR="$(python3 -B "$SCRIPT_DIR/reuse_native_build.py" --source "$PROJECT_DIR" --receipt "$NATIVE_BUILD_RECEIPT")"
+else
+    swift build --package-path "$PROJECT_DIR/native" "${BUILD_FLAGS[@]}" --product AIRSApp
+    swift build --package-path "$PROJECT_DIR/native" "${BUILD_FLAGS[@]}" --product airs-entitlements
+    BUILD_DIR="$(swift build --package-path "$PROJECT_DIR/native" --configuration "$CONFIGURATION" --show-bin-path)"
+fi
 if [ ! -x "$BUILD_DIR/AIRSApp" ]; then
     printf '%s\n' 'Swift did not produce the expected AIRSApp executable.' >&2
     exit 3
@@ -128,6 +177,13 @@ if [ "$EXTERNAL_PYTHON" -eq 0 ]; then
     mkdir -p "$CONTENTS/Frameworks" "$CONTENTS/Resources/RuntimeNotices"
     /usr/bin/ditto "$PRIVATE_PYTHON/Python.framework" "$CONTENTS/Frameworks/Python.framework"
     /usr/bin/ditto "$PRIVATE_PYTHON/Notices" "$CONTENTS/Resources/RuntimeNotices"
+    # The application does not use CPython's deliberately malformed test archives.
+    # Trim only this fresh bundle copy; preserve the prepared runtime and receipt.
+    rm -rf "$CONTENTS/Frameworks/Python.framework/Versions/3.15/lib/python3.15/test" \
+        "$CONTENTS/Frameworks/Python.framework/Versions/3.15/lib/python3.15/ensurepip"
+    python3 -B "$SCRIPT_DIR/sanitize_runtime_staging.py" \
+        --framework "$CONTENTS/Frameworks/Python.framework" \
+        > "$CONTENTS/Resources/RuntimeNotices/runtime-staging.json"
     # Keep machine-specific verification metadata local. This is informational
     # provenance only; the sealed receipt above remains the reuse authority.
     python3 -I -B - "$PRIVATE_PYTHON/runtime-receipt.json" "$CONTENTS/Resources/RuntimeNotices/runtime-info.json" <<'PYINFO'
@@ -135,7 +191,9 @@ import json, sys
 from pathlib import Path
 receipt = json.loads(Path(sys.argv[1]).read_text())
 keys = ("python_version", "source_url", "source_sha256", "omitted", "scope")
-Path(sys.argv[2]).write_text(json.dumps({k: receipt[k] for k in keys}, indent=2) + "\n")
+info = {k: receipt[k] for k in keys}
+info["packaged_omissions"] = ["lib/python3.15/test", "lib/python3.15/ensurepip"]
+Path(sys.argv[2]).write_text(json.dumps(info, indent=2) + "\n")
 PYINFO
     cp "$PRIVATE_PYTHON/Python.framework/Versions/3.15/lib/python3.15/LICENSE.txt" "$CONTENTS/Resources/RuntimeNotices/Python-LICENSE.txt"
 fi
@@ -201,6 +259,13 @@ cat > "$CONTENTS/Info.plist" <<'PLIST'
 </dict>
 </plist>
 PLIST
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $BUNDLE_VERSION" "$CONTENTS/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUNDLE_BUILD" "$CONTENTS/Info.plist"
+if [ -n "$SOURCE_COMMIT" ]; then
+    python3 -B "$SCRIPT_DIR/build_provenance.py" --source "$PROJECT_DIR" \
+        --expected-commit "$SOURCE_COMMIT" --bundle-id dev.airs.app --build "$BUNDLE_BUILD" \
+        --output "$CONTENTS/Resources/AIRSBuildProvenance.json"
+fi
 if [ "$EXTERNAL_PYTHON" -eq 0 ]; then
     /usr/libexec/PlistBuddy -c 'Add :AIRSPrivatePythonVersion string 3.15.0' "$CONTENTS/Info.plist"
 fi

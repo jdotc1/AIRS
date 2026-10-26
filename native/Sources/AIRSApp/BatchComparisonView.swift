@@ -9,6 +9,7 @@ struct BatchComparisonView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var choices: [UUID: UUID]
     @State private var detail: ComparisonDocument?
+    @State private var requireSavedReportCoverage = true
 
     init(plan: BatchComparisonPlan, workspace: AuditWorkspace) {
         self.plan = plan; self.workspace = workspace
@@ -65,8 +66,14 @@ struct BatchComparisonView: View {
                     ForEach(plan.baseline.items) { item in imageLabel(item) }
                 }
             }
+            Toggle("Require complete saved-report row coverage", isOn: $requireSavedReportCoverage)
+                .disabled(workspace.isBusy)
+            Text("When enabled, the comparator must account for every relevant source-report function group. Missing or ambiguous coverage refuses that pair; it never falls back to an unchecked comparison. This is not binary authentication.")
+                .font(.caption).foregroundStyle(.secondary)
             if !valid { LumenBanner("A baseline image is selected more than once. Each image may be paired only once.", tone: .warning) }
-            Button("Confirm Pairing and Compare") { workspace.compareSavedBatches(pairs) }
+            Button("Confirm Pairing and Compare") {
+                workspace.compareSavedBatches(pairs, requireSavedReportCoverage: requireSavedReportCoverage)
+            }
                 .disabled(workspace.isBusy || !valid)
         }
     }

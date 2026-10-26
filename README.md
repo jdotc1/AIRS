@@ -7,20 +7,21 @@ input data and are never loaded or executed by the analyzer.
 ## Development source and the published app
 
 This is the **single active AIRS development repository**. Development branches,
-pull requests, issues and future releases belong here. The retired private
-repository is not a development dependency; its history is not imported.
+pull requests, issues and future releases belong here.
 
-Current source includes the accepted **0.3.3/build 12 sidebar corrections**.
 The current release is the
-[AIRS 0.3.3/build 12 preview](https://github.com/jdotc1/AIRS/releases/tag/v0.3.3-build12),
-using the accepted signed, notarized and stapled candidate. See
-[build 12 evidence and limits](docs/RELEASE_0_3_3_BUILD12.md) and
-[sidebar acceptance](docs/SIDEBAR_NAVIGATION.md).
+[AIRS 0.3.4/build 13 preview](https://github.com/jdotc1/AIRS/releases/tag/v0.3.4-build13),
+using the accepted signed, notarized and stapled candidate. Browser-download and
+local App Translocation acceptance are recorded in
+[current release qualification](docs/CURRENT_SOURCE_RELEASE_GATES.md).
+**Independent clean-machine and minimum-macOS acceptance remain pending.**
+The [build 12 records](docs/RELEASE_0_3_3_BUILD12.md) and
+[sidebar acceptance](docs/SIDEBAR_NAVIGATION.md) retain their historical scope.
 
 Build 10 introduced the isolated downloaded-app acceptance profile.
 See [its evidence and limits](docs/RELEASE_0_3_3_BUILD10.md).
-SOURCE_SNAPSHOT.json records the retained baseline and the final migration's
-changed/reused sanitization scope. Subsequent development is committed directly
+SOURCE_SNAPSHOT.json records the retained baseline and its changed/reused
+sanitization scope. Subsequent development is committed directly
 here, with private execution records kept outside the tracked source tree.
 
 The source includes the v40 baseline: bounded X29-relative

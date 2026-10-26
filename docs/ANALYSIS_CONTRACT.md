@@ -979,3 +979,9 @@ opaque targets, full source counts and proof limits remain distinct. Renderer
 row/byte caps never widen eligibility or source claims. Rendering failure returns
 no partial text; default JSON and unwind semantics remain unchanged. See
 SWIFT_ERROR_FLOW.md for explicit caps and qualification scope.
+
+Edge model `swift-sync-error-edges-v2` adds only exact ordinary synchronous
+untyped Int-to-Void throwing free-function declarations (`yySiKF`), retaining the
+previous Int-to-Int mapping. Historical v1 results keep their identity. Region,
+entry, presentation and unwind semantics remain unchanged; the owned later-
+epilogue jump remains a region refusal. See SWIFT_ERROR_FLOW.md.
