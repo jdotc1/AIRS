@@ -345,6 +345,7 @@ still required. See GUI_SAVED_REPORT_COVERAGE.md for delivered and held scope.
 A1 strict saved-batch coverage has composed workspace/native interaction
 qualification. Version 0.3.4/build 13 is locally signed, notarized and stapled,
 with exact frozen source identity and a qualified local distribution archive.
-See CURRENT_SOURCE_RELEASE_GATES.md. New-candidate download/translocation and
-independent clean-machine acceptance remain open; build 12 remains published
+See CURRENT_SOURCE_RELEASE_GATES.md. The new archive has isolated GUI
+and actual App Translocation acceptance on the development Mac. Browser-download
+delivery and independent clean-machine acceptance remain open; build 12 remains published
 and installed. No historical release qualification is transferred to build 13.

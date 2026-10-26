@@ -124,8 +124,13 @@ paths, escaped/mismatched quotes, case variants and adjacent private markers.
 Independent review recommended the same bounded policy. No signed artifact was
 modified to resolve these generic scanner matches.
 
-R1A–R1C and local distribution preparation are complete. R1D remains open for the
-new candidate's download/translocation delivery acceptance; historical build-12
-results cannot qualify it. R2 remains blocked because no independently provisioned
+R1A–R1C and local distribution preparation are complete. The new archive also
+passed one isolated GUI launch from an actual App Translocation location after
+fresh extraction and synthetic quarantine. Both the launch API and application
+profile recorded the translocated executable. Native control observed the report
+overview, opened and dismissed the comparison sheet, then closed the window; the
+test process exited. This is local archive/translocation acceptance, not a browser
+download. R1D remains open for download delivery; historical build-12 results
+cannot qualify it. R2 remains blocked because no independently provisioned
 compatible Apple silicon environment is available. There is no new download link
 or public release, and the installed app and production stores are unchanged.
