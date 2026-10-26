@@ -1,15 +1,16 @@
 # AIRS bounded development roadmap
 
 This public repository is the single development baseline. Plans describe intended
-work; acceptance records establish completed scope. Build 13 is the current published preview, with clean-machine and minimum-macOS
-acceptance pending. Source-only increments do not replace installed apps.
+work; acceptance records establish completed scope. Build 13 is the current
+published preview, with clean-machine and minimum-macOS acceptance pending.
+Source-only increments do not replace installed apps.
 
 | Milestone | Current position | Remaining boundary |
 | --- | --- | --- |
 | Native evidence review and saved workflows | Build 12 includes accepted Settings, comparison and persistent sidebar corrections | Qualify each changed user interaction after pending work settles |
 | Conservative ARM64/CFI model | Merged through CLS v47; MOVK v48 and CBZ/CBNZ v49 merged in PR32; TBZ/TBNZ v50 merged in PR33 with bounded source/native qualification; historical identities remain distinct | New instruction/rule families require distinct positive and refusal evidence and independent review |
 | Saved-report coverage triage | Reason selection, terminal-safe output, bounded detail and literal code ordering implemented | Additional triage tools must preserve full denominators, overlap, duplicate/conflict and exact identity context |
-| Public distribution | Single repository; build 12 signed/notarized/stapled release, public browser download and actual App Translocation accepted on the development Mac | Clean-machine, minimum-macOS, Intel-app and offline qualification remain incomplete |
+| Public distribution | Build 13 preview is signed, notarized and stapled; published browser download and local App Translocation are accepted | Independent clean-machine, minimum-macOS and offline qualification remain pending; this preview targets Apple silicon |
 
 ## Current bounded increment
 
@@ -337,15 +338,17 @@ and entry analysis rather than treating the success entry as the true join.
 The saved-batch pairing window now exposes strict coverage with a captured
 per-invocation policy. Legacy programmatic behavior remains the default. The real
 app build and a new refusal/export/policy-separation workspace test passed;
-accepted core controls were reused. Interactive isolated-profile acceptance is
-still required. See GUI_SAVED_REPORT_COVERAGE.md for delivered and held scope.
+accepted core controls were reused. Isolated native interaction confirmed strict
+refusal, legacy opt-out, busy-state locking and cancellation without stale output. See GUI_SAVED_REPORT_COVERAGE.md for delivered and held scope.
 
-## Current-source handoff candidate
+## Published preview qualification
 
-A1 strict saved-batch coverage has composed workspace/native interaction
+Strict saved-batch coverage has composed workspace/native interaction
 qualification. Version 0.3.4/build 13 is locally signed, notarized and stapled,
 with exact frozen source identity and a qualified local distribution archive.
 See CURRENT_SOURCE_RELEASE_GATES.md. The new archive has isolated GUI
-and actual App Translocation acceptance on the development Mac. Published browser-download delivery is accepted for the identical archive.
+and actual App Translocation acceptance on the development Mac. Published
+browser-download delivery is accepted for the identical archive.
 Independent clean-machine and minimum-macOS acceptance remain open. Build 13 is
-published as a preview; the installed app is unchanged. No historical release qualification is transferred to build 13.
+published as a preview; qualification did not replace an installed app. No
+historical release qualification is transferred to build 13.

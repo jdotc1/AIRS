@@ -92,7 +92,7 @@ Stripping precedes normalization, so a refused stage may be partially processed;
 it must be discarded/held, not retried. Actual modified-runtime behavior and
 artifact acceptance remain mandatory separate checks before delivery.
 
-## Current local candidate qualification
+## Published preview qualification
 
 The frozen Apple silicon candidate is version 0.3.4, build 13, source
 2944e4626a6e3b600bac0a8793c0accecb51b363. The source claim was embedded before
@@ -104,9 +104,8 @@ The final staged private Python 3.15 runtime passed one changed-boundary probe o
 its seven normalized extension modules, sysconfig, one owned child process and
 engine bootstrap. The exact candidate launched with isolated stores using native
 audit/comparison fixtures; native control observed the report overview, opened
-and dismissed the comparison sheet, and closed the acceptance window. An earlier
-attempt supplied the wrong report kind and exited before displaying a window;
-it is not counted as successful acceptance. These checks do not establish a
+and dismissed the comparison sheet, and closed the acceptance window. A rejected
+wrong-kind fixture was not counted as successful acceptance. These checks do not establish a
 clean installation, offline operation, minimum-OS compatibility or arbitrary
 runtime-module correctness.
 
@@ -124,18 +123,20 @@ paths, escaped/mismatched quotes, case variants and adjacent private markers.
 Independent review recommended the same bounded policy. No signed artifact was
 modified to resolve these generic scanner matches.
 
-R1A–R1C and local distribution preparation are complete. The new archive also
+Exact-source preparation, self-contained packaging, signing and notarization
+are complete. The new archive also
 passed one isolated GUI launch from an actual App Translocation location after
 fresh extraction and synthetic quarantine. Both the launch API and application
 profile recorded the translocated executable. Native control observed the report
 overview, opened and dismissed the comparison sheet, then closed the window; the
-test process exited. That local check is distinct from the subsequent published browser download.
+test process exited. That local check is distinct from the subsequent published
+browser download.
 The preview was then published with the remaining platform gaps explicit. Its
 browser download completed with HTTP 200, the expected filename and byte size,
 and one checksum comparison matching the accepted archive. Browser quarantine
 metadata was present. The downloaded app was not launched; accepted identical-
-candidate signing and GUI results were reused. R1D delivery is complete within
-that scope; historical build-12 results were not transferred. R2 remains blocked because no independently provisioned
-compatible Apple silicon environment is available. The owner authorized preview publication with these gaps explicit. Version
-0.3.4/build 13 is published as a prerelease; the installed app and production
-stores are unchanged.
+candidate signing and GUI results were reused. Preview distribution is accepted
+within that scope; historical build-12 results were not transferred. Independent
+clean-machine acceptance remains pending. Version 0.3.4/build 13 is published as
+a prerelease with clean-machine and minimum-macOS acceptance pending; publishing
+did not modify installed apps or production stores.
