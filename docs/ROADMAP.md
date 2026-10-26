@@ -317,3 +317,10 @@ candidates. Seventeen new focused controls and the accepted owned-example record
 qualify the source contract. Source reconstruction remains disabled. Next add a
 bounded renderer that preserves blocked/unresolved evidence, raw instructions,
 opaque-call labels and all proof limits; native UI activation remains separate.
+
+The bounded terminal renderer is implemented with thirteen focused passing
+controls and renderer-only accepted-record qualification. It retains eligible,
+blocked and unresolved outcomes, raw evidence and source denominators within
+explicit row/byte caps. Next improve bounded signature/handler coverage from
+owned Swift examples, or separately adapt this qualified presentation contract to
+native UI. Full source reconstruction and native activation remain separate.

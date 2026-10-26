@@ -23,6 +23,7 @@ from .report_summary_ordering import validate_summary_order, order_summary_findi
 from .report_summary_names import validate_summary_name, select_summary_names
 from .diff_text import render_diff_text
 from .coverage_text import render_coverage_text
+from .swift_error_text import render_swift_error_text
 from .coverage_frequency import validate_coverage_minimum_count, select_coverage_frequency
 from .coverage_limit import validate_coverage_limit, limit_coverage_reasons
 from .coverage_ordering import validate_coverage_order, order_coverage_reasons
@@ -84,6 +85,7 @@ def _parser() -> argparse.ArgumentParser:
     swift_flow.add_argument("input", type=Path)
     swift_flow.add_argument("--arch", choices=("auto", "arm64", "arm64e"), default="auto")
     swift_flow.add_argument("--output", type=Path)
+    swift_flow.add_argument("--format", choices=("json", "text"), default="json")
     swift_flow.add_argument("--include-structured-presentation", action="store_true", help="Emit eligibility and structural display plans; requires regions and entry validation")
     swift_flow.add_argument("--validate-region-entries", action="store_true", help="Check caller-local direct entries; requires --include-error-regions")
     swift_flow.add_argument("--include-error-regions", action="store_true", help="Describe bounded structural error intervals; calls remain opaque")
@@ -103,9 +105,11 @@ def main(argv: list[str] | None = None) -> int:
             protected = (source, args.input)
             exit_code = 1 if args.fail_on_inconsistency and report["summary"]["inconsistency_count"] else 0
         elif args.command == "swift-error-flow":
+            if args.format == "text" and not args.include_structured_presentation:
+                raise InputError("swift_text_options", "Swift text requires --include-structured-presentation and its region/entry prerequisites")
             source = resolve_input(args.input)
             report = recover_swift_error_flow_path(source, requested_arch=args.arch, include_error_regions=args.include_error_regions, validate_region_entries=args.validate_region_entries, include_structured_presentation=args.include_structured_presentation)
-            output, protected = dumps(report), (source, args.input)
+            output, protected = (render_swift_error_text(report) if args.format == "text" else dumps(report)), (source, args.input)
             exit_code = 0 if report["word_scan_complete"] and report["call_details_complete"] else 1
         elif args.command == "decode-blockers":
             source = resolve_input(args.input)

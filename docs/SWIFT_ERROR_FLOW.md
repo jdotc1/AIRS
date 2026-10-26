@@ -233,3 +233,53 @@ for test PC 0x938, x21 nonzero error interval [0x93c, 0x948), and success entry
 No binary read/hash/admission, compiler, disassembly, edge, region or incoming
 analysis was repeated for this qualification. Native UI, installation and release
 acceptance remain separate.
+
+## Bounded terminal renderer
+
+```
+python3 -I -B airs_cli.py swift-error-flow Example.dylib --include-error-regions --validate-region-entries --include-structured-presentation --format text --output review.txt
+```
+
+`--format text` renders current in-process producer output. All three structural
+options are required; default output remains JSON. The renderer does not admit
+saved reports or perform new binary analysis, and does not activate native UI.
+It reuses the existing bounded text builder and ASCII JSON escaping.
+
+Eligible calls show the structural candidate label, condition, raw error-interval
+instructions and success entry. Blocked/unresolved calls show their reason and
+region evidence with the structured plan withheld. All displayed calls retain
+call identity/encoding, relative call offset, recorded test/success/error PCs,
+post-call MOV/NOP/test words, incoming validation and candidate limitations.
+Direct targets remain opaque evidence. The header always disables source
+reconstruction and preserves indirect/external-entry and runtime-proof limits.
+
+Rendering caps are 32 call rows, eight post-call words, 16 region words, 16 entries
+for each incoming-evidence list, 16 issue/reason rows and 16 limitation rows per
+list. Every capped list has an explicit renderer-omission count. Full producer
+summary counters, original scan/detail completeness, validation totals and source
+detail-completeness flags remain visible. Renderer omissions are additional to
+producer omissions and do not change source denominators or eligibility.
+
+Text is capped at 1 MiB, including escaping and the final newline. Invalid byte
+limits or oversized output refuse before any partial text is returned; CLI
+atomic export preserves an existing destination on rendering failure. Every
+variable value, including keys, names and warning text, is ASCII JSON escaped to
+avoid terminal control sequences. The original report is not mutated.
+
+Thirteen focused methods passed in composed receipts. They cover eligible,
+blocked and unresolved displays, raw post-call evidence, row caps, source-count
+preservation, terminal controls/Unicode, exact byte fit and one-byte overflow,
+invalid/global limits, model prerequisites, nonmutation, default JSON, protected
+input export and destination preservation on size refusal. Independent review
+identified the initial omitted post-call window; a new red/green regression
+control and bounded evidence output corrected it. Final review found no remaining
+blocking issue. Accepted producer qualification was reused.
+
+A renderer-only fixture assembled from the accepted owned-example records kept
+all 14 original call rows and source counts: one eligible plan and 13 expected
+blocked outcomes for declined edges. The rendered text retained test PC 0x938,
+raw test word 0xb4000095 and opaque target 0xaec. This checks rendering of accepted
+facts and expected blocked-display records, not a replay of the full producer.
+No binary read/hash/admission, compiler, disassembly, edge, region, incoming or
+eligibility analysis was repeated for this fixture. Native UI, installation and
+release acceptance remain separate.
