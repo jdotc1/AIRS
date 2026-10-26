@@ -943,3 +943,10 @@ labels with consistent accounting must refuse strict acceptance. Existing matchi
 and observation implementations remain unchanged. Synthetic saved-report parity
 does not prove machine-code equivalence, analysis truth, regression severity,
 authenticity, packaged transport or GUI acceptance.
+
+## Swift synchronous error-flow recovery
+
+`swift-sync-error-edges-v1` is a separate structural model, exposed through
+`swift-error-flow`. Its exact declaration subset, bounded alias window, explicit
+scan/detail completeness and excluded claims are specified in SWIFT_ERROR_FLOW.md.
+Its candidates do not enter unwind agreement or inconsistency accounting.

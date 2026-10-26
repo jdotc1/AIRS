@@ -288,3 +288,11 @@ preservation and structural admission now have nine focused passing tests and a
 successful real AIRSApp build. See NATIVE_BODY_FINGERPRINT_CODEC.md. Build products
 are removed after retaining logs. Fingerprint production/matching activation and
 GUI acceptance remain separate; no installed binary or release changes.
+
+## Swift decompilation: synchronous error paths
+
+The first bounded throwing-call return-edge model is implemented and qualified
+against an owned optimized Swift image; see SWIFT_ERROR_FLOW.md. It recovers
+local success/error successors without claiming complete source reconstruction.
+Next extend explicit declaration coverage with owned examples, then bounded
+handler-region recovery. Async continuation reconstruction remains separate.
