@@ -48,3 +48,26 @@ and its original receipt remain unchanged, and packaged omissions are recorded
 in runtime-info.json. Malformed stdlib test archives therefore cannot accidentally
 enter the distribution surface. Package changes require a new source claim,
 seal and archive qualification; an earlier refused archive is not reused as clean.
+
+## Staged-runtime publication surface
+
+The full archive gate also covers the private runtime. A dependency-integrity
+receipt is not a publication-content clearance. New staging removes unused
+runtime developer documentation/build directories and normalizes build-home
+prefixes in generated sysconfig data. The literal dictionary/JSON transforms
+preserve nonpath values and types and refuse executable configuration. Fixed
+strip operations remove native debug/local-symbol metadata before signing;
+no arbitrary Mach-O byte replacement is performed.
+
+The sanitizer accepts only a fresh .airs-package.* staging copy, rejects unsafe
+paths, uses a one-shot marker and retains a relative-path staging report in
+RuntimeNotices. The prepared runtime and previously signed candidates are not
+modified. Seventeen new synthetic controls passed. Actual staged runtime startup
+and the new signed archive still require their separate qualification.
+
+The archive gate now supports bounded standard framework link chains, including
+Versions/Current and implicit ZIP directories. It still refuses escapes, cycles,
+dangling links, malformed archives and private markers. Twenty new focused
+controls passed; no previous archive acceptance was silently transferred to the
+changed policy. Resolution is bounded by link, component, namespace and byte
+limits, without extraction or execution.

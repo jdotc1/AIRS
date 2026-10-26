@@ -181,6 +181,9 @@ if [ "$EXTERNAL_PYTHON" -eq 0 ]; then
     # Trim only this fresh bundle copy; preserve the prepared runtime and receipt.
     rm -rf "$CONTENTS/Frameworks/Python.framework/Versions/3.15/lib/python3.15/test" \
         "$CONTENTS/Frameworks/Python.framework/Versions/3.15/lib/python3.15/ensurepip"
+    python3 -B "$SCRIPT_DIR/sanitize_runtime_staging.py" \
+        --framework "$CONTENTS/Frameworks/Python.framework" \
+        > "$CONTENTS/Resources/RuntimeNotices/runtime-staging.json"
     # Keep machine-specific verification metadata local. This is informational
     # provenance only; the sealed receipt above remains the reuse authority.
     python3 -I -B - "$PRIVATE_PYTHON/runtime-receipt.json" "$CONTENTS/Resources/RuntimeNotices/runtime-info.json" <<'PYINFO'
