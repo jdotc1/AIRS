@@ -11,12 +11,13 @@ PRIVATE_PYTHON="$PROJECT_DIR/build/private-python-3.15.0"
 EXTERNAL_PYTHON=0
 SOURCE_COMMIT=""
 ACCEPTED_VENDOR_SOURCE=""
+NATIVE_BUILD_RECEIPT=""
 BUNDLE_VERSION="0.3.3"
 BUNDLE_BUILD="12"
 
 usage() {
     cat <<'USAGE'
-Usage: scripts/package-app.sh [--output-dir DIRECTORY] [--debug|--release] [--ad-hoc-sign] [--python-runtime DIRECTORY|--external-python] [--version VERSION --build NUMBER --source-commit COMMIT] [--accepted-vendor-source COMMIT]
+Usage: scripts/package-app.sh [--output-dir DIRECTORY] [--debug|--release] [--ad-hoc-sign] [--python-runtime DIRECTORY|--external-python] [--version VERSION --build NUMBER --source-commit COMMIT] [--accepted-vendor-source COMMIT] [--native-build-receipt FILE]
 
 Build and package AIRS.app for local use on macOS 14 or newer.
 Includes the native airs-entitlements command at Contents/MacOS/airs-entitlements.
@@ -43,13 +44,14 @@ while [ "$#" -gt 0 ]; do
         --python-runtime)
             if [ "$#" -lt 2 ]; then printf '%s\n' 'Missing directory after --python-runtime.' >&2; exit 2; fi
             PRIVATE_PYTHON="$2"; shift 2 ;;
-        --version|--build|--source-commit|--accepted-vendor-source)
+        --version|--build|--source-commit|--accepted-vendor-source|--native-build-receipt)
             if [ "$#" -lt 2 ]; then printf 'Missing value for %s\n' "$1" >&2; exit 2; fi
             case "$1" in
                 --version) BUNDLE_VERSION="$2" ;;
                 --build) BUNDLE_BUILD="$2" ;;
                 --source-commit) SOURCE_COMMIT="$2" ;;
                 --accepted-vendor-source) ACCEPTED_VENDOR_SOURCE="$2" ;;
+                --native-build-receipt) NATIVE_BUILD_RECEIPT="$2" ;;
             esac
             shift 2 ;;
         --external-python) EXTERNAL_PYTHON=1; shift ;;
@@ -129,9 +131,13 @@ PYVENDOR
     BUILD_FLAGS+=(-Xswiftc -debug-prefix-map -Xswiftc "$PROJECT_DIR=/AIRS"
                  -Xswiftc -file-prefix-map -Xswiftc "$PROJECT_DIR=/AIRS")
 fi
-swift build --package-path "$PROJECT_DIR/native" "${BUILD_FLAGS[@]}" --product AIRSApp
-swift build --package-path "$PROJECT_DIR/native" "${BUILD_FLAGS[@]}" --product airs-entitlements
-BUILD_DIR="$(swift build --package-path "$PROJECT_DIR/native" --configuration "$CONFIGURATION" --show-bin-path)"
+if [ -n "$NATIVE_BUILD_RECEIPT" ]; then
+    BUILD_DIR="$(python3 -B "$SCRIPT_DIR/reuse_native_build.py" --source "$PROJECT_DIR" --receipt "$NATIVE_BUILD_RECEIPT")"
+else
+    swift build --package-path "$PROJECT_DIR/native" "${BUILD_FLAGS[@]}" --product AIRSApp
+    swift build --package-path "$PROJECT_DIR/native" "${BUILD_FLAGS[@]}" --product airs-entitlements
+    BUILD_DIR="$(swift build --package-path "$PROJECT_DIR/native" --configuration "$CONFIGURATION" --show-bin-path)"
+fi
 if [ ! -x "$BUILD_DIR/AIRSApp" ]; then
     printf '%s\n' 'Swift did not produce the expected AIRSApp executable.' >&2
     exit 3
@@ -171,6 +177,10 @@ if [ "$EXTERNAL_PYTHON" -eq 0 ]; then
     mkdir -p "$CONTENTS/Frameworks" "$CONTENTS/Resources/RuntimeNotices"
     /usr/bin/ditto "$PRIVATE_PYTHON/Python.framework" "$CONTENTS/Frameworks/Python.framework"
     /usr/bin/ditto "$PRIVATE_PYTHON/Notices" "$CONTENTS/Resources/RuntimeNotices"
+    # The application does not use CPython's deliberately malformed test archives.
+    # Trim only this fresh bundle copy; preserve the prepared runtime and receipt.
+    rm -rf "$CONTENTS/Frameworks/Python.framework/Versions/3.15/lib/python3.15/test" \
+        "$CONTENTS/Frameworks/Python.framework/Versions/3.15/lib/python3.15/ensurepip"
     # Keep machine-specific verification metadata local. This is informational
     # provenance only; the sealed receipt above remains the reuse authority.
     python3 -I -B - "$PRIVATE_PYTHON/runtime-receipt.json" "$CONTENTS/Resources/RuntimeNotices/runtime-info.json" <<'PYINFO'
@@ -178,7 +188,9 @@ import json, sys
 from pathlib import Path
 receipt = json.loads(Path(sys.argv[1]).read_text())
 keys = ("python_version", "source_url", "source_sha256", "omitted", "scope")
-Path(sys.argv[2]).write_text(json.dumps({k: receipt[k] for k in keys}, indent=2) + "\n")
+info = {k: receipt[k] for k in keys}
+info["packaged_omissions"] = ["lib/python3.15/test", "lib/python3.15/ensurepip"]
+Path(sys.argv[2]).write_text(json.dumps(info, indent=2) + "\n")
 PYINFO
     cp "$PRIVATE_PYTHON/Python.framework/Versions/3.15/lib/python3.15/LICENSE.txt" "$CONTENTS/Resources/RuntimeNotices/Python-LICENSE.txt"
 fi

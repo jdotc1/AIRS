@@ -30,3 +30,21 @@ Clean-machine acceptance requires an independently provisioned Apple silicon Mac
 or VM. None is currently available. Local checks cannot close this gate or prove
 minimum-macOS compatibility. No new public release may be described as fully
 qualified while required environment/platform evidence remains unavailable.
+
+## Reuse and lean runtime staging
+
+--native-build-receipt names a trusted local airs-native-build-reuse-v1 receipt.
+The helper requires matching accepted/current native source object identities,
+clean compiler inputs, build-root containment, both executable records, exact
+resource membership and matching file metadata. It rejects resource links, empty
+new bundles and missing/changed products. Sixteen new synthetic methods passed.
+It performs no source-content hashes or compiler invocations. Trusted local
+receipt custody is required; this is not adversarial artifact authentication.
+
+New staging omits CPython's unused test directory and ensurepip bootstrap payload
+from the copied private framework. The application engine is standard-library-only
+and never installs packages into its immutable runtime. The prepared framework
+and its original receipt remain unchanged, and packaged omissions are recorded
+in runtime-info.json. Malformed stdlib test archives therefore cannot accidentally
+enter the distribution surface. Package changes require a new source claim,
+seal and archive qualification; an earlier refused archive is not reused as clean.
