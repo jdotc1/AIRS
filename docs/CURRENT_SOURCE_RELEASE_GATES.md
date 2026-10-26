@@ -71,3 +71,23 @@ dangling links, malformed archives and private markers. Twenty new focused
 controls passed; no previous archive acceptance was silently transferred to the
 changed policy. Resolution is bounded by link, component, namespace and byte
 limits, without extraction or execution.
+
+## Residual native source-path literals
+
+Some upstream build paths are C source-file/build-directory literals rather than
+removable debug symbols. Fresh staging now supports a narrowly qualified
+fixed-width normalization of those complete ASCII literals in readable,
+non-writable __TEXT,__cstring sections. It preserves literal terminators, file
+length, offsets and every byte outside the selected home-prefix spans; it does
+not touch sections marked as instructions. Unclassified markers or contradictory
+Mach-O mappings refuse the stage. This is a trusted pinned-runtime packaging
+transform, not an input-binary patching feature or a general semantic-equivalence
+claim.
+
+Twenty-one new focused controls passed for thin/universal containers, preserved
+bytes/width, section/protection/instruction boundaries, string subsets and parser
+budgets. Two additional staging-composition methods passed. Independent review
+found no blocking issue. Original preparation and older candidates remain intact.
+Stripping precedes normalization, so a refused stage may be partially processed;
+it must be discarded/held, not retried. Actual modified-runtime behavior and
+artifact acceptance remain mandatory separate checks before delivery.

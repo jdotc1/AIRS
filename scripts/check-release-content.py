@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check newly assembled owned app content; reuse sealed runtime evidence."""
+"""Check newly assembled owned content; runtime/archive acceptance is separate."""
 import re
 import sys
 from pathlib import Path
@@ -62,7 +62,7 @@ def check(app):
                     failures.append(f'Private path or credential marker: {item.relative_to(app)}')
     if failures:
         raise ValueError('\n'.join(failures))
-    print(f'Release content check passed: {count} owned/notice files; sealed runtime unchanged.')
+    print(f'Release content check passed: {count} owned/notice files; staged runtime/archive acceptance remains separate.')
 
 
 if __name__ == '__main__':

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Sanitize only a fresh package's private Python copy before signing.
 
-Prepared runtimes and signed/installed apps are never valid destinations. No
-Mach-O bytes are substituted: owned staged code is processed only by strip.
+Prepared runtimes and signed/installed apps are never valid destinations. Native
+metadata changes use strip and qualified fixed-width read-only source-path literals.
 """
 from __future__ import annotations
 import argparse
@@ -18,7 +18,8 @@ import stat
 import struct
 import tempfile
 from build_provenance import plain_path
-from release_preflight import execute_check
+from release_preflight import execute_check, read_file
+from runtime_source_paths import normalize_source_paths
 
 MAX_CONFIG_BYTES = 1024 * 1024
 MAX_ENTRIES = 5000
@@ -174,7 +175,7 @@ def sanitize(framework: Path):
     for path, encoded, changes in configs:
         if changes:
             write_config(path, encoded); changed.append(path.relative_to(root).as_posix()); occurrences += changes
-    stripped = []
+    stripped = []; normalized_members = []; normalized_count = 0
     for path in files:
         if not path.exists() or any(parent in remove for parent in path.parents): continue
         if code_type(path) not in (2, 6, 8): continue
@@ -183,12 +184,24 @@ def sanitize(framework: Path):
             path.chmod(mode | stat.S_IWUSR)
             result = execute_check(['/usr/bin/strip', '-S', '-x', str(path)])
             if not result['passed']: raise ValueError('Staged native stripping failed')
+            original = read_file(path, 128 * 1024 * 1024)
+            normalized, count = normalize_source_paths(original)
+            if count:
+                descriptor, temporary = tempfile.mkstemp(prefix='.runtime-code-', dir=path.parent)
+                try:
+                    with os.fdopen(descriptor, 'wb') as output: output.write(normalized)
+                    os.chmod(temporary, mode | stat.S_IWUSR)
+                    os.replace(temporary, path)
+                finally:
+                    Path(temporary).unlink(missing_ok=True)
+                normalized_members.append(path.relative_to(root).as_posix()); normalized_count += count
         finally:
             path.chmod(mode)
         stripped.append(path.relative_to(root).as_posix())
     return {'schema': 'airs-runtime-staging-sanitization-v1', 'removed_directories': [p.relative_to(root).as_posix() for p in remove],
             'sanitized_configs': changed, 'neutralized_home_prefixes': occurrences,
             'stripped_code_members': stripped, 'stripped_code_count': len(stripped),
+            'normalized_native_members': normalized_members, 'normalized_native_source_prefixes': normalized_count,
             'scope': 'Fresh staging copy only; signing and runtime acceptance remain separate'}
 
 
