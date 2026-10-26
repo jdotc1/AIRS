@@ -324,3 +324,10 @@ blocked and unresolved outcomes, raw evidence and source denominators within
 explicit row/byte caps. Next improve bounded signature/handler coverage from
 owned Swift examples, or separately adapt this qualified presentation contract to
 native UI. Full source reconstruction and native activation remain separate.
+
+The v2 Swift edge model now admits exact ordinary Int-to-Void throwing free
+functions, qualified by ten new controls and one owned compiler example. The
+example recovers correct success/error edges but conservatively declines its
+error block's jump past a distinct success entry into the epilogue. That concrete
+layout is the next bounded region-recovery candidate; it requires separate join
+and entry analysis rather than treating the success entry as the true join.
