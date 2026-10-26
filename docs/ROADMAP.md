@@ -296,3 +296,10 @@ against an owned optimized Swift image; see SWIFT_ERROR_FLOW.md. It recovers
 local success/error successors without claiming complete source reconstruction.
 Next extend explicit declaration coverage with owned examples, then bounded
 handler-region recovery. Async continuation reconstruction remains separate.
+
+The next bounded slice now adds opt-in local error-region intervals with raw
+instructions and opaque call targets, qualified against the existing owned Swift
+example and eleven new focused methods. Exclusive entry, catch type, reachable
+join and source-like handler reconstruction remain unimplemented. The next
+semantic step should establish incoming-edge constraints before widening region
+layouts or presenting structured source.
