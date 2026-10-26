@@ -874,3 +874,15 @@ Model/configuration incompatibility retains ambiguous labels without suppressing
 coverage. Missing/false status or same-image use refuses, even when empty. Coverage
 is limited to saved-report groups, not original bytes, function identity, complete
 remaining producer fields or GUI activation. Earlier APIs/defaults retain scope.
+
+
+## 38. Explicit covered saved-report comparison decoding
+
+The opt-in covered decoder (COVERED_COMPARISON_DECODE.md) bounds comparison bytes
+before existing generic admission. It selects same-image coverage while preserving
+body metadata, or the explicit false/true cross-image coverage branch. Missing
+cross-image body status refuses. Composed source-context checks reject forged
+dispatch flags. The decoded modeled fields are returned unchanged; generic decode,
+matching defaults and native workflows retain their scope. Success establishes
+saved-report group coverage plus composed field checks, not authenticated bytes,
+function identity, every producer field or GUI acceptance.
