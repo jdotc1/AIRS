@@ -83,7 +83,41 @@
           "type": "boolean"
         },
         "matching_policy": {
-          "const": "exact_digest_then_unique_symbol"
+          "enum": [
+            "exact_digest_then_unique_symbol",
+            "manual_then_unique_symbol",
+            "exact_digest_then_unique_symbol_then_exact_body_candidate",
+            "manual_then_unique_symbol_then_exact_body_candidate"
+          ]
+        },
+        "exact_body_candidates": {
+          "type": "boolean"
+        },
+        "manual_pairs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "baseline_id": {
+                "type": "string",
+                "pattern": "^airsf-[0-9a-f]{64}$",
+                "minLength": 70,
+                "maxLength": 70
+              },
+              "current_id": {
+                "type": "string",
+                "pattern": "^airsf-[0-9a-f]{64}$",
+                "minLength": 70,
+                "maxLength": 70
+              }
+            },
+            "required": [
+              "baseline_id",
+              "current_id"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 50000
         }
       },
       "required": [
@@ -146,7 +180,9 @@
             "enum": [
               "exact_image_offset",
               "unique_symbol",
-              "unmatched"
+              "unmatched",
+              "manual_review",
+              "exact_body_candidate"
             ]
           },
           "function_name": {
