@@ -364,3 +364,10 @@ words and accepted edge facts establish changed-stage qualification without
 repeating binary admission or compilation. See SWIFT_ERROR_FLOW.md. New end-to-end
 binary/CLI, native UI and release qualification remain separate; build 13 and
 installed stores are unchanged.
+
+Shared Swift error epilogues are merged in PR #34 with accepted results reused.
+The next bounded local increment recognizes a final SP post-indexed LDP/RET tail
+through the existing decoder under region v3. Eleven new focused methods and
+three affected controls passed; independent semantic review found no blocker.
+See SWIFT_ERROR_FLOW.md. This is synthetic source/CLI qualification only; installed
+build 13, production stores and MacScope remain unchanged.

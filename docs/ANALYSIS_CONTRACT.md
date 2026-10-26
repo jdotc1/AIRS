@@ -996,3 +996,10 @@ default output and unwind semantics are unchanged. Historical region-v1 refusal
 of the owned later-epilogue example is superseded only within this new component
 scope. Restored state, reachability and reconstructed Swift remain unproven. See
 SWIFT_ERROR_FLOW.md for qualification and limits.
+
+Region v3 additionally admits a final SP post-indexed LDP of distinct callee-saved
+registers with a positive 16-byte-aligned increment up to 496, immediately followed
+by exact RET x30. Both words must fit the existing tail budget and scan prefix.
+It reuses the existing decoder and direct-entry guards; other component identities,
+default output and proof limitations remain unchanged. The tail's restored-state
+claim remains false. See SWIFT_ERROR_FLOW.md for focused qualification.
