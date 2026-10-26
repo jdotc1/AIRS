@@ -421,3 +421,50 @@ shared/post-indexed results were reused without repeating full suites or
 real-binary admission, hashing, compilation or disassembly. Independent semantic
 review found no blocking issue. This is synthetic source/CLI qualification only;
 no native app, release, installation or production-store changes were performed.
+
+## Success fallthrough with a forward error arm (region v5)
+
+`swift-sync-error-region-v5` adds the other ordinary error-test polarity: a
+recovered XCBNZ test whose success entry is the next word and whose error target
+lies later in the same caller. The success arm must contain at most eight words,
+with only NOP/MOV/MOVZ/MOVN before one final direct B immediately before the error
+entry. That B must target a later nonoverlapping shared join. The error arm then
+falls through to the join in at most 16 words, allowing the existing straight-line
+word subset and opaque BL calls, but no branch or RET. The existing eight-word
+restore/return-tail recognizer is reused without adding tail opcodes.
+
+The new layout is recorded as success_fallthrough_error_forward. Its error
+interval is error-entry to join; its separate success interval is test+4 to error
+entry; its shared tail starts at join. All words must fit the already scanned
+caller prefix and function. Unsupported layouts, overlapping/backward/outside
+joins, missing terminal success branches, exceeded budgets and unmodeled words
+remain declined. Recovered candidates still make no runtime reachability or
+handler-meaning claim.
+
+`swift-region-direct-entries-v3` exempts only the recorded XCBNZ test to the exact
+error entry and the success arm's terminal B to the exact shared join. The older
+XCBZ error-fallthrough layout retains its distinct exemptions. Other explicit
+cross-arm and tail entries conflict, including opaque error-arm calls targeting
+success/tail words. Incomplete or unclassified caller coverage withholds an
+absence result; indirect and external entries remain outside this proof.
+
+`swift-structural-presentation-v3` binds the new geometry and requires complete
+success evidence as well as existing entry validation before emitting a structural
+plan. Text retains separate success/error/tail bounds and words for eligible,
+blocked and unresolved candidates. Declined success-arm scans retain inspected
+words, including unclassified raw words, and instructions_complete describes only
+word-evidence coverage, not semantic validity. Invalid branch targets are omitted
+as VM addresses and receive an explicit reason. Source reconstruction and all
+restored-state, exclusive-entry, call-return and reachability proof claims remain
+false. Edge identity v2 and default edge-only output are unchanged.
+
+Seventeen new methods passed in composed focused runs, including the first
+red/green layout case, minimal and exact/over-limit arms, branch/entry binding,
+side entries, scan-prefix boundaries, presentation tampering, retained declined
+success evidence, invalid VM targets and one synthetic CLI text case. Ninety-five
+affected region/entry/presentation/renderer and prior-tail controls passed once
+after extracting the shared-tail recognizer. Their accepted scopes were reused
+for the subsequent forward-only diagnostic correction. Independent semantic
+review found no remaining blocking issue. No sealed binary admission, hashing,
+compilation, disassembly, native app, release or installation check was repeated.
+This is synthetic source/CLI qualification, not real-binary or installed-app proof.

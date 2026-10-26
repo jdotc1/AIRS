@@ -20,11 +20,11 @@ from .types import InputError, Limits, MachOImage
 
 MODEL = 'swift-sync-error-edges-v2'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v4'
+REGION_MODEL = 'swift-sync-error-region-v5'
 REGION_WORDS = 16
-INCOMING_MODEL = 'swift-region-direct-entries-v2'
+INCOMING_MODEL = 'swift-region-direct-entries-v3'
 INCOMING_EVIDENCE_LIMIT = 16
-PRESENTATION_MODEL = 'swift-structural-presentation-v2'
+PRESENTATION_MODEL = 'swift-structural-presentation-v3'
 SHARED_WORDS = 8
 
 
@@ -141,31 +141,24 @@ def _edges(data: bytes, function, call_offset: int) -> dict:
     return {'reason': 'postcall_window_exhausted', 'window': window}
 
 
-def _shared_epilogue(data: bytes, function, success: int, join: int) -> dict | None:
-    """Bounded straight-line success arm and SP restore/return shape only."""
-    if not success < join < function.end or (success | join) % 4 or join - success > SHARED_WORDS * 4:
-        return None
-    def word_at(pc):
-        if not function.start <= pc < function.end or pc + 4 - function.start > len(data):
-            raise ValueError('Shared interval outside scanned caller')
-        word = struct.unpack_from('<I', data, pc - function.start)[0]
-        return decode_instruction(word, pc), {'pc': hex(pc), 'word': f'0x{word:08x}'}
-    success_words = []; tail = []
+def _bounded_instruction(data: bytes, function, pc: int):
+    if pc % 4 or not function.start <= pc < function.end or pc + 4 - function.start > len(data):
+        raise ValueError('Shared interval outside scanned caller')
+    word = struct.unpack_from('<I', data, pc - function.start)[0]
+    return decode_instruction(word, pc), {'pc': hex(pc), 'word': f'0x{word:08x}'}
+
+
+def _shared_return_tail(data: bytes, function, join: int) -> dict | None:
+    """Existing bounded restore/return shapes, independent of arm placement."""
+    tail = []
     try:
-        for pc in range(success, join, 4):
-            instruction, row = word_at(pc)
-            if instruction.kind not in ('nop', 'mov', 'movz', 'movn'):
-                return None
-            success_words.append({**row, 'kind': instruction.kind})
         for index in range(SHARED_WORDS):
             pc = join + index * 4
-            instruction, row = word_at(pc)
+            instruction, row = _bounded_instruction(data, function, pc)
             tail.append({**row, 'kind': instruction.kind})
             if instruction.kind == 'ret':
-                return {'success_interval': {'start_pc': hex(success), 'end_pc_exclusive': hex(join),
-                                            'instructions': success_words},
-                        'shared_epilogue': {'start_pc': hex(join), 'end_pc_exclusive': hex(pc + 4),
-                                            'instructions': tail, 'restore_state_proven': False}}
+                return {'start_pc': hex(join), 'end_pc_exclusive': hex(pc + 4),
+                        'instructions': tail, 'restore_state_proven': False}
             if instruction.kind == 'nop':
                 continue
             if (instruction.kind == 'ldp' and instruction.rn == 31 and instruction.addressing == 'offset'
@@ -175,13 +168,13 @@ def _shared_epilogue(data: bytes, function, success: int, join: int) -> dict | N
                     and 0 < instruction.immediate <= 496 and instruction.immediate % 16 == 0
                     and 19 <= instruction.rd <= 30 and 19 <= instruction.rt2 <= 30
                     and index + 1 < SHARED_WORDS):
-                following, _ = word_at(pc + 4)
+                following, _ = _bounded_instruction(data, function, pc + 4)
                 if following.kind == 'ret':
                     continue
                 return None
             if instruction.word == 0x910003bf and index + 2 < SHARED_WORDS:
-                restore, _ = word_at(pc + 4)
-                terminal, _ = word_at(pc + 8)
+                restore, _ = _bounded_instruction(data, function, pc + 4)
+                terminal, _ = _bounded_instruction(data, function, pc + 8)
                 if (restore.kind == 'ldp' and restore.rn == 31 and restore.addressing == 'post'
                         and restore.rd == 29 and restore.rt2 == 30
                         and 0 < restore.immediate <= 496 and restore.immediate % 16 == 0
@@ -197,6 +190,87 @@ def _shared_epilogue(data: bytes, function, success: int, join: int) -> dict | N
     return None
 
 
+def _shared_epilogue(data: bytes, function, success: int, join: int) -> dict | None:
+    """Bounded straight-line success arm and shared restore/return shape."""
+    if not success < join < function.end or (success | join) % 4 or join - success > SHARED_WORDS * 4:
+        return None
+    words = []
+    try:
+        for pc in range(success, join, 4):
+            instruction, row = _bounded_instruction(data, function, pc)
+            if instruction.kind not in ('nop', 'mov', 'movz', 'movn'):
+                return None
+            words.append({**row, 'kind': instruction.kind})
+    except (ModelError, ValueError):
+        return None
+    tail = _shared_return_tail(data, function, join)
+    if tail is None:
+        return None
+    return {'success_interval': {'start_pc': hex(success), 'end_pc_exclusive': hex(join), 'instructions': words},
+            'shared_epilogue': tail}
+
+
+def _forward_error_region(data: bytes, function, edge: dict) -> dict:
+    """Success fallthrough ending in B over a bounded out-of-line error arm."""
+    result = {'status': 'declined', 'instructions': []}
+    start, success, test = (int(edge[key], 16) for key in ('error_pc', 'success_pc', 'test_pc'))
+    if success != test + 4 or not function.start <= success < start < function.end or (success | start) % 4:
+        return {**result, 'reason': 'unsupported_error_region_layout'}
+    if start - success > SHARED_WORDS * 4:
+        return {**result, 'reason': 'success_region_budget'}
+    words = []; calls = 0
+    success_evidence = {'start_pc': hex(success), 'end_pc_exclusive': hex(start),
+                        'instructions': words, 'instructions_complete': False}
+    result['success_interval'] = success_evidence
+    try:
+        for pc in range(success, start, 4):
+            try:
+                instruction, row = _bounded_instruction(data, function, pc)
+            except ModelError:
+                word = struct.unpack_from('<I', data, pc - function.start)[0]
+                words.append({'pc': hex(pc), 'word': f'0x{word:08x}', 'kind': 'unclassified'})
+                success_evidence['instructions_complete'] = len(words) * 4 == start - success
+                return {**result, 'reason': 'success_region_instruction_unmodeled'}
+            row['kind'] = instruction.kind; words.append(row)
+            success_evidence['instructions_complete'] = len(words) * 4 == start - success
+            if pc + 4 == start:
+                if instruction.kind != 'b':
+                    return {**result, 'reason': 'unsupported_error_region_layout'}
+                join = pc + instruction.immediate
+                if 0 <= join < (1 << 64):
+                    row['target_pc'] = hex(join)
+                else:
+                    row['target_reason'] = 'outside_vm_address_space'
+            elif instruction.kind not in ('nop', 'mov', 'movz', 'movn'):
+                return {**result, 'reason': 'success_region_control_flow_unmodeled'}
+        if not start < join < function.end or join % 4:
+            return {**result, 'reason': 'unsupported_error_region_layout'}
+        if join - start > REGION_WORDS * 4:
+            return {**result, 'reason': 'error_region_budget'}
+        for pc in range(start, join, 4):
+            instruction, row = _bounded_instruction(data, function, pc)
+            row['kind'] = instruction.kind; result['instructions'].append(row)
+            if instruction.kind == 'bl':
+                target = pc + instruction.immediate
+                if not 0 <= target < (1 << 64) or target % 4:
+                    return {**result, 'reason': 'error_region_call_target_invalid'}
+                row.update(call_target_pc=hex(target), semantics='opaque_call'); calls += 1
+            elif instruction.kind not in ('nop', 'mov', 'movz', 'movn'):
+                return {**result, 'reason': 'error_region_instruction_unmodeled'}
+    except ModelError:
+        return {**result, 'reason': 'error_region_instruction_unmodeled'}
+    except ValueError:
+        return {**result, 'reason': 'error_region_outside_scanned_prefix'}
+    tail = _shared_return_tail(data, function, join)
+    if tail is None:
+        return {**result, 'reason': 'shared_epilogue_unmodeled'}
+    return {**result, 'status': 'structural_region_candidate', 'layout': 'success_fallthrough_error_forward',
+            'start_pc': hex(start), 'end_pc_exclusive': hex(join), 'join_pc': hex(join),
+            'success_interval': success_evidence,
+            'shared_epilogue': tail, 'opaque_call_count': calls,
+            'call_return_proven': False, 'join_reachability_proven': False}
+
+
 def _error_region(data: bytes, function, edge: dict) -> dict:
     """Describe a local error interval; calls are opaque and may not return.
 
@@ -205,6 +279,8 @@ def _error_region(data: bytes, function, edge: dict) -> dict:
     """
     result = {'status': 'declined', 'instructions': []}
     start, join, test = (int(edge[key], 16) for key in ('error_pc', 'success_pc', 'test_pc'))
+    if join == test + 4 and start > join:
+        return _forward_error_region(data, function, edge)
     if start != test + 4 or not function.start <= start < join < function.end or (start | join) % 4:
         return {**result, 'reason': 'unsupported_error_region_layout'}
     if join - start > REGION_WORDS * 4:
@@ -277,10 +353,18 @@ def _region_incoming(scan: dict, region: dict, call: dict | None = None) -> dict
         if 'shared_epilogue' in region:
             join = int(region['join_pc'], 16)
             tail_end = int(region['shared_epilogue']['end_pc_exclusive'], 16)
+            forward = region.get('layout') == 'success_fallthrough_error_forward'
+            success = int(region['success_interval']['start_pc'], 16)
+            success_end = int(region['success_interval']['end_pc_exclusive'], 16)
             expected_test = (call is not None and source == int(call['test_pc'], 16)
-                             and edge['kind'] == 'xcbz' and target == end)
-            expected_exit = source == end - 4 and edge['kind'] == 'b' and target == join
-            if end <= target < tail_end and not (expected_test or expected_exit):
+                             and edge['kind'] == ('xcbnz' if forward else 'xcbz')
+                             and target == (start if forward else success))
+            expected_exit = (source == (success_end - 4 if forward else end - 4)
+                             and edge['kind'] == 'b' and target == join)
+            if expected_test:
+                conflict = False
+            if ((success <= target < success_end or join <= target < tail_end)
+                    and not (expected_test or expected_exit)):
                 conflict = True
         if conflict:
             count += 1
@@ -332,9 +416,15 @@ def _presentation_eligibility(call: dict) -> dict:
             if not isinstance(value, str) or re.fullmatch(r'0x[0-9a-f]{1,16}', value) is None:
                 raise ValueError('Invalid presentation VM address')
             return int(value, 16)
-        start, end, test = (address(call[key]) for key in ('error_pc', 'success_pc', 'test_pc'))
+        start, success, test = (address(call[key]) for key in ('error_pc', 'success_pc', 'test_pc'))
+        forward = region.get('layout') == 'success_fallthrough_error_forward'
+        end = address(region['end_pc_exclusive']) if forward else success
+        if forward and ('shared_epilogue' not in region
+                        or region.get('success_interval', {}).get('instructions_complete') is not True):
+            raise ValueError('Forward layout requires complete success and shared-tail evidence')
         words = region['instructions']
-        if (start != test + 4 or not start < end or (start | end) % 4
+        if ((not (success == test + 4 and success < start < end) if forward else
+             not (start == test + 4 and start < end)) or (start | end) % 4
                 or address(region['start_pc']) != start or address(region['end_pc_exclusive']) != end
                 or (address(region['join_pc']) != end and 'shared_epilogue' not in region)
                 or not isinstance(words, list) or not 1 <= len(words) <= REGION_WORDS
@@ -347,7 +437,7 @@ def _presentation_eligibility(call: dict) -> dict:
                 raise ValueError('Inconsistent presentation word')
         if 'shared_epilogue' in region:
             join = address(region['join_pc'])
-            for interval, lower, upper in ((region['success_interval'], end, join),
+            for interval, lower, upper in ((region['success_interval'], success, start if forward else join),
                     (region['shared_epilogue'], join, address(region['shared_epilogue']['end_pc_exclusive']))):
                 evidence = interval['instructions']
                 if (address(interval['start_pc']) != lower or address(interval['end_pc_exclusive']) != upper
@@ -356,7 +446,9 @@ def _presentation_eligibility(call: dict) -> dict:
                 for index, word in enumerate(evidence):
                     if address(word['pc']) != lower + 4 * index or re.fullmatch(r'0x[0-9a-f]{8}', word['word']) is None:
                         raise ValueError('Inconsistent shared evidence')
-            if (join <= end or words[-1].get('kind') != 'b' or address(words[-1]['target_pc']) != join
+            exit_word = region['success_interval']['instructions'][-1] if forward else words[-1]
+            if ((join != end if forward else join <= end)
+                    or exit_word.get('kind') != 'b' or address(exit_word['target_pc']) != join
                     or region['shared_epilogue']['instructions'][-1].get('kind') != 'ret'
                     or region['shared_epilogue'].get('restore_state_proven') is not False):
                 raise ValueError('Inconsistent shared join')
