@@ -9,10 +9,14 @@ CONFIGURATION="debug"
 AD_HOC_SIGN=0
 PRIVATE_PYTHON="$PROJECT_DIR/build/private-python-3.15.0"
 EXTERNAL_PYTHON=0
+SOURCE_COMMIT=""
+ACCEPTED_VENDOR_SOURCE=""
+BUNDLE_VERSION="0.3.3"
+BUNDLE_BUILD="12"
 
 usage() {
     cat <<'USAGE'
-Usage: scripts/package-app.sh [--output-dir DIRECTORY] [--debug|--release] [--ad-hoc-sign] [--python-runtime DIRECTORY|--external-python]
+Usage: scripts/package-app.sh [--output-dir DIRECTORY] [--debug|--release] [--ad-hoc-sign] [--python-runtime DIRECTORY|--external-python] [--version VERSION --build NUMBER --source-commit COMMIT] [--accepted-vendor-source COMMIT]
 
 Build and package AIRS.app for local use on macOS 14 or newer.
 Includes the native airs-entitlements command at Contents/MacOS/airs-entitlements.
@@ -39,6 +43,15 @@ while [ "$#" -gt 0 ]; do
         --python-runtime)
             if [ "$#" -lt 2 ]; then printf '%s\n' 'Missing directory after --python-runtime.' >&2; exit 2; fi
             PRIVATE_PYTHON="$2"; shift 2 ;;
+        --version|--build|--source-commit|--accepted-vendor-source)
+            if [ "$#" -lt 2 ]; then printf 'Missing value for %s\n' "$1" >&2; exit 2; fi
+            case "$1" in
+                --version) BUNDLE_VERSION="$2" ;;
+                --build) BUNDLE_BUILD="$2" ;;
+                --source-commit) SOURCE_COMMIT="$2" ;;
+                --accepted-vendor-source) ACCEPTED_VENDOR_SOURCE="$2" ;;
+            esac
+            shift 2 ;;
         --external-python) EXTERNAL_PYTHON=1; shift ;;
         --debug) CONFIGURATION="debug"; shift ;;
         --release) CONFIGURATION="release"; shift ;;
@@ -47,6 +60,15 @@ while [ "$#" -gt 0 ]; do
         *) printf 'Unknown option: %s\n' "$1" >&2; usage >&2; exit 2 ;;
     esac
 done
+
+python3 -B - "$BUNDLE_VERSION" "$BUNDLE_BUILD" "$SOURCE_COMMIT" <<'PYIDENTITY'
+import re, sys
+version, build, commit = sys.argv[1:]
+if (re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+', version) is None
+        or re.fullmatch(r'[1-9][0-9]{0,9}', build) is None
+        or (commit and re.fullmatch(r'[0-9a-f]{40}', commit) is None)):
+    raise SystemExit('Invalid version, build or exact source commit')
+PYIDENTITY
 
 if [ "$(uname -s)" != "Darwin" ]; then
     printf '%s\n' 'Packaging requires macOS 14+ and the Apple Swift toolchain.' >&2
@@ -80,9 +102,30 @@ if [ "$EXTERNAL_PYTHON" -eq 0 ]; then
 fi
 
 # Release executables must not embed this machine's checkout or build paths.
-BUILD_FLAGS=(--configuration "$CONFIGURATION")
+BUILD_FLAGS=(--configuration "$CONFIGURATION" --jobs 2)
 if [ "$CONFIGURATION" = "release" ]; then
-    python3 -I -B "$SCRIPT_DIR/check-release-content.py" --lumen-source "$PROJECT_DIR/native/Vendor/Lumen"
+    if [ -n "$ACCEPTED_VENDOR_SOURCE" ]; then
+        # Caller supplies a retained accepted source identity. Compare immutable
+        # Git tree identity only; never rescan unchanged vendor content.
+        python3 -B - "$PROJECT_DIR" "$ACCEPTED_VENDOR_SOURCE" <<'PYVENDOR'
+import re, subprocess, sys
+root, accepted = sys.argv[1:]
+if re.fullmatch(r'[0-9a-f]{40}', accepted) is None:
+    raise SystemExit('Expected an exact accepted vendor-source commit')
+def git(*args):
+    return subprocess.check_output(['git', '-C', root, *args], text=True).strip()
+if git('rev-parse', accepted + ':native/Vendor/Lumen') != git('rev-parse', 'HEAD:native/Vendor/Lumen'):
+    raise SystemExit('Vendor source differs from accepted identity')
+if git('status', '--porcelain', '--untracked-files=all', '--', 'native/Vendor/Lumen'):
+    raise SystemExit('Vendor working tree differs from accepted identity')
+if git('ls-files', '--others', '--ignored', '--exclude-standard', '--',
+       'native/Vendor/Lumen/Sources', 'native/Vendor/Lumen/Package.swift'):
+    raise SystemExit('Ignored vendor compiler/resource inputs are not covered by the accepted identity')
+print('Reused accepted immutable Lumen source identity; no source scan repeated.')
+PYVENDOR
+    else
+        python3 -I -B "$SCRIPT_DIR/check-release-content.py" --lumen-source "$PROJECT_DIR/native/Vendor/Lumen"
+    fi
     BUILD_FLAGS+=(-Xswiftc -debug-prefix-map -Xswiftc "$PROJECT_DIR=/AIRS"
                  -Xswiftc -file-prefix-map -Xswiftc "$PROJECT_DIR=/AIRS")
 fi
@@ -201,6 +244,13 @@ cat > "$CONTENTS/Info.plist" <<'PLIST'
 </dict>
 </plist>
 PLIST
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $BUNDLE_VERSION" "$CONTENTS/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUNDLE_BUILD" "$CONTENTS/Info.plist"
+if [ -n "$SOURCE_COMMIT" ]; then
+    python3 -B "$SCRIPT_DIR/build_provenance.py" --source "$PROJECT_DIR" \
+        --expected-commit "$SOURCE_COMMIT" --bundle-id dev.airs.app --build "$BUNDLE_BUILD" \
+        --output "$CONTENTS/Resources/AIRSBuildProvenance.json"
+fi
 if [ "$EXTERNAL_PYTHON" -eq 0 ]; then
     /usr/libexec/PlistBuddy -c 'Add :AIRSPrivatePythonVersion string 3.15.0' "$CONTENTS/Info.plist"
 fi

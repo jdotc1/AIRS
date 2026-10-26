@@ -29,15 +29,20 @@ history/library stores are owned test fixtures and removed after the check.
 
 Accepted strict-success, refusal, later-pair continuation and core export controls
 were reused; unchanged suites were not repeated. Existing cancellation wiring was
-reviewed rather than described as newly exercised. Interactive pairing/toggle,
-cancellation and export acceptance remain unverified. A successful app build and
+reviewed rather than described as newly exercised. Subsequent isolated native UI observations confirmed explicit pairing, the
+strict default and refusal without drill-down, legacy opt-out, busy-state choice
+locking, and cancellation with no stale comparison. Export bytes are covered by
+the new workspace test; unchanged native save/export behavior reuses its accepted
+prior scope. A standalone XCTest Save panel did not become observable, so that
+attempt is not claimed as new save-panel acceptance. A successful app build and
 workspace test do not establish GUI, installed-app or release acceptance.
 No app was installed, signed or published for this increment.
 
 ## Follow-up boundaries
 
-Complete bounded interactive acceptance in an isolated development profile before
-claiming this GUI workflow fully accepted. Source provenance/release preparation
+The changed A1 policy workflow has composed native build, workspace-test and
+isolated interaction evidence. Candidate-level distribution and clean-host
+acceptance remain separate. Source provenance/release preparation
 may follow separately; signing, clean-host acceptance, installation and publishing
 retain their own gates. Donor integrations into other applications are separate
 host work and do not authorize changes to those repositories here.
