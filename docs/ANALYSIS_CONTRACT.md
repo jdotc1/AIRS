@@ -1003,3 +1003,10 @@ by exact RET x30. Both words must fit the existing tail budget and scan prefix.
 It reuses the existing decoder and direct-entry guards; other component identities,
 default output and proof limitations remain unchanged. The tail's restored-state
 claim remains false. See SWIFT_ERROR_FLOW.md for focused qualification.
+
+Region v4 additionally admits exact raw ADD SP,X29,#0 only as the start of an
+adjacent ordered SP-post-index LDP X29,X30 / RET X30 sequence. Existing positive
+aligned increment and caller/tail bounds apply to all three words. Other reset
+aliases/forms or intervening words decline. It reuses the existing decoder,
+entry guards and presentation contracts without proving FP provenance, stack
+balance, restored state or unwind correctness. See SWIFT_ERROR_FLOW.md.
