@@ -378,3 +378,12 @@ ordered FP/LR post-indexed pop and RET sequence under region v4. Twelve new
 focused methods and four affected controls passed, with independent semantic
 review. Qualification remains synthetic source/CLI; installed build 13,
 production settings/stores and MacScope are unchanged. See SWIFT_ERROR_FLOW.md.
+
+Frame-pointer-reset recovery is merged in PR #36 with accepted results reused.
+The next bounded local increment covers success-fallthrough / forward-error
+XCBNZ layouts with separate bounded arms and an existing shared return tail.
+Region v5, entry v3 and presentation v3 preserve conservative unknown handling
+and proof limits. Seventeen new methods and 95 affected controls passed in
+composed scope; independent semantic review found no remaining blocker.
+Qualification is synthetic source/CLI only. No installed application, production
+settings/stores or MacScope source was changed. See SWIFT_ERROR_FLOW.md.

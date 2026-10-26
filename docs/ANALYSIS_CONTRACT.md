@@ -1010,3 +1010,14 @@ aligned increment and caller/tail bounds apply to all three words. Other reset
 aliases/forms or intervening words decline. It reuses the existing decoder,
 entry guards and presentation contracts without proving FP provenance, stack
 balance, restored state or unwind correctness. See SWIFT_ERROR_FLOW.md.
+
+Region v5 adds bounded success-fallthrough / error-forward XCBNZ layouts only
+when a terminal success-arm B skips a bounded straight-line error arm into an
+existing qualified shared tail. Error, success and tail intervals remain separate.
+Entry v3 exempts only the exact recorded test-to-error and success-exit-to-join
+edges; other cross-arm/tail direct entries conflict. Presentation v3 binds this
+geometry and complete success evidence before structural display. Declines retain
+partial inspected success words with explicit completeness, without publishing
+out-of-range targets as VM addresses. Edge v2/default output and unwind verdicts
+are unchanged; no runtime or source-reconstruction proof is added. See
+SWIFT_ERROR_FLOW.md for bounds, historical component scopes and qualification.
