@@ -129,8 +129,13 @@ passed one isolated GUI launch from an actual App Translocation location after
 fresh extraction and synthetic quarantine. Both the launch API and application
 profile recorded the translocated executable. Native control observed the report
 overview, opened and dismissed the comparison sheet, then closed the window; the
-test process exited. This is local archive/translocation acceptance, not a browser
-download. R1D remains open for download delivery; historical build-12 results
-cannot qualify it. R2 remains blocked because no independently provisioned
-compatible Apple silicon environment is available. There is no new download link
-or public release, and the installed app and production stores are unchanged.
+test process exited. That local check is distinct from the subsequent published browser download.
+The preview was then published with the remaining platform gaps explicit. Its
+browser download completed with HTTP 200, the expected filename and byte size,
+and one checksum comparison matching the accepted archive. Browser quarantine
+metadata was present. The downloaded app was not launched; accepted identical-
+candidate signing and GUI results were reused. R1D delivery is complete within
+that scope; historical build-12 results were not transferred. R2 remains blocked because no independently provisioned
+compatible Apple silicon environment is available. The owner authorized preview publication with these gaps explicit. Version
+0.3.4/build 13 is published as a prerelease; the installed app and production
+stores are unchanged.

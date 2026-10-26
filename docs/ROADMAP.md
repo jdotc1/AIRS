@@ -1,8 +1,8 @@
 # AIRS bounded development roadmap
 
 This public repository is the single development baseline. Plans describe intended
-work; acceptance records establish completed scope. Build 12 remains the published
-preview and is not replaced by source-only increments.
+work; acceptance records establish completed scope. Build 13 is the current published preview, with clean-machine and minimum-macOS
+acceptance pending. Source-only increments do not replace installed apps.
 
 | Milestone | Current position | Remaining boundary |
 | --- | --- | --- |
@@ -346,6 +346,6 @@ A1 strict saved-batch coverage has composed workspace/native interaction
 qualification. Version 0.3.4/build 13 is locally signed, notarized and stapled,
 with exact frozen source identity and a qualified local distribution archive.
 See CURRENT_SOURCE_RELEASE_GATES.md. The new archive has isolated GUI
-and actual App Translocation acceptance on the development Mac. Browser-download
-delivery and independent clean-machine acceptance remain open; build 12 remains published
-and installed. No historical release qualification is transferred to build 13.
+and actual App Translocation acceptance on the development Mac. Published browser-download delivery is accepted for the identical archive.
+Independent clean-machine and minimum-macOS acceptance remain open. Build 13 is
+published as a preview; the installed app is unchanged. No historical release qualification is transferred to build 13.
