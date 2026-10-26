@@ -1,6 +1,6 @@
 # Swift synchronous throwing-call recovery
 
-The independent `swift-sync-error-edges-v2` model identifies bounded structural
+The independent `swift-sync-error-edges-v3` model identifies bounded structural
 success/error return edges in ordinary ARM64 Mach-O images. This is the first
 Swift decompilation slice: it does not reconstruct complete `do/catch` source.
 The existing unwind audit and its model identity remain unchanged.
@@ -14,9 +14,9 @@ python3 -I -B airs_cli.py swift-error-flow Example.dylib --output flow.json
 A direct BL must target an exact LC_FUNCTION_STARTS entry with one public,
 file-backed executable-section symbol. Section-end labels, aliases, private,
 resolver and alternate entries do not supply declarations. The complete supported
-mangling is two length-prefixed ASCII identifiers followed by `yS2iKF` or
-`yySiKF`: an ordinary synchronous, untyped throwing free function taking one
-unlabeled Swift.Int and returning Swift.Int or Swift.Void, respectively. Other declarations remain declined, including
+mangling is two length-prefixed ASCII identifiers followed by `yS2iKF`,
+`yySiKF` or `yyKF`: ordinary synchronous, untyped throwing free functions with
+Int-to-Int, Int-to-Void or parameterless Void signatures, respectively. Other declarations remain declined, including
 async, typed throws, generic functions, methods and thunks. Symbol declarations
 are structural evidence, not authenticated runtime targets.
 
@@ -468,3 +468,40 @@ for the subsequent forward-only diagnostic correction. Independent semantic
 review found no remaining blocking issue. No sealed binary admission, hashing,
 compilation, disassembly, native app, release or installation check was repeated.
 This is synthetic source/CLI qualification, not real-binary or installed-app proof.
+
+## Parameterless throwing Void declarations (edge v3)
+
+`swift-sync-error-edges-v3` adds only exact `yyKF` after the existing bounded ASCII
+module/free-name identifiers. It records parameters as a fresh empty list and
+result as Swift.Void. Swift's Mangling.rst specifies empty-list `y` for Void result
+and no parameters, plus `K` for untyped throws. The development demangler confirms
+`AIRSNoArgs.validate() throws -> ()`. Neither demangling nor a new dependency is
+introduced at runtime. Existing Int-to-Int and Int-to-Void declaration facts remain
+unchanged; historical edge-v2 reports retain their identity.
+
+Async, typed-throws, methods, generic contexts, thunks, nonthrowing functions and
+other parameterless result types remain refused. Exact entry/symbol admission,
+alias ambiguity, bounded x21 tracking and narrow-register refusal are unchanged.
+Region v5, incoming v3, presentation v3 and unwind model identities retain their
+existing scopes. Symbols remain structural declaration evidence, not runtime
+identity, target authentication or reconstructed Swift source.
+
+Twelve new focused methods passed in composed runs, including the first red/green
+case, prior signature facts, near-match/context refusals, parameter-list isolation,
+alias ambiguity, width/copy tracking, forward-handler integration, CLI JSON and
+direct text rendering. Thirty affected declaration/admission/renderer/model
+controls passed; unchanged region and corpus checks were reused. Independent
+semantic review found no blocking issue.
+
+One new optimized owned ARM64 dylib was compiled from
+fixtures/swift-error-flow/OwnedNoArgThrows.swift, independently disassembled and
+analyzed once. The first scan covered 187 words and retained all 15 direct calls:
+one recovered candidate and 14 explicit declines. The call at preferred VM 0x9dc
+targets parameterless validate at 0x914. Its x21 test at 0x9e0 has error successor
+0x9e4 and success successor 0x9f4; the error arm jumps at 0x9f0 to shared join
+0x9f8, whose tail ends at 0xa08. These facts agree with retained disassembly and
+produce an eligible structural presentation. The image was inspected as data,
+never loaded or executed. This establishes one owned compiler case, not broad
+compiler/layout coverage, native UI, clean-host or release qualification. No
+sealed earlier binary was reread/rehashed/recompiled, and no installed app or
+production settings/stores were modified.

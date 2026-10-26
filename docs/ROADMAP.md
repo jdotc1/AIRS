@@ -387,3 +387,12 @@ and proof limits. Seventeen new methods and 95 affected controls passed in
 composed scope; independent semantic review found no remaining blocker.
 Qualification is synthetic source/CLI only. No installed application, production
 settings/stores or MacScope source was changed. See SWIFT_ERROR_FLOW.md.
+
+Forward-error-arm recovery is merged in PR #37 with accepted results reused. The
+next local bounded increment admits exact parameterless throwing Void declarations
+under edge v3, reusing existing x21, region, entry and presentation recovery.
+Twelve new methods and 30 affected controls passed, with independent review. One
+new owned ARM64 compiler example recovered a parameterless call and structurally
+eligible handler, with 14 other calls explicitly declined. No old binary checks
+were repeated; native UI, installation and release qualification remain separate.
+MacScope, installed build 13 and production settings/stores are unchanged.

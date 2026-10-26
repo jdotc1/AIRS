@@ -1021,3 +1021,11 @@ partial inspected success words with explicit completeness, without publishing
 out-of-range targets as VM addresses. Edge v2/default output and unwind verdicts
 are unchanged; no runtime or source-reconstruction proof is added. See
 SWIFT_ERROR_FLOW.md for bounds, historical component scopes and qualification.
+
+Edge v3 adds exact ordinary parameterless synchronous untyped throwing free
+functions returning Void (`yyKF`) to the bounded declaration matcher. Parameter
+metadata is a fresh empty list; prior Int-parameter mappings retain their facts.
+Other parameterless returns, async/typed/generic/method/thunk forms still refuse.
+Region v5, entry v3, presentation v3 and unwind identities are unchanged. One new
+owned compiler case and focused source/CLI/renderer controls qualify this subset;
+symbol declarations do not authenticate runtime targets. See SWIFT_ERROR_FLOW.md.

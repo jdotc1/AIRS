@@ -20,12 +20,12 @@ class SwiftVoidThrowsBoundaryTests(unittest.TestCase):
     def test_stable_prefix_optional_macho_underscore(self):
         self.assertEqual(throwing_declaration(SYMBOL), throwing_declaration(SYMBOL[1:]))
 
-    def test_v2_preserves_previous_scalar_declaration_facts(self):
+    def test_current_model_preserves_previous_scalar_declaration_facts(self):
         from airs.swift_error_flow import MODEL
         declaration = throwing_declaration('_$s4Demo5parseyS2iKF')
         self.assertEqual(declaration['parameters'], ['Swift.Int'])
         self.assertEqual(declaration['result'], 'Swift.Int')
-        self.assertEqual(MODEL, 'swift-sync-error-edges-v2')
+        self.assertEqual(MODEL, 'swift-sync-error-edges-v3')
 
     def test_async_typed_thunk_generic_nonthrowing_and_extra_args_refuse(self):
         prefix = '_$s12AIRSValidate8validate'
@@ -51,7 +51,7 @@ class SwiftVoidThrowsBoundaryTests(unittest.TestCase):
         self.assertEqual(call['callee']['result'], 'Swift.Void')
         self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
         self.assertIn('Swift.Void', render_swift_error_text(report))
-        self.assertIn('swift-sync-error-edges-v2', render_swift_error_text(report))
+        self.assertIn('swift-sync-error-edges-v3', render_swift_error_text(report))
 
     def test_new_signature_alias_ambiguity_remains_declined(self):
         report = recover_swift_error_flow(image(symbol=SYMBOL, aliases=(('_$s4Demo5otheryySiKF', 32),)))
