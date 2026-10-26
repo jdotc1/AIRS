@@ -20,6 +20,8 @@ from .types import InputError, Limits, MachOImage
 
 MODEL = 'swift-sync-error-edges-v1'
 WINDOW_WORDS = 8
+REGION_MODEL = 'swift-sync-error-region-v1'
+REGION_WORDS = 16
 
 
 def throwing_declaration(symbol: str) -> dict | None:
@@ -134,7 +136,48 @@ def _edges(data: bytes, function, call_offset: int) -> dict:
     return {'reason': 'postcall_window_exhausted', 'window': window}
 
 
-def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS) -> dict:
+def _error_region(data: bytes, function, edge: dict) -> dict:
+    """Describe a local error interval; calls are opaque and may not return.
+
+    The forward success entry is a structural join boundary, not a proven
+    postdominator. Input data is the already bounded caller scan prefix.
+    """
+    result = {'status': 'declined', 'instructions': []}
+    start, join, test = (int(edge[key], 16) for key in ('error_pc', 'success_pc', 'test_pc'))
+    if start != test + 4 or not function.start <= start < join < function.end or (start | join) % 4:
+        return {**result, 'reason': 'unsupported_error_region_layout'}
+    if join - start > REGION_WORDS * 4:
+        return {**result, 'reason': 'error_region_budget'}
+    if join - function.start > len(data):
+        return {**result, 'reason': 'error_region_outside_scanned_prefix'}
+    calls = 0
+    for pc in range(start, join, 4):
+        word = struct.unpack_from('<I', data, pc - function.start)[0]
+        try:
+            instruction = decode_instruction(word, pc)
+        except ModelError:
+            return {**result, 'reason': 'error_region_instruction_unmodeled'}
+        row = {'pc': hex(pc), 'word': f'0x{word:08x}', 'kind': instruction.kind}
+        result['instructions'].append(row)
+        if instruction.kind == 'bl':
+            target = pc + instruction.immediate
+            if not 0 <= target < (1 << 64) or target % 4:
+                return {**result, 'reason': 'error_region_call_target_invalid'}
+            row['call_target_pc'] = hex(target)
+            row['semantics'] = 'opaque_call'
+            calls += 1
+        elif instruction.kind == 'b':
+            if pc + 4 != join or pc + instruction.immediate != join:
+                return {**result, 'reason': 'error_region_control_flow_unmodeled'}
+            row['target_pc'] = hex(join)
+        elif instruction.kind not in ('nop', 'mov', 'movz', 'movn'):
+            return {**result, 'reason': 'error_region_instruction_unmodeled'}
+    return {**result, 'status': 'structural_region_candidate', 'start_pc': hex(start),
+            'join_pc': hex(join), 'end_pc_exclusive': hex(join), 'opaque_call_count': calls,
+            'call_return_proven': False, 'join_reachability_proven': False}
+
+
+def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS, *, include_error_regions: bool = False) -> dict:
     if image.architecture != 'arm64' or image.cpu_subtype not in (0, 1):
         raise InputError('swift_flow_architecture', 'Only exact ordinary ARM64 subtypes are admitted')
     if len(image.data) > limits.max_file_bytes or len(image.functions) > limits.max_functions:
@@ -188,10 +231,12 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS)
                 else:
                     row['callee'] = {'symbol': symbol, 'image_offset': hex(target - image.preferred_base), **declaration}
                     row.update(_edges(data, function, offset))
+                    if include_error_regions and row['status'] == 'recovered_candidate':
+                        row['error_region'] = _error_region(data, function, row)
             if row['status'] == 'declined':
                 reasons[row['reason']] += 1
     recovered = sum(row['status'] == 'recovered_candidate' for row in calls)
-    return {'schema_version': 1, 'report_kind': 'airs.swift_error_flow', 'model_version': MODEL,
+    report = {'schema_version': 1, 'report_kind': 'airs.swift_error_flow', 'model_version': MODEL,
             'scope': 'structural_call_return_edges', 'address_space': 'preferred_vm',
             'image': {'architecture': image.architecture, 'cpu_subtype': image.cpu_subtype,
                       'uuid': image.uuid, 'slice_sha256': image.slice_sha256,
@@ -210,9 +255,16 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS)
                             'Only bounded 64-bit MOV/NOP and forward CBZ/CBNZ return windows are recovered.',
                             'Embedded-data, relocation and symbol-only function boundaries are excluded by existing admission tags.',
                             'No catch type, handler semantics, source equivalence, unwind verdict or async claim is made.']}
+    if include_error_regions:
+        regions = [row['error_region'] for row in calls if 'error_region' in row]
+        report['error_region_model_version'] = REGION_MODEL
+        report['summary']['recovered_error_region_count'] = sum(r['status'] == 'structural_region_candidate' for r in regions)
+        report['summary']['declined_error_region_count'] = sum(r['status'] == 'declined' for r in regions)
+        report['limitations'].append('Error intervals are structural candidates; opaque calls may not return and joins are not proven reachable.')
+    return report
 
 
-def recover_swift_error_flow_path(path: Path | str, *, requested_arch: str = 'auto', limits: Limits = DEFAULT_LIMITS) -> dict:
+def recover_swift_error_flow_path(path: Path | str, *, requested_arch: str = 'auto', limits: Limits = DEFAULT_LIMITS, include_error_regions: bool = False) -> dict:
     source = resolve_input(path)
     try:
         with source.open('rb') as handle:
@@ -221,4 +273,4 @@ def recover_swift_error_flow_path(path: Path | str, *, requested_arch: str = 'au
         raise InputError('unreadable_input', f'Cannot read Swift-flow input: {error}') from error
     if len(data) > limits.max_file_bytes:
         raise InputError('file_size_limit', 'Input exceeds the bounded Swift flow file limit')
-    return recover_swift_error_flow(parse_macho(data, str(source), limits, requested_arch), limits)
+    return recover_swift_error_flow(parse_macho(data, str(source), limits, requested_arch), limits, include_error_regions=include_error_regions)

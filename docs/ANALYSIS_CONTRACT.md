@@ -950,3 +950,9 @@ authenticity, packaged transport or GUI acceptance.
 `swift-error-flow`. Its exact declaration subset, bounded alias window, explicit
 scan/detail completeness and excluded claims are specified in SWIFT_ERROR_FLOW.md.
 Its candidates do not enter unwind agreement or inconsistency accounting.
+
+The opt-in `swift-sync-error-region-v1` supplement admits only bounded structural
+error-fallthrough intervals ending at a forward success entry. Opaque calls and
+raw targets are retained without return, reachability, exclusive-entry or
+postdominator proof. Region refusal preserves the underlying edge result.
+SWIFT_ERROR_FLOW.md specifies the 16-word and already-scanned-prefix limits.

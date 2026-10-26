@@ -73,3 +73,51 @@ Generated images and detailed execution receipts remain outside tracked source.
 Next: qualify additional explicit Swift signatures and recover bounded handler
 regions before presenting source-like `do/catch` output. Every extension needs a
 positive owned example and an independently reviewed refusal boundary.
+
+## Opt-in bounded error-region intervals
+
+```
+python3 -I -B airs_cli.py swift-error-flow Example.dylib --include-error-regions --output flow.json
+```
+
+The optional `swift-sync-error-region-v1` supplement describes local structural
+intervals for recovered calls. Default reports retain the original edge-only
+shape and model. A region decline does not invalidate or promote an edge result.
+The report adds `error_region_model_version`, per-call `error_region`, and
+recovered/declined region counts in the summary. These counts cover retained
+recovered edges only; omitted calls and declined edge candidates remain visible
+in the original scan/detail counters. Existing exit status describes scan/detail
+completeness, not successful region recovery.
+
+The first admitted layout requires the error successor to be the instruction
+immediately after the test, before a forward success successor in the same
+caller. The success entry is the proposed exclusive-end join boundary. At most
+16 words may lie in the interval, and every word must be in the already scanned
+caller prefix. Supported words are NOP, 64-bit MOV/MOVZ/MOVN, opaque direct BL,
+and a final unconditional B exactly to the proposed join. Other instructions,
+reverse layouts, early or differently targeted branches and truncated scan
+prefixes decline with explicit reasons. No additional instruction family is
+added to the existing decoder or unwind model.
+
+Each admitted word retains its PC, raw encoding and kind. BL retains its target
+and `opaque_call` label without claiming a callee identity or behavior. Both
+`call_return_proven` and `join_reachability_proven` are false. There is no proof
+that calls return, that the join executes, that the interval has no other incoming
+edges, or that it is exclusively entered on error. The join is not a proven
+postdominator. This is neither catch-type recovery nor source-level handler
+reconstruction.
+
+Eleven new focused methods passed, covering the owned shape, default preservation,
+CLI opt-in, opaque calls, permitted final join branch, rejected control flow,
+reverse layouts, the exact 16-word bound and scan-prefix refusal. Independent
+semantic review found no blocking correctness issue. Accepted edge and CLI
+qualification was reused rather than replayed.
+
+The same accepted owned compiler image and independent disassembly supplied the
+new region qualification. Only the new helper analyzed the accepted caller bytes;
+compilation, disassembly, image hashing/admission and edge analysis were not
+repeated. It recorded MOV at 0x93c, an opaque BL at 0x940 to 0xaec, and MOVN at
+0x944, with proposed join 0x948. Disassembly labels the call as an error-release
+stub, but the report deliberately assigns no runtime meaning to that target.
+This is source-engine qualification; native presentation, installation and
+release acceptance remain separate.
