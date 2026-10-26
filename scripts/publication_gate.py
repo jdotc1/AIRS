@@ -2,6 +2,7 @@
 """Bounded publication preflight. Never uploads, signs, executes inputs or rewrites history."""
 import argparse
 import base64
+from collections import deque
 import io
 import json
 import os
@@ -16,6 +17,7 @@ import zipfile
 
 MAXIMUM_BYTES = 512 * 1024 * 1024
 MAXIMUM_ENTRIES = 20000
+MAX_ARCHIVE_LINK_STEPS = 8192
 PUBLIC_EMAILS = {'138259519+jdotc1@users.noreply.github.com', 'noreply@github.com'}
 
 class GateError(ValueError):
@@ -68,6 +70,81 @@ def inspect_asset(path, maximum_bytes=MAXIMUM_BYTES):
     inspect_payload(data, path.name, maximum_bytes)
 
 
+
+def archive_link_graph(archive, members):
+    """Canonical ZIP namespace, including implicit directories; no extraction."""
+    nodes = {}; links = {}
+    for member in members:
+        path = PurePosixPath(member.filename)
+        if len(path.parts) > 128:
+            raise GateError('Archive member component depth exceeds its bound')
+        name = str(path)
+        if name == '.' or name in nodes:
+            raise GateError('Duplicate or empty canonical archive member')
+        mode = member.external_attr >> 16
+        if stat.S_ISLNK(mode):
+            if member.is_dir() or member.file_size > 4096:
+                raise GateError('Malformed or excessive archive link')
+            try:
+                target = archive.read(member).decode('utf-8')
+            except UnicodeError as error:
+                raise GateError('Malformed archive link encoding') from error
+            inspect_bytes(target.encode(), 'link target')
+            if not target or target.startswith('/') or '\\' in target or '\x00' in target:
+                raise GateError('Absolute or malformed archive link')
+            nodes[name] = 'link'; links[name] = target
+        else:
+            nodes[name] = 'directory' if member.is_dir() or stat.S_ISDIR(mode) else 'file'
+    for name in tuple(nodes):
+        parent = PurePosixPath(name).parent
+        while str(parent) != '.':
+            label = str(parent)
+            if label in nodes and nodes[label] != 'directory':
+                raise GateError('Archive member has a non-directory parent')
+            nodes.setdefault(label, 'directory')
+            if len(nodes) > MAXIMUM_ENTRIES * 2:
+                raise GateError('Archive namespace exceeds its bound')
+            parent = parent.parent
+    return nodes, links
+
+
+def resolve_archive_link(member, nodes, links):
+    """Follow at most 32 links, resolving each target relative to its parent."""
+    top = PurePosixPath(member).parts[0]
+    pending = deque((*PurePosixPath(member).parent.parts, *links[member].split('/')))
+    resolved = []; hops = 1; steps = 0; seen = {(member, ())}
+    while pending:
+        steps += 1
+        if steps > MAX_ARCHIVE_LINK_STEPS:
+            raise GateError('Archive link path expansion exceeds its bound')
+        part = pending.popleft()
+        if part in ('', '.'):
+            continue
+        if part == '..':
+            if len(resolved) <= 1:
+                raise GateError('Archive link escapes its top-level payload')
+            resolved.pop(); continue
+        resolved.append(part)
+        name = '/'.join(resolved)
+        if resolved[0] != top:
+            raise GateError('Archive link escapes its top-level payload')
+        if name not in nodes:
+            raise GateError('Archive link is dangling')
+        if name in links:
+            hops += 1
+            state = (name, tuple(pending))
+            if hops > 32 or state in seen:
+                raise GateError('Archive link cycle or resolution bound exceeded')
+            seen.add(state)
+            resolved.pop()
+            pending.extendleft(reversed(links[name].split('/')))
+        elif pending and nodes[name] != 'directory':
+            raise GateError('Archive link traverses a non-directory')
+    if not resolved or '/'.join(resolved) not in nodes:
+        raise GateError('Archive link is dangling')
+    return '/'.join(resolved)
+
+
 def inspect_payload(data, name, maximum_bytes=MAXIMUM_BYTES):
     if len(data) > maximum_bytes: raise GateError('Payload exceeds bounded inspection size')
     budget = [maximum_bytes, MAXIMUM_ENTRIES]
@@ -101,32 +178,18 @@ def inspect_payload(data, name, maximum_bytes=MAXIMUM_BYTES):
             with zipfile.ZipFile(io.BytesIO(payload)) as archive:
                 if len(archive.infolist()) != count: raise GateError('Contradictory ZIP entry count')
                 inspect_bytes(archive.comment, 'archive comment')
-                seen = set()
-                member_names = {m.filename.rstrip('/') for m in archive.infolist()}
-                for member in archive.infolist():
+                members = archive.infolist()
+                for member in members:
                     safe_name(member.filename)
-                    if member.filename in seen:
-                        raise GateError('Duplicate archive member')
-                    seen.add(member.filename)
                     budget[1] -= 1; budget[0] -= member.file_size
                     if budget[1] < 0 or budget[0] < 0 or member.flag_bits & 1:
                         raise GateError('Archive exceeds bounds or is encrypted')
                     inspect_bytes(member.comment + member.extra, 'archive metadata')
-                    mode = member.external_attr >> 16
-                    if stat.S_ISLNK(mode):
-                        target = archive.read(member).decode('utf-8')
-                        inspect_bytes(target.encode(), 'link target')
-                        if target.startswith('/') or '\\' in target:
-                            raise GateError('Absolute archive link')
-                        components = list(PurePosixPath(member.filename).parent.parts)
-                        for part in PurePosixPath(target).parts:
-                            if part == '..':
-                                if not components: raise GateError('Escaping archive link')
-                                components.pop()
-                            elif part != '.': components.append(part)
-                        resolved = '/'.join(components)
-                        if resolved not in member_names or components[:1] != list(PurePosixPath(member.filename).parts[:1]):
-                            raise GateError('Archive link escapes its top-level payload or is dangling')
+                nodes, links = archive_link_graph(archive, members)
+                for name in links:
+                    resolve_archive_link(name, nodes, links)
+                for member in members:
+                    if str(PurePosixPath(member.filename)) in links:
                         continue
                     visit(archive.read(member), member.filename, depth + 1)
         else:
