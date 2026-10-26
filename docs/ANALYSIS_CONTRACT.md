@@ -897,3 +897,15 @@ Matching, policy suffixes, limitations, precedence and schema/model versions ret
 their meaning. Historical absent metadata remains unavailable; no decoder default
 or source report mutation is introduced. Native caller activation and runtime
 acceptance remain separate.
+
+
+## 40. Opt-in covered batch comparison acceptance
+
+The explicit covered batch policy (COVERED_BATCH_COMPARISON.md) delegates to the
+bounded covered decoder at the existing acceptance point, before budget decrement
+or payload/model storage. Validation failures remain unavailable with no accepted
+comparison fields; later pairs continue under existing progress/cancellation
+rules. The policy is immutable per runner. The exact no-argument initializer and
+GUI callers retain legacy acceptance; source pairing, retained reports and export
+contracts are unchanged. This is source/unit integration, not GUI activation,
+authenticated bytes, function identity or native workflow acceptance.
