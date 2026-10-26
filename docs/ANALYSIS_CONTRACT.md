@@ -847,3 +847,16 @@ cross-image use refuses even when empty. Coverage does not establish original
 binary-function completeness, authenticity, identity or exact remaining producer
 fields. Earlier APIs retain partial-output scope; defaults and GUI behavior are
 unchanged.
+
+
+## 36. Explicit-body-disabled cross-image saved-report coverage
+
+The opt-in body-disabled coverage validator (BODY_DISABLED_ROW_COVERAGE.md)
+composes declared-row/name/order proofs and requires cross-image sources with
+explicitly false body status. Expected raw UTF-8 keys include validated manual
+pairs and remaining usable-name symbol or side-specific unmatched groups after
+pins. Duplicate raw names collapse; generated labels retain separate side keys.
+Missing/enabled body status and same-image use refuse, even for empty sources.
+This adds saved-report omission detection, not original-binary completeness,
+authenticity, identity, exact remaining fields or native activation. Earlier APIs
+retain partial-output scope; defaults are unchanged.
