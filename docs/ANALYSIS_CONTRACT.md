@@ -886,3 +886,14 @@ dispatch flags. The decoded modeled fields are returned unchanged; generic decod
 matching defaults and native workflows retain their scope. Success establishes
 saved-report group coverage plus composed field checks, not authenticated bytes,
 function identity, every producer field or GUI acceptance.
+
+
+## 39. Explicit producer body-option metadata
+
+New comparisons always serialize the validated body-candidate Boolean, including
+false for the existing default (EXPLICIT_BODY_STATUS.md). This additive wire field
+records caller configuration independently of fingerprint presence or phase output.
+Matching, policy suffixes, limitations, precedence and schema/model versions retain
+their meaning. Historical absent metadata remains unavailable; no decoder default
+or source report mutation is introduced. Native caller activation and runtime
+acceptance remain separate.
