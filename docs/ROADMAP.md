@@ -331,3 +331,11 @@ example recovers correct success/error edges but conservatively declines its
 error block's jump past a distinct success entry into the epilogue. That concrete
 layout is the next bounded region-recovery candidate; it requires separate join
 and entry analysis rather than treating the success entry as the true join.
+
+## Saved-report coverage GUI integration
+
+The saved-batch pairing window now exposes strict coverage with a captured
+per-invocation policy. Legacy programmatic behavior remains the default. The real
+app build and a new refusal/export/policy-separation workspace test passed;
+accepted core controls were reused. Interactive isolated-profile acceptance is
+still required. See GUI_SAVED_REPORT_COVERAGE.md for delivered and held scope.
