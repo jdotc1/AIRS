@@ -972,3 +972,10 @@ bounded structural display plan. Source reconstruction is always disabled;
 indirect/external entry, reachability, call return and handler meaning remain
 unproven. The consumer does not admit arbitrary saved reports. Default analysis
 and unwind results remain unchanged; see SWIFT_ERROR_FLOW.md.
+
+The bounded Swift text renderer consumes current in-process producer facts only.
+Eligible structural plans, blocked/unresolved evidence, raw post-call/region words,
+opaque targets, full source counts and proof limits remain distinct. Renderer
+row/byte caps never widen eligibility or source claims. Rendering failure returns
+no partial text; default JSON and unwind semantics remain unchanged. See
+SWIFT_ERROR_FLOW.md for explicit caps and qualification scope.
