@@ -395,3 +395,29 @@ shared-epilogue results were reused; no unchanged full suite or real binary
 admission, hash, compiler or disassembly pass was repeated. Independent semantic
 review found no blocking issue. This is synthetic source/CLI qualification, not
 real-binary prevalence, native-app or release qualification.
+
+## Exact frame-pointer-reset tail (region v4)
+
+`swift-sync-error-region-v4` adds the exact three-word tail shape ADD SP, X29, #0
+(raw 0x910003bf, the MOV SP, X29 alias), followed immediately by SP post-indexed
+LDP X29, X30 with a positive 16-byte-aligned increment up to 496, then exact
+RET X30. The ordered restore pair is required. Existing offset restores may
+precede this sequence within the shared-tail budget.
+
+All three words must fit the eight-word tail budget, admitted function and
+already scanned prefix. Shifted-zero aliases, WSP/SUB/nonzero-immediate forms,
+other reset sources, swapped/wrong restore pairs, other bases/addressing modes,
+intervening instructions and unsupported returns decline. Caller-local direct
+side entries retain their existing blocked/unresolved behavior. Edge v2,
+incoming v2 and presentation v2 contracts are unchanged; restored-state and
+source-reconstruction proof flags remain false. No FP provenance, stack balance,
+restored LR, unwind validity or runtime reachability is established by this shape.
+
+Twelve new focused methods passed in composed runs, including the first red/green
+case, encoding/pair restrictions, increment boundaries, immediate adjacency,
+exact budget/prefix boundaries, side entries, offset-restore composition and one
+synthetic CLI text check. Four changed model/CLI controls passed. Accepted
+shared/post-indexed results were reused without repeating full suites or
+real-binary admission, hashing, compilation or disassembly. Independent semantic
+review found no blocking issue. This is synthetic source/CLI qualification only;
+no native app, release, installation or production-store changes were performed.

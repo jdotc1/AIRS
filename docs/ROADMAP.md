@@ -371,3 +371,10 @@ through the existing decoder under region v3. Eleven new focused methods and
 three affected controls passed; independent semantic review found no blocker.
 See SWIFT_ERROR_FLOW.md. This is synthetic source/CLI qualification only; installed
 build 13, production stores and MacScope remain unchanged.
+
+Final post-indexed epilogue recovery is merged in PR #35 with accepted results
+reused. The next local bounded increment recognizes the exact FP-to-SP reset,
+ordered FP/LR post-indexed pop and RET sequence under region v4. Twelve new
+focused methods and four affected controls passed, with independent semantic
+review. Qualification remains synthetic source/CLI; installed build 13,
+production settings/stores and MacScope are unchanged. See SWIFT_ERROR_FLOW.md.
