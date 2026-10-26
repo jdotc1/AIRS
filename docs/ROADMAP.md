@@ -231,12 +231,19 @@ payload check. Independent review found no actionable production defect. Existin
 no-argument initialization and GUI callers retain legacy acceptance; GUI activation,
 authenticity and identity remain separate.
 
-The local comparison-schema alignment admits current manual/body policies and
+The comparison-schema alignment, merged in public PR25, admits current manual/body policies and
 bases, plus optional typed body status and bounded exact manual-pair objects. See
 COMPARISON_SCHEMA_ALIGNMENT.md. Fourteen development-validator tests passed with
 zero skips; independent review found no actionable defect. Only baseline-diff was
 regenerated. Structural validity does not establish semantic coverage, source
 binding, authenticity or GUI activation; accepted runtime evidence is reused.
+
+The local owned producer/native coverage bridge qualifies exact Python-produced
+comparison bytes through covered decoding and strict batch acceptance. See
+PRODUCER_COVERAGE_BRIDGE.md. Eight new controls and two mutation refusals passed;
+independent review found no actionable defect. Production behavior and GUI callers
+are unchanged; accepted app/runtime evidence is reused. Packaged transport,
+authenticity, identity and GUI acceptance remain separate.
 
 Next reuse sequence:
 
