@@ -104,7 +104,14 @@ public struct BatchComparisonResult: Sendable {
 }
 
 public actor BatchComparisonRunner {
-    public init() {}
+    private let requireSavedReportCoverage: Bool
+
+    public init() { requireSavedReportCoverage = false }
+
+    /// Explicit acceptance policy; existing callers retain legacy decoding.
+    public init(requireSavedReportCoverage: Bool) {
+        self.requireSavedReportCoverage = requireSavedReportCoverage
+    }
     public func run(plan: BatchComparisonPlan, pairs: [BatchImagePair],
                     load: @Sendable (UUID) async throws -> RetainedReport,
                     compare: @Sendable (Data, Data) async throws -> Data,
@@ -147,7 +154,13 @@ public actor BatchComparisonRunner {
                 let data = try await compare(baseline.data, current.data)
                 try Task.checkCancellation()
                 guard data.count <= remaining else { throw ReportError.invalidContents("Batch comparison output budget exhausted.") }
-                let decoded = try ComparisonReport.decode(data)
+                let decoded: ComparisonReport
+                if requireSavedReportCoverage {
+                    decoded = try ComparisonReport.decodeWithSavedReportCoverage(data,
+                        baselineData: baseline.data, currentData: current.data)
+                } else {
+                    decoded = try ComparisonReport.decode(data)
+                }
                 guard Self.matches(decoded.comparison.baselineImage, baseline.report.image),
                       Self.matches(decoded.comparison.currentImage, current.report.image) else {
                     throw ReportError.invalidContents("Comparison returned different image identities.")

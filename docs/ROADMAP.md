@@ -218,11 +218,18 @@ actionable defect. Generic decode remains broader; cross-image missing body
 status refuses. Native workflow activation, remaining producer fields,
 authenticity and identity remain separate.
 
-The local explicit body-status producer change records false as well as true in
+The explicit body-status producer change, merged in public PR23, records false as well as true in
 new comparison metadata. See EXPLICIT_BODY_STATUS.md. Eleven new tests and two
 affected checks passed, including the CLI default path; independent review found
 no actionable defect. Accepted native evidence is reused. Matching remains off
 by default; historical absence stays unknown, and app activation remains separate.
+
+The local covered batch-runner policy exposes saved-report coverage as explicit
+acceptance opt-in. See COVERED_BATCH_COMPARISON.md. The real AIRSApp build passed;
+ten async methods qualified through nine accepted results and one corrected
+payload check. Independent review found no actionable production defect. Existing
+no-argument initialization and GUI callers retain legacy acceptance; GUI activation,
+authenticity and identity remain separate.
 
 Next reuse sequence:
 
