@@ -20,11 +20,12 @@ from .types import InputError, Limits, MachOImage
 
 MODEL = 'swift-sync-error-edges-v2'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v1'
+REGION_MODEL = 'swift-sync-error-region-v2'
 REGION_WORDS = 16
-INCOMING_MODEL = 'swift-region-direct-entries-v1'
+INCOMING_MODEL = 'swift-region-direct-entries-v2'
 INCOMING_EVIDENCE_LIMIT = 16
-PRESENTATION_MODEL = 'swift-structural-presentation-v1'
+PRESENTATION_MODEL = 'swift-structural-presentation-v2'
+SHARED_WORDS = 8
 
 
 def throwing_declaration(symbol: str) -> dict | None:
@@ -140,11 +141,50 @@ def _edges(data: bytes, function, call_offset: int) -> dict:
     return {'reason': 'postcall_window_exhausted', 'window': window}
 
 
+def _shared_epilogue(data: bytes, function, success: int, join: int) -> dict | None:
+    """Bounded straight-line success arm and SP restore/return shape only."""
+    if not success < join < function.end or (success | join) % 4 or join - success > SHARED_WORDS * 4:
+        return None
+    def word_at(pc):
+        if not function.start <= pc < function.end or pc + 4 - function.start > len(data):
+            raise ValueError('Shared interval outside scanned caller')
+        word = struct.unpack_from('<I', data, pc - function.start)[0]
+        return decode_instruction(word, pc), {'pc': hex(pc), 'word': f'0x{word:08x}'}
+    success_words = []; tail = []
+    try:
+        for pc in range(success, join, 4):
+            instruction, row = word_at(pc)
+            if instruction.kind not in ('nop', 'mov', 'movz', 'movn'):
+                return None
+            success_words.append({**row, 'kind': instruction.kind})
+        for index in range(SHARED_WORDS):
+            pc = join + index * 4
+            instruction, row = word_at(pc)
+            tail.append({**row, 'kind': instruction.kind})
+            if instruction.kind == 'ret':
+                return {'success_interval': {'start_pc': hex(success), 'end_pc_exclusive': hex(join),
+                                            'instructions': success_words},
+                        'shared_epilogue': {'start_pc': hex(join), 'end_pc_exclusive': hex(pc + 4),
+                                            'instructions': tail, 'restore_state_proven': False}}
+            if instruction.kind == 'nop':
+                continue
+            if (instruction.kind == 'ldp' and instruction.rn == 31 and instruction.addressing == 'offset'
+                    and instruction.immediate >= 0 and 19 <= instruction.rd <= 30 and 19 <= instruction.rt2 <= 30):
+                continue
+            if (instruction.kind == 'add' and instruction.rd == instruction.rn == 31
+                    and 0 < instruction.immediate <= 4096 and instruction.immediate % 16 == 0):
+                continue
+            return None
+    except (ModelError, ValueError):
+        return None
+    return None
+
+
 def _error_region(data: bytes, function, edge: dict) -> dict:
     """Describe a local error interval; calls are opaque and may not return.
 
-    The forward success entry is a structural join boundary, not a proven
-    postdominator. Input data is the already bounded caller scan prefix.
+    The forward success entry bounds the error interval. A separately qualified
+    shared restore/return tail may lie later; neither boundary proves a postdominator. Input data is the already bounded caller scan prefix.
     """
     result = {'status': 'declined', 'instructions': []}
     start, join, test = (int(edge[key], 16) for key in ('error_pc', 'success_pc', 'test_pc'))
@@ -154,8 +194,8 @@ def _error_region(data: bytes, function, edge: dict) -> dict:
         return {**result, 'reason': 'error_region_budget'}
     if join - function.start > len(data):
         return {**result, 'reason': 'error_region_outside_scanned_prefix'}
-    calls = 0
-    for pc in range(start, join, 4):
+    calls = 0; boundary = join; shared = {}
+    for pc in range(start, boundary, 4):
         word = struct.unpack_from('<I', data, pc - function.start)[0]
         try:
             instruction = decode_instruction(word, pc)
@@ -171,13 +211,19 @@ def _error_region(data: bytes, function, edge: dict) -> dict:
             row['semantics'] = 'opaque_call'
             calls += 1
         elif instruction.kind == 'b':
-            if pc + 4 != join or pc + instruction.immediate != join:
+            target = pc + instruction.immediate
+            if pc + 4 != boundary:
                 return {**result, 'reason': 'error_region_control_flow_unmodeled'}
+            if target != boundary:
+                shared = _shared_epilogue(data, function, boundary, target)
+                if shared is None:
+                    return {**result, 'reason': 'error_region_control_flow_unmodeled'}
+                join = target
             row['target_pc'] = hex(join)
         elif instruction.kind not in ('nop', 'mov', 'movz', 'movn'):
             return {**result, 'reason': 'error_region_instruction_unmodeled'}
     return {**result, 'status': 'structural_region_candidate', 'start_pc': hex(start),
-            'join_pc': hex(join), 'end_pc_exclusive': hex(join), 'opaque_call_count': calls,
+            'join_pc': hex(join), 'end_pc_exclusive': hex(boundary), 'opaque_call_count': calls, **shared,
             'call_return_proven': False, 'join_reachability_proven': False}
 
 
@@ -204,13 +250,22 @@ def _caller_direct_edges(data: bytes, function) -> dict:
             'caller_scan_complete': len(data) == function.size}
 
 
-def _region_incoming(scan: dict, region: dict) -> dict:
+def _region_incoming(scan: dict, region: dict, call: dict | None = None) -> dict:
     """Only absence of observed unexpected caller-local direct edges is eligible."""
     start, end = int(region['start_pc'], 16), int(region['end_pc_exclusive'], 16)
     entries = []; count = 0
     for edge in scan['direct_edges']:
         source, target = int(edge['source_pc'], 16), int(edge['target_pc'], 16)
-        if not start <= source < end and start <= target < end:
+        conflict = not start <= source < end and start <= target < end
+        if 'shared_epilogue' in region:
+            join = int(region['join_pc'], 16)
+            tail_end = int(region['shared_epilogue']['end_pc_exclusive'], 16)
+            expected_test = (call is not None and source == int(call['test_pc'], 16)
+                             and edge['kind'] == 'xcbz' and target == end)
+            expected_exit = source == end - 4 and edge['kind'] == 'b' and target == join
+            if end <= target < tail_end and not (expected_test or expected_exit):
+                conflict = True
+        if conflict:
             count += 1
             if len(entries) < INCOMING_EVIDENCE_LIMIT:
                 entries.append(edge)
@@ -264,7 +319,7 @@ def _presentation_eligibility(call: dict) -> dict:
         words = region['instructions']
         if (start != test + 4 or not start < end or (start | end) % 4
                 or address(region['start_pc']) != start or address(region['end_pc_exclusive']) != end
-                or address(region['join_pc']) != end
+                or (address(region['join_pc']) != end and 'shared_epilogue' not in region)
                 or not isinstance(words, list) or not 1 <= len(words) <= REGION_WORDS
                 or len(words) * 4 != end - start
                 or re.fullmatch(r'x(?:[0-9]|[12][0-9]|30)', call['tested_register']) is None):
@@ -273,6 +328,21 @@ def _presentation_eligibility(call: dict) -> dict:
             if (address(word['pc']) != start + index * 4
                     or re.fullmatch(r'0x[0-9a-f]{8}', word['word']) is None):
                 raise ValueError('Inconsistent presentation word')
+        if 'shared_epilogue' in region:
+            join = address(region['join_pc'])
+            for interval, lower, upper in ((region['success_interval'], end, join),
+                    (region['shared_epilogue'], join, address(region['shared_epilogue']['end_pc_exclusive']))):
+                evidence = interval['instructions']
+                if (address(interval['start_pc']) != lower or address(interval['end_pc_exclusive']) != upper
+                        or not 1 <= len(evidence) <= SHARED_WORDS or len(evidence) * 4 != upper - lower):
+                    raise ValueError('Inconsistent shared interval')
+                for index, word in enumerate(evidence):
+                    if address(word['pc']) != lower + 4 * index or re.fullmatch(r'0x[0-9a-f]{8}', word['word']) is None:
+                        raise ValueError('Inconsistent shared evidence')
+            if (join <= end or words[-1].get('kind') != 'b' or address(words[-1]['target_pc']) != join
+                    or region['shared_epilogue']['instructions'][-1].get('kind') != 'ret'
+                    or region['shared_epilogue'].get('restore_state_proven') is not False):
+                raise ValueError('Inconsistent shared join')
     except (KeyError, TypeError, ValueError):
         return {**result, 'reason': 'presentation_evidence_inconsistent'}
     return {**result, 'status': 'eligible_structural_only', 'reason': 'complete_caller_local_direct_validation',
@@ -281,7 +351,10 @@ def _presentation_eligibility(call: dict) -> dict:
                                            'error_when': 'nonzero'},
                              'error_interval': {'start_pc': region['start_pc'], 'end_pc_exclusive': region['end_pc_exclusive'],
                                                 'instructions': [dict(word) for word in words]},
-                             'success_entry_pc': call['success_pc']}}
+                             'success_entry_pc': call['success_pc'],
+                             **({'shared_epilogue': {**region['shared_epilogue'], 'instructions': [dict(w) for w in region['shared_epilogue']['instructions']]},
+                                 'success_interval': {**region['success_interval'], 'instructions': [dict(w) for w in region['success_interval']['instructions']]}}
+                                if 'shared_epilogue' in region else {})}}
 
 
 def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS, *, include_error_regions: bool = False, validate_region_entries: bool = False, include_structured_presentation: bool = False) -> dict:
@@ -349,7 +422,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
                         if validate_region_entries and row['error_region']['status'] == 'structural_region_candidate':
                             if direct_scan is None:
                                 direct_scan = _caller_direct_edges(data, function)
-                            row['error_region']['incoming_validation'] = _region_incoming(direct_scan, row['error_region'])
+                            row['error_region']['incoming_validation'] = _region_incoming(direct_scan, row['error_region'], row)
             if row['status'] == 'declined':
                 reasons[row['reason']] += 1
             if include_structured_presentation:

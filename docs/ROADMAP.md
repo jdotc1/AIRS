@@ -352,3 +352,15 @@ browser-download delivery is accepted for the identical archive.
 Independent clean-machine and minimum-macOS acceptance remain open. Build 13 is
 published as a preview; qualification did not replace an installed app. No
 historical release qualification is transferred to build 13.
+
+## Shared Swift error-handler epilogue recovery
+
+The next bounded source increment recovers a terminal error-arm jump over a
+separate success arm into a narrowly qualified common restore/return tail.
+Region, direct-entry and presentation component identities advance to v2;
+edge identity and unwind verdicts remain unchanged. Fourteen new and 60 affected
+focused methods passed, with independent semantic review. Captured owned caller
+words and accepted edge facts establish changed-stage qualification without
+repeating binary admission or compilation. See SWIFT_ERROR_FLOW.md. New end-to-end
+binary/CLI, native UI and release qualification remain separate; build 13 and
+installed stores are unchanged.

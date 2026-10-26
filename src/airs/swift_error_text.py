@@ -76,6 +76,9 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
             line('  Error interval', {key: interval[key] for key in ('start_pc', 'end_pc_exclusive')})
             rows('    Instruction', interval['instructions'], MAX_WORD_ROWS)
             line('  Success entry', plan['success_entry_pc'])
+            if 'shared_epilogue' in plan:
+                line('  Shared restore/return candidate (state unproven)',
+                     {key: value for key, value in plan['shared_epilogue'].items() if key != 'instructions'})
         else:
             lines.append('  Structured plan: withheld')
             region = call.get('error_region')
@@ -84,6 +87,11 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
                     'join_pc', 'call_return_proven', 'join_reachability_proven') if key in region})
                 rows('    Region instruction evidence', region['instructions'], MAX_WORD_ROWS)
         region = call.get('error_region', {})
+        for key, label in (('success_interval', 'Success-arm'), ('shared_epilogue', 'Shared tail')):
+            interval = region.get(key)
+            if isinstance(interval, dict):
+                line('  ' + label + ' interval evidence', {k: v for k, v in interval.items() if k != 'instructions'})
+                rows('    ' + label + ' instruction', interval['instructions'], MAX_WORD_ROWS)
         entry = region.get('incoming_validation')
         if isinstance(entry, dict):
             line('  Incoming validation', {key: value for key, value in entry.items()
