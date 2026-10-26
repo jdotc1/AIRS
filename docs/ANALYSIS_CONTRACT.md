@@ -920,3 +920,14 @@ shape. Historical absence remains valid. This structural contract does not prove
 bijection, source membership, metadata consistency, coverage, authenticity or
 identity; explicit native validators retain those scopes. Runtime dependencies,
 matching defaults, other schema contracts and GUI behavior are unchanged.
+
+
+## 42. Owned producer/native coverage integration controls
+
+The producer coverage controls (PRODUCER_COVERAGE_BRIDGE.md) join existing Python
+comparison generation to the covered native decoder through strict batch acceptance.
+Exact serialized strings and independent expected counts/bases/status preserve the
+protocol boundary. Synthetic digests are placeholders; mutations isolate missing
+groups and foreign source endpoints while retaining structural validity. These
+controls do not change matching or GUI activation, authenticate bytes, establish
+analysis truth or prove packaged-engine transport and original-binary completeness.
