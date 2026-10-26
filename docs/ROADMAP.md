@@ -190,11 +190,18 @@ Its AIRSApp build and 16 focused tests passed; independent review found no
 actionable defect. Input is not reordered; complete-output reconstruction,
 authenticity, identity and native activation remain separate.
 
-The local same-image row-coverage validator detects omitted offset groups from
+The same-image row-coverage validator, merged in public PR19, detects omitted offset groups from
 the union of two admitted saved reports. See SAME_IMAGE_ROW_COVERAGE.md. Its
 AIRSApp build and 17 focused tests passed; independent review found no actionable
 defect. Cross-image use refuses; original-binary coverage, remaining producer
 fields, authenticity, identity and native activation remain separate.
+
+The local body-disabled cross-image coverage validator detects omitted manual,
+symbol and side-specific unmatched groups after validated pins. See
+BODY_DISABLED_ROW_COVERAGE.md. Its AIRSApp build and 18 focused tests passed;
+independent review found no actionable defect. Explicit false body status is
+required; unknown/enabled status and same-image use refuse. Body-enabled
+coverage, binary completeness, authenticity and native activation remain separate.
 
 Next reuse sequence:
 
