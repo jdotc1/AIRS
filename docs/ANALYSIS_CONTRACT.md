@@ -985,3 +985,14 @@ untyped Int-to-Void throwing free-function declarations (`yySiKF`), retaining th
 previous Int-to-Int mapping. Historical v1 results keep their identity. Region,
 entry, presentation and unwind semantics remain unchanged; the owned later-
 epilogue jump remains a region refusal. See SWIFT_ERROR_FLOW.md.
+
+Region/entry/presentation v2 adds bounded shared restore/return tails for a terminal
+error-arm B past a separate straight-line success arm. The error interval excludes
+both success and tail words. Eight-word success/tail caps, narrow SP-restore shape,
+complete scanned-prefix evidence and exact expected-edge exemptions are required.
+Other caller-local direct entries conflict, unknown coverage withholds eligibility,
+and blocked/unresolved text retains all bounded interval evidence. Edge identity,
+default output and unwind semantics are unchanged. Historical region-v1 refusal
+of the owned later-epilogue example is superseded only within this new component
+scope. Restored state, reachability and reconstructed Swift remain unproven. See
+SWIFT_ERROR_FLOW.md for qualification and limits.

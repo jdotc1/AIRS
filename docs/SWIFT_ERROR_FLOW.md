@@ -323,3 +323,50 @@ qualification establishes new declaration/call-edge coverage, not full handler
 recovery. The different-success-entry/epilogue layout is a concrete next bounded
 region extension requiring separate positive and refusal controls. Native app,
 GUI, installation and release qualification remain separate.
+
+## Bounded shared restore/return tail (region, entry and presentation v2)
+
+`swift-sync-error-region-v2` retains the earlier forward-success interval and adds
+one shared-tail layout. The final error-arm instruction must be a direct B past
+the success entry to a later aligned join in the same admitted, scanned function.
+The error interval still ends at the success entry; `join_pc` records the distinct
+shared-tail start. No error instruction is attributed to the success arm or tail.
+
+The error arm remains capped at 16 words. The success arm and shared tail are each
+capped at eight words and must fit the existing caller scan prefix. The success
+arm admits only straight-line NOP/MOV/MOVZ/MOVN. The tail admits NOP, nonnegative
+SP-offset LDP of distinct registers x19–x30, positive 16-byte-aligned SP-to-SP ADD
+up to 4096, and exact RET x30. Calls, branches, unknown words, unsupported memory
+bases/writeback, missing returns and over-budget intervals decline. These are
+instruction-shape restrictions, not frame-state or stack-memory validation.
+
+`swift-region-direct-entries-v2` additionally checks direct targets into the
+success arm and shared tail, including calls originating in the error arm. Only
+the recorded XCBZ test to the exact success entry and terminal error B to the
+exact shared join are exempt. Other explicit entries, including extra entries at
+the join, conflict. Incomplete caller scans or unclassified words withhold the
+absence result. Indirect/external entries and runtime reachability remain unproven.
+
+`swift-structural-presentation-v2` binds and copies the separate intervals into
+its structural plan. The bounded text renderer preserves success/tail bounds and
+raw words even when the plan is blocked or unresolved, with row omission counts.
+Source reconstruction remains disabled; restored return state, call return,
+exclusive entry, postdominance and handler meaning are not proven. The edge model
+remains v2, default edge-only output and unwind verdicts are unchanged, and older
+component reports retain their historical identities.
+
+Fourteen new focused methods passed in composed runs, including red/green recovery
+and withheld-evidence cases, side entries, expected-edge binding, tail restrictions,
+exact limits, truncated prefixes, presentation tampering and copied evidence.
+Sixty affected region/entry/presentation/text and selected Void-call controls
+passed once. Unchanged declaration/admission suites were reused. Independent
+semantic review found no remaining blocking issue after the withheld-evidence
+renderer correction.
+
+The already captured owned Void-handler example was qualified only at the changed
+region, entry and presentation stages, using its accepted call-edge facts and
+retained disassembly words. It now yields error interval 0x938–0x948, success arm
+0x948–0x94c and shared tail 0x94c–0x95c, eligible for structural presentation.
+No sealed binary read/hash/admission, compiler or disassembly pass was repeated.
+This is not a new end-to-end real-binary CLI or native-app qualification. No
+packaging, publication, installation or production-store changes were performed.

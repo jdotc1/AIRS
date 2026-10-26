@@ -124,7 +124,7 @@ class SwiftRegionIncomingBoundaryTests(unittest.TestCase):
                 status = main(['swift-error-flow', str(source), '--include-error-regions', '--validate-region-entries'])
             self.assertEqual(status, 0)
             report = json.loads(output.getvalue())
-            self.assertEqual(report['region_incoming_model_version'], 'swift-region-direct-entries-v1')
+            self.assertEqual(report['region_incoming_model_version'], 'swift-region-direct-entries-v2')
             self.assertEqual(report['calls'][0]['error_region']['incoming_validation']['unexpected_entry_count'], 1)
             with contextlib.redirect_stderr(errors):
                 self.assertEqual(main(['swift-error-flow', str(source), '--validate-region-entries']), 2)
