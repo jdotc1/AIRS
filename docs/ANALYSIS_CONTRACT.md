@@ -964,3 +964,11 @@ an absence result; observed conflicts remain visible with exact counts and
 bounded details. It never establishes exclusive entry, indirect/external-entry
 absence, reachability, a postdominator or handler semantics. Default edge/region
 reports and unwind verdicts remain unchanged. See SWIFT_ERROR_FLOW.md.
+
+The opt-in `swift-structural-presentation-v1` consumer assigns blocked, unresolved
+or eligible_structural_only presentation status to retained producer candidates.
+Only complete, consistent caller-local direct validation can enable a labeled
+bounded structural display plan. Source reconstruction is always disabled;
+indirect/external entry, reachability, call return and handler meaning remain
+unproven. The consumer does not admit arbitrary saved reports. Default analysis
+and unwind results remain unchanged; see SWIFT_ERROR_FLOW.md.

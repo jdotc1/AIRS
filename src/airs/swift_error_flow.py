@@ -24,6 +24,7 @@ REGION_MODEL = 'swift-sync-error-region-v1'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v1'
 INCOMING_EVIDENCE_LIMIT = 16
+PRESENTATION_MODEL = 'swift-structural-presentation-v1'
 
 
 def throwing_declaration(symbol: str) -> dict | None:
@@ -225,8 +226,68 @@ def _region_incoming(scan: dict, region: dict) -> dict:
             'entry_details_complete': count == len(entries), 'exclusive_entry_proven': False}
 
 
-def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS, *, include_error_regions: bool = False, validate_region_entries: bool = False) -> dict:
+def _presentation_eligibility(call: dict) -> dict:
+    """Consume in-process producer results; this is not a saved-report decoder."""
+    result = {'status': 'unresolved', 'source_reconstruction_allowed': False,
+              'limitations': ['Structural candidate only; not reconstructed Swift source.',
+                              'Calls remain opaque; displayed targets do not identify runtime behavior.',
+                              'Caller-local direct-edge checks do not exclude indirect or external entries.',
+                              'Reachability, exclusive entry, call return and handler semantics remain unproven.']}
+    if call.get('status') != 'recovered_candidate':
+        return {**result, 'status': 'blocked', 'reason': 'edge_not_recovered'}
+    region = call.get('error_region')
+    if not isinstance(region, dict) or region.get('status') != 'structural_region_candidate':
+        return {**result, 'status': 'blocked', 'reason': 'region_not_recovered'}
+    entry = region.get('incoming_validation')
+    if not isinstance(entry, dict):
+        return {**result, 'reason': 'incoming_validation_missing'}
+    if entry.get('status') == 'unexpected_direct_entries':
+        return {**result, 'status': 'blocked', 'reason': 'unexpected_direct_entries'}
+    if (entry.get('status') != 'no_unexpected_direct_entries'
+            or entry.get('scope') != 'caller_local_direct_edges'
+            or entry.get('caller_scan_complete') is not True
+            or entry.get('entry_details_complete') is not True
+            or entry.get('unclassified_details_complete') is not True
+            or any(type(entry.get(key)) is not int or entry[key] != 0
+                   for key in ('unexpected_entry_count', 'unclassified_word_count'))
+            or entry.get('exclusive_entry_proven') is not False
+            or region.get('call_return_proven') is not False
+            or region.get('join_reachability_proven') is not False):
+        return {**result, 'reason': 'incoming_validation_not_complete_or_consistent'}
+    try:
+        def address(value):
+            if not isinstance(value, str) or re.fullmatch(r'0x[0-9a-f]{1,16}', value) is None:
+                raise ValueError('Invalid presentation VM address')
+            return int(value, 16)
+        start, end, test = (address(call[key]) for key in ('error_pc', 'success_pc', 'test_pc'))
+        words = region['instructions']
+        if (start != test + 4 or not start < end or (start | end) % 4
+                or address(region['start_pc']) != start or address(region['end_pc_exclusive']) != end
+                or address(region['join_pc']) != end
+                or not isinstance(words, list) or not 1 <= len(words) <= REGION_WORDS
+                or len(words) * 4 != end - start
+                or re.fullmatch(r'x(?:[0-9]|[12][0-9]|30)', call['tested_register']) is None):
+            raise ValueError('Inconsistent presentation interval')
+        for index, word in enumerate(words):
+            if (address(word['pc']) != start + index * 4
+                    or re.fullmatch(r'0x[0-9a-f]{8}', word['word']) is None):
+                raise ValueError('Inconsistent presentation word')
+    except (KeyError, TypeError, ValueError):
+        return {**result, 'reason': 'presentation_evidence_inconsistent'}
+    return {**result, 'status': 'eligible_structural_only', 'reason': 'complete_caller_local_direct_validation',
+            'display_plan': {'kind': 'structural_error_interval', 'label': 'Structural error-path candidate',
+                             'condition': {'test_pc': call['test_pc'], 'register': call['tested_register'],
+                                           'error_when': 'nonzero'},
+                             'error_interval': {'start_pc': region['start_pc'], 'end_pc_exclusive': region['end_pc_exclusive'],
+                                                'instructions': [dict(word) for word in words]},
+                             'success_entry_pc': call['success_pc']}}
+
+
+def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS, *, include_error_regions: bool = False, validate_region_entries: bool = False, include_structured_presentation: bool = False) -> dict:
+    if include_structured_presentation and not (include_error_regions and validate_region_entries):
+        raise InputError('swift_presentation_option', 'Structured presentation requires error regions and entry validation')
     if validate_region_entries and not include_error_regions:
+
         raise InputError('swift_region_option', 'Entry validation requires error-region recovery')
     if image.architecture != 'arm64' or image.cpu_subtype not in (0, 1):
         raise InputError('swift_flow_architecture', 'Only exact ordinary ARM64 subtypes are admitted')
@@ -290,6 +351,8 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
                             row['error_region']['incoming_validation'] = _region_incoming(direct_scan, row['error_region'])
             if row['status'] == 'declined':
                 reasons[row['reason']] += 1
+            if include_structured_presentation:
+                row['presentation'] = _presentation_eligibility(row)
     recovered = sum(row['status'] == 'recovered_candidate' for row in calls)
     report = {'schema_version': 1, 'report_kind': 'airs.swift_error_flow', 'model_version': MODEL,
             'scope': 'structural_call_return_edges', 'address_space': 'preferred_vm',
@@ -319,10 +382,14 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
     if validate_region_entries:
         report['region_incoming_model_version'] = INCOMING_MODEL
         report['limitations'].append('Entry validation covers only direct edges in the bounded caller; indirect and external entries, reachability and exclusivity remain unproven.')
+    if include_structured_presentation:
+        report['structured_presentation_model_version'] = PRESENTATION_MODEL
+        for status in ('eligible_structural_only', 'blocked', 'unresolved'):
+            report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     return report
 
 
-def recover_swift_error_flow_path(path: Path | str, *, requested_arch: str = 'auto', limits: Limits = DEFAULT_LIMITS, include_error_regions: bool = False, validate_region_entries: bool = False) -> dict:
+def recover_swift_error_flow_path(path: Path | str, *, requested_arch: str = 'auto', limits: Limits = DEFAULT_LIMITS, include_error_regions: bool = False, validate_region_entries: bool = False, include_structured_presentation: bool = False) -> dict:
     source = resolve_input(path)
     try:
         with source.open('rb') as handle:
@@ -331,4 +398,4 @@ def recover_swift_error_flow_path(path: Path | str, *, requested_arch: str = 'au
         raise InputError('unreadable_input', f'Cannot read Swift-flow input: {error}') from error
     if len(data) > limits.max_file_bytes:
         raise InputError('file_size_limit', 'Input exceeds the bounded Swift flow file limit')
-    return recover_swift_error_flow(parse_macho(data, str(source), limits, requested_arch), limits, include_error_regions=include_error_regions, validate_region_entries=validate_region_entries)
+    return recover_swift_error_flow(parse_macho(data, str(source), limits, requested_arch), limits, include_error_regions=include_error_regions, validate_region_entries=validate_region_entries, include_structured_presentation=include_structured_presentation)
