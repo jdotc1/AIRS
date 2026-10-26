@@ -39,8 +39,17 @@ AUDIT = obj({"schema_version": {"const": 1}, "report_kind": {"const": "airs.audi
 
 SHORT_IMAGE = obj({"display_name": STRING, "uuid": {"type": ["string", "null"]}, "slice_sha256": DIGEST, "architecture": STRING})
 DIFF_SUMMARY = obj({key: INTEGER for key in ("matched_count", "changed_count", "unchanged_count", "added_count", "removed_count", "ambiguous_count")})
-CHANGE = obj({"key": STRING, "match_basis": {"enum": ["exact_image_offset", "unique_symbol", "unmatched"]}, "function_name": STRING, "change": {"enum": ["changed", "unchanged", "added", "removed", "ambiguous"]}, "notes": arr(STRING), "baseline_id": ID, "current_id": ID, "before_verdict": VERDICT, "after_verdict": VERDICT, "before_scope": SCOPE, "after_scope": SCOPE}, ["key", "match_basis", "function_name", "change", "notes"])
-DIFF = obj({"schema_version": {"const": 1}, "report_kind": {"const": "airs.diff"}, "comparison": obj({"baseline_image": SHORT_IMAGE, "current_image": SHORT_IMAGE, "same_image": {"type": "boolean"}, "model_compatible": {"type": "boolean"}, "analysis_configuration_changed": {"type": "boolean"}, "matching_policy": {"const": "exact_digest_then_unique_symbol"}}, ["baseline_image", "current_image", "same_image", "model_compatible", "matching_policy"]), "summary": DIFF_SUMMARY, "changes": arr(CHANGE), "limitations": arr(STRING)})
+CHANGE = obj({"key": STRING, "match_basis": {"enum": ["exact_image_offset", "unique_symbol", "unmatched", "manual_review", "exact_body_candidate"]}, "function_name": STRING, "change": {"enum": ["changed", "unchanged", "added", "removed", "ambiguous"]}, "notes": arr(STRING), "baseline_id": ID, "current_id": ID, "before_verdict": VERDICT, "after_verdict": VERDICT, "before_scope": SCOPE, "after_scope": SCOPE}, ["key", "match_basis", "function_name", "change", "notes"])
+MATCHING_POLICIES = [
+    "exact_digest_then_unique_symbol",
+    "manual_then_unique_symbol",
+    "exact_digest_then_unique_symbol_then_exact_body_candidate",
+    "manual_then_unique_symbol_then_exact_body_candidate",
+]
+MANUAL_PAIR_ID = {**ID, "minLength": 70, "maxLength": 70}
+MANUAL_PAIR = obj({"baseline_id": MANUAL_PAIR_ID, "current_id": MANUAL_PAIR_ID})
+MANUAL_PAIR["additionalProperties"] = False
+DIFF = obj({"schema_version": {"const": 1}, "report_kind": {"const": "airs.diff"}, "comparison": obj({"baseline_image": SHORT_IMAGE, "current_image": SHORT_IMAGE, "same_image": {"type": "boolean"}, "model_compatible": {"type": "boolean"}, "analysis_configuration_changed": {"type": "boolean"}, "matching_policy": {"enum": MATCHING_POLICIES}, "exact_body_candidates": {"type": "boolean"}, "manual_pairs": arr(MANUAL_PAIR, 50000)}, ["baseline_image", "current_image", "same_image", "model_compatible", "matching_policy"]), "summary": DIFF_SUMMARY, "changes": arr(CHANGE), "limitations": arr(STRING)})
 HANDOFF_IMAGE = obj({key: value for key, value in IMAGE["properties"].items() if key not in ("path", "file_type")})
 RANGE = obj({"start": ADDRESS, "end": ADDRESS})
 HANDOFF = obj({"schema_version": {"const": 1}, "report_kind": {"const": "airs.macscope_handoff"}, "integration_status": {"const": "proposed_export_contract"}, "image": HANDOFF_IMAGE, "selection": obj({"finding_id": ID, "function_name": STRING, "address_space": {"const": "preferred_vm"}, "vm_range": RANGE, "image_relative_range": RANGE}), "finding": obj(ANALYSIS), "source_analysis": GENERATOR, "requirements": arr(STRING)})

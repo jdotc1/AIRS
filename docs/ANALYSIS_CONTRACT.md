@@ -909,3 +909,14 @@ rules. The policy is immutable per runner. The exact no-argument initializer and
 GUI callers retain legacy acceptance; source pairing, retained reports and export
 contracts are unchanged. This is source/unit integration, not GUI activation,
 authenticated bytes, function identity or native workflow acceptance.
+
+
+## 41. Structural comparison schema vocabulary
+
+The baseline-diff v1 schema and generator (COMPARISON_SCHEMA_ALIGNMENT.md) admit
+the four supported policies and five bases. Optional body status is Boolean;
+optional manual pairs are bounded exact two-ID objects with strict endpoint text
+shape. Historical absence remains valid. This structural contract does not prove
+bijection, source membership, metadata consistency, coverage, authenticity or
+identity; explicit native validators retain those scopes. Runtime dependencies,
+matching defaults, other schema contracts and GUI behavior are unchanged.
