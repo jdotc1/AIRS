@@ -339,3 +339,12 @@ per-invocation policy. Legacy programmatic behavior remains the default. The rea
 app build and a new refusal/export/policy-separation workspace test passed;
 accepted core controls were reused. Interactive isolated-profile acceptance is
 still required. See GUI_SAVED_REPORT_COVERAGE.md for delivered and held scope.
+
+## Current-source handoff candidate
+
+A1 strict saved-batch coverage has composed workspace/native interaction
+qualification. Version 0.3.4/build 13 is locally signed, notarized and stapled,
+with exact frozen source identity and a qualified local distribution archive.
+See CURRENT_SOURCE_RELEASE_GATES.md. New-candidate download/translocation and
+independent clean-machine acceptance remain open; build 12 remains published
+and installed. No historical release qualification is transferred to build 13.

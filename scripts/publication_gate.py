@@ -25,6 +25,14 @@ class GateError(ValueError):
 
 
 def inspect_bytes(data, label):
+    # Upstream standard-library lookup defaults contain no account identity.
+    # Admit only the complete quoted literals, never arbitrary home paths.
+    shorthand_data = data
+    for literal in (b'~/Library/Frameworks',
+                    b'~/Library/Preferences/com.apple.LaunchServices/'):
+        for quote in (b"'", b'"'):
+            token = re.compile(rb'(?<!\\)' + re.escape(quote + literal + quote))
+            shorthand_data = token.sub(lambda match: b' ' * len(match[0]), shorthand_data)
     # Construct patterns without embedding examples of forbidden private text.
     patterns = [
         rb'/(?:Users|home)/(?!example(?:/|\b))[^/\s\x00]+/',
@@ -37,7 +45,8 @@ def inspect_bytes(data, label):
         rb'sk-(?:proj-)?[A-Za-z0-9_-]{24,}',
         rb'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----',
     ]
-    if any(re.search(pattern, data, re.I) for pattern in patterns):
+    if any(re.search(pattern, shorthand_data if index == 1 else data, re.I)
+           for index, pattern in enumerate(patterns)):
         raise GateError('Private publication marker detected; matching bytes withheld (' + label + ')')
 
 

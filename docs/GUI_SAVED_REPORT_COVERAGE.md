@@ -36,7 +36,8 @@ the new workspace test; unchanged native save/export behavior reuses its accepte
 prior scope. A standalone XCTest Save panel did not become observable, so that
 attempt is not claimed as new save-panel acceptance. A successful app build and
 workspace test do not establish GUI, installed-app or release acceptance.
-No app was installed, signed or published for this increment.
+The subsequent exact-source candidate was signed and notarized as documented in
+CURRENT_SOURCE_RELEASE_GATES.md; no app was installed or published.
 
 ## Follow-up boundaries
 

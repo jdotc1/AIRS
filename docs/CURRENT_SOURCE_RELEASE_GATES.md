@@ -91,3 +91,41 @@ found no blocking issue. Original preparation and older candidates remain intact
 Stripping precedes normalization, so a refused stage may be partially processed;
 it must be discarded/held, not retried. Actual modified-runtime behavior and
 artifact acceptance remain mandatory separate checks before delivery.
+
+## Current local candidate qualification
+
+The frozen Apple silicon candidate is version 0.3.4, build 13, source
+2944e4626a6e3b600bac0a8793c0accecb51b363. The source claim was embedded before
+signing. The retained release native build was reused only while its native
+source identities and product metadata matched. Subsequent scanner/documentation
+changes do not retroactively change this candidate's source identity.
+
+The final staged private Python 3.15 runtime passed one changed-boundary probe of
+its seven normalized extension modules, sysconfig, one owned child process and
+engine bootstrap. The exact candidate launched with isolated stores using native
+audit/comparison fixtures; native control observed the report overview, opened
+and dismissed the comparison sheet, and closed the acceptance window. An earlier
+attempt supplied the wrong report kind and exited before displaying a window;
+it is not counted as successful acceptance. These checks do not establish a
+clean installation, offline operation, minimum-OS compatibility or arbitrary
+runtime-module correctness.
+
+Apple notarization accepted the signed candidate. Stapling and the post-staple
+source/build binding, code seal, Gatekeeper and ticket checks passed. The final
+stapled distribution ZIP passed the bounded archive privacy/link gate. Its size
+is 33,207,916 bytes and SHA-256 is
+be30a2a95fdcb17dc924f18d766c6f94159f93407f712ec9954d7c354ee8e51d.
+Detailed receipts and credential-profile information remain private.
+
+The archive scanner permits two exact quoted generic upstream library lookup
+constants for its home-shorthand rule only. It keeps all other marker checks on
+original bytes. Four new focused methods cover exact literals, suffixes, other
+paths, escaped/mismatched quotes, case variants and adjacent private markers.
+Independent review recommended the same bounded policy. No signed artifact was
+modified to resolve these generic scanner matches.
+
+R1A–R1C and local distribution preparation are complete. R1D remains open for the
+new candidate's download/translocation delivery acceptance; historical build-12
+results cannot qualify it. R2 remains blocked because no independently provisioned
+compatible Apple silicon environment is available. There is no new download link
+or public release, and the installed app and production stores are unchanged.
