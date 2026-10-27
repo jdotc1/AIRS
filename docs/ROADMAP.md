@@ -642,3 +642,12 @@ the nonzero error predicate. Flag-window and handler-entry gates are independent
 Twelve new and 206 affected methods passed. Explicit CMP outcome guards remain
 closed; result/constant/choice recovery, B.NE/shared CMP layouts, compiler-emission
 and runtime qualification are still open. See SWIFT_ERROR_FLOW.md.
+
+## CMP selected-path outcome recovery
+
+Qualified CMP-zero/B.EQ simple handler plans can now pair a preserved/copied call
+result with error literal bits using the existing bounded success-entry return
+tail checks. Both PCs and the encoded/logical condition remain bound in the choice.
+Fifteen new and 215 affected methods passed. Success-path literals, B.NE/shared
+CMP layouts, compiler-emission and runtime proof remain open. No native release
+or installed-app qualification is added. See SWIFT_ERROR_FLOW.md.

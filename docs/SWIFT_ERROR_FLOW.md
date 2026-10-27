@@ -1217,3 +1217,35 @@ Twelve new focused methods and 206 affected methods passed in composed bounded
 runs. Two text assertions were corrected to reflect per-call structural plans
 rather than the earlier blocked layout; accepted passing selections were retained.
 Prior owned-image and compiler results were reused without repeating workflows.
+
+## Bounded CMP outcome recovery
+
+The current edge model is `swift-sync-error-edges-v9`, success-result model is
+`swift-success-result-v11`, error-constant model is `swift-error-constant-v11`
+and return-choice model is `swift-return-choice-v11`. Qualified CMP-zero/B.EQ
+simple error-fallthrough plans may now reuse the bounded selected-path outcome
+logic. No shared or forward-error CMP layout is added.
+
+Success-result tracking reuses full-width MOV aliases and re-reads the admitted
+caller words. It permits only the exact adjacent 64-bit zero comparison and EQ
+branch to the recorded success entry; testing x0 cannot establish preserved
+call-result evidence. The existing bounded restore/RET tail and caller-local
+incoming checks remain required. The expected EQ branch is exempted only at its
+recorded source and success target; other direct tail entries withhold recovery.
+
+An error literal can pair with that validated success-entry return tail. Opaque
+calls clear prior constant state; a literal must be established afterward.
+Existing W zero-extension, move-wide/copy restrictions and bounds remain intact.
+The structural choice binds the full CMP condition, including both PCs, to the
+presentation and both outcomes. It distinguishes a preserved/copied call result
+from literal bits. Runtime, caller return type, exclusive path, source and handler
+meaning remain unproven; opaque calls are not guaranteed to return.
+
+Success-path literal recovery remains explicitly withheld for CMP. Unknown or
+conflicting entry evidence, unsupported tails, changed comparison/branch words,
+missing error literals and inconsistent outcome bindings remain declined or
+unresolved. B.NE, shared CMP tails, compiler-emission and native/release gates
+remain open. Fifteen new and 215 affected methods passed in bounded composed
+runs. One affected test expectation was corrected: replacing an error literal
+with a branch does not produce constant evidence. Prior passed selections and
+owned-image/compiler results were reused without repeated binary workflows.

@@ -95,14 +95,15 @@ class CmpHandlerBoundaryTests(unittest.TestCase):
             0x9400000c, 0x92800000, 0x14000002, 0xd2800000, 0xd65f03c0))
         self.assertEqual(region['reason'], 'compare_shared_epilogue_not_qualified')
 
-    def test_region_does_not_unlock_presentation_or_outcomes(self):
+    def test_region_and_presentation_enable_only_bounded_outcomes(self):
         call = report(include_structured_presentation=True)['calls'][0]
         self.assertEqual(call['error_region']['status'], 'structural_region_candidate')
         self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
         self.assertEqual(call['presentation']['reason'], 'complete_caller_local_direct_validation')
-        for key in ('success_result', 'success_constant', 'error_constant'):
-            self.assertEqual(call[key]['status'], 'declined')
-        self.assertEqual(call['return_choice']['status'], 'unresolved')
+        self.assertEqual(call['success_result']['status'], 'preserved_register_candidate')
+        self.assertEqual(call['error_constant']['status'], 'constant_register_candidate')
+        self.assertEqual(call['success_constant']['status'], 'declined')
+        self.assertEqual(call['return_choice']['status'], 'structural_choice_candidate')
 
 class CmpHandlerBindingFirstTests(unittest.TestCase):
     def test_flag_entry_record_from_another_window_cannot_unlock_region(self):
