@@ -12,7 +12,7 @@ class ErrorConstantFirstTests(unittest.TestCase):
         self.assertEqual(result['opaque_call_count'], 1)
         self.assertFalse(result['call_return_proven'])
         self.assertFalse(result['handler_semantics_proven'])
-        self.assertEqual(value['error_constant_model_version'], 'swift-error-constant-v17')
+        self.assertEqual(value['error_constant_model_version'], 'swift-error-constant-v18')
 
 def error_arm(body, tail=(0xd65f03c0,)):
     test = 0xb4000015 | ((len(body) + 2) << 5)
@@ -117,6 +117,6 @@ class ErrorConstantEvidenceTests(unittest.TestCase):
                     self.assertEqual(call['error_constant']['constant_bits'], '0xffffffffffffffff')
                     self.assertEqual(call['success_constant']['constant_bits'], '0x0000000000000000')
                 else:
-                    self.assertIn('Error-constant model: "swift-error-constant-v17"', output.getvalue())
+                    self.assertIn('Error-constant model: "swift-error-constant-v18"', output.getvalue())
                     self.assertIn('cleared_after_opaque_call', output.getvalue())
                     self.assertIn('Source reconstruction: disabled', output.getvalue())

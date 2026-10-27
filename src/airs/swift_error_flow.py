@@ -20,7 +20,7 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v20'
+MODEL = 'swift-sync-error-edges-v21'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v15'
@@ -30,7 +30,7 @@ INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v6'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v12'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v15'
-ERROR_CONSTANT_MODEL = 'swift-error-constant-v17'
+ERROR_CONSTANT_MODEL = 'swift-error-constant-v18'
 RETURN_CHOICE_MODEL = 'swift-return-choice-v18'
 SHARED_WORDS = 8
 
@@ -821,8 +821,19 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False, sc
               'caller_return_type_proven': False}
     if error:
         result.update(call_return_proven=False, handler_semantics_proven=False)
-    if call.get('test_kind') == 'cmp_zero_bcond' and call.get('test_condition') == 'ne':
+    cmp_ne = call.get('test_kind') == 'cmp_zero_bcond' and call.get('test_condition') == 'ne'
+    if cmp_ne and not error:
         return {**result, 'reason': 'compare_ne_outcomes_not_qualified'}
+    if cmp_ne:
+        try:
+            fresh_scan = _caller_direct_edges(data, function)
+            region = call['error_region']
+            if (_flag_entries(fresh_scan, call) != call['flag_entry_validation']
+                    or _region_incoming(fresh_scan, region, call) != region['incoming_validation']
+                    or _presentation_eligibility(call, data, function).get('status') != 'eligible_structural_only'):
+                return {**result, 'reason': 'compare_ne_error_evidence_inconsistent'}
+        except (KeyError, TypeError, ValueError, IndexError, ModelError):
+            return {**result, 'reason': 'compare_ne_error_evidence_inconsistent'}
     cmp_success = call.get('test_kind') == 'cmp_zero_bcond' and not error
     if call.get('callee', {}).get('result') not in ('Swift.Int', 'Swift.Void'):
         return {**result, 'reason': 'callee_result_outside_admitted_subset'}
@@ -1149,7 +1160,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     if any(row.get('test_kind') == 'cmp_zero_bcond' for row in calls):
-        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ shared tails may pair a preserved call result or success literal with error literal bits; screened NE forward presentation is structural only; NE outcomes remain withheld.')
+        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ shared tails may pair a preserved call result or success literal with error literal bits; screened NE forward presentation and error literals are structural only; NE success outcomes and return choices remain withheld.')
     return report
 
 
