@@ -1290,3 +1290,25 @@ the conditional branch and are not exclusive to success. The reported success
 entry is bound to the decoded EQ target and region join. Inspected tail words
 remain visible even when an entry conflict withholds the literal; successful
 records retain the same tail once, without duplicate evidence.
+
+## Bounded CMP MOVK success-prefix updates
+
+The current edge model is `swift-sync-error-edges-v11`, success-constant model is
+`swift-success-constant-v11`, error-constant model is `swift-error-constant-v13`
+and return-choice model is `swift-return-choice-v13`. X MOVK may now update a
+known success-prefix literal before the adjacent CMP-zero test. The existing
+constant-transfer path replaces only the selected halfword and retains the other
+bits. MOVK on an unknown value does not establish known literal bits.
+
+The extension reuses existing decoding, shift validation, constant transfer,
+register copies and XZR discard semantics. Updated destinations invalidate error
+aliases. Literal prefixes still require CMP, never CBZ/CBNZ; W MOVK and W seeds
+remain refused. Prefix and protected-tail bounds remain eight words each. The
+existing flag/handler/tail entry checks, exact outcome binding and false proof
+flags remain intact. B.NE/shared CMP handlers, compiler-emission and native/runtime
+qualification remain open.
+
+Fifteen new methods and 268 affected methods passed. New controls cover all four
+halfwords, repeated updates, MOVN seeds, known/unknown copies, error aliases,
+unseeded refusal, XZR, bounds, tail conflicts and CLI/text evidence. Prior owned
+image/compiler results were reused without repeating their workflows.

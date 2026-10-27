@@ -51,8 +51,8 @@ class CmpSuccessLiteralBoundaryTests(unittest.TestCase):
             self.assertEqual(call['status'], 'declined')
             self.assertEqual(call['reason'], 'literal_prefix_requires_compare_test')
 
-    def test_w_seed_and_movk_prefix_stay_unmodeled(self):
-        for word in (0x52800540, 0x12800000, 0xf2800540):
+    def test_w_seed_prefix_stays_unmodeled(self):
+        for word in (0x52800540, 0x12800000):
             call = report((word, *WORDS[1:]))['calls'][0]
             self.assertEqual(call['status'], 'declined')
 
