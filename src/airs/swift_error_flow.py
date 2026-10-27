@@ -25,7 +25,7 @@ REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v3'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v3'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v1'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v2'
 SHARED_WORDS = 8
 
 
@@ -484,6 +484,22 @@ def _success_result(data: bytes, function, call: dict) -> dict:
     if 'shared_epilogue' not in region:
         return {**result, 'reason': 'bounded_shared_return_missing'}
     evidence = []
+    aliases = {0}
+    copied = False
+
+    def transfer(instruction):
+        nonlocal copied
+        destination = instruction.rd
+        # MOV's register 31 is XZR, never a live result location.
+        if destination == 31:
+            return
+        if instruction.kind == 'mov' and instruction.rn in aliases:
+            if destination == 0 and instruction.rn != 0:
+                copied = True
+            aliases.add(destination)
+        else:
+            aliases.discard(destination)
+
     try:
         test = int(call['test_pc'], 16)
         first = int(call['call_pc'], 16) + 4
@@ -498,8 +514,11 @@ def _success_result(data: bytes, function, call: dict) -> dict:
                     return {**result, 'reason': 'unsupported_result_test', 'instructions': evidence}
             elif instruction.kind == 'nop':
                 continue
-            elif instruction.kind == 'mov' and instruction.rd != 0:
-                continue
+            elif instruction.kind == 'mov':
+                transfer(instruction)
+                if aliases:
+                    continue
+                return {**result, 'reason': 'post_call_result_not_preserved', 'instructions': evidence}
             else:
                 return {**result, 'reason': 'post_call_result_not_preserved', 'instructions': evidence}
         interval = region['success_interval']
@@ -512,18 +531,24 @@ def _success_result(data: bytes, function, call: dict) -> dict:
             evidence.append({**row, 'phase': 'success'})
             if instruction.kind == 'nop':
                 continue
-            if instruction.kind in ('mov', 'movz', 'movn') and instruction.rd != 0:
-                continue
+            if instruction.kind in ('mov', 'movz', 'movn'):
+                transfer(instruction)
+                if aliases:
+                    continue
+                return {**result, 'reason': 'success_result_not_preserved', 'instructions': evidence}
             if instruction.kind == 'b' and pc == end - 4 and pc + instruction.immediate == join:
                 continue
             return {**result, 'reason': 'success_result_not_preserved', 'instructions': evidence}
+        if 0 not in aliases:
+            return {**result, 'reason': 'result_not_restored_to_x0', 'instructions': evidence}
         tail = _shared_return_tail(data, function, join)
         if tail is None or tail != region['shared_epilogue']:
             return {**result, 'reason': 'bounded_shared_return_missing', 'instructions': evidence}
         # The shared-tail whitelist only restores x19..x30 and adjusts SP.
         evidence.extend({**row, 'phase': 'return_tail'} for row in tail['instructions'])
-        return {**result, 'status': 'preserved_register_candidate',
-                'reason': 'recorded_success_path_preserves_x0',
+        return {**result, 'status': 'copied_register_candidate' if copied else 'preserved_register_candidate',
+                'reason': 'recorded_success_path_restores_x0_copy' if copied else 'recorded_success_path_preserves_x0',
+                'result_registers_before_tail': [f'x{register}' for register in sorted(aliases)],
                 'call_pc': call['call_pc'], 'success_pc': call['success_pc'],
                 'return_pc': tail['instructions'][-1]['pc'], 'instructions': evidence}
     except (KeyError, TypeError, ValueError, ModelError):
