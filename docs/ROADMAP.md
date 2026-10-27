@@ -463,3 +463,13 @@ entry checks protect the entire tail, with only exact test/terminal-error-branch
 exemptions. Unsupported or conflicting evidence withholds the result; all runtime
 and source proof flags remain false. Thirteen new and 33 affected synthetic/CLI
 controls passed. See SWIFT_ERROR_FLOW.md for exact limits and evidence scope.
+
+## Bounded success-path constants
+
+A separate success-constant v1 component tracks complete 64-bit literal patterns
+assigned within an eligible bounded success arm and retained through its shared
+return tail. It starts with no incoming constants, uses only existing MOVZ/MOVN
+and MOV decoding, and distinguishes literals from call-result preservation.
+Evidence is at most 16 words; runtime, caller-type, exclusive-path and source
+proofs remain false. Twelve new and 46 affected synthetic/CLI controls passed.
+See SWIFT_ERROR_FLOW.md for exact scope and exclusions.
