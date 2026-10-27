@@ -14,7 +14,7 @@ class NeSuccessResultFirstTests(unittest.TestCase):
         for key in ('runtime_value_proven', 'exclusive_path_proven', 'caller_return_type_proven', 'source_reconstruction_allowed'):
             self.assertFalse(result[key])
         self.assertEqual(call['success_constant']['status'], 'declined')
-        self.assertEqual(call['return_choice']['status'], 'unresolved')
+        self.assertEqual(call['return_choice']['status'], 'structural_choice_candidate')
 
 
 class NeSuccessResultBoundaryTests(unittest.TestCase):
@@ -92,13 +92,13 @@ class NeSuccessResultBoundaryTests(unittest.TestCase):
         words = (0xaa1503e0, 0xf100001f, *PRESERVED[1:])
         self.assertEqual(report(words)['calls'][0]['success_result']['status'], 'declined')
 
-    def test_ne_success_literal_and_return_choice_remain_gated(self):
+    def test_ne_success_literal_and_incomplete_choice_remain_gated(self):
         from copy import deepcopy
         from airs.swift_error_flow import _return_choice
         call = report(PRESERVED)['calls'][0]
         self.assertEqual(call['success_constant']['reason'], 'compare_ne_outcomes_not_qualified')
         altered = deepcopy(call); altered['return_choice'] = {}; altered['error_constant'] = {'status': 'constant_register_candidate'}
-        self.assertEqual(_return_choice(altered)['reason'], 'compare_ne_outcomes_not_qualified')
+        self.assertEqual(_return_choice(altered)['status'], 'unresolved')
 
     def test_cli_preserves_candidate_and_closed_choice(self):
         import contextlib, io, json, tempfile
@@ -116,4 +116,4 @@ class NeSuccessResultBoundaryTests(unittest.TestCase):
             self.assertEqual(status, 0)
             call = json.loads(output.getvalue())['calls'][0]
             self.assertEqual(call['success_result']['status'], 'preserved_register_candidate')
-            self.assertEqual(call['return_choice']['reason'], 'compare_ne_outcomes_not_qualified')
+            self.assertEqual(call['return_choice']['status'], 'structural_choice_candidate')

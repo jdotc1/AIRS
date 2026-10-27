@@ -20,7 +20,7 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v22'
+MODEL = 'swift-sync-error-edges-v23'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v15'
@@ -31,7 +31,7 @@ PRESENTATION_MODEL = 'swift-structural-presentation-v6'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v13'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v15'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v18'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v18'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v19'
 SHARED_WORDS = 8
 
 
@@ -991,8 +991,7 @@ def _return_choice(call: dict) -> dict:
               'runtime_value_proven': False, 'exclusive_path_proven': False,
               'caller_return_type_proven': False, 'call_return_proven': False,
               'handler_semantics_proven': False}
-    if call.get('test_kind') == 'cmp_zero_bcond' and call.get('test_condition') == 'ne':
-        return {**result, 'reason': 'compare_ne_outcomes_not_qualified'}
+    cmp_ne = call.get('test_kind') == 'cmp_zero_bcond' and call.get('test_condition') == 'ne'
     if call.get('presentation', {}).get('status') != 'eligible_structural_only':
         return {**result, 'reason': 'structural_presentation_not_eligible'}
     error = call.get('error_constant', {})
@@ -1001,6 +1000,8 @@ def _return_choice(call: dict) -> dict:
     error_known = error.get('status') == 'constant_register_candidate'
     constant_known = constant.get('status') == 'constant_register_candidate'
     returned_known = returned.get('status') in ('preserved_register_candidate', 'copied_register_candidate')
+    if cmp_ne and (constant_known or not returned_known):
+        return {**result, 'reason': 'compare_ne_outcomes_not_qualified'}
     if not error_known or constant_known == returned_known:
         return {**result, 'reason': 'outcome_evidence_missing_or_conflicting'}
     success = constant if constant_known else returned
@@ -1017,6 +1018,10 @@ def _return_choice(call: dict) -> dict:
                 or plan['error_interval']['start_pc'] != call['error_pc']):
             raise ValueError('Presentation binding')
         region = call['error_region']
+        if cmp_ne and (region.get('layout') != 'success_fallthrough_error_forward'
+                       or 'shared_epilogue' not in region
+                       or returned.get('return_tail_layout') != 'shared_epilogue'):
+            raise ValueError('NE forward shared outcome source')
         if ('shared_epilogue' not in region
                 and not ((returned_known and not constant_known and returned.get('return_tail_layout') == 'success_entry')
                          or (call.get('test_kind') == 'cmp_zero_bcond' and constant_known and not returned_known
@@ -1169,7 +1174,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     if any(row.get('test_kind') == 'cmp_zero_bcond' for row in calls):
-        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ shared tails may pair a preserved call result or success literal with error literal bits; screened NE forward presentation, preserved Int call results and error literals are structural only; NE success literals and return choices remain withheld.')
+        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ shared tails may pair a preserved call result or success literal with error literal bits; screened NE forward presentation, preserved Int call results and error literals are structural only; NE success literals remain withheld; the screened result-versus-error-literal choice is structural only.')
     return report
 
 

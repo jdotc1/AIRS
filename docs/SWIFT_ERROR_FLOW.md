@@ -1542,3 +1542,19 @@ B.NE success literals and return choices remain gated. Twelve new and 280
 affected methods passed, with independent semantic review. Prior compiler,
 binary and native evidence remains valid only within its existing scope. The
 caller rescan is bounded by existing function scan limits.
+
+## CMP/B.NE forward return choice
+
+`swift-sync-error-edges-v23` and `swift-return-choice-v19` can pair a screened
+CMP-zero/B.NE forward success-path preserved or copied Int call result with an
+error-arm literal. The existing producer facts must identify the same call,
+respective arm entries, full condition and common recorded shared return PC.
+The forward shared layout and success-result tail layout are required; success
+literal candidates and conflicting success sources remain refused.
+
+The choice is selected-path structural evidence only. It does not prove runtime
+values, call return, exclusive entry, caller return type, handler meaning,
+restored state or reconstructed source. Ten new and 314 affected methods passed
+after one older unresolved-choice expectation was updated. Independent semantic
+review found no blocker. Prior compiler, binary and native evidence retains its
+existing scope.

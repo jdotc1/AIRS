@@ -1433,3 +1433,12 @@ match the bounded caller bytes; the encoded B.NE targets the error arm. Narrow
 writes invalidate the corresponding full-width alias. Success literals and
 return choices remain gated. No runtime, source, exclusive-entry, handler or
 restored-state proof is implied.
+
+## CMP/B.NE return-choice evidence
+
+For screened CMP-zero/B.NE forward shared tails, `swift-return-choice-v19` can
+pair the qualified preserved or copied Int success result with a qualified
+error-path literal. Full condition, call, arm and shared-return bindings and
+false proof flags are required. B.NE success literals remain withheld. The
+result is structural evidence and does not establish runtime behavior, source,
+call return, handler semantics, exclusive entry or restored state.
