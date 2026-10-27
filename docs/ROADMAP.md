@@ -624,3 +624,12 @@ retain counts, capped evidence, model identity and false proof flags. Nineteen
 new and 121 affected controls passed with independent review. General NZCV and
 indirect/external-entry proof, compiler-emission qualification, comparison-based
 handler regions and structured outcomes remain open. See SWIFT_ERROR_FLOW.md.
+
+## CMP/B.EQ error-fallthrough recovery
+
+Bounded CMP-zero/B.EQ handler intervals now reuse the existing region decoder,
+with exact call/window binding and complete clear caller-local flag-entry
+screening. Raw instructions, opaque calls and interval incoming conflicts remain
+visible in JSON/text. Twenty-one new and 208 affected methods passed. CMP-based
+B.NE handlers, shared epilogues and structured presentation/outcomes remain open,
+as do compiler-emission and runtime qualification. See SWIFT_ERROR_FLOW.md.

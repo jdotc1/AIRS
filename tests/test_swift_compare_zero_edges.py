@@ -61,7 +61,7 @@ class CompareZeroBoundaryTests(unittest.TestCase):
     def test_downstream_gates_remain_closed(self):
         call = self.call((compare(), branch()), include_error_regions=True,
                          validate_region_entries=True, include_structured_presentation=True)
-        self.assertEqual(call['error_region']['reason'], 'compare_branch_region_not_qualified')
+        self.assertEqual(call['error_region']['reason'], 'error_region_instruction_unmodeled')
         self.assertNotEqual(call['error_region']['status'], 'structural_region_candidate')
         self.assertNotEqual(call['return_choice']['status'], 'structural_choice_candidate')
 
@@ -74,7 +74,7 @@ class CompareZeroPresentationTests(unittest.TestCase):
         text = render_swift_error_text(value)
         for expected in ('comparison_pc', 'cmp_zero_bcond', 'test_condition',
                          '0xf10002bf', '0x54000060',
-                         'compare_branch_region_not_qualified',
+                         'error_region_instruction_unmodeled',
                          'Structured plan: withheld', 'Source reconstruction: disabled'):
             self.assertIn(expected, text)
 
