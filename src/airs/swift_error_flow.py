@@ -20,7 +20,7 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v21'
+MODEL = 'swift-sync-error-edges-v22'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v15'
@@ -28,7 +28,7 @@ REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v7'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v6'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v12'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v13'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v15'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v18'
 RETURN_CHOICE_MODEL = 'swift-return-choice-v18'
@@ -699,8 +699,17 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
     result = {'status': 'declined', 'register': 'x0',
               'runtime_value_proven': False, 'source_reconstruction_allowed': False,
               'exclusive_path_proven': False, 'caller_return_type_proven': False}
-    if call.get('test_kind') == 'cmp_zero_bcond' and call.get('test_condition') == 'ne':
-        return {**result, 'reason': 'compare_ne_outcomes_not_qualified'}
+    cmp_ne = call.get('test_kind') == 'cmp_zero_bcond' and call.get('test_condition') == 'ne'
+    if cmp_ne:
+        try:
+            fresh_scan = _caller_direct_edges(data, function)
+            region = call['error_region']
+            if (_flag_entries(fresh_scan, call) != call['flag_entry_validation']
+                    or _region_incoming(fresh_scan, region, call) != region['incoming_validation']
+                    or _presentation_eligibility(call, data, function).get('status') != 'eligible_structural_only'):
+                return {**result, 'reason': 'compare_ne_success_evidence_inconsistent'}
+        except (KeyError, TypeError, ValueError, IndexError, ModelError):
+            return {**result, 'reason': 'compare_ne_success_evidence_inconsistent'}
     if call.get('callee', {}).get('result') != 'Swift.Int':
         return {**result, 'reason': 'callee_result_not_scalar_int'}
     if call.get('presentation', {}).get('status') != 'eligible_structural_only':
@@ -736,9 +745,9 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
             evidence.append({**row, 'phase': 'post_call'})
             if pc == test:
                 if compare:
-                    if (call.get('test_condition') != 'eq' or instruction.kind != 'bcond'
-                            or instruction.addressing != '0' or call['tested_register'] == 'x0'
-                            or pc + instruction.immediate != int(call['success_pc'], 16)):
+                    if (call.get('test_condition') not in ('eq', 'ne') or instruction.kind != 'bcond'
+                            or instruction.addressing != ('1' if cmp_ne else '0') or call['tested_register'] == 'x0'
+                            or pc + instruction.immediate != int(call['error_pc' if cmp_ne else 'success_pc'], 16)):
                         return {**result, 'reason': 'unsupported_result_test', 'instructions': evidence}
                 elif instruction.kind not in ('xcbz', 'xcbnz') or instruction.rn == 0:
                     return {**result, 'reason': 'unsupported_result_test', 'instructions': evidence}
@@ -1160,7 +1169,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     if any(row.get('test_kind') == 'cmp_zero_bcond' for row in calls):
-        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ shared tails may pair a preserved call result or success literal with error literal bits; screened NE forward presentation and error literals are structural only; NE success outcomes and return choices remain withheld.')
+        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ shared tails may pair a preserved call result or success literal with error literal bits; screened NE forward presentation, preserved Int call results and error literals are structural only; NE success literals and return choices remain withheld.')
     return report
 
 

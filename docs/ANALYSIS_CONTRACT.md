@@ -1423,3 +1423,13 @@ rules clear constants at opaque calls and preserve unknown values. This does not
 prove runtime behavior, call return, handler semantics, exclusive entry, caller
 return type, restored state or source. B.NE success outcomes and return choices
 remain gated.
+
+## CMP/B.NE success-result evidence
+
+For screened CMP-zero/B.NE forward-error regions, `swift-success-result-v13`
+can record a selected success path preserving an Int call result or restoring a
+full-width copy to x0. Caller-local entry screens and the structural plan must
+match the bounded caller bytes; the encoded B.NE targets the error arm. Narrow
+writes invalidate the corresponding full-width alias. Success literals and
+return choices remain gated. No runtime, source, exclusive-entry, handler or
+restored-state proof is implied.
