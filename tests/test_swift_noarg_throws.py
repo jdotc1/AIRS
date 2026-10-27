@@ -77,7 +77,7 @@ class NoArgThrowsBoundaryTests(unittest.TestCase):
         self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
         self.assertFalse(call['presentation']['source_reconstruction_allowed'])
         self.assertEqual(value['model_version'], 'swift-sync-error-edges-v4')
-        self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v5')
+        self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v6')
         self.assertEqual(value['region_incoming_model_version'], 'swift-region-direct-entries-v3')
         self.assertEqual(value['structured_presentation_model_version'], 'swift-structural-presentation-v3')
         self.assertIn('Swift.Void', render_swift_error_text(value))

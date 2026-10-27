@@ -511,3 +511,12 @@ explicit selected-arm assignments are required. Bounds, entry checks and proof
 restrictions remain unchanged. Eleven new and 61 affected controls passed; a
 nine-word retained owned-example replay qualified the new helper context without
 recompilation, rehashing or readmission. See SWIFT_ERROR_FLOW.md for exact scope.
+
+## Known-seeded MOVK outcome literals
+
+Bounded success/error arms now admit decoded 64-bit MOVK. Complete known values
+receive exact lane replacement; unknown values remain unknown. Result aliases
+are invalidated at the updated destination. No W-width, post-call-window or
+return-tail support is added. Region v6 and the updated outcome model identities
+retain existing bounds and proof restrictions. Thirteen new and 171 affected
+synthetic/CLI controls passed with independent review. See SWIFT_ERROR_FLOW.md.
