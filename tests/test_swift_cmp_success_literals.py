@@ -51,10 +51,10 @@ class CmpSuccessLiteralBoundaryTests(unittest.TestCase):
             self.assertEqual(call['status'], 'declined')
             self.assertEqual(call['reason'], 'literal_prefix_requires_compare_test')
 
-    def test_w_seed_prefix_stays_unmodeled(self):
-        for word in (0x52800540, 0x12800000):
+    def test_w_seed_prefix_records_zero_extended_bits(self):
+        for word, expected in ((0x52800540, '0x000000000000002a'), (0x12800000, '0x00000000ffffffff')):
             call = report((word, *WORDS[1:]))['calls'][0]
-            self.assertEqual(call['status'], 'declined')
+            self.assertEqual(call['success_constant']['constant_bits'], expected)
 
     def test_success_tail_side_entry_withholds_literal_and_choice(self):
         # Tail starts +28; branch at +32 targets it.
@@ -100,7 +100,7 @@ class CmpSuccessLiteralBindingTests(unittest.TestCase):
         from airs.swift_error_flow import _path_constant, _caller_direct_edges
         value = image(WORDS); function = value.functions[0]
         call = report()['calls'][0]
-        for offset, word in ((4, 0x52800540), (4, 0xf2800540),
+        for offset, word in ((4, 0xf2800540),
                              (8, 0xf100029f), (12, 0x54000081), (12, 0x540000a0)):
             with self.subTest(offset=offset, word=hex(word)):
                 data = bytearray(value.bytes_at(function.start, function.size))

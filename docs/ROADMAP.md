@@ -668,3 +668,10 @@ halfwords. Unseeded updates remain unknown, error aliases are invalidated, and
 entry/tail checks remain intact. Fifteen new and 268 affected methods passed.
 W success prefixes, B.NE/shared CMP layouts and compiler/runtime/native acceptance
 remain open. See SWIFT_ERROR_FLOW.md.
+
+## CMP W-register success seeds
+
+CMP success prefixes now reuse W MOVZ/MOVN zero-extension semantics, preserving
+width distinctions, reserved-encoding refusal and full error-alias invalidation.
+Fifteen new and 271 affected methods passed. W MOVK/copy prefixes, B.NE/shared CMP
+handlers and compiler/runtime/native qualification remain open. See SWIFT_ERROR_FLOW.md.

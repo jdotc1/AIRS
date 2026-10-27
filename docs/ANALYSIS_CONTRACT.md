@@ -1317,3 +1317,14 @@ values remain unknown. Destinations invalidate error aliases, prefixes cannot
 widen CBZ/CBNZ, and W prefixes remain refused. Existing eight-word prefix/tail,
 entry, identity and false-proof constraints retain their scopes. Fifteen new and
 268 affected methods passed; compiler/runtime/native qualification remains open.
+
+## CMP W seed zero extension
+
+`swift-sync-error-edges-v12`, `swift-success-constant-v12`,
+`swift-error-constant-v14` and `swift-return-choice-v14` admit W MOVZ/MOVN seeds
+in bounded CMP success prefixes. Existing 32-bit masking zero-extends into X;
+reserved shifts refuse, and W writes invalidate full-width error aliases.
+Existing X copies/updates retain exact bits. W-copy/W-MOVK prefixes, narrow tests,
+CBZ/CBNZ literal-prefix widening and unsupported handler layouts remain refused.
+Fifteen new and 271 affected methods passed. Source/runtime/exclusive-path proof
+and compiler/native qualification remain separate and unestablished.
