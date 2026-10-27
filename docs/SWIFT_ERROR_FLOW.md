@@ -1558,3 +1558,23 @@ restored state or reconstructed source. Ten new and 314 affected methods passed
 after one older unresolved-choice expectation was updated. Independent semantic
 review found no blocker. Prior compiler, binary and native evidence retains its
 existing scope.
+
+## CMP/B.NE forward success literals
+
+`swift-sync-error-edges-v24`, `swift-success-constant-v16` and
+`swift-return-choice-v20` admit selected success-path literal bits for screened
+CMP-zero/B.NE forward-error regions. The complete recorded post-call window is
+bound to supplied caller bytes, caller-local entries are rederived, and the
+forward presentation is revalidated before transfer. Literal tracking walks the
+post-call prefix then the fallthrough success arm, including its exact terminal
+branch over the error arm to the shared tail. W writes zero-extend; unknown
+copies and unseeded partial updates do not invent known values.
+
+A structural choice can pair exactly one success source, either literal bits or
+a preserved/copied Int call result, with the error literal. Call, condition,
+arm and shared return bindings and false proof flags remain required. This does
+not prove runtime values, call return, caller return type, exclusive entry,
+handler meaning, restored state or source reconstruction. Thirteen new and 336
+affected methods passed after updating an older clobbered-result expectation.
+Independent review found no blocker. Prior compiler, binary and native evidence
+retains its existing scope; qualifying NE evidence uses bounded caller rescans.

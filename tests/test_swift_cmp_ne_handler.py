@@ -23,7 +23,7 @@ class CmpNeHandlerFirstTests(unittest.TestCase):
         self.assertFalse(region['call_return_proven'])
         self.assertFalse(region['shared_epilogue']['restore_state_proven'])
         self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
-        self.assertEqual(call['return_choice']['status'], 'unresolved')
+        self.assertEqual(call['return_choice']['status'], 'structural_choice_candidate')
 
 
 class CmpNeHandlerBoundaryTests(unittest.TestCase):

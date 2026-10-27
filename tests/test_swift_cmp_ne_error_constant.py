@@ -13,8 +13,8 @@ class NeErrorConstantFirstTests(unittest.TestCase):
                     'exclusive_path_proven', 'caller_return_type_proven', 'source_reconstruction_allowed'):
             self.assertFalse(result[key])
         self.assertEqual(call['success_result']['status'], 'declined')
-        self.assertEqual(call['success_constant']['status'], 'declined')
-        self.assertEqual(call['return_choice']['status'], 'unresolved')
+        self.assertEqual(call['success_constant']['status'], 'constant_register_candidate')
+        self.assertEqual(call['return_choice']['status'], 'structural_choice_candidate')
 
 
 class NeErrorConstantBoundaryTests(unittest.TestCase):
@@ -82,7 +82,7 @@ class NeErrorConstantBoundaryTests(unittest.TestCase):
         from airs.swift_error_text import render_swift_error_text
         text = render_swift_error_text(report())
         for expected in ('0xffffffffffffffff', 'constant_register_candidate',
-                         'compare_ne_outcomes_not_qualified', 'Source reconstruction: disabled'):
+                         'structural_choice_candidate', 'Source reconstruction: disabled'):
             self.assertIn(expected, text)
 
     def test_cli_preserves_error_candidate_and_closed_return_choice(self):
@@ -102,4 +102,4 @@ class NeErrorConstantBoundaryTests(unittest.TestCase):
             self.assertEqual(status, 0)
             call = json.loads(output.getvalue())['calls'][0]
             self.assertEqual(call['error_constant']['constant_bits'], '0xffffffffffffffff')
-            self.assertEqual(call['return_choice']['reason'], 'compare_ne_outcomes_not_qualified')
+            self.assertEqual(call['return_choice']['status'], 'structural_choice_candidate')

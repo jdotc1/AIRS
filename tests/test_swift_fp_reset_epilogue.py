@@ -78,7 +78,7 @@ class FPResetBoundaryTests(unittest.TestCase):
         from test_swift_shared_epilogue import report, WORDS
         value = report(WORDS[:6] + (0xa94157f6, RESET, pop_word(48), RETURN))
         self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v15')
-        for key, expected in (('model_version', 'swift-sync-error-edges-v23'),
+        for key, expected in (('model_version', 'swift-sync-error-edges-v24'),
                               ('region_incoming_model_version', 'swift-region-direct-entries-v7'),
                               ('structured_presentation_model_version', 'swift-structural-presentation-v6')):
             self.assertEqual(value[key], expected)

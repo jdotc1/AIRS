@@ -763,3 +763,11 @@ an error literal as structural evidence. Ten new and 314 affected methods
 passed after updating an older refusal expectation; independent review found no
 blocker. Success literals and runtime qualification remain open. See
 SWIFT_ERROR_FLOW.md.
+
+## CMP/B.NE success literals
+
+Screened forward B.NE success arms now retain selected-path literal bits and
+can pair them with error literals as structural choices. Thirteen new and 336
+affected methods passed after updating an older result-clobber expectation;
+independent review found no blocker. Runtime qualification remains open. See
+SWIFT_ERROR_FLOW.md.
