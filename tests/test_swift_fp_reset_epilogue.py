@@ -77,9 +77,9 @@ class FPResetBoundaryTests(unittest.TestCase):
         from airs.swift_error_text import render_swift_error_text
         from test_swift_shared_epilogue import report, WORDS
         value = report(WORDS[:6] + (0xa94157f6, RESET, pop_word(48), RETURN))
-        self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v10')
+        self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v11')
         for key, expected in (('model_version', 'swift-sync-error-edges-v4'),
-                              ('region_incoming_model_version', 'swift-region-direct-entries-v4'),
+                              ('region_incoming_model_version', 'swift-region-direct-entries-v5'),
                               ('structured_presentation_model_version', 'swift-structural-presentation-v3')):
             self.assertEqual(value[key], expected)
         call = value['calls'][0]
@@ -109,7 +109,7 @@ class FPResetCLIControls(unittest.TestCase):
             self.assertEqual(status, 0)
             for word in ('0x910003bf', '0xa8c17bfd', '0xd65f03c0'):
                 self.assertIn(word, output.getvalue())
-            self.assertIn('swift-sync-error-region-v10', output.getvalue())
+            self.assertIn('swift-sync-error-region-v11', output.getvalue())
             self.assertIn('Source reconstruction: disabled', output.getvalue())
 
 

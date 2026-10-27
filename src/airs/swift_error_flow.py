@@ -13,7 +13,7 @@ import re
 import struct
 
 from .cfg import decode_instruction as decode_cfg_instruction, BRANCHES
-from .arm64 import ModelError
+from .arm64 import ModelError, _signed
 from .decode_inventory import DEFAULT_LIMITS
 from .engine import resolve_input
 from .macho import parse_macho
@@ -21,22 +21,27 @@ from .types import InputError, Limits, MachOImage
 
 MODEL = 'swift-sync-error-edges-v4'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v10'
+REGION_MODEL = 'swift-sync-error-region-v11'
 REGION_WORDS = 16
-INCOMING_MODEL = 'swift-region-direct-entries-v4'
+INCOMING_MODEL = 'swift-region-direct-entries-v5'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v3'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v8'
-SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v7'
-ERROR_CONSTANT_MODEL = 'swift-error-constant-v8'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v8'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v9'
+SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v8'
+ERROR_CONSTANT_MODEL = 'swift-error-constant-v9'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v9'
 SHARED_WORDS = 8
 
 
 def decode_instruction(word: int, address: int = 0):
-    """Swift-local W literal seeds and canonical copies; core decoding is unchanged."""
+    """Swift-local bounded forms; core decoding is unchanged."""
     if not 0 <= word <= 0xffffffff:
         return decode_cfg_instruction(word, address)
+    # Swift-only, nonexecuting descriptor: core SP-effect/state models do not consume this kind.
+    if word & 0xffe00fe0 == 0xf84007e0:
+        decoded = decode_cfg_instruction(0xf9400000 | (word & 0x3ff), address)
+        return replace(decoded, word=word, kind='xldr_post',
+                       immediate=_signed((word >> 12) & 0x1ff, 9), addressing='post')
     if word & 0xffe0ffe0 == 0x2a0003e0:
         decoded = decode_cfg_instruction(word, address)
         return replace(decoded, kind='wmov', rn=decoded.rt2, rt2=0, addressing='')
@@ -189,6 +194,14 @@ def _shared_return_tail(data: bytes, function, join: int) -> dict | None:
             if (instruction.kind == 'xldr' and instruction.rn == 31
                     and 19 <= instruction.rd <= 30 and 0 <= instruction.immediate <= 4096
                     and instruction.immediate % 8 == 0):
+                continue
+            if (instruction.kind == 'xldr_post' and instruction.rn == 31
+                    and 19 <= instruction.rd <= 30 and 0 < instruction.immediate <= 240
+                    and instruction.immediate % 16 == 0 and index + 1 < SHARED_WORDS):
+                following, _ = _bounded_instruction(data, function, pc + 4)
+                if following.kind != 'ret':
+                    return None
+                tail[-1]['sp_writeback_bytes'] = instruction.immediate
                 continue
             if (instruction.kind == 'ldp' and instruction.rn == 31 and instruction.addressing == 'offset'
                     and instruction.immediate >= 0 and 19 <= instruction.rd <= 30 and 19 <= instruction.rt2 <= 30):

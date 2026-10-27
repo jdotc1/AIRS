@@ -94,7 +94,7 @@ class MovkOutcomeCLIControls(unittest.TestCase):
                 if format=='json':
                     value=json.loads(output.getvalue())
                     self.assertEqual(value['calls'][0]['success_constant']['constant_bits'],'0xabcd000000001234')
-                    self.assertEqual(value['error_region_model_version'],'swift-sync-error-region-v10')
+                    self.assertEqual(value['error_region_model_version'],'swift-sync-error-region-v11')
                 else:
                     self.assertIn('0xabcd000000001234',output.getvalue())
                     self.assertIn('xmovk',output.getvalue())

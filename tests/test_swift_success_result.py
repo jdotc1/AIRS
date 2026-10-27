@@ -20,7 +20,7 @@ class SuccessResultFirstTests(unittest.TestCase):
         self.assertEqual(result['return_pc'], hex(BASE + 40))
         self.assertFalse(result['runtime_value_proven'])
         self.assertFalse(result['source_reconstruction_allowed'])
-        self.assertEqual(value['success_result_model_version'], 'swift-success-result-v8')
+        self.assertEqual(value['success_result_model_version'], 'swift-success-result-v9')
 
 class SuccessResultBoundaryTests(unittest.TestCase):
     def test_success_x0_writes_are_not_preservation(self):
@@ -116,4 +116,4 @@ class SuccessResultBoundControls(unittest.TestCase):
 
     def test_text_displays_result_model_identity(self):
         from airs.swift_error_text import render_swift_error_text
-        self.assertIn('Success-result model: "swift-success-result-v8"', render_swift_error_text(report()))
+        self.assertIn('Success-result model: "swift-success-result-v9"', render_swift_error_text(report()))

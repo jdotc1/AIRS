@@ -997,3 +997,40 @@ is synthetic analysis and output; no new compiled-image, native GUI or release
 acceptance is claimed. Previous owned results retain their original scope.
 
 Instruction semantics reference: [Arm LDR immediate reference](https://documentation-service.arm.com/static/6245c734b059dc5ff9a8bdab).
+
+## Terminal scalar post-index restore-tail candidates
+
+Region v11 adds a narrow terminal SP post-index 64-bit LDR shape. The destination
+must be x19..x30, the signed byte increment must be a positive multiple of 16
+from 16 through 240, and the next word must be exact RET x30. The pair must fit
+inside the existing eight-word tail and scanned prefix. Zero, negative, unaligned
+and larger increments, W loads, other bases/destinations, stores, pre-indexed
+loads and intervening words remain outside this subset.
+
+A Swift-local exact encoding adapter reuses unsigned-load operand extraction
+and the existing signed-immediate helper, retaining the original word and
+marking the post-index form separately. Global CFG/linear decoding and execution
+are unchanged. The tail evidence records `sp_writeback_bytes` explicitly rather
+than silently treating the stack update as a no-op. It does not simulate stack
+contents or establish frame validity, restored LR, successful memory access or
+runtime return; restored-state and source/runtime proof flags remain false.
+
+Incoming v5 records the expanded local classification of SP post-index loads
+as non-control instructions. The tail guard imposes the stricter register and
+increment subset above. Result v9, success-constant v8, error-constant v9 and
+return-choice v9 reflect the expanded tail scope. Arm and post-call whitelists,
+image admission and all direct-entry protections retain their prior scope.
+
+Twelve new methods and 272 affected region/entry/presentation/outcome/renderer
+controls passed in composed runs. New cases cover exact operand/sign fields,
+register and increment boundaries, excluded forms, immediate-return adjacency,
+mixed tails, exact/over-limit tails, both arm layouts, success-entry fallback,
+conflicting entries, partial scans, raw word and writeback CLI evidence. This
+is synthetic analysis/output qualification; no new compiled-image, native GUI
+or release acceptance is claimed. Prior owned results retain original scope.
+
+Instruction semantics reference: [Arm LDR immediate reference](https://documentation-service.arm.com/static/67e40f3398aa3c3b6eea6a85).
+
+Independent semantic review found no blocking issue. The new instruction kind
+is confined to nonexecuting Swift structural helpers and explicit writeback
+metadata; generic core SP-effect/state simulation is not extended to this kind.
