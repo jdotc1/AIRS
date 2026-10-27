@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from .report_summary_text import _BoundedText
-from .swift_error_flow import MODEL, REGION_MODEL, INCOMING_MODEL, PRESENTATION_MODEL, SUCCESS_RESULT_MODEL, SUCCESS_CONSTANT_MODEL, ERROR_CONSTANT_MODEL
+from .swift_error_flow import MODEL, REGION_MODEL, INCOMING_MODEL, PRESENTATION_MODEL, SUCCESS_RESULT_MODEL, SUCCESS_CONSTANT_MODEL, ERROR_CONSTANT_MODEL, RETURN_CHOICE_MODEL
 from .types import InputError
 
 MAXIMUM_TEXT_BYTES = 1024 * 1024
@@ -34,6 +34,8 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
         raise InputError('swift_text_models', 'Unsupported success-constant evidence model')
     if report.get('error_constant_model_version') not in (None, ERROR_CONSTANT_MODEL):
         raise InputError('swift_text_models', 'Unsupported error-constant evidence model')
+    if report.get('return_choice_model_version') not in (None, RETURN_CHOICE_MODEL):
+        raise InputError('swift_text_models', 'Unsupported return-choice evidence model')
     lines = _BoundedText(min(maximum_bytes, MAXIMUM_TEXT_BYTES))
 
     def line(label, value):
@@ -58,6 +60,8 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
         line('Success-constant model', report['success_constant_model_version'])
     if 'error_constant_model_version' in report:
         line('Error-constant model', report['error_constant_model_version'])
+    if 'return_choice_model_version' in report:
+        line('Return-choice model', report['return_choice_model_version'])
     line('Full producer summary (not filtered by displayed rows)', report['summary'])
     line('Word scan complete', report['word_scan_complete'])
     line('Call details complete', report['call_details_complete'])
@@ -98,6 +102,10 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
             line('  Error constant (selected-path bits; call return unproven)',
                  {key: value for key, value in constant.items() if key != 'instructions'})
             rows('    Error-constant instruction', constant.get('instructions', []), 24)
+        if 'return_choice' in call:
+            if report.get('return_choice_model_version') != RETURN_CHOICE_MODEL:
+                raise InputError('swift_text_models', 'Return-choice evidence requires its current model')
+            line('  Return choice (structural outcomes; source disabled)', call['return_choice'])
         line('  Recorded return edges', {key: call[key] for key in ('test_pc', 'tested_register', 'success_pc', 'error_pc') if key in call})
         rows('  Post-call instruction evidence', call.get('window', []), MAX_WINDOW_ROWS)
         line('  Presentation', {key: presentation[key] for key in ('status', 'reason')})

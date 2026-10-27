@@ -28,6 +28,7 @@ PRESENTATION_MODEL = 'swift-structural-presentation-v3'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v3'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v1'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v1'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v1'
 SHARED_WORDS = 8
 
 
@@ -643,6 +644,60 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False) ->
         return {**result, 'reason': 'bounded_constant_evidence_unavailable', 'instructions': evidence}
 
 
+def _return_choice(call: dict) -> dict:
+    """Join in-process producer facts only; this does not admit saved reports."""
+    result = {'status': 'unresolved', 'source_reconstruction_allowed': False,
+              'runtime_value_proven': False, 'exclusive_path_proven': False,
+              'caller_return_type_proven': False, 'call_return_proven': False,
+              'handler_semantics_proven': False}
+    if call.get('presentation', {}).get('status') != 'eligible_structural_only':
+        return {**result, 'reason': 'structural_presentation_not_eligible'}
+    error = call.get('error_constant', {})
+    constant = call.get('success_constant', {})
+    returned = call.get('success_result', {})
+    error_known = error.get('status') == 'constant_register_candidate'
+    constant_known = constant.get('status') == 'constant_register_candidate'
+    returned_known = returned.get('status') in ('preserved_register_candidate', 'copied_register_candidate')
+    if not error_known or constant_known == returned_known:
+        return {**result, 'reason': 'outcome_evidence_missing_or_conflicting'}
+    success = constant if constant_known else returned
+    try:
+        plan = call['presentation']['display_plan']
+        expected_condition = {'test_pc': call['test_pc'], 'register': call['tested_register'], 'error_when': 'nonzero'}
+        if (call['presentation'].get('source_reconstruction_allowed') is not False
+                or plan['condition'] != expected_condition
+                or plan['success_entry_pc'] != call['success_pc']
+                or plan['error_interval']['start_pc'] != call['error_pc']):
+            raise ValueError('Presentation binding')
+        return_pc = call['error_region']['shared_epilogue']['instructions'][-1]['pc']
+        for path, outcome in (('success', success), ('error', error)):
+            if (outcome['register'] != 'x0' or outcome['call_pc'] != call['call_pc']
+                    or outcome[path + '_pc'] != call[path + '_pc']
+                    or outcome['return_pc'] != return_pc
+                    or any(outcome.get(key) is not False for key in ('source_reconstruction_allowed',
+                        'runtime_value_proven', 'exclusive_path_proven', 'caller_return_type_proven'))):
+                raise ValueError('Outcome binding')
+        if error.get('call_return_proven') is not False or error.get('handler_semantics_proven') is not False:
+            raise ValueError('Error proof scope')
+        def literal(outcome):
+            bits = outcome['constant_bits']
+            if (type(outcome['bit_width']) is not int or outcome['bit_width'] != 64
+                    or not isinstance(bits, str) or re.fullmatch(r'0x[0-9a-f]{16}', bits) is None
+                    or outcome.get('depends_on_call_result') is not False):
+                raise ValueError('Literal bits')
+            return {'kind': 'constant_bits', 'bit_width': 64, 'constant_bits': bits}
+        success_description = literal(success) if constant_known else {
+            'kind': 'call_result', 'register': 'x0', 'candidate_status': success['status']}
+        error_description = literal(error)
+        return {**result, 'status': 'structural_choice_candidate',
+                'reason': 'bound_selected_path_outcomes', 'call_pc': call['call_pc'],
+                'condition': {'test_pc': call['test_pc'], 'register': call['tested_register'], 'error_when': 'nonzero'},
+                'success': success_description, 'error': error_description, 'return_pc': return_pc,
+                'same_constant_bits': success['constant_bits'] == error['constant_bits'] if constant_known else None}
+    except (KeyError, TypeError, ValueError):
+        return {**result, 'reason': 'outcome_evidence_inconsistent'}
+
+
 def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS, *, include_error_regions: bool = False, validate_region_entries: bool = False, include_structured_presentation: bool = False) -> dict:
     if include_structured_presentation and not (include_error_regions and validate_region_entries):
         raise InputError('swift_presentation_option', 'Structured presentation requires error regions and entry validation')
@@ -716,6 +771,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
                 row['success_result'] = _success_result(data, function, row, direct_scan)
                 row['success_constant'] = _path_constant(data, function, row)
                 row['error_constant'] = _path_constant(data, function, row, error=True)
+                row['return_choice'] = _return_choice(row)
     recovered = sum(row['status'] == 'recovered_candidate' for row in calls)
     report = {'schema_version': 1, 'report_kind': 'airs.swift_error_flow', 'model_version': MODEL,
             'scope': 'structural_call_return_edges', 'address_space': 'preferred_vm',
@@ -750,6 +806,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         report['success_result_model_version'] = SUCCESS_RESULT_MODEL
         report['success_constant_model_version'] = SUCCESS_CONSTANT_MODEL
         report['error_constant_model_version'] = ERROR_CONSTANT_MODEL
+        report['return_choice_model_version'] = RETURN_CHOICE_MODEL
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     return report

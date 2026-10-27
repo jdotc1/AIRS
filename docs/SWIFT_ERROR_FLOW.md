@@ -691,3 +691,38 @@ or release qualification. Existing binary evidence retains its original scope.
 Independent semantic review found no false-supported blocker and confirmed that
 the shared walker preserves success-constant behavior. No source image was
 executed or newly admitted as part of this synthetic qualification.
+
+## Bound return-choice summaries
+
+`swift-return-choice-v1` joins existing in-process outcome evidence into one
+structural review item. Eligible presentation, an error literal and exactly one
+success literal or call-result candidate are required. Both outcomes must bind
+to the same call, their recorded branch entries, x0 and the same shared return
+word. Literal evidence must retain exact 64-bit hexadecimal bits and its
+independence from the call result. Incomplete, contradictory or inconsistent
+outcomes leave the summary unresolved. This is not saved-report admission.
+
+A choice records the existing error test, its register and nonzero error sense,
+plus separate success and error descriptions. Copied call results remain
+distinguished from direct preservation. `same_constant_bits` is a static bit
+comparison only when both paths have literal candidates; it is null when the
+success value is a call result. Null does not assert the outcomes differ.
+
+The summary performs no new image admission or instruction scan and does not
+widen any component's existing bounds or model identity. It adds no runtime,
+path-exclusive, call-return, handler, caller-return-type or source-reconstruction
+proof. CLI text labels it as structural outcomes with source disabled; retained
+component rows provide the original bounded instruction evidence.
+
+Twelve new methods and 38 affected constant/renderer controls passed in composed
+runs. Coverage includes literal pairs, equal literal patterns, direct/copied call
+results, incomplete and contradictory outcomes, call/entry/return bindings,
+invalid bit widths and proof claims, both layouts, default-output isolation,
+model binding and CLI JSON/text. Qualification is synthetic analysis and output;
+existing owned-image, native and release evidence retains its original scope.
+
+Independent review identified a presentation-binding consistency gap. The join
+now also requires exact agreement with the eligible display plan condition,
+success entry, error-interval start and source-disabled flag. A new focused
+valid/tampered/missing-plan control passed after that correction, without
+replaying prior accepted checks.
