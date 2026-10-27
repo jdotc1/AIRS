@@ -454,3 +454,12 @@ excluded; x0 must hold a live copy before the existing return tail. Copied
 candidates are distinguished from direct preservation. Other component models,
 24-word maximum and all proof restrictions are unchanged. Eight new and
 25 affected synthetic controls passed. See SWIFT_ERROR_FLOW.md for exact scope.
+
+## Success-entry return-tail recovery
+
+Success-result v3 recognizes the existing bounded return-tail whitelist directly
+at a success entry equal to the recorded error join. Complete caller-local direct
+entry checks protect the entire tail, with only exact test/terminal-error-branch
+exemptions. Unsupported or conflicting evidence withholds the result; all runtime
+and source proof flags remain false. Thirteen new and 33 affected synthetic/CLI
+controls passed. See SWIFT_ERROR_FLOW.md for exact limits and evidence scope.

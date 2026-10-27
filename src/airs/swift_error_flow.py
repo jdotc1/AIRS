@@ -25,7 +25,7 @@ REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v3'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v3'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v2'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v3'
 SHARED_WORDS = 8
 
 
@@ -471,7 +471,7 @@ def _presentation_eligibility(call: dict) -> dict:
                                 if 'shared_epilogue' in region else {})}}
 
 
-def _success_result(data: bytes, function, call: dict) -> dict:
+def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dict:
     """In-process bounded selected-path register evidence, not a saved-report decoder."""
     result = {'status': 'declined', 'register': 'x0',
               'runtime_value_proven': False, 'source_reconstruction_allowed': False,
@@ -481,8 +481,7 @@ def _success_result(data: bytes, function, call: dict) -> dict:
     if call.get('presentation', {}).get('status') != 'eligible_structural_only':
         return {**result, 'reason': 'structural_presentation_not_eligible'}
     region = call['error_region']
-    if 'shared_epilogue' not in region:
-        return {**result, 'reason': 'bounded_shared_return_missing'}
+    shared = 'shared_epilogue' in region
     evidence = []
     aliases = {0}
     copied = False
@@ -521,9 +520,9 @@ def _success_result(data: bytes, function, call: dict) -> dict:
                 return {**result, 'reason': 'post_call_result_not_preserved', 'instructions': evidence}
             else:
                 return {**result, 'reason': 'post_call_result_not_preserved', 'instructions': evidence}
-        interval = region['success_interval']
+        interval = region['success_interval'] if shared else {'start_pc': call['success_pc'], 'end_pc_exclusive': call['success_pc']}
         start, end = int(interval['start_pc'], 16), int(interval['end_pc_exclusive'], 16)
-        if not 1 <= (end - start) // 4 <= SHARED_WORDS:
+        if (not shared and int(region['join_pc'], 16) != start) or not (1 if shared else 0) <= (end - start) // 4 <= SHARED_WORDS:
             raise ValueError('Success bound')
         join = int(region['join_pc'], 16)
         for pc in range(start, end, 4):
@@ -542,13 +541,35 @@ def _success_result(data: bytes, function, call: dict) -> dict:
         if 0 not in aliases:
             return {**result, 'reason': 'result_not_restored_to_x0', 'instructions': evidence}
         tail = _shared_return_tail(data, function, join)
-        if tail is None or tail != region['shared_epilogue']:
-            return {**result, 'reason': 'bounded_shared_return_missing', 'instructions': evidence}
-        # The shared-tail whitelist only restores x19..x30 and adjusts SP.
+        if tail is None or (shared and tail != region['shared_epilogue']):
+            return {**result, 'reason': 'bounded_return_tail_missing', 'instructions': evidence}
+        # Retain the inspected tail even when its entry check withholds recovery.
         evidence.extend({**row, 'phase': 'return_tail'} for row in tail['instructions'])
+        if not shared:
+            if (scan is None or scan.get('caller_scan_complete') is not True
+                    or scan.get('unclassified_word_count') != 0):
+                return {**result, 'reason': 'return_tail_entries_unresolved', 'instructions': evidence}
+            tail_end = int(tail['end_pc_exclusive'], 16)
+            conflicts = []; conflict_count = 0
+            for edge in scan['direct_edges']:
+                source, target = int(edge['source_pc'], 16), int(edge['target_pc'], 16)
+                expected_test = source == test and edge['kind'] == 'xcbz' and target == join
+                expected_error_exit = (source == int(region['end_pc_exclusive'], 16) - 4
+                                       and edge['kind'] == 'b' and target == join)
+                if join <= target < tail_end and not (expected_test or expected_error_exit):
+                    conflict_count += 1
+                    if len(conflicts) < INCOMING_EVIDENCE_LIMIT:
+                        conflicts.append(edge)
+            if conflicts:
+                return {**result, 'reason': 'unexpected_return_tail_entry',
+                        'unexpected_tail_entry_count': conflict_count,
+                        'tail_entry_details_complete': conflict_count == len(conflicts),
+                        'unexpected_tail_entries': conflicts, 'instructions': evidence}
+
         return {**result, 'status': 'copied_register_candidate' if copied else 'preserved_register_candidate',
                 'reason': 'recorded_success_path_restores_x0_copy' if copied else 'recorded_success_path_preserves_x0',
                 'result_registers_before_tail': [f'x{register}' for register in sorted(aliases)],
+                'return_tail_layout': 'shared_epilogue' if shared else 'success_entry',
                 'call_pc': call['call_pc'], 'success_pc': call['success_pc'],
                 'return_pc': tail['instructions'][-1]['pc'], 'instructions': evidence}
     except (KeyError, TypeError, ValueError, ModelError):
@@ -625,7 +646,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
                 reasons[row['reason']] += 1
             if include_structured_presentation:
                 row['presentation'] = _presentation_eligibility(row)
-                row['success_result'] = _success_result(data, function, row)
+                row['success_result'] = _success_result(data, function, row, direct_scan)
     recovered = sum(row['status'] == 'recovered_candidate' for row in calls)
     report = {'schema_version': 1, 'report_kind': 'airs.swift_error_flow', 'model_version': MODEL,
             'scope': 'structural_call_return_edges', 'address_space': 'preferred_vm',

@@ -585,3 +585,37 @@ copy-kill controls additionally confirmed eligible presentation and the exact
 result-layer refusal reason; only those changed methods were run again. The
 narrow-copy control establishes end-to-end pipeline refusal, not direct modeling
 of W-register copies.
+
+## Success-entry return tails (success-result v3)
+
+The v3 result model also admits an eligible error-fallthrough interval whose
+success entry equals its recorded join and begins the existing bounded
+restore/return whitelist. A direct RET x30 is the smallest accepted tail. No
+separate success-arm interval or shared-epilogue record is required for this
+layout; the result records `return_tail_layout: success_entry` and retains the
+actual tail words. Existing shared layouts retain their distinct layout label.
+
+This extension reuses the complete caller-local direct-edge scan. Every direct
+edge into any tail word conflicts except the exact recorded XCBZ test to the
+join and the terminal error-arm B to that join. An opaque error-arm BL into the
+tail is not exempt. Conflicts retain full counts and at most 16 details with an
+explicit completeness flag. Indirect and external entries remain unproven.
+
+The new tail is at most eight words; post-call evidence remains at most eight
+words and shared-layout paths retain the overall 24-word maximum. Unsupported
+operations, x0 writes in the tail, nonstandard returns, missing RET, incomplete
+caller classification and conflicting entries withhold recovery. Post-call
+64-bit saved-copy restoration composes with the direct-return layout. Runtime
+value, caller return type, exclusivity and source reconstruction remain unproven.
+Edge, error-region, incoming and presentation identities are unchanged.
+
+Thirteen new methods passed in composed runs, covering direct RET, restore tails,
+exact/over-limit tails, tail entry/interior conflicts, opaque calls, conflict
+detail caps, partial scans, result-copy composition and CLI JSON/text. Thirty-three
+affected success-result, copy and renderer methods passed once. Qualification is
+synthetic analysis and CLI output; no new owned-image, native or installed-app
+claim is made. Prior accepted binary/release evidence retains its original scope.
+
+Independent semantic review found no false-supported fallback issue. A diagnostic
+finding was corrected so a withheld tail-entry result retains the inspected tail
+words; one new focused conflict/text test passed after that change.
