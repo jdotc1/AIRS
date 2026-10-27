@@ -98,8 +98,8 @@ class CmpHandlerBoundaryTests(unittest.TestCase):
     def test_region_does_not_unlock_presentation_or_outcomes(self):
         call = report(include_structured_presentation=True)['calls'][0]
         self.assertEqual(call['error_region']['status'], 'structural_region_candidate')
-        self.assertEqual(call['presentation']['status'], 'blocked')
-        self.assertEqual(call['presentation']['reason'], 'compare_structured_presentation_not_qualified')
+        self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
+        self.assertEqual(call['presentation']['reason'], 'complete_caller_local_direct_validation')
         for key in ('success_result', 'success_constant', 'error_constant'):
             self.assertEqual(call[key]['status'], 'declined')
         self.assertEqual(call['return_choice']['status'], 'unresolved')
@@ -178,11 +178,11 @@ class CmpHandlerDeliveryTests(unittest.TestCase):
     def test_text_preserves_handler_evidence_without_structured_plan(self):
         from airs.swift_error_text import render_swift_error_text
         text = render_swift_error_text(report(include_structured_presentation=True))
-        for expected in ('structural_region_candidate', '0xaa1503e0', '0x9400000c',
+        for expected in ('Error interval:', '0xaa1503e0', '0x9400000c',
                          'opaque_call', 'Flag-entry validation', 'Incoming validation',
-                         'Structured plan: withheld', 'Source reconstruction: disabled'):
+                         'Condition (structural):', 'Source reconstruction: disabled'):
             self.assertIn(expected, text)
-        self.assertNotIn('Condition (structural):', text)
+        self.assertIn('Condition (structural):', text)
 
     def test_cli_json_and_text_retain_screened_region(self):
         import contextlib
@@ -204,13 +204,13 @@ class CmpHandlerDeliveryTests(unittest.TestCase):
                     status = main(options+extra)
                 self.assertEqual(status, 0)
                 if extra:
-                    self.assertIn('structural_region_candidate', output.getvalue())
-                    self.assertIn('Structured plan: withheld', output.getvalue())
+                    self.assertIn('Error interval:', output.getvalue())
+                    self.assertIn('Condition (structural):', output.getvalue())
                 else:
                     value = json.loads(output.getvalue())
                     self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v13')
                     self.assertEqual(value['calls'][0]['error_region']['status'], 'structural_region_candidate')
-                    self.assertEqual(value['calls'][0]['presentation']['status'], 'blocked')
+                    self.assertEqual(value['calls'][0]['presentation']['status'], 'eligible_structural_only')
 
     def test_text_preserves_refusal_and_flag_conflict(self):
         from airs.swift_error_text import render_swift_error_text
