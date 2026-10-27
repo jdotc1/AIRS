@@ -33,8 +33,8 @@ class CmpSharedOutcomeBoundaryTests(unittest.TestCase):
     def test_success_arm_clobber_does_not_become_call_result(self):
         call = report()['calls'][0]
         self.assertEqual(call['success_result']['status'], 'declined')
-        self.assertEqual(call['return_choice']['status'], 'unresolved')
-        self.assertEqual(call['success_constant']['reason'], 'compare_shared_success_literal_not_qualified')
+        self.assertEqual(call['return_choice']['success']['kind'], 'constant_bits')
+        self.assertEqual(call['success_constant']['constant_bits'], '0x0000000000000000')
 
     def test_narrow_copy_cannot_preserve_unknown_full_width_result(self):
         call = report((0x2a0003e0, *PRESERVED))['calls'][0]
@@ -103,7 +103,7 @@ class CmpSharedOutcomeBoundaryTests(unittest.TestCase):
         from airs.swift_error_flow import _return_choice
         call = deepcopy(report(PRESERVED)['calls'][0])
         call['success_constant'] = {'status': 'constant_register_candidate'}
-        self.assertEqual(_return_choice(call)['reason'], 'compare_shared_success_result_not_qualified')
+        self.assertEqual(_return_choice(call)['reason'], 'outcome_evidence_missing_or_conflicting')
 
 
 class CmpSharedOutcomeDeliveryTests(unittest.TestCase):

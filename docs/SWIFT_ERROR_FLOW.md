@@ -1452,3 +1452,22 @@ runtime value, caller return type, exclusive path, handler semantics, restored
 state, or source reconstruction. Fourteen new and 284 affected methods passed;
 independent review found no blocking issue. Prior compiler, binary and native
 results were reused within their existing scope.
+
+## CMP shared success literals
+
+`swift-sync-error-edges-v18`, `swift-success-constant-v15` and
+`swift-return-choice-v18` extend screened CMP-zero/B.EQ shared-epilogue
+outcomes to success-path literals. Constant tracking follows the post-call
+prefix and then the selected success arm, applying the existing conservative
+register and width rules. The success arm and tail are re-decoded and matched
+against their complete recorded instruction evidence before a candidate is
+accepted. The return choice retains the existing condition and common-return
+bindings. Error-arm calls and writes do not flow into success-path constants.
+
+These are selected-path structural candidates, not proof of runtime values,
+caller return type, exclusive entry, handler semantics, restored state or
+source reconstruction. NE and forward CMP handlers remain outside this
+subset. Independent review found and prompted correction of a stale-arm
+binding gap; a changed supported instruction is now refused. The focused and
+affected checks passed after updating an obsolete refusal expectation; prior
+compiler, binary and native results retain their existing scope.

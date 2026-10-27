@@ -180,7 +180,7 @@ class CmpSuccessLiteralAdditionalTests(unittest.TestCase):
         self.assertEqual(over['success_constant']['status'], 'declined')
         self.assertEqual(over['return_choice']['status'], 'unresolved')
 
-    def test_partial_caller_and_shared_layout_do_not_produce_literal(self):
+    def test_partial_caller_declines_and_screened_shared_layout_qualifies(self):
         from dataclasses import replace
         from airs.swift_error_flow import DEFAULT_LIMITS
         value = recover_swift_error_flow(image(WORDS),
@@ -191,8 +191,8 @@ class CmpSuccessLiteralAdditionalTests(unittest.TestCase):
         shared = report((WORDS[0], WORDS[1], 0x540000a0,
             0xaa1503e0, 0x9400000b, 0x92800000, 0x14000002,
             0xd2800000, 0xd65f03c0))['calls'][0]
-        self.assertEqual(shared['success_constant']['status'], 'declined')
-        self.assertEqual(shared['return_choice']['status'], 'unresolved')
+        self.assertEqual(shared['success_constant']['constant_bits'], '0x0000000000000000')
+        self.assertEqual(shared['return_choice']['status'], 'structural_choice_candidate')
 
 class CmpSuccessLiteralFinalBindingTests(unittest.TestCase):
     def test_stale_success_entry_cannot_produce_misbound_literal(self):
