@@ -520,3 +520,37 @@ with a call record containing additional attribution fields; only that changed
 test was rerun after correcting its comparison. Existing owned-image results
 are reused for their original signatures; this extension has synthetic source
 and renderer qualification, not a new compiled-image or installed-app claim.
+
+## Bounded success-result evidence
+
+When structured presentation is requested, `swift-success-result-v1` records
+whether x0 is preserved along the recorded success path of an exact Swift.Int
+throwing call. Swift's ARM64 calling-convention summary assigns the first integer
+result to x0. The new result requires eligible caller-local structural evidence
+and the existing bounded shared return tail. It reuses admitted caller bytes,
+with at most eight post-call words, eight success-arm words and eight tail words.
+Post-call NOP and MOV to other registers, success NOP and MOV/MOVZ/MOVN to other
+registers, and the exact terminal success branch to the shared join are admitted.
+The existing tail whitelist restores x19..x30, adjusts SP and ends in RET x30.
+Any x0 write, call, unknown operation, unsupported return, incomplete entry check
+or missing shared tail withholds the candidate. Even x0 self-copy is declined
+by this initial conservative subset.
+
+The candidate describes selected-path register preservation only. Runtime value,
+path exclusivity, caller return type and source-reconstruction proof remain false.
+No error-arm result is inferred. Default edge-only output and edge v4, region v5,
+incoming v3 and presentation v3 identities are unchanged. JSON carries raw bounded
+path evidence; text exposes the same scoped result with explicit omission counts.
+The text renderer accepts prior reports lacking the optional result model, but
+requires the current model when result evidence is present.
+
+Twelve new focused methods passed in composed runs, including both arm layouts,
+x0 clobbers, post-call writes, call/unknown/return refusals, partial scans, direct
+side entries, unsupported declarations, default-output isolation and CLI JSON/text.
+Exact 24-word coverage and each independent one-word overflow were checked;
+text displays the success-result model identity. Independent semantic review
+found no false-preserved-result blocker.
+Forty-nine affected renderer, declaration, forward-arm and shared-tail controls
+passed once. Existing owned-image results are reused only for their original
+scopes; this increment has synthetic analysis/CLI qualification and no new native
+app, compiled-image, installed-app or release qualification.

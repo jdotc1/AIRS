@@ -25,6 +25,7 @@ REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v3'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v3'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v1'
 SHARED_WORDS = 8
 
 
@@ -470,6 +471,65 @@ def _presentation_eligibility(call: dict) -> dict:
                                 if 'shared_epilogue' in region else {})}}
 
 
+def _success_result(data: bytes, function, call: dict) -> dict:
+    """In-process bounded selected-path register evidence, not a saved-report decoder."""
+    result = {'status': 'declined', 'register': 'x0',
+              'runtime_value_proven': False, 'source_reconstruction_allowed': False,
+              'exclusive_path_proven': False, 'caller_return_type_proven': False}
+    if call.get('callee', {}).get('result') != 'Swift.Int':
+        return {**result, 'reason': 'callee_result_not_scalar_int'}
+    if call.get('presentation', {}).get('status') != 'eligible_structural_only':
+        return {**result, 'reason': 'structural_presentation_not_eligible'}
+    region = call['error_region']
+    if 'shared_epilogue' not in region:
+        return {**result, 'reason': 'bounded_shared_return_missing'}
+    evidence = []
+    try:
+        test = int(call['test_pc'], 16)
+        first = int(call['call_pc'], 16) + 4
+        if not 0 <= test - first < WINDOW_WORDS * 4:
+            raise ValueError('Post-call bound')
+        # Reuse exact admitted caller bytes; never infer writes from rendered labels.
+        for pc in range(first, test + 4, 4):
+            instruction, row = _bounded_instruction(data, function, pc)
+            evidence.append({**row, 'phase': 'post_call'})
+            if pc == test:
+                if instruction.kind not in ('xcbz', 'xcbnz') or instruction.rn == 0:
+                    return {**result, 'reason': 'unsupported_result_test', 'instructions': evidence}
+            elif instruction.kind == 'nop':
+                continue
+            elif instruction.kind == 'mov' and instruction.rd != 0:
+                continue
+            else:
+                return {**result, 'reason': 'post_call_result_not_preserved', 'instructions': evidence}
+        interval = region['success_interval']
+        start, end = int(interval['start_pc'], 16), int(interval['end_pc_exclusive'], 16)
+        if not 1 <= (end - start) // 4 <= SHARED_WORDS:
+            raise ValueError('Success bound')
+        join = int(region['join_pc'], 16)
+        for pc in range(start, end, 4):
+            instruction, row = _bounded_instruction(data, function, pc)
+            evidence.append({**row, 'phase': 'success'})
+            if instruction.kind == 'nop':
+                continue
+            if instruction.kind in ('mov', 'movz', 'movn') and instruction.rd != 0:
+                continue
+            if instruction.kind == 'b' and pc == end - 4 and pc + instruction.immediate == join:
+                continue
+            return {**result, 'reason': 'success_result_not_preserved', 'instructions': evidence}
+        tail = _shared_return_tail(data, function, join)
+        if tail is None or tail != region['shared_epilogue']:
+            return {**result, 'reason': 'bounded_shared_return_missing', 'instructions': evidence}
+        # The shared-tail whitelist only restores x19..x30 and adjusts SP.
+        evidence.extend({**row, 'phase': 'return_tail'} for row in tail['instructions'])
+        return {**result, 'status': 'preserved_register_candidate',
+                'reason': 'recorded_success_path_preserves_x0',
+                'call_pc': call['call_pc'], 'success_pc': call['success_pc'],
+                'return_pc': tail['instructions'][-1]['pc'], 'instructions': evidence}
+    except (KeyError, TypeError, ValueError, ModelError):
+        return {**result, 'reason': 'bounded_result_evidence_unavailable', 'instructions': evidence}
+
+
 def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS, *, include_error_regions: bool = False, validate_region_entries: bool = False, include_structured_presentation: bool = False) -> dict:
     if include_structured_presentation and not (include_error_regions and validate_region_entries):
         raise InputError('swift_presentation_option', 'Structured presentation requires error regions and entry validation')
@@ -540,6 +600,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
                 reasons[row['reason']] += 1
             if include_structured_presentation:
                 row['presentation'] = _presentation_eligibility(row)
+                row['success_result'] = _success_result(data, function, row)
     recovered = sum(row['status'] == 'recovered_candidate' for row in calls)
     report = {'schema_version': 1, 'report_kind': 'airs.swift_error_flow', 'model_version': MODEL,
             'scope': 'structural_call_return_edges', 'address_space': 'preferred_vm',
@@ -571,6 +632,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         report['limitations'].append('Entry validation covers only direct edges in the bounded caller; indirect and external entries, reachability and exclusivity remain unproven.')
     if include_structured_presentation:
         report['structured_presentation_model_version'] = PRESENTATION_MODEL
+        report['success_result_model_version'] = SUCCESS_RESULT_MODEL
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     return report
