@@ -12,7 +12,7 @@ class ErrorConstantFirstTests(unittest.TestCase):
         self.assertEqual(result['opaque_call_count'], 1)
         self.assertFalse(result['call_return_proven'])
         self.assertFalse(result['handler_semantics_proven'])
-        self.assertEqual(value['error_constant_model_version'], 'swift-error-constant-v4')
+        self.assertEqual(value['error_constant_model_version'], 'swift-error-constant-v5')
 
 def error_arm(body, tail=(0xd65f03c0,)):
     test = 0xb4000015 | ((len(body) + 2) << 5)
@@ -75,8 +75,8 @@ class ErrorConstantBoundaryTests(unittest.TestCase):
                       report(WORDS, symbol='_$s4Demo4readyyF')):
             self.assertEqual(value['calls'][0]['error_constant']['status'], 'declined')
 
-    def test_pipeline_refuses_narrow_update_and_unknown_instructions(self):
-        for word in (0x52800020, 0xf2800020, 0xffffffff):
+    def test_pipeline_refuses_reserved_w_update_and_unknown_instructions(self):
+        for word in (0x52c00020, 0xf2800020, 0xffffffff):
             self.assertEqual(error_arm((word,))['calls'][0]['error_constant']['status'], 'declined')
 
 class ErrorConstantEvidenceTests(unittest.TestCase):
@@ -117,6 +117,6 @@ class ErrorConstantEvidenceTests(unittest.TestCase):
                     self.assertEqual(call['error_constant']['constant_bits'], '0xffffffffffffffff')
                     self.assertEqual(call['success_constant']['constant_bits'], '0x0000000000000000')
                 else:
-                    self.assertIn('Error-constant model: "swift-error-constant-v4"', output.getvalue())
+                    self.assertIn('Error-constant model: "swift-error-constant-v5"', output.getvalue())
                     self.assertIn('cleared_after_opaque_call', output.getvalue())
                     self.assertIn('Source reconstruction: disabled', output.getvalue())

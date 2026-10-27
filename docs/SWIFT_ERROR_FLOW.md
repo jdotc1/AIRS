@@ -832,3 +832,38 @@ new compiled-image, native app or release acceptance is claimed. Existing owned
 image evidence remains accepted only within its original instruction scope.
 
 Instruction semantics reference: [Arm A64 MOVK](https://support.arm.com/documentation/ddi0596/2021-06/Base-Instructions/MOVK--Move-wide-with-keep-).
+
+## Swift-local W move-wide literal seeds
+
+The Swift structural analyzer now recognizes exact W MOVZ and MOVN words through
+a local adapter. It reuses the existing X move-wide decoder's field extraction,
+rejects reserved W shifts 32/48, and restores the original word and W kind in
+its instruction record. The core CFG/linear decoder, Mach-O admission and unwind
+engine remain unchanged. Only shifts zero and 16 are admitted for W seeds.
+
+Literal state applies 32-bit inversion/masking, then retains the resulting
+zero-extended x-register bits. Thus MOVN w0,#0 yields 0x00000000ffffffff, while
+MOVN x0,#0 remains 0xffffffffffffffff. A W seed clears any prior upper bits.
+Known W seeds may feed existing 64-bit copies and X MOVK updates. Any such W
+write invalidates its destination's call-result alias; WZR writes are discarded.
+
+Region v7 and incoming v4 identify the expanded arm/classifiable-word scope.
+Result v5, success-constant v4, error-constant v5 and return-choice v5 record the
+new width semantics. Error-edge and presentation identities remain unchanged.
+No W MOVK, W-register copy, post-call-window or return-tail support is added.
+Opaque calls, unknown overwrites, interval limits, entry checks and all runtime
+and source proof restrictions retain their prior behavior.
+
+Twelve new methods and 218 affected region/entry/presentation/outcome/renderer
+controls passed in composed runs. Cases cover shifts, raw word provenance,
+zero extension, upper-bit clearing, alias invalidation, WZR, opaque calls, both
+arm geometries, bounds, excluded operations and CLI JSON/text. One synthetic
+forward-layout displacement was corrected after it pointed at the branch rather
+than the error entry; only that changed case and previously unrun methods were
+then executed. Qualification is synthetic analysis and output, without a new
+compiled-image, native GUI or release acceptance claim.
+
+Instruction semantics reference: [Arm A64 instruction reference](https://documentation-service.arm.com/static/67e40f3398aa3c3b6eea6a85).
+
+Independent semantic review found no blocking issue and confirmed local adapter
+scope, original-word retention, zero extension and unchanged global decoding.
