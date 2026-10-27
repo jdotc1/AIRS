@@ -69,9 +69,9 @@ class CmpMovkBoundaryTests(unittest.TestCase):
             self.assertEqual(call['status'], 'declined')
             self.assertEqual(call['reason'], 'literal_prefix_requires_compare_test')
 
-    def test_w_movk_stays_unmodeled(self):
+    def test_w_movk_records_zero_extended_update(self):
         call = report(words((0xd2800540, 0x72a24680)))['calls'][0]
-        self.assertEqual(call['status'], 'declined')
+        self.assertEqual(call['success_constant']['constant_bits'], '0x000000001234002a')
 
     def test_eight_word_prefix_limit_is_not_extended(self):
         exact = report(words((0xd2800540, *(movk(i) for i in range(5)))))['calls'][0]

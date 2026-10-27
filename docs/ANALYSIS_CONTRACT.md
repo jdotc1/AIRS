@@ -1328,3 +1328,14 @@ Existing X copies/updates retain exact bits. W-copy/W-MOVK prefixes, narrow test
 CBZ/CBNZ literal-prefix widening and unsupported handler layouts remain refused.
 Fifteen new and 271 affected methods passed. Source/runtime/exclusive-path proof
 and compiler/native qualification remain separate and unestablished.
+
+## CMP W MOVK known-state updates
+
+`swift-sync-error-edges-v13`, `swift-success-constant-v13`,
+`swift-error-constant-v15` and `swift-return-choice-v15` admit W MOVK updates in
+bounded CMP success prefixes. Existing transfer replaces a legal halfword only
+for known input, then clears upper X bits through 32-bit masking. Unknown input
+remains unknown; full error aliases are invalidated. Reserved shifts, W-copy
+prefixes and unsupported handler layouts remain refused. Fifteen new and 286
+affected methods passed with independent review. Proof and release gates retain
+their prior scopes.

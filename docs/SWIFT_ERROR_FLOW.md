@@ -1337,3 +1337,24 @@ Fifteen new methods and 271 affected methods passed. New controls cover both
 legal shifts, reserved encodings, high-bit clearing, aliases, excluded forms,
 zero-register writes, bounds, conflicts and JSON/text evidence. No decoder,
 dependency, compiler, binary-admission or native workflow was added or repeated.
+
+## Bounded CMP W MOVK success updates
+
+The current edge model is `swift-sync-error-edges-v13`, success-constant model is
+`swift-success-constant-v13`, error-constant model is `swift-error-constant-v15`
+and return-choice model is `swift-return-choice-v15`. W MOVK may now update a
+known prefix literal through the existing decoder and constant transfer. The
+selected 16-bit lane is replaced and the result is masked to 32 bits, clearing
+upper X bits even when the seed was X-width. Unknown input remains unknown.
+
+Both legal lanes, repeated updates and subsequent X copies/updates retain their
+existing bit semantics. Reserved W shifts remain rejected. Every W update
+invalidates the full destination error alias; a separately saved alias can survive.
+CMP-only prefixes, eight-word prefix/tail bounds, cached entry validation and
+exact outcome/proof binding remain unchanged. W-copy prefixes, B.NE/shared CMP
+handlers and compiler/runtime/native qualification remain open.
+
+Fifteen new and 286 affected methods passed. New controls cover width truncation,
+legal/reserved lanes, known/unknown states, aliases, XZR, bounds, tail conflicts
+and CLI/text evidence. Independent semantic review found no blocking issue.
+Prior compiler, binary and native results were reused within their scopes.
