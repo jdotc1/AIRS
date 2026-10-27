@@ -655,3 +655,39 @@ synthetic source and CLI output, with no new owned-image or installed-app claim.
 Independent semantic review found no blocking issue. Narrow/MOVK/call controls
 establish conservative pipeline refusal rather than interpretation by the
 constant helper; no instruction-family support is inferred from those controls.
+
+## Bounded error-arm constants
+
+`swift-error-constant-v1` separately records exact 64-bit patterns assigned on
+an admitted Int throwing call's recorded error arm. It requires eligible
+structural presentation, the bounded error interval and its exact validated
+shared return tail. The existing constant walker is reused with an empty state;
+success-constant v1 behavior and all previous model identities are unchanged.
+
+The same 64-bit MOVZ/MOVN/MOV and XZR rules apply. Every opaque BL clears all
+known constants, including saved-register entries; evidence explicitly marks
+the invalidation. A complete assignment after the last call may establish
+known x0 bits at the join. A value assigned before an opaque call, or copied
+from unknown incoming state, cannot seed a candidate afterward. Neither the
+success arm nor the call result supplies error constants.
+
+Evidence is at most 16 error words plus eight return-tail words. The result
+retains exact hexadecimal bits and candidate opaque-call counts, while call
+return, handler meaning, runtime value, exclusive path, caller return type and
+source reconstruction remain unproven. Even an eligible pattern does not prove
+a Swift catch clause or that an opaque call returns. Unsupported instructions,
+partial scans, conflicting entries and missing tails withhold recovery. Narrow
+and MOVK controls establish pipeline refusal rather than interpretation of
+those instruction families. Default edge-only output remains unchanged.
+
+Thirteen new methods and 58 affected success-constant/result/copy/return-tail/
+renderer controls passed in composed runs. They cover state invalidation before
+and after calls, saved-register invalidation, copies/XZR/shifts, separate success
+and error values, both arm layouts, exact 24-word and overflow bounds, entry
+conflicts, partial scans, optional model binding and CLI JSON/text. This is
+synthetic analysis and CLI qualification, not a new compiled-image, native app
+or release qualification. Existing binary evidence retains its original scope.
+
+Independent semantic review found no false-supported blocker and confirmed that
+the shared walker preserves success-constant behavior. No source image was
+executed or newly admitted as part of this synthetic qualification.
