@@ -1180,3 +1180,13 @@ not preserve original 64-bit call-result aliases. The existing logical decoder
 is reused through a local canonical-alias adapter. Core decoding, post-call
 windows, return tails and evidence limits retain prior scope. Twelve new and
 208 affected synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md for details.
+
+## Owned W outcome qualification
+
+One fresh optimized Swift fixture qualified two throwing-Void handler outcomes:
+32-bit literal assembly and W-versus-X all-ones width. The first 205-word scan
+retained all 17 calls, recovering two candidates and declining 15. Twenty-two
+captured words matched retained disassembly and relocated regression fixtures;
+six new regression/CLI methods passed. Analyzer semantics are unchanged and
+prior checks are reused. W-copy compiler coverage remains open because no such
+word was emitted. See SWIFT_ERROR_FLOW.md for exact scope and acceptance limits.
