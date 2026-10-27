@@ -1115,3 +1115,12 @@ be assigned after the last call and survive the validated shared return tail.
 Call return and handler/source/runtime meaning remain unproven. Evidence stays
 within 24 words; prior models are unchanged. Thirteen new and 58 affected
 synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md for exact scope.
+
+## Bound return-choice summaries
+
+Return-choice v1 combines eligible same-call, same-tail success/error evidence
+into a structural summary. It requires an error literal and an unambiguous
+success literal or direct/copied call result. Missing or inconsistent outcomes
+remain unresolved. Literal equality is unknown for a call-result/literal pair;
+all runtime/source proof restrictions and existing models remain unchanged.
+Twelve new and 38 affected synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md.
