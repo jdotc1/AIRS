@@ -927,3 +927,41 @@ Instruction semantics reference: [Arm MOV register alias](https://documentation-
 
 Independent semantic review found no blocking issue and confirmed the exact
 alias mask, source-field reuse, zero extension and conservative alias invalidation.
+
+## Owned Swift word-outcome qualification
+
+fixtures/swift-error-flow/OwnedWordOutcomes.swift supplies two independent
+optimized ARM64 handlers after an admitted throwing Void validation call.
+`handleWords` assigns 0x89abcdef on success and 0x12345678 on error.
+`handleWidth` assigns 0xffffffff on success and -1 on error. The input was
+compiled, disassembled, admitted and analyzed once as data; it was never loaded
+or executed. No analyzer semantics or model identity changed in this increment.
+
+The first scan covered 205 instruction words and retained all 17 direct calls:
+two recovered candidates and 15 explicit declines. Both recorded error regions
+were eligible for structural presentation and both outcome summaries recovered.
+At call VM 0x9e4, W MOVZ/MOVK pairs establish success 0x0000000089abcdef and
+error 0x0000000012345678, sharing RET 0xa14. At call 0xa2c, W MOVN on success
+and X MOVN on error establish 0x00000000ffffffff versus 0xffffffffffffffff,
+sharing RET 0xa54. Literal equality remains false and source/runtime proof
+flags remain disabled. Opaque error calls retain their unproven return semantics.
+
+Twenty-two selected test/arm/tail instruction records were compared with the
+retained independent disassembly and with the relocated word tuples in
+tests/test_swift_owned_word_outcomes.py. Six new synthetic regression methods
+passed: both positive pairs, missing-seed refusal, width-bit sensitivity,
+conflicting-entry refusal and CLI JSON/text. Relocated synthetic admission is
+separate from the owned dylib's first admission; it is not another dylib scan.
+The owned dylib was not reopened or rehashed for these comparisons, and
+no compiler/disassembler/admission workflow was repeated.
+
+This qualifies two compiler-produced W-seed/update/width cases, not a broad
+compiler corpus, runtime behavior, native UI or release acceptance. No W MOV
+register copies were emitted by this fixture; their compiler qualification
+remains open and their accepted synthetic evidence retains its original scope.
+Earlier analyzer/renderer and binary results were reused without unrelated
+repeat checks.
+
+Independent review found no blocking fixture or evidence issue. It confirmed
+that the relocated windows match retained disassembly and that compiled W-copy
+coverage must remain open. No source equivalence or runtime claim is added.
