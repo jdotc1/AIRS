@@ -748,3 +748,10 @@ binding caller entries and instructions to the supplied bytes. Nine new and
 260 affected methods passed, and independent review found no blocker. B.NE
 success outcomes, return choices and runtime qualification remain open. See
 SWIFT_ERROR_FLOW.md.
+
+## CMP/B.NE success result
+
+Screened B.NE forward handlers can now retain selected-path preserved or copied
+Int call-result evidence. Twelve new and 280 affected methods passed with
+independent semantic review. Success literals, return choices and runtime
+qualification remain open. See SWIFT_ERROR_FLOW.md.

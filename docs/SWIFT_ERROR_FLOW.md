@@ -1525,3 +1525,20 @@ state or reconstructed source. B.NE success outcomes and return choice remain
 gated. Nine new and 260 affected methods passed; independent review found no
 blocking issue. The per-call caller rescan is bounded by the existing function
 scan limits. Prior compiler, binary and native evidence retains its earlier scope.
+
+## CMP/B.NE forward success result
+
+`swift-sync-error-edges-v22` and `swift-success-result-v13` admit selected-path
+Int call-result preservation or a full-width copy restored to x0 for screened
+CMP-zero/B.NE forward-error regions. The supplied caller bytes are rescanned
+for flag-window and region entries and rebound to the structural plan. The
+post-call prefix and success arm are inspected in order, with the B.NE target
+bound to the error arm, followed by the recorded shared return tail. Narrow
+writes do not preserve an unknown full-width result.
+
+This is structural evidence, not proof of call return, runtime value, caller
+return type, exclusive entry, handler semantics, restored state or source.
+B.NE success literals and return choices remain gated. Twelve new and 280
+affected methods passed, with independent semantic review. Prior compiler,
+binary and native evidence remains valid only within its existing scope. The
+caller rescan is bounded by existing function scan limits.
