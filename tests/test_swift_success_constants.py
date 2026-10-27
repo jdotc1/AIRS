@@ -13,7 +13,7 @@ class SuccessConstantFirstTests(unittest.TestCase):
         self.assertFalse(constant['depends_on_call_result'])
         self.assertFalse(constant['runtime_value_proven'])
         self.assertEqual(call['success_result']['status'], 'declined')
-        self.assertEqual(value['success_constant_model_version'], 'swift-success-constant-v1')
+        self.assertEqual(value['success_constant_model_version'], 'swift-success-constant-v2')
 
 def success(body, tail=None, error_call=0x94000010):
     if tail is None:
@@ -58,12 +58,12 @@ class SuccessConstantBoundaryTests(unittest.TestCase):
         for key in ('runtime_value_proven', 'exclusive_path_proven', 'caller_return_type_proven', 'source_reconstruction_allowed'):
             self.assertFalse(result[key])
 
-    def test_conflicting_entries_partial_scan_and_void_declaration_withhold(self):
+    def test_conflicting_entries_partial_scan_and_unsupported_declaration_withhold(self):
         from dataclasses import replace
         from airs.swift_error_flow import DEFAULT_LIMITS
         for value in (report(WORDS + (0x17fffffb,)),
                       report(WORDS, limits=replace(DEFAULT_LIMITS, max_instructions_per_function=10)),
-                      report(WORDS, symbol='_$s4Demo4readyyKF')):
+                      report(WORDS, symbol='_$s4Demo4readyyF')):
             self.assertEqual(value['calls'][0]['success_constant']['status'], 'declined')
 
     def test_exact_sixteen_word_evidence_and_each_overflow(self):
@@ -85,7 +85,7 @@ class SuccessConstantBoundaryTests(unittest.TestCase):
         self.assertNotIn('success_constant_model_version', value)
         value = report(WORDS)
         text = render_swift_error_text(value)
-        self.assertIn('Success-constant model: "swift-success-constant-v1"', text)
+        self.assertIn('Success-constant model: "swift-success-constant-v2"', text)
         self.assertIn('0x0000000000000000', text)
         self.assertIn('Constant-path instruction', text)
         value['success_constant_model_version'] = 'foreign'
