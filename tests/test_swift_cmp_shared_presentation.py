@@ -17,8 +17,9 @@ class CmpSharedPresentationFirstTests(unittest.TestCase):
         self.assertEqual(plan['condition']['error_when'], 'nonzero')
         self.assertEqual(plan['success_interval']['start_pc'], hex(BASE+28))
         self.assertEqual(plan['shared_epilogue']['start_pc'], hex(BASE+32))
-        for key in ('success_result', 'success_constant', 'error_constant'):
+        for key in ('success_result', 'success_constant'):
             self.assertEqual(call[key]['status'], 'declined')
+        self.assertEqual(call['error_constant']['status'], 'constant_register_candidate')
         self.assertEqual(call['return_choice']['status'], 'unresolved')
 
 class CmpSharedPresentationBoundaryTests(unittest.TestCase):
@@ -99,11 +100,11 @@ class CmpSharedPresentationBoundaryTests(unittest.TestCase):
         for value in values:
             self.assertEqual(value['calls'][0]['presentation']['status'], 'blocked')
 
-    def test_all_shared_cmp_outcome_helpers_remain_explicitly_gated(self):
+    def test_shared_success_literal_remains_explicitly_gated(self):
         call = report()['calls'][0]
         self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
+        self.assertEqual(call['success_constant']['reason'], 'compare_shared_success_literal_not_qualified')
         for key in ('success_result', 'success_constant', 'error_constant', 'return_choice'):
-            self.assertEqual(call[key]['reason'], 'compare_shared_outcomes_not_qualified')
             self.assertFalse(call[key]['runtime_value_proven'])
             self.assertFalse(call[key]['source_reconstruction_allowed'])
 
@@ -114,7 +115,7 @@ class CmpSharedPresentationDeliveryTests(unittest.TestCase):
         text = render_swift_error_text(report())
         for expected in ('Condition (structural):', 'comparison_pc', 'test_condition',
                          'Shared restore/return candidate', '0xa9427bfd', '0xd65f03c0',
-                         'compare_shared_outcomes_not_qualified', 'Source reconstruction: disabled'):
+                         'compare_shared_success_literal_not_qualified', 'Source reconstruction: disabled'):
             self.assertIn(expected, text)
 
     def test_cli_json_retains_plan_and_declined_outcomes(self):
@@ -137,4 +138,4 @@ class CmpSharedPresentationDeliveryTests(unittest.TestCase):
             self.assertEqual(status, 0)
             call = json.loads(output.getvalue())['calls'][0]
             self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
-            self.assertEqual(call['return_choice']['reason'], 'compare_shared_outcomes_not_qualified')
+            self.assertEqual(call['return_choice']['reason'], 'compare_shared_success_result_not_qualified')

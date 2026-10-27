@@ -1432,3 +1432,23 @@ error-constant records decline, and return choice remains unresolved. No source,
 runtime, reachability, exclusive-entry or handler-semantics proof is added.
 Compiler-emission and native/release qualification remain open. Eleven new and
 330 affected methods passed; prior accepted compiler/binary results were reused.
+
+## CMP shared-epilogue outcomes
+
+The edge model is `swift-sync-error-edges-v17`, the success-result model is
+`swift-success-result-v12`, the error-constant model is
+`swift-error-constant-v17`, and the return-choice model is
+`swift-return-choice-v17`. For an eligible, entry-screened CMP-zero/B.EQ
+error-fallthrough region with a shared return tail, the existing bounded
+analysis can pair a preserved or copied Int call result on the success arm with
+an error-arm literal. It re-decodes the compare and branch and the shared tail;
+error-path constant tracking clears known values at opaque calls. The choice
+binds the complete condition and the common return PC.
+
+An error literal can be a candidate independently when the success result is
+clobbered; the choice remains unresolved. Shared CMP success literals and
+NE/forward layouts remain withheld. This structural evidence does not prove a
+runtime value, caller return type, exclusive path, handler semantics, restored
+state, or source reconstruction. Fourteen new and 284 affected methods passed;
+independent review found no blocking issue. Prior compiler, binary and native
+results were reused within their existing scope.

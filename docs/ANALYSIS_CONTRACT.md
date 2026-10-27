@@ -1370,3 +1370,16 @@ restore tail. Shared CMP outcomes remain explicitly declined/unresolved; NE and
 forward CMP layouts remain withheld. Runtime/source/exclusive-entry and restored
 state are unproven. Eleven new and 330 affected methods passed; prior binary and
 native receipts retain their original scope.
+
+## CMP shared outcome evidence
+
+For screened CMP-zero/B.EQ shared tails, `swift-sync-error-edges-v17` can pair
+an Int call result preserved or copied through the success arm with an
+error-path literal. `swift-success-result-v12`, `swift-error-constant-v17`, and
+`swift-return-choice-v17` retain the existing exact instruction and shared-tail
+checks, invalidate constants at opaque calls, and bind the full condition and
+common return PC. An error literal may stand alone when the success result is
+clobbered; the return choice then remains unresolved. Shared CMP success
+literals, NE/forward layouts and runtime/source/exclusive-entry/restore-state
+proof remain withheld. Fourteen new and 284 affected methods passed, with an
+independent semantic review; prior compiler and native evidence was reused.

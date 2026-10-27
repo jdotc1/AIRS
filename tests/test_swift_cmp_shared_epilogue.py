@@ -97,8 +97,9 @@ class CmpSharedBoundaryTests(unittest.TestCase):
     def test_shared_region_enables_presentation_but_not_outcomes(self):
         call = report()['calls'][0]
         self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
-        for key in ('success_result', 'success_constant', 'error_constant'):
+        for key in ('success_result', 'success_constant'):
             self.assertEqual(call[key]['status'], 'declined')
+        self.assertEqual(call['error_constant']['status'], 'constant_register_candidate')
         self.assertEqual(call['return_choice']['status'], 'unresolved')
 
 class CmpSharedEvidenceTests(unittest.TestCase):
@@ -119,7 +120,7 @@ class CmpSharedEvidenceTests(unittest.TestCase):
         from airs.swift_error_text import render_swift_error_text
         text = render_swift_error_text(report())
         for expected in ('Shared tail interval evidence', '0xa9427bfd', '0xd65f03c0',
-                         'Incoming validation', 'compare_shared_outcomes_not_qualified',
+                         'Incoming validation', 'compare_shared_success_literal_not_qualified',
                          'Condition (structural):', 'Source reconstruction: disabled'):
             self.assertIn(expected, text)
 

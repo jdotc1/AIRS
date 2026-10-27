@@ -12,7 +12,7 @@ class ReturnChoiceFirstTests(unittest.TestCase):
         self.assertEqual(choice['error']['constant_bits'], '0xffffffffffffffff')
         self.assertFalse(choice['same_constant_bits'])
         self.assertFalse(choice['source_reconstruction_allowed'])
-        self.assertEqual(value['return_choice_model_version'], 'swift-return-choice-v16')
+        self.assertEqual(value['return_choice_model_version'], 'swift-return-choice-v17')
 
 class ReturnChoiceBoundaryTests(unittest.TestCase):
     def test_call_result_and_error_literal_are_not_claimed_different(self):
@@ -86,7 +86,7 @@ class ReturnChoiceEvidenceTests(unittest.TestCase):
         self.assertNotIn('return_choice_model_version', recover_swift_error_flow(image()))
         value = report(WORDS)
         text = render_swift_error_text(value)
-        self.assertIn('Return-choice model: "swift-return-choice-v16"', text)
+        self.assertIn('Return-choice model: "swift-return-choice-v17"', text)
         self.assertIn('structural_choice_candidate', text)
         value['return_choice_model_version'] = 'foreign'
         with self.assertRaises(InputError):

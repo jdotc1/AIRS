@@ -706,3 +706,12 @@ Screened CMP/B.EQ shared regions now have structural display plans, with explici
 error-exit and complete success/tail consistency checks. Eleven new and 330
 affected methods passed. CMP shared outcomes, NE/forward layouts and compiler,
 runtime and native qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+## CMP shared-epilogue outcomes
+
+Screened CMP/B.EQ shared regions can now pair a preserved or copied Int call
+result with an error-arm literal while retaining the shared return and condition
+binding. Fourteen new and 284 affected methods passed, and independent review
+found no blocking issue. Shared CMP success literals and NE/forward layouts
+remain open; compiler, runtime and native qualification retain their existing
+scope. See SWIFT_ERROR_FLOW.md.
