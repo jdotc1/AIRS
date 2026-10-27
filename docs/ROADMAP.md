@@ -675,3 +675,11 @@ CMP success prefixes now reuse W MOVZ/MOVN zero-extension semantics, preserving
 width distinctions, reserved-encoding refusal and full error-alias invalidation.
 Fifteen new and 271 affected methods passed. W MOVK/copy prefixes, B.NE/shared CMP
 handlers and compiler/runtime/native qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+## CMP W MOVK success updates
+
+CMP success prefixes now reuse known-state W MOVK updates with explicit X upper-bit
+clearing, unknown-state refusal and full error-alias invalidation. Fifteen new
+and 286 affected methods passed with independent review. W-copy prefixes,
+B.NE/shared CMP handlers and compiler/runtime/native qualification remain open.
+See SWIFT_ERROR_FLOW.md.

@@ -54,8 +54,8 @@ class CmpWBoundaryTests(unittest.TestCase):
         self.assertEqual(call['success_constant']['constant_bits'], '0x000000000000002a')
         self.assertEqual(call['return_choice']['status'], 'structural_choice_candidate')
 
-    def test_w_movk_and_w_copy_remain_unmodeled(self):
-        for word in (0x72a24680, 0x2a1303e0):
+    def test_w_copy_remains_unmodeled(self):
+        for word in (0x2a1303e0,):
             call = report((0x52800540, word, *WORDS[1:], 0xd65f03c0))['calls'][0]
             self.assertEqual(call['status'], 'declined')
 
