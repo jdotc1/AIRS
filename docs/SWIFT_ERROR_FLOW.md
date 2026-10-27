@@ -768,3 +768,34 @@ Independent review found no binary-triggered false-supported issue and prompted
 explicit fallback-source/layout and x0 guards, covered by two new focused tests.
 No broader compiler coverage, runtime, reconstructed source, native UI or release
 acceptance is claimed; previous evidence retains its original scope.
+
+## Caller-assigned literals after throwing Void calls
+
+Success-constant v2, error-constant v3 and return-choice v3 also admit explicit
+caller-assigned literal outcomes after the existing ordinary throwing Void
+declarations (`yyKF` and `yySiKF`). A caller can assign zero after validation
+and all-ones bits on the error path without using any callee result. No new
+declaration grammar or instruction family is introduced.
+
+Only the constant helper's declaration context expands from Int to Int/Void.
+Maps still start empty and require supported definitions on the selected arm;
+opaque calls still clear them. Call-result preservation remains Int-only, and
+a stale integer-result candidate attached to a Void callee is rejected. No
+implicit value is inferred from x0 after a Void call. The no-shared-tail Void
+case still withholds error recovery because its required validated integer-result
+tail source is unavailable. All existing geometry, entry, evidence-bound and
+runtime/source proof restrictions remain unchanged.
+
+Eleven new methods and 61 affected constant/choice/return-layout/renderer controls
+passed in composed runs. New cases cover both Void signatures, both arm layouts,
+missing assignments, stale result types, unsupported signatures, alias ambiguity,
+partial scans, entry conflicts and CLI JSON/text. Independent semantic review
+found no blocking correctness issue.
+
+A single changed-context replay used nine captured arm/tail words from the
+previously accepted owned parameterless-validation example, checked against its
+retained disassembly. At call VM 0x9dc, it recovered success zero versus error
+all-ones, with shared RET 0xa04. No old binary was reopened or rehashed; no
+compilation, disassembly, image admission or caller-entry scan was repeated.
+This is incremental helper-context qualification over retained owned evidence,
+not a new complete-image, runtime, native UI or release acceptance claim.

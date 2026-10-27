@@ -501,3 +501,13 @@ entry identities and x0. Explicit source/layout guards reject mixed metadata.
 Eleven new and 50 affected synthetic/CLI controls passed; a seven-word replay
 of retained owned evidence qualified the changed boundary without rebuilding,
 rehashing or readmitting the binary. See SWIFT_ERROR_FLOW.md for evidence scopes.
+
+## Literal outcomes after Void validation calls
+
+Existing admitted throwing Void declarations can now supply caller-assigned
+literal outcome evidence through success-constant v2, error-constant v3 and
+return-choice v3. X0 is never treated as a Void call result or assumed literal;
+explicit selected-arm assignments are required. Bounds, entry checks and proof
+restrictions remain unchanged. Eleven new and 61 affected controls passed; a
+nine-word retained owned-example replay qualified the new helper context without
+recompilation, rehashing or readmission. See SWIFT_ERROR_FLOW.md for exact scope.

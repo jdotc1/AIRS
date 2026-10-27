@@ -26,9 +26,9 @@ INCOMING_MODEL = 'swift-region-direct-entries-v3'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v3'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v3'
-SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v1'
-ERROR_CONSTANT_MODEL = 'swift-error-constant-v2'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v2'
+SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v2'
+ERROR_CONSTANT_MODEL = 'swift-error-constant-v3'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v3'
 SHARED_WORDS = 8
 
 
@@ -587,8 +587,8 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False) ->
               'caller_return_type_proven': False}
     if error:
         result.update(call_return_proven=False, handler_semantics_proven=False)
-    if call.get('callee', {}).get('result') != 'Swift.Int':
-        return {**result, 'reason': 'callee_result_not_scalar_int'}
+    if call.get('callee', {}).get('result') not in ('Swift.Int', 'Swift.Void'):
+        return {**result, 'reason': 'callee_result_outside_admitted_subset'}
     if call.get('presentation', {}).get('status') != 'eligible_structural_only':
         return {**result, 'reason': 'structural_presentation_not_eligible'}
     region = call['error_region']
@@ -679,6 +679,8 @@ def _return_choice(call: dict) -> dict:
     if not error_known or constant_known == returned_known:
         return {**result, 'reason': 'outcome_evidence_missing_or_conflicting'}
     success = constant if constant_known else returned
+    if returned_known and call.get('callee', {}).get('result') != 'Swift.Int':
+        return {**result, 'reason': 'outcome_evidence_inconsistent'}
     try:
         plan = call['presentation']['display_plan']
         expected_condition = {'test_pc': call['test_pc'], 'register': call['tested_register'], 'error_when': 'nonzero'}
