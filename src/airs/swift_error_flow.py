@@ -27,8 +27,8 @@ INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v3'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v3'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v1'
-ERROR_CONSTANT_MODEL = 'swift-error-constant-v1'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v1'
+ERROR_CONSTANT_MODEL = 'swift-error-constant-v2'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v2'
 SHARED_WORDS = 8
 
 
@@ -592,8 +592,14 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False) ->
     if call.get('presentation', {}).get('status') != 'eligible_structural_only':
         return {**result, 'reason': 'structural_presentation_not_eligible'}
     region = call['error_region']
-    if 'shared_epilogue' not in region:
+    shared = 'shared_epilogue' in region
+    if not shared and not error:
         return {**result, 'reason': f'bounded_{path}_interval_missing'}
+    if not shared:
+        success_result = call.get('success_result', {})
+        if (success_result.get('status') not in ('preserved_register_candidate', 'copied_register_candidate')
+                or success_result.get('return_tail_layout') != 'success_entry'):
+            return {**result, 'reason': 'validated_success_return_tail_missing'}
     evidence = []; constants = {}; opaque_calls = 0
     try:
         interval = region if error else region['success_interval']
@@ -628,8 +634,20 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False) ->
             else:
                 constants.pop(destination, None)
         tail = _shared_return_tail(data, function, join)
-        if tail is None or tail != region['shared_epilogue']:
+        if tail is None or (shared and tail != region['shared_epilogue']):
             return {**result, 'reason': 'bounded_return_tail_missing', 'instructions': evidence}
+        if not shared:
+            captured_tail = [{key: value for key, value in row.items() if key != 'phase'}
+                             for row in success_result.get('instructions', []) if row.get('phase') == 'return_tail']
+            if (success_result.get('register') != 'x0'
+                    or success_result.get('call_pc') != call['call_pc']
+                    or success_result.get('success_pc') != call['success_pc']
+                    or region['join_pc'] != call['success_pc']
+                    or success_result.get('return_pc') != tail['instructions'][-1]['pc']
+                    or captured_tail != tail['instructions']
+                    or any(success_result.get(key) is not False for key in ('runtime_value_proven',
+                        'source_reconstruction_allowed', 'exclusive_path_proven', 'caller_return_type_proven'))):
+                return {**result, 'reason': 'validated_success_return_tail_inconsistent', 'instructions': evidence}
         evidence.extend({**row, 'phase': 'return_tail'} for row in tail['instructions'])
         if 0 not in constants:
             return {**result, 'reason': f'{path}_x0_constant_not_known', 'instructions': evidence}
@@ -669,7 +687,12 @@ def _return_choice(call: dict) -> dict:
                 or plan['success_entry_pc'] != call['success_pc']
                 or plan['error_interval']['start_pc'] != call['error_pc']):
             raise ValueError('Presentation binding')
-        return_pc = call['error_region']['shared_epilogue']['instructions'][-1]['pc']
+        region = call['error_region']
+        if 'shared_epilogue' not in region and (not returned_known or constant_known
+                or returned.get('return_tail_layout') != 'success_entry'):
+            raise ValueError('Success-entry outcome source')
+        return_pc = (region['shared_epilogue']['instructions'][-1]['pc'] if 'shared_epilogue' in region
+                     else returned['return_pc'])
         for path, outcome in (('success', success), ('error', error)):
             if (outcome['register'] != 'x0' or outcome['call_pc'] != call['call_pc']
                     or outcome[path + '_pc'] != call[path + '_pc']

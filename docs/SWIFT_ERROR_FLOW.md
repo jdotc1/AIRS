@@ -726,3 +726,45 @@ now also requires exact agreement with the eligible display plan condition,
 success entry, error-interval start and source-disabled flag. A new focused
 valid/tampered/missing-plan control passed after that correction, without
 replaying prior accepted checks.
+
+## Owned return-choice qualification and success-entry error literals
+
+The optimized ARM64 input in fixtures/swift-error-flow/OwnedReturnChoice.swift
+contains two ordinary throwing Int call sites. One handler forwards the call
+result on success and assigns all-ones bits after an opaque error-arm call. The
+other assigns zero on success and all-ones-minus-one bits on error. The image
+was compiled, disassembled and admitted once, then inspected as data only.
+
+The first complete scan covered 213 words and retained all 18 direct calls:
+two recovered candidates and 16 explicit declines. Both recovered error regions
+were structurally eligible. At call VM 0xa4c, the existing summary recovered
+success zero versus error 0xfffffffffffffffe, ending at RET 0xa74. At call 0xa14,
+it recovered x0 preservation through a success-entry return tail, but initially
+withheld the combined summary because error-constant v1 required a separate
+shared-epilogue record. This refusal exposed a bounded layout gap.
+
+Error-constant v2 now permits that error-arm layout only when a known success
+result already supplies a validated success-entry tail. It binds x0, call and
+success PCs, join, return PC, exact captured tail words and false proof flags.
+The candidate continues to invalidate all constants at opaque calls. Success
+constant behavior is unchanged. Return-choice v2 admits the matching outcome
+pair only with an explicit known success-result/success-entry-layout guard,
+retaining all existing presentation and per-arm consistency checks.
+
+A single changed-boundary replay used seven captured error/tail words from the
+first report, compared them with retained disassembly and evaluated only the
+changed error-constant and summary logic. It recovered call-result versus error
+all-ones at call 0xa14, test 0xa18, success entry 0xa28 and RET 0xa34. No binary
+was reopened or rehashed, no image was readmitted, and no compiler, disassembly
+or caller-entry scan was repeated. The original complete-scan result remains
+separate from this incremental captured-word qualification.
+
+Eleven new synthetic methods and 50 affected error-constant/return-choice/
+success-constant/renderer controls passed in composed runs. New cases cover
+protected-tail entry conflicts, missing/mismatched word and address bindings,
+opaque-call invalidation, copied results, partial scans, exact 24-word and
+overflow bounds, model-bound CLI output and mixed/foreign outcome metadata.
+Independent review found no binary-triggered false-supported issue and prompted
+explicit fallback-source/layout and x0 guards, covered by two new focused tests.
+No broader compiler coverage, runtime, reconstructed source, native UI or release
+acceptance is claimed; previous evidence retains its original scope.
