@@ -1067,3 +1067,39 @@ results retain their original instruction/layout scopes.
 Independent semantic review found no blocking issue and confirmed exact field
 bindings, bounded lookahead and unchanged pair-pop handling. Actual frame
 provenance and restored-state/runtime proofs remain open.
+
+## Owned assembler-backed epilogue and W-copy qualification
+
+OwnedEpilogueProvider.swift supplies an admitted throwing Void validation
+function. OwnedEpilogueHandlers.s supplies two fixed owned assembly handlers
+that call it. The provider was compiled, the handlers assembled, and the input
+linked, disassembled, admitted and analyzed once. The dylib was never loaded
+or executed. Its runtime ABI and CFI correctness are not qualified.
+
+The first scan covered 232 instruction words and retained all 21 direct calls:
+two recovered candidates and 19 explicit declines. At call VM 0xb84, a canonical
+W copy feeds success bits 0x0000000000001234 versus error all-ones. Its tail
+contains unsigned SP scalar loads and a 32-byte scalar post-load, ending at
+RET 0xbb0. At call 0xbc8, success bits 0x0000000000005678 pair with error
+0xfffffffffffffffe. A pair-load prefix leads into the exact FP reset, LR load
+from SP+8, FP post-load by 16 and RET 0xbf4. Both structural choices recover,
+with restored-state, source and runtime proof flags still disabled.
+
+Twenty-two captured test/arm/tail records matched retained disassembly and
+the relocated tuples in tests/test_swift_owned_epilogue_fixtures.py. Six new
+regression methods passed: both outcome pairs, lost W-seed refusal, wrong
+split-pop increment refusal, tail side-entry refusal and CLI JSON/text.
+Synthetic-image admission of relocated tuples is separate from the dylib's
+first admission; no binary was reopened or rehashed for these comparisons.
+No build, disassembly or admission workflow was repeated.
+
+This is assembler/linker-produced evidence for the encoded W copy and epilogue
+shapes. It does not establish that the Swift frontend emitted those handlers.
+Swift-compiler W-copy/tail coverage, runtime execution, CFI/ABI correctness,
+clean-host behavior and native app/release acceptance remain open. Analyzer
+semantics and models are unchanged; prior accepted checks retain their scope
+and were reused without unrelated repeats.
+
+Independent fixture review found no blocking issue and confirmed word-window
+fidelity, outcome bits and the assembler-versus-Swift-frontend distinction.
+No runtime, ABI or CFI attestation is added.

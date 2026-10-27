@@ -583,3 +583,13 @@ Wrong order/fields and incomplete or over-budget lookahead are refused.
 Existing decoding, entry protection and runtime/source proof restrictions
 remain unchanged. Twelve new and 250 affected synthetic/CLI controls passed.
 See SWIFT_ERROR_FLOW.md for model identities and qualification scope.
+
+## Owned assembler-backed epilogue qualification
+
+A fresh Swift-provider/assembly-handler input qualified canonical W-copy and
+scalar/post-index/split-tail encodings as data. The first 232-word scan retained
+all 21 calls, recovering two candidates and declining 19. Twenty-two captured
+words matched disassembly and relocated fixtures; six new regression/CLI methods
+passed. Analyzer code/models are unchanged. This is assembler-backed evidence;
+Swift-frontend emission and runtime/ABI/CFI/native-release gates remain open.
+See SWIFT_ERROR_FLOW.md for exact scope.
