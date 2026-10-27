@@ -1190,3 +1190,11 @@ captured words matched retained disassembly and relocated regression fixtures;
 six new regression/CLI methods passed. Analyzer semantics are unchanged and
 prior checks are reused. W-copy compiler coverage remains open because no such
 word was emitted. See SWIFT_ERROR_FLOW.md for exact scope and acceptance limits.
+
+## Scalar SP restore-tail candidates
+
+Bounded return tails now admit existing unsigned 64-bit SP-relative LDR into
+x19..x30 at scaled offsets through 4096 bytes. No x0, W-width, FP-base or indexed
+load is added. Tail/prefix/entry bounds remain unchanged and restored-state/frame
+proof stays false. Twelve new and 226 affected synthetic/CLI controls passed
+with independent review. See SWIFT_ERROR_FLOW.md for model scopes and limits.

@@ -93,5 +93,5 @@ class SwiftErrorRegionBoundaryTests(unittest.TestCase):
                 status = main(['swift-error-flow', str(source), '--include-error-regions'])
             self.assertEqual(status, 0)
             report = json.loads(output.getvalue())
-            self.assertEqual(report['error_region_model_version'], 'swift-sync-error-region-v9')
+            self.assertEqual(report['error_region_model_version'], 'swift-sync-error-region-v10')
             self.assertEqual(report['calls'][0]['error_region']['join_pc'], hex(BASE + 20))
