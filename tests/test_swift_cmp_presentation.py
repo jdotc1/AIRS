@@ -58,7 +58,7 @@ class CmpPresentationBoundaryTests(unittest.TestCase):
                 call = deepcopy(original); call[key] = replacement
                 self.assertNotEqual(_presentation_eligibility(call)['status'], 'eligible_structural_only')
         call = deepcopy(original); call['error_region']['shared_epilogue'] = {}
-        self.assertEqual(_presentation_eligibility(call)['status'], 'blocked')
+        self.assertEqual(_presentation_eligibility(call)['status'], 'unresolved')
         call = deepcopy(original); call['error_region']['layout'] = 'success_fallthrough_error_forward'
         self.assertEqual(_presentation_eligibility(call)['status'], 'unresolved')
 

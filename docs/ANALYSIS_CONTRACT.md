@@ -1360,3 +1360,13 @@ Only the exact recorded EQ branch to success and qualifying terminal error branc
 are expected entries; other direct entries into protected intervals conflict.
 Shared CMP presentation/outcomes, NE/forward layouts and runtime/source proof
 remain withheld. Thirteen new and 364 affected methods passed in composed runs.
+
+## CMP shared structural plans
+
+`swift-sync-error-edges-v16` and `swift-structural-presentation-v5` admit screened
+CMP/B.EQ shared-epilogue structural plans. Exact flag and entry checks, encoded
+error-branch target and bounded full-record re-decoding bind the success arm and
+restore tail. Shared CMP outcomes remain explicitly declined/unresolved; NE and
+forward CMP layouts remain withheld. Runtime/source/exclusive-entry and restored
+state are unproven. Eleven new and 330 affected methods passed; prior binary and
+native receipts retain their original scope.
