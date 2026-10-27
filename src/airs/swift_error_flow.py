@@ -20,12 +20,12 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v18'
+MODEL = 'swift-sync-error-edges-v19'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v14'
+REGION_MODEL = 'swift-sync-error-region-v15'
 REGION_WORDS = 16
-INCOMING_MODEL = 'swift-region-direct-entries-v6'
+INCOMING_MODEL = 'swift-region-direct-entries-v7'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v5'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v12'
@@ -355,7 +355,7 @@ def _error_region(data: bytes, function, edge: dict) -> dict:
     """
     result = {'status': 'declined', 'instructions': []}
     if edge.get('test_kind') == 'cmp_zero_bcond':
-        if edge.get('test_condition') != 'eq':
+        if edge.get('test_condition') not in ('eq', 'ne'):
             return {**result, 'reason': 'compare_handler_layout_not_qualified'}
         entry = edge.get('flag_entry_validation')
         if not isinstance(entry, dict):
@@ -374,8 +374,27 @@ def _error_region(data: bytes, function, edge: dict) -> dict:
                 or entry.get('flag_state_proven') is not False):
             return {**result, 'reason': 'compare_flag_entries_not_clear'}
     start, join, test = (int(edge[key], 16) for key in ('error_pc', 'success_pc', 'test_pc'))
-    if edge.get('test_kind') == 'cmp_zero_bcond' and (start != test + 4 or join <= start):
-        return {**result, 'reason': 'compare_handler_layout_not_qualified'}
+    if edge.get('test_kind') == 'cmp_zero_bcond':
+        if edge.get('test_condition') == 'eq' and (start != test + 4 or join <= start):
+            return {**result, 'reason': 'compare_handler_layout_not_qualified'}
+        if edge.get('test_condition') == 'ne':
+            if join != test + 4 or start <= join:
+                return {**result, 'reason': 'compare_handler_layout_not_qualified'}
+            try:
+                comparison, comparison_row = _bounded_instruction(data, function, test - 4)
+                branch, branch_row = _bounded_instruction(data, function, test)
+                recorded_comparison, recorded_branch = edge['window'][-2:]
+                if (comparison.word & 0xfffffc1f != 0xf100001f
+                        or edge['tested_register'] != f'x{comparison.rn}'
+                        or branch.kind != 'bcond' or branch.addressing != '1'
+                        or test + branch.immediate != start
+                        or any(recorded_comparison.get(k) != v for k, v in comparison_row.items())
+                        or any(recorded_branch.get(k) != v for k, v in branch_row.items())
+                        or recorded_comparison.get('kind') != comparison.kind
+                        or recorded_branch.get('kind') != branch.kind):
+                    return {**result, 'reason': 'compare_forward_words_inconsistent'}
+            except (KeyError, TypeError, ValueError, IndexError, ModelError):
+                return {**result, 'reason': 'compare_forward_words_inconsistent'}
     if join == test + 4 and start > join:
         return _forward_error_region(data, function, edge)
     if start != test + 4 or not function.start <= start < join < function.end or (start | join) % 4:
@@ -490,6 +509,18 @@ def _region_incoming(scan: dict, region: dict, call: dict | None = None) -> dict
                     expected_test = (recorded['pc'] == call['test_pc'] and recorded['word'] == word
                                      and re.fullmatch(r'0x[0-9a-f]{8}', word) is not None
                                      and int(word, 16) & 0xff00001f == 0x54000000
+                                     and source + decode_instruction(int(word, 16), source).immediate == target)
+                except (KeyError, TypeError, IndexError, ValueError, ModelError):
+                    expected_test = False
+            if (call is not None and forward and call.get('test_kind') == 'cmp_zero_bcond'
+                    and call.get('test_condition') == 'ne' and source == int(call['test_pc'], 16)
+                    and target == start and edge['kind'] == 'bcond'):
+                try:
+                    recorded = call['window'][-1]
+                    word = edge['word']
+                    expected_test = (recorded['pc'] == call['test_pc'] and recorded['word'] == word
+                                     and re.fullmatch(r'0x[0-9a-f]{8}', word) is not None
+                                     and int(word, 16) & 0xff00001f == 0x54000001
                                      and source + decode_instruction(int(word, 16), source).immediate == target)
                 except (KeyError, TypeError, IndexError, ValueError, ModelError):
                     expected_test = False
@@ -1095,7 +1126,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     if any(row.get('test_kind') == 'cmp_zero_bcond' for row in calls):
-        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ shared tails may pair a preserved call result or success literal with error literal bits; NE handlers remain withheld.')
+        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ shared tails may pair a preserved call result or success literal with error literal bits; NE forward regions are structural only; NE presentation and outcomes remain withheld.')
     return report
 
 

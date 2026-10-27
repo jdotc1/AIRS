@@ -53,7 +53,7 @@ class CmpSharedBoundaryTests(unittest.TestCase):
 
     def test_ne_and_missing_flag_validation_stay_declined(self):
         words = (WORDS[0], WORDS[1] | 1, *WORDS[2:])
-        self.assertEqual(report(words)['calls'][0]['error_region']['reason'], 'compare_handler_layout_not_qualified')
+        self.assertEqual(report(words)['calls'][0]['error_region']['reason'], 'success_region_control_flow_unmodeled')
         value = recover_swift_error_flow(image(WORDS), include_error_regions=True)
         self.assertEqual(value['calls'][0]['error_region']['reason'], 'compare_flag_entries_required')
 

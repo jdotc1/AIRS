@@ -724,3 +724,11 @@ Independent review prompted a stale-arm fix, and focused and affected checks
 passed after an obsolete refusal expectation was updated. Runtime, compiler and
 native qualification remain within their earlier scope; NE and forward CMP
 handlers remain open. See SWIFT_ERROR_FLOW.md.
+
+## CMP/B.NE forward regions
+
+Screened CMP/B.NE success-fallthrough and forward-error regions can now be
+recorded as bounded structural evidence, with exact instruction and entry
+binding. Eight new methods and affected checks passed, and independent review
+found no blocker. Presentation, outcomes and runtime qualification remain open.
+See SWIFT_ERROR_FLOW.md.

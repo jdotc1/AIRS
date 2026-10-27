@@ -95,7 +95,7 @@ class WConstantCLIControls(unittest.TestCase):
                 if format=='json':
                     value=json.loads(output.getvalue())
                     self.assertEqual(value['calls'][0]['success_constant']['constant_bits'],'0x00000000ffffffff')
-                    self.assertEqual(value['region_incoming_model_version'],'swift-region-direct-entries-v6')
+                    self.assertEqual(value['region_incoming_model_version'],'swift-region-direct-entries-v7')
                 else:
                     self.assertIn('0x12800000',output.getvalue())
                     self.assertIn('wmovn',output.getvalue())

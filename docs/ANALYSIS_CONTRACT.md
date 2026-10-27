@@ -1393,3 +1393,13 @@ The decoded arm and shared tail must match the recorded evidence;
 The result is structural only and does not establish execution, exclusive
 entry, caller return type, handler behavior, restored state or source. NE and
 forward CMP handlers remain withheld.
+
+## CMP/B.NE forward-region evidence
+
+`swift-sync-error-edges-v19` can record a screened CMP-zero/B.NE forward-error
+region with `swift-sync-error-region-v15` and caller-local entry evidence from
+`swift-region-direct-entries-v7`. Exact recorded and decoded compare and branch
+words, target geometry, complete flag-window screening and the bounded forward
+arm and tail recognizer remain mandatory. Only the exact B.NE edge is exempted
+from incoming conflicts. Presentation and outcomes remain gated; no runtime,
+source, exclusive-entry, flag-state or restored-state proof is implied.
