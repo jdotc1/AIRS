@@ -13,7 +13,7 @@ class SuccessConstantFirstTests(unittest.TestCase):
         self.assertFalse(constant['depends_on_call_result'])
         self.assertFalse(constant['runtime_value_proven'])
         self.assertEqual(call['success_result']['status'], 'declined')
-        self.assertEqual(value['success_constant_model_version'], 'swift-success-constant-v3')
+        self.assertEqual(value['success_constant_model_version'], 'swift-success-constant-v4')
 
 def success(body, tail=None, error_call=0x94000010):
     if tail is None:
@@ -46,8 +46,8 @@ class SuccessConstantBoundaryTests(unittest.TestCase):
         result = success((0xd280003f, 0xaa1f03e0))['calls'][0]['success_constant']
         self.assertEqual(result['constant_bits'], '0x0000000000000000')
 
-    def test_wide_update_narrow_constant_call_and_unknown_stay_outside_subset(self):
-        for word in (0xf2800020, 0x52800020, 0x94000010, 0xffffffff):
+    def test_unknown_update_reserved_w_constant_call_and_unknown_stay_outside_subset(self):
+        for word in (0xf2800020, 0x52c00020, 0x94000010, 0xffffffff):
             self.assertEqual(success((word,))['calls'][0]['success_constant']['status'], 'declined')
 
     def test_forward_layout_constant_has_same_scope(self):
@@ -85,7 +85,7 @@ class SuccessConstantBoundaryTests(unittest.TestCase):
         self.assertNotIn('success_constant_model_version', value)
         value = report(WORDS)
         text = render_swift_error_text(value)
-        self.assertIn('Success-constant model: "swift-success-constant-v3"', text)
+        self.assertIn('Success-constant model: "swift-success-constant-v4"', text)
         self.assertIn('0x0000000000000000', text)
         self.assertIn('Constant-path instruction', text)
         value['success_constant_model_version'] = 'foreign'

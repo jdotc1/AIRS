@@ -1153,3 +1153,12 @@ are invalidated at the updated destination. No W-width, post-call-window or
 return-tail support is added. Region v6 and the updated outcome model identities
 retain existing bounds and proof restrictions. Thirteen new and 171 affected
 synthetic/CLI controls passed with independent review. See SWIFT_ERROR_FLOW.md.
+
+## Zero-extended W move-wide outcomes
+
+A Swift-local adapter admits exact W MOVZ/MOVN seeds using existing move-wide
+field decoding, with reserved shifts rejected and original words retained.
+Literal patterns zero-extend from 32 bits; result aliases are invalidated at the
+written destination. Core decoding/admission, post-call windows and return-tail
+whitelists remain unchanged. Twelve new and 218 affected synthetic/CLI controls
+passed. See SWIFT_ERROR_FLOW.md for model identities, bounds and exclusions.
