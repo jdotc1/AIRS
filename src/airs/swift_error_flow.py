@@ -19,7 +19,8 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v5'
+MODEL = 'swift-sync-error-edges-v6'
+FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v12'
 REGION_WORDS = 16
@@ -409,6 +410,30 @@ def _caller_direct_edges(data: bytes, function) -> dict:
     return {'direct_edges': direct, 'unclassified_word_count': unknown_count,
             'unclassified_words': unknown, 'scanned_word_count': len(data) // 4,
             'caller_scan_complete': len(data) == function.size}
+
+
+def _flag_entries(scan: dict, call: dict) -> dict:
+    """Observe direct entries into the alias/flag window; never prove NZCV state."""
+    start, end = int(call['call_pc'], 16) + 4, int(call['test_pc'], 16) + 4
+    entries = []; count = 0
+    for edge in scan['direct_edges']:
+        if start <= int(edge['target_pc'], 16) < end:
+            count += 1
+            if len(entries) < INCOMING_EVIDENCE_LIMIT:
+                entries.append(edge)
+    status = ('unexpected_direct_entries' if count else
+              'unresolved' if not scan['caller_scan_complete'] or scan['unclassified_word_count'] else
+              'no_unexpected_direct_entries')
+    return {'status': status, 'scope': 'caller_local_direct_edges_into_postcall_flag_window',
+            'protected_start_pc': hex(start), 'protected_end_pc_exclusive': hex(end),
+            'caller_scan_complete': scan['caller_scan_complete'],
+            'scanned_word_count': scan['scanned_word_count'],
+            'unclassified_word_count': scan['unclassified_word_count'],
+            'unclassified_words': scan['unclassified_words'],
+            'unclassified_details_complete': scan['unclassified_word_count'] == len(scan['unclassified_words']),
+            'unexpected_entry_count': count, 'unexpected_entries': entries,
+            'entry_details_complete': count == len(entries),
+            'exclusive_entry_proven': False, 'flag_state_proven': False}
 
 
 def _region_incoming(scan: dict, region: dict, call: dict | None = None) -> dict:
@@ -852,6 +877,10 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
                 else:
                     row['callee'] = {'symbol': symbol, 'image_offset': hex(target - image.preferred_base), **declaration}
                     row.update(_edges(data, function, offset))
+                    if validate_region_entries and row.get('test_kind') == 'cmp_zero_bcond':
+                        if direct_scan is None:
+                            direct_scan = _caller_direct_edges(data, function)
+                        row['flag_entry_validation'] = _flag_entries(direct_scan, row)
                     if include_error_regions and row['status'] == 'recovered_candidate':
                         row['error_region'] = _error_region(data, function, row)
                         if validate_region_entries and row['error_region']['status'] == 'structural_region_candidate':
@@ -883,7 +912,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
             'limitations': ['Structural instruction-word candidates, not runtime reachability or dominance proof.',
                             'Exact symbol declarations are not authenticated runtime targets or function identity.',
                             'Only ordinary synchronous untyped Swift Int-to-Int, Int-to-Void or parameterless Int/Void free-function declarations are admitted.',
-                            'Only bounded 64-bit MOV/NOP and forward CBZ/CBNZ return windows are recovered.',
+                            'Only bounded 64-bit MOV/NOP and forward CBZ/CBNZ or adjacent CMP-zero EQ/NE return windows are recovered.',
                             'Embedded-data, relocation and symbol-only function boundaries are excluded by existing admission tags.',
                             'No catch type, handler semantics, source equivalence, unwind verdict or async claim is made.']}
     if include_error_regions:
@@ -894,6 +923,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         report['limitations'].append('Error intervals are structural candidates; opaque calls may not return and joins are not proven reachable.')
     if validate_region_entries:
         report['region_incoming_model_version'] = INCOMING_MODEL
+        report['flag_entry_model_version'] = FLAG_ENTRY_MODEL
         report['limitations'].append('Entry validation covers only direct edges in the bounded caller; indirect and external entries, reachability and exclusivity remain unproven.')
     if include_structured_presentation:
         report['structured_presentation_model_version'] = PRESENTATION_MODEL
@@ -904,7 +934,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     if any(row.get('test_kind') == 'cmp_zero_bcond' for row in calls):
-        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; flag-entry, handler-region and structured-outcome qualification remains open.')
+        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Handler-region and structured-outcome qualification remains open.')
     return report
 
 

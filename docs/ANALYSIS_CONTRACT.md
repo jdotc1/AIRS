@@ -1247,3 +1247,15 @@ flag-entry qualification and native/release acceptance remain open.
 Ten new focused methods and 94 affected edge/signature/tail/CLI/rendering methods
 passed. Prior owned-image qualification is reused without recompilation,
 disassembly, binary admission or hashing.
+
+## Compare-window direct-entry evidence
+
+`swift-sync-error-edges-v6` adds opt-in `swift-compare-flag-entries-v1` evidence
+for retained recovered CMP-zero edges. Caller-local direct targets into the
+post-call alias/flag interval, through B.cond inclusive, are conflicts. Unknown
+words or incomplete caller prefixes leave absence unresolved; observed conflicts
+remain explicit despite those gaps. Exact totals and capped details are separate.
+No NZCV, dominance, exclusive-entry, indirect/external-entry or runtime proof is
+implied by a complete scan with no observed conflict. Handler and structured
+outcome gates remain closed for this form. Twenty new and 121 affected controls
+passed with independent review; no owned binary workflow was repeated.
