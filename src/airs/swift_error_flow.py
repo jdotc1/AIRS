@@ -1,7 +1,7 @@
 """Structural Swift synchronous throw-return edges, independently of unwind audits.
 
 Reuse AIRS decoding/admission and MacScope's ordinary SwiftCC x21 error rule.
-Declaration recognition implements only a complete documented scalar free-function
+Declaration recognition implements only a complete documented bounded free-function
 mangling subset. Symbols and bytes are evidence, not runtime authentication.
 """
 from __future__ import annotations
@@ -18,7 +18,7 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v2'
+MODEL = 'swift-sync-error-edges-v3'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v5'
 REGION_WORDS = 16
@@ -29,7 +29,7 @@ SHARED_WORDS = 8
 
 
 def throwing_declaration(symbol: str) -> dict | None:
-    """Exact ASCII module/free-name, one unlabeled Int -> Int or Void, untyped throws.
+    """Exact ASCII free-function subset: Int -> Int/Void or () -> Void, untyped throws.
 
     Swift Mangling.rst's identifiers, standard Int substitution and throws suffix;
     qualified methods, specializations, typed/async/generic/thunk forms refuse.
@@ -50,11 +50,14 @@ def throwing_declaration(symbol: str) -> dict | None:
         if len(value) != size or re.fullmatch(r'[A-Za-z_][A-Za-z_0-9]*', value) is None:
             return None
         identifiers.append(value)
-    result = {'yS2iKF': 'Swift.Int', 'yySiKF': 'Swift.Void'}.get(name[cursor:])
-    if result is None:
+    signature = {'yS2iKF': (('Swift.Int',), 'Swift.Int'),
+                 'yySiKF': (('Swift.Int',), 'Swift.Void'),
+                 'yyKF': ((), 'Swift.Void')}.get(name[cursor:])
+    if signature is None:
         return None
+    parameters, result = signature
     return {'module': identifiers[0], 'name': identifiers[1],
-            'parameters': ['Swift.Int'], 'result': result,
+            'parameters': list(parameters), 'result': result,
             'convention': 'swift_sync_untyped_throws', 'error_register': 'x21',
             'source': 'exact_external_symbol_grammar'}
 
@@ -552,7 +555,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
             'functions': scans, 'calls': calls,
             'limitations': ['Structural instruction-word candidates, not runtime reachability or dominance proof.',
                             'Exact symbol declarations are not authenticated runtime targets or function identity.',
-                            'Only ordinary synchronous untyped Swift Int-to-Int or Int-to-Void free-function declarations are admitted.',
+                            'Only ordinary synchronous untyped Swift Int-to-Int, Int-to-Void or parameterless Void free-function declarations are admitted.',
                             'Only bounded 64-bit MOV/NOP and forward CBZ/CBNZ return windows are recovered.',
                             'Embedded-data, relocation and symbol-only function boundaries are excluded by existing admission tags.',
                             'No catch type, handler semantics, source equivalence, unwind verdict or async claim is made.']}
