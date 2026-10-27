@@ -1625,3 +1625,27 @@ refusal for this image. It does not qualify CMP/B.NE frontend emission, arithmet
 recovery, runtime behavior, ABI/CFI correctness, clean-host behavior or native
 app/release acceptance. Analyzer semantics and models are unchanged; prior
 accepted results retain their original scope.
+
+## Bounded success-path ADD-immediate result
+
+`swift-sync-error-edges-v25`, `swift-sync-error-region-v16`,
+`swift-success-result-v14` and `swift-return-choice-v21` admit the observed
+shared success-path arithmetic shape for a screened X-register CBZ error test.
+The success arm must contain exactly one nonflagging, unshifted 64-bit
+`ADD X0, X0, #imm` with immediate 1 through 4095; all other success-arm words
+must be NOPs. The Int call result must reach X0 before the addition. Full-width
+saved/restored copies may do so; narrow or unrestored copies do not qualify.
+
+The candidate and return choice describe an `add_immediate_modulo` machine
+operation on 64-bit call-result bits, not a proven runtime value or recovered
+Swift expression. Exact post-call, caller-entry, success-arm and shared-tail
+bindings remain required. Shifted, narrow, flag-setting, subtract, alternate
+register, repeated ADD and mixed-copy success arms remain outside this subset;
+CMP and CBNZ layouts are not widened. Call return, exclusive entry, caller
+return type, handler semantics, restored state and source remain unproven.
+
+The prior Swift-frontend image is not reanalyzed: its retained instruction window
+is used in a relocated regression. Fourteen new and 425 affected methods passed,
+including an updated regression for the observed ADD; independent semantic
+review found no blocker. Prior compiler, binary and native results retain their
+original scope.

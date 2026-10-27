@@ -1,4 +1,4 @@
-"""Relocated Swift-frontend arithmetic window: refusal is intentional."""
+"""Relocated Swift-frontend arithmetic window and refusal boundaries."""
 import unittest
 from airs.swift_error_flow import recover_swift_error_flow
 from test_swift_error_flow import image
@@ -14,13 +14,14 @@ def report(words=WORDS):
 
 
 class OwnedPostCallArithmeticTests(unittest.TestCase):
-    def test_frontend_add_keeps_edge_but_declines_region_and_choice(self):
+    def test_frontend_add_yields_structural_adjusted_choice(self):
         call = report()['calls'][0]
         self.assertEqual(call['status'], 'recovered_candidate')
         self.assertEqual(call['window'][0]['kind'], 'xcbz')
-        self.assertEqual(call['error_region']['reason'], 'error_region_control_flow_unmodeled')
-        self.assertEqual(call['presentation']['status'], 'blocked')
-        self.assertEqual(call['return_choice']['status'], 'unresolved')
+        self.assertEqual(call['error_region']['status'], 'structural_region_candidate')
+        self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
+        self.assertEqual(call['return_choice']['success']['kind'], 'call_result_add_immediate')
+        self.assertEqual(call['return_choice']['success']['immediate'], 5)
         self.assertFalse(call['return_choice']['runtime_value_proven'])
         self.assertFalse(call['return_choice']['source_reconstruction_allowed'])
 
@@ -31,12 +32,12 @@ class OwnedPostCallArithmeticTests(unittest.TestCase):
         self.assertEqual(call['return_choice']['error']['constant_bits'], '0xfffffffffffffff9')
 
     def test_unsupported_arithmetic_does_not_become_noop(self):
-        for word in (0x91000400, 0xd1000400):
+        for word in (0x91000401, 0xd1000400):
             call = report((*WORDS[:5], word, *WORDS[6:]))['calls'][0]
             self.assertNotEqual(call['presentation']['status'], 'eligible_structural_only')
             self.assertEqual(call['return_choice']['status'], 'unresolved')
 
-    def test_cli_retains_refusal(self):
+    def test_cli_retains_adjusted_choice(self):
         import contextlib, io, json
         from pathlib import Path
         from fixture_storage import temporary_directory
@@ -49,5 +50,5 @@ class OwnedPostCallArithmeticTests(unittest.TestCase):
                     '--validate-region-entries', '--include-structured-presentation'])
             self.assertEqual(status, 0)
             call = json.loads(output.getvalue())['calls'][0]
-            self.assertEqual(call['error_region']['reason'], 'error_region_control_flow_unmodeled')
-            self.assertEqual(call['return_choice']['status'], 'unresolved')
+            self.assertEqual(call['return_choice']['success']['kind'], 'call_result_add_immediate')
+            self.assertEqual(call['return_choice']['success']['immediate'], 5)

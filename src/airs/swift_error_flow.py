@@ -20,18 +20,18 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v24'
+MODEL = 'swift-sync-error-edges-v25'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v15'
+REGION_MODEL = 'swift-sync-error-region-v16'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v7'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v6'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v13'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v14'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v16'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v18'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v20'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v21'
 SHARED_WORDS = 8
 
 
@@ -266,17 +266,25 @@ def _shared_return_tail(data: bytes, function, join: int) -> dict | None:
     return None
 
 
-def _shared_epilogue(data: bytes, function, success: int, join: int) -> dict | None:
+def _shared_epilogue(data: bytes, function, success: int, join: int, *, allow_result_add: bool = False) -> dict | None:
     """Bounded straight-line success arm and shared restore/return shape."""
     if not success < join < function.end or (success | join) % 4 or join - success > SHARED_WORDS * 4:
         return None
-    words = []
+    words = []; has_add = False
     try:
         for pc in range(success, join, 4):
             instruction, row = _bounded_instruction(data, function, pc)
-            if instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk', 'wmov'):
+            is_add = (allow_result_add and instruction.kind == 'add'
+                      and instruction.word & 0xffc003ff == 0x91000000 and 1 <= instruction.immediate <= 4095)
+            if is_add:
+                if has_add:
+                    return None
+                has_add = True
+            elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk', 'wmov'):
                 return None
             words.append({**row, 'kind': instruction.kind})
+        if has_add and any(row['kind'] not in ('nop', 'add') for row in words):
+            return None
     except (ModelError, ValueError):
         return None
     tail = _shared_return_tail(data, function, join)
@@ -424,7 +432,8 @@ def _error_region(data: bytes, function, edge: dict) -> dict:
             if pc + 4 != boundary:
                 return {**result, 'reason': 'error_region_control_flow_unmodeled'}
             if target != boundary:
-                shared = _shared_epilogue(data, function, boundary, target)
+                shared = _shared_epilogue(data, function, boundary, target,
+                    allow_result_add=edge.get('test_kind') != 'cmp_zero_bcond' and edge.get('window', [{}])[-1].get('kind') == 'xcbz')
                 if shared is None:
                     return {**result, 'reason': 'error_region_control_flow_unmodeled'}
                 join = target
@@ -719,6 +728,7 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
     evidence = []
     aliases = {0}
     copied = False
+    adjustment = None
 
     def transfer(instruction):
         nonlocal copied
@@ -770,9 +780,36 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
         if (not shared and int(region['join_pc'], 16) != start) or not (1 if shared else 0) <= (end - start) // 4 <= SHARED_WORDS:
             raise ValueError('Success bound')
         join = int(region['join_pc'], 16)
+        has_add = shared and any(row.get('kind') == 'add' for row in interval['instructions'])
+        if has_add:
+            if compare or call['window'][-1].get('kind') != 'xcbz' or scan is None:
+                return {**result, 'reason': 'success_add_layout_not_qualified', 'instructions': evidence}
+            fresh_scan = _caller_direct_edges(data, function)
+            decoded = _shared_epilogue(data, function, start, join, allow_result_add=True)
+            if (fresh_scan != scan or _region_incoming(fresh_scan, region, call) != region['incoming_validation']
+                    or decoded is None or decoded['success_interval'] != interval
+                    or decoded['shared_epilogue'] != region['shared_epilogue']):
+                return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
+            recorded = call['window']
+            if len(recorded) != (test - first) // 4 + 1:
+                return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
+            for index, item in enumerate(recorded):
+                ins, raw = _bounded_instruction(data, function, first + index * 4)
+                if item != {**raw, 'kind': ins.kind}:
+                    return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
+            test_ins, _ = _bounded_instruction(data, function, test)
+            if (test_ins.kind != 'xcbz' or call['tested_register'] != f'x{test_ins.rn}'
+                    or test + test_ins.immediate != start or int(call['error_pc'], 16) != test + 4):
+                return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
         for pc in range(start, end, 4):
             instruction, row = _bounded_instruction(data, function, pc)
             evidence.append({**row, 'phase': 'success'})
+            if has_add and instruction.kind == 'add':
+                if 0 not in aliases or adjustment is not None:
+                    return {**result, 'reason': 'success_result_not_preserved', 'instructions': evidence}
+                adjustment = instruction.immediate
+                aliases = {0}
+                continue
             if instruction.kind == 'nop':
                 continue
             if instruction.kind in ('mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk', 'wmov'):
@@ -812,8 +849,12 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
                         'tail_entry_details_complete': conflict_count == len(conflicts),
                         'unexpected_tail_entries': conflicts, 'instructions': evidence}
 
-        return {**result, 'status': 'copied_register_candidate' if copied else 'preserved_register_candidate',
-                'reason': 'recorded_success_path_restores_x0_copy' if copied else 'recorded_success_path_preserves_x0',
+        return {**result, 'status': ('adjusted_register_candidate' if adjustment is not None else
+                                      'copied_register_candidate' if copied else 'preserved_register_candidate'),
+                'reason': ('recorded_success_path_adds_immediate' if adjustment is not None else
+                           'recorded_success_path_restores_x0_copy' if copied else 'recorded_success_path_preserves_x0'),
+                **({'operation': 'add_immediate_modulo', 'immediate': adjustment, 'bit_width': 64}
+                   if adjustment is not None else {}),
                 'result_registers_before_tail': [f'x{register}' for register in sorted(aliases)],
                 'return_tail_layout': 'shared_epilogue' if shared else 'success_entry',
                 'call_pc': call['call_pc'], 'success_pc': call['success_pc'],
@@ -1014,7 +1055,7 @@ def _return_choice(call: dict) -> dict:
     returned = call.get('success_result', {})
     error_known = error.get('status') == 'constant_register_candidate'
     constant_known = constant.get('status') == 'constant_register_candidate'
-    returned_known = returned.get('status') in ('preserved_register_candidate', 'copied_register_candidate')
+    returned_known = returned.get('status') in ('preserved_register_candidate', 'copied_register_candidate', 'adjusted_register_candidate')
     if not error_known or constant_known == returned_known:
         return {**result, 'reason': 'outcome_evidence_missing_or_conflicting'}
     success = constant if constant_known else returned
@@ -1058,8 +1099,17 @@ def _return_choice(call: dict) -> dict:
                     or outcome.get('depends_on_call_result') is not False):
                 raise ValueError('Literal bits')
             return {'kind': 'constant_bits', 'bit_width': 64, 'constant_bits': bits}
-        success_description = literal(success) if constant_known else {
-            'kind': 'call_result', 'register': 'x0', 'candidate_status': success['status']}
+        if returned_known and success['status'] == 'adjusted_register_candidate':
+            if (success.get('operation') != 'add_immediate_modulo' or type(success.get('immediate')) is not int
+                    or not 1 <= success['immediate'] <= 4095 or type(success.get('bit_width')) is not int
+                    or success['bit_width'] != 64 or success.get('return_tail_layout') != 'shared_epilogue'):
+                raise ValueError('Adjusted result')
+            success_description = {'kind': 'call_result_add_immediate', 'register': 'x0',
+                                   'immediate': success['immediate'], 'bit_width': 64,
+                                   'operation': 'add_immediate_modulo'}
+        else:
+            success_description = literal(success) if constant_known else {
+                'kind': 'call_result', 'register': 'x0', 'candidate_status': success['status']}
         error_description = literal(error)
         return {**result, 'status': 'structural_choice_candidate',
                 'reason': 'bound_selected_path_outcomes', 'call_pc': call['call_pc'],

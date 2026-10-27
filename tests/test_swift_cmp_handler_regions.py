@@ -210,7 +210,7 @@ class CmpHandlerDeliveryTests(unittest.TestCase):
                     self.assertIn('Condition (structural):', output.getvalue())
                 else:
                     value = json.loads(output.getvalue())
-                    self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v15')
+                    self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v16')
                     self.assertEqual(value['calls'][0]['error_region']['status'], 'structural_region_candidate')
                     self.assertEqual(value['calls'][0]['presentation']['status'], 'eligible_structural_only')
 
