@@ -619,3 +619,39 @@ claim is made. Prior accepted binary/release evidence retains its original scope
 Independent semantic review found no false-supported fallback issue. A diagnostic
 finding was corrected so a withheld tail-entry result retains the inspected tail
 words; one new focused conflict/text test passed after that change.
+
+## Bounded success-path constants
+
+`swift-success-constant-v1` independently records an exact 64-bit pattern assigned
+on an admitted Int throwing call's selected success arm. It is separate from
+call-result preservation: a success arm returning zero does not preserve the
+call's integer result. The new result requires eligible structural presentation,
+a recorded bounded success interval and the exact existing shared return tail.
+
+No incoming register or error-arm constant is assumed. Existing decoded 64-bit
+MOVZ and MOVN create complete patterns with their encoded shifts; MOV copies
+a known pattern or reads XZR as zero. Writes to XZR are discarded. An unknown
+MOV source removes knowledge of its destination. No partial MOVK assembly,
+32-bit constant, arithmetic or extra instruction family is admitted. A known
+pattern must reach x0 before the unchanged tail, whose whitelist cannot write
+x0. Maximum evidence is eight success words plus eight tail words.
+
+The result records fixed-width hex `constant_bits`, bit width 64 and
+`depends_on_call_result: false`. It does not infer signed source syntax, the
+caller's return type, execution, path exclusivity or reconstructed Swift. Those
+proof flags remain false. Existing result v3, edge, region, incoming and
+presentation models retain their identities. Default edge-only output is
+unchanged; JSON and text expose the optional constant model and bounded words.
+
+Twelve new methods and 46 affected result/copy/return-tail/renderer controls
+passed in composed runs. Cases include shifted MOVZ/MOVN, transitive copies,
+unknown-source kills, XZR, unsupported widths and updates, both arm layouts,
+entry conflicts, partial scans, exact 16-word and overflow bounds, and CLI
+JSON/text. One boundary fixture initially placed its opaque error call inside
+the enlarged tail and correctly declined. Only that changed test was run again
+after moving its call target outside the protected interval. Qualification is
+synthetic source and CLI output, with no new owned-image or installed-app claim.
+
+Independent semantic review found no blocking issue. Narrow/MOVK/call controls
+establish conservative pipeline refusal rather than interpretation by the
+constant helper; no instruction-family support is inferred from those controls.
