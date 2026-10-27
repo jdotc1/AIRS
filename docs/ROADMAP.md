@@ -771,3 +771,10 @@ can pair them with error literals as structural choices. Thirteen new and 336
 affected methods passed after updating an older result-clobber expectation;
 independent review found no blocker. Runtime qualification remains open. See
 SWIFT_ERROR_FLOW.md.
+
+## Owned CMP/B.NE qualification
+
+A new assembler/linker-produced forward handler qualified the bounded B.NE
+literal choice against retained disassembly and eight regression words. Five
+new methods passed. Swift frontend emission, runtime and native release
+qualification remain open. See SWIFT_ERROR_FLOW.md.
