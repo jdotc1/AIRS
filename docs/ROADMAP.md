@@ -778,3 +778,12 @@ A new assembler/linker-produced forward handler qualified the bounded B.NE
 literal choice against retained disassembly and eight regression words. Five
 new methods passed. Swift frontend emission, runtime and native release
 qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+## Swift frontend post-call arithmetic
+
+A new Swift-compiled throwing-call example emitted CBZ and a wrapping ADD on
+the success path. AIRS recovered the edge and conservatively withheld the
+shared region and choice. Four new regression methods passed against the
+captured window; supporting bounded success-path arithmetic is a distinct next
+semantic change. CMP/B.NE frontend emission and runtime qualification remain
+open. See SWIFT_ERROR_FLOW.md.

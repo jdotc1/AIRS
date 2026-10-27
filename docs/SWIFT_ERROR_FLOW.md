@@ -1601,3 +1601,27 @@ establish Swift frontend emission of the handler, runtime execution, ABI or CFI
 correctness, restored state, clean-host behavior or native app/release
 acceptance. Existing proof flags remain false, and prior results retain their
 original scope. Analyzer semantics and models are unchanged.
+
+## Owned Swift-frontend post-call arithmetic observation
+
+OwnedPostCallArithmetic.swift supplies an owned throwing Int call whose success
+path returns the value with a wrapping increment. One arm64 macOS image was
+compiled at `-O`, disassembled and analyzed once; it was not loaded or
+executed. The compiler emitted a CBZ error test, not CMP/B.NE. AIRS recovered
+the call's selected error/success edges, then declined the shared error region
+because the success interval contains an unmodeled ADD instruction. The
+structural presentation remains blocked and return choice unresolved.
+
+The bounded scan covered 199 instruction words and retained all 16 direct
+calls: one recovered edge and 15 explicit declines. Ten emitted words matched
+the relocated regression fixture; five report words matched retained
+disassembly. Four new methods passed, including controls confirming that an
+unsupported ADD or SUB does not become a no-op and that replacing the ADD
+with NOP allows the previously supported structural path. The latter is a
+synthetic control, not evidence that the original ADD preserves the result.
+
+This establishes the observed frontend instruction layout and a conservative
+refusal for this image. It does not qualify CMP/B.NE frontend emission, arithmetic
+recovery, runtime behavior, ABI/CFI correctness, clean-host behavior or native
+app/release acceptance. Analyzer semantics and models are unchanged; prior
+accepted results retain their original scope.
