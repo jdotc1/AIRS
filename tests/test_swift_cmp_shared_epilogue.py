@@ -24,7 +24,7 @@ class CmpSharedFirstTests(unittest.TestCase):
         self.assertEqual(region['shared_epilogue']['start_pc'], hex(BASE+32))
         self.assertEqual(region['incoming_validation']['status'], 'no_unexpected_direct_entries')
         self.assertFalse(region['shared_epilogue']['restore_state_proven'])
-        self.assertEqual(call['presentation']['status'], 'blocked')
+        self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
         self.assertEqual(call['return_choice']['status'], 'unresolved')
 
 class CmpSharedBoundaryTests(unittest.TestCase):
@@ -94,9 +94,9 @@ class CmpSharedBoundaryTests(unittest.TestCase):
                 incoming = _region_incoming(modified, region, altered)
                 self.assertEqual(incoming['status'], 'unexpected_direct_entries')
 
-    def test_shared_region_never_enables_cmp_presentation_or_outcomes(self):
+    def test_shared_region_enables_presentation_but_not_outcomes(self):
         call = report()['calls'][0]
-        self.assertEqual(call['presentation']['reason'], 'compare_shared_presentation_not_qualified')
+        self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
         for key in ('success_result', 'success_constant', 'error_constant'):
             self.assertEqual(call[key]['status'], 'declined')
         self.assertEqual(call['return_choice']['status'], 'unresolved')
@@ -119,11 +119,11 @@ class CmpSharedEvidenceTests(unittest.TestCase):
         from airs.swift_error_text import render_swift_error_text
         text = render_swift_error_text(report())
         for expected in ('Shared tail interval evidence', '0xa9427bfd', '0xd65f03c0',
-                         'Incoming validation', 'compare_shared_presentation_not_qualified',
-                         'Structured plan: withheld', 'Source reconstruction: disabled'):
+                         'Incoming validation', 'compare_shared_outcomes_not_qualified',
+                         'Condition (structural):', 'Source reconstruction: disabled'):
             self.assertIn(expected, text)
 
-    def test_cli_json_retains_region_and_blocks_shared_presentation(self):
+    def test_cli_json_retains_region_and_eligible_shared_presentation(self):
         import contextlib
         import io
         import json
@@ -142,4 +142,4 @@ class CmpSharedEvidenceTests(unittest.TestCase):
             call = json.loads(output.getvalue())['calls'][0]
             self.assertEqual(call['error_region']['status'], 'structural_region_candidate')
             self.assertEqual(call['error_region']['incoming_validation']['status'], 'no_unexpected_direct_entries')
-            self.assertEqual(call['presentation']['status'], 'blocked')
+            self.assertEqual(call['presentation']['status'], 'eligible_structural_only')

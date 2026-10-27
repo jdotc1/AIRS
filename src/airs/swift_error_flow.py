@@ -11,6 +11,7 @@ from dataclasses import replace
 from pathlib import Path
 import re
 import struct
+from types import SimpleNamespace
 
 from .cfg import decode_instruction as decode_cfg_instruction, BRANCHES
 from .arm64 import ModelError, _signed
@@ -19,14 +20,14 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v15'
+MODEL = 'swift-sync-error-edges-v16'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v14'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v6'
 INCOMING_EVIDENCE_LIMIT = 16
-PRESENTATION_MODEL = 'swift-structural-presentation-v4'
+PRESENTATION_MODEL = 'swift-structural-presentation-v5'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v11'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v14'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v16'
@@ -528,8 +529,6 @@ def _presentation_eligibility(call: dict) -> dict:
     region = call.get('error_region')
     if not isinstance(region, dict) or region.get('status') != 'structural_region_candidate':
         return {**result, 'status': 'blocked', 'reason': 'region_not_recovered'}
-    if call.get('test_kind') == 'cmp_zero_bcond' and 'shared_epilogue' in region:
-        return {**result, 'status': 'blocked', 'reason': 'compare_shared_presentation_not_qualified'}
     entry = region.get('incoming_validation')
     if not isinstance(entry, dict):
         return {**result, 'reason': 'incoming_validation_missing'}
@@ -557,7 +556,7 @@ def _presentation_eligibility(call: dict) -> dict:
             flag = call.get('flag_entry_validation', {})
             if not isinstance(flag, dict):
                 raise ValueError('Missing compare flag-entry evidence')
-            if (call.get('test_condition') != 'eq' or forward or 'shared_epilogue' in region
+            if (call.get('test_condition') != 'eq' or forward
                     or start != test + 4 or success <= start
                     or address(call['comparison_pc']) != test - 4
                     or flag.get('status') != 'no_unexpected_direct_entries'
@@ -618,6 +617,19 @@ def _presentation_eligibility(call: dict) -> dict:
                     or region['shared_epilogue']['instructions'][-1].get('kind') != 'ret'
                     or region['shared_epilogue'].get('restore_state_proven') is not False):
                 raise ValueError('Inconsistent shared join')
+            if call.get('test_kind') == 'cmp_zero_bcond':
+                exit_pc = address(exit_word['pc'])
+                decoded_exit = decode_instruction(int(exit_word['word'], 16), exit_pc)
+                if decoded_exit.kind != 'b' or exit_pc + decoded_exit.immediate != join:
+                    raise ValueError('Inconsistent encoded error exit')
+                success_words = region['success_interval']['instructions']
+                tail_words = region['shared_epilogue']['instructions']
+                packed = b''.join(struct.pack('<I', int(item['word'], 16))
+                                  for item in (*success_words, *tail_words))
+                synthetic = SimpleNamespace(start=success, end=address(region['shared_epilogue']['end_pc_exclusive']))
+                if _shared_epilogue(packed, synthetic, success, join) != {
+                        'success_interval': region['success_interval'], 'shared_epilogue': region['shared_epilogue']}:
+                    raise ValueError('Inconsistent encoded shared intervals')
     except (KeyError, TypeError, ValueError, ModelError):
         return {**result, 'reason': 'presentation_evidence_inconsistent'}
     return {**result, 'status': 'eligible_structural_only', 'reason': 'complete_caller_local_direct_validation',
@@ -639,6 +651,9 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
     result = {'status': 'declined', 'register': 'x0',
               'runtime_value_proven': False, 'source_reconstruction_allowed': False,
               'exclusive_path_proven': False, 'caller_return_type_proven': False}
+    if (call.get('test_kind') == 'cmp_zero_bcond' and isinstance(call.get('error_region'), dict)
+            and 'shared_epilogue' in call['error_region']):
+        return {**result, 'reason': 'compare_shared_outcomes_not_qualified'}
     if call.get('callee', {}).get('result') != 'Swift.Int':
         return {**result, 'reason': 'callee_result_not_scalar_int'}
     if call.get('presentation', {}).get('status') != 'eligible_structural_only':
@@ -759,6 +774,9 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False, sc
               'caller_return_type_proven': False}
     if error:
         result.update(call_return_proven=False, handler_semantics_proven=False)
+    if (call.get('test_kind') == 'cmp_zero_bcond' and isinstance(call.get('error_region'), dict)
+            and 'shared_epilogue' in call['error_region']):
+        return {**result, 'reason': 'compare_shared_outcomes_not_qualified'}
     cmp_success = call.get('test_kind') == 'cmp_zero_bcond' and not error
     if call.get('callee', {}).get('result') not in ('Swift.Int', 'Swift.Void'):
         return {**result, 'reason': 'callee_result_outside_admitted_subset'}
@@ -896,6 +914,9 @@ def _return_choice(call: dict) -> dict:
               'runtime_value_proven': False, 'exclusive_path_proven': False,
               'caller_return_type_proven': False, 'call_return_proven': False,
               'handler_semantics_proven': False}
+    if (call.get('test_kind') == 'cmp_zero_bcond' and isinstance(call.get('error_region'), dict)
+            and 'shared_epilogue' in call['error_region']):
+        return {**result, 'reason': 'compare_shared_outcomes_not_qualified'}
     if call.get('presentation', {}).get('status') != 'eligible_structural_only':
         return {**result, 'reason': 'structural_presentation_not_eligible'}
     error = call.get('error_constant', {})
@@ -1072,7 +1093,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     if any(row.get('test_kind') == 'cmp_zero_bcond' for row in calls):
-        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ shared-tail regions remain structural evidence; their presentation and outcomes, and NE handlers, remain withheld.')
+        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ shared tails may be structurally presented; their outcomes and NE handlers remain withheld.')
     return report
 
 

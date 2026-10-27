@@ -699,3 +699,10 @@ shared restore/RET tail words and caller-local entry evidence. The exact recorde
 EQ edge is distinguished from unexpected entries. Thirteen new and 364 affected
 methods passed. Shared CMP presentation/outcomes, NE/forward handlers and
 compiler/runtime/native qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+## CMP shared-epilogue presentation
+
+Screened CMP/B.EQ shared regions now have structural display plans, with explicit
+error-exit and complete success/tail consistency checks. Eleven new and 330
+affected methods passed. CMP shared outcomes, NE/forward layouts and compiler,
+runtime and native qualification remain open. See SWIFT_ERROR_FLOW.md.

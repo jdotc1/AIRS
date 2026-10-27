@@ -1410,3 +1410,25 @@ Thirteen new and 364 affected methods passed in bounded composed runs. A prior
 test expectation was updated from unresolved to blocked for shared presentation;
 126 preceding passing selections were retained. No compiler, binary admission or
 native workflow was repeated.
+
+## CMP shared-epilogue structural presentation
+
+The current edge model is `swift-sync-error-edges-v16` and presentation model is
+`swift-structural-presentation-v5`. A qualified CMP-zero/B.EQ error-fallthrough
+region with a shared restore/RET tail can now receive an eligible structural
+plan. The existing exact CMP/branch, flag-window and caller-local incoming-entry
+checks remain required. B.NE and forward-error CMP layouts remain outside scope.
+
+The presentation binds the terminal error branch's recorded PC and decoded target
+to the join. After checking canonical words, contiguous PCs and bounded interval
+sizes, it re-decodes the recorded success arm and tail as bounded in-memory word
+evidence through the existing recognizer and requires the complete resulting
+records to match. This is in-process structural consistency, not target execution
+or saved-report admission. The plan retains both CMP/branch PCs, the encoded EQ
+condition, nonzero error predicate, raw intervals and false restore-state proof.
+
+CMP shared outcomes remain explicitly gated: success-result, success-constant and
+error-constant records decline, and return choice remains unresolved. No source,
+runtime, reachability, exclusive-entry or handler-semantics proof is added.
+Compiler-emission and native/release qualification remain open. Eleven new and
+330 affected methods passed; prior accepted compiler/binary results were reused.
