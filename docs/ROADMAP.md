@@ -683,3 +683,11 @@ clearing, unknown-state refusal and full error-alias invalidation. Fifteen new
 and 286 affected methods passed with independent review. W-copy prefixes,
 B.NE/shared CMP handlers and compiler/runtime/native qualification remain open.
 See SWIFT_ERROR_FLOW.md.
+
+## CMP W-register copy recovery
+
+Bounded CMP success prefixes now reuse canonical W MOV constant transfer with
+zero extension, unknown-state invalidation and conservative error-alias handling.
+Fifteen new and 301 affected methods passed with independent review. Narrow call
+results remain unpreserved; B.NE/shared CMP layouts and compiler/runtime/native
+qualification remain open. See SWIFT_ERROR_FLOW.md.

@@ -1358,3 +1358,27 @@ Fifteen new and 286 affected methods passed. New controls cover width truncation
 legal/reserved lanes, known/unknown states, aliases, XZR, bounds, tail conflicts
 and CLI/text evidence. Independent semantic review found no blocking issue.
 Prior compiler, binary and native results were reused within their scopes.
+
+## Bounded CMP W-register literal copies
+
+The current edge model is `swift-sync-error-edges-v14`, success-constant model is
+`swift-success-constant-v14`, error-constant model is `swift-error-constant-v16`
+and return-choice model is `swift-return-choice-v16`. Canonical W MOV copies may
+now participate in CMP-only success prefixes through existing local decoding and
+constant transfer. Known sources supply zero-extended low 32 bits; unknown sources
+invalidate destination knowledge. WZR supplies zero and destination WZR discards
+writes.
+
+W copies invalidate the destination's full-width error alias; they never promote
+a narrow source into an error alias. A separately saved X alias may survive.
+Call-result preservation remains conservative: copying an unknown call result
+through W, including a self-copy, cannot establish a preserved full-width result.
+Noncanonical copy encodings, CBZ/CBNZ literal prefixes and narrow error tests
+remain refused. Existing prefix/tail limits, entry checks and outcome/proof
+binding are unchanged.
+
+Fifteen new and 301 affected methods passed, with independent semantic review
+finding no blocking issue. New controls cover known/unknown and self copies,
+upper-bit clearing, aliases, WZR, canonical encodings, bounds, conflicts and
+JSON/text evidence. B.NE/shared CMP handlers and compiler/runtime/native
+qualification remain open. No decoder, dependency or binary workflow was added.

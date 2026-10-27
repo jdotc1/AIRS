@@ -19,7 +19,7 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v13'
+MODEL = 'swift-sync-error-edges-v14'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v13'
@@ -28,9 +28,9 @@ INCOMING_MODEL = 'swift-region-direct-entries-v5'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v4'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v11'
-SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v13'
-ERROR_CONSTANT_MODEL = 'swift-error-constant-v15'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v15'
+SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v14'
+ERROR_CONSTANT_MODEL = 'swift-error-constant-v16'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v16'
 SHARED_WORDS = 8
 
 
@@ -153,7 +153,7 @@ def _edges(data: bytes, function, call_offset: int) -> dict:
         else:
             if instruction.kind == 'nop':
                 continue
-            if instruction.kind in ('movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk'):
+            if instruction.kind in ('movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk', 'wmov'):
                 literal_prefix = True
                 aliases.discard(instruction.rd)
                 if not aliases:
@@ -791,7 +791,7 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False, sc
                         or instruction.addressing != '0' or pc + instruction.immediate != join):
                     return {**result, 'reason': 'unsupported_success_test', 'instructions': evidence}
                 continue
-            if cmp_success and instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk'):
+            if cmp_success and instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk', 'wmov'):
                 return {**result, 'reason': 'success_constant_instruction_unsupported', 'instructions': evidence}
             if instruction.kind == 'nop':
                 continue
@@ -1037,7 +1037,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
             'limitations': ['Structural instruction-word candidates, not runtime reachability or dominance proof.',
                             'Exact symbol declarations are not authenticated runtime targets or function identity.',
                             'Only ordinary synchronous untyped Swift Int-to-Int, Int-to-Void or parameterless Int/Void free-function declarations are admitted.',
-                            'Only bounded 64-bit MOV/NOP, CMP-only X/W MOVZ/MOVN/MOVK prefixes, and forward CBZ/CBNZ or adjacent CMP-zero EQ/NE return windows are recovered.',
+                            'Only bounded 64-bit MOV/NOP, CMP-only W MOV and X/W MOVZ/MOVN/MOVK prefixes, and forward CBZ/CBNZ or adjacent CMP-zero EQ/NE return windows are recovered.',
                             'Embedded-data, relocation and symbol-only function boundaries are excluded by existing admission tags.',
                             'No catch type, handler semantics, source equivalence, unwind verdict or async claim is made.']}
     if include_error_regions:
@@ -1059,7 +1059,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     if any(row.get('test_kind') == 'cmp_zero_bcond' for row in calls):
-        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ intervals may pair a call result or bounded X/W-seeded/updated success literal with error literal bits; shared tails, NE handlers and W-copy prefixes remain withheld.')
+        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ intervals may pair a call result or bounded X/W success literal with error literal bits; W copies do not preserve unknown full-width call results or error aliases. Shared tails and NE handlers remain withheld.')
     return report
 
 

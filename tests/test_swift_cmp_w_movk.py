@@ -57,9 +57,9 @@ class CmpWMovkBoundaryTests(unittest.TestCase):
             0x92800000, 0xd65f03c0))['calls'][0]
         self.assertEqual(call['return_choice']['status'], 'structural_choice_candidate')
 
-    def test_w_copy_and_cbz_prefixes_remain_refused(self):
+    def test_unknown_w_copy_and_cbz_prefixes_do_not_produce_outcome(self):
         call = report(words((0x52800540, wmovk(1), 0x2a1303e0)))['calls'][0]
-        self.assertEqual(call['status'], 'declined')
+        self.assertEqual(call['success_constant']['status'], 'declined')
         for branch in (0xb4000095, 0xb5000095):
             call = report((0x52800540, wmovk(1), branch, *WORDS[3:], 0xd65f03c0))['calls'][0]
             self.assertEqual(call['reason'], 'literal_prefix_requires_compare_test')
