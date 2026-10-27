@@ -473,3 +473,12 @@ and MOV decoding, and distinguishes literals from call-result preservation.
 Evidence is at most 16 words; runtime, caller-type, exclusive-path and source
 proofs remain false. Twelve new and 46 affected synthetic/CLI controls passed.
 See SWIFT_ERROR_FLOW.md for exact scope and exclusions.
+
+## Bounded error-arm constants
+
+Error-constant v1 reuses the success constant rules on eligible bounded error
+intervals, clearing all known constants at every opaque call. Known x0 bits must
+be assigned after the last call and survive the validated shared return tail.
+Call return and handler/source/runtime meaning remain unproven. Evidence stays
+within 24 words; prior models are unchanged. Thirteen new and 58 affected
+synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md for exact scope.

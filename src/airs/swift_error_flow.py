@@ -27,6 +27,7 @@ INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v3'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v3'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v1'
+ERROR_CONSTANT_MODEL = 'swift-error-constant-v1'
 SHARED_WORDS = 8
 
 
@@ -577,34 +578,42 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
         return {**result, 'reason': 'bounded_result_evidence_unavailable', 'instructions': evidence}
 
 
-def _success_constant(data: bytes, function, call: dict) -> dict:
-    """Constants defined on the recorded success arm, not caller or runtime facts."""
+def _path_constant(data: bytes, function, call: dict, *, error: bool = False) -> dict:
+    """Constants defined on one recorded arm, not caller or runtime facts."""
+    path = 'error' if error else 'success'
     result = {'status': 'declined', 'register': 'x0', 'runtime_value_proven': False,
               'source_reconstruction_allowed': False, 'exclusive_path_proven': False,
               'caller_return_type_proven': False}
+    if error:
+        result.update(call_return_proven=False, handler_semantics_proven=False)
     if call.get('callee', {}).get('result') != 'Swift.Int':
         return {**result, 'reason': 'callee_result_not_scalar_int'}
     if call.get('presentation', {}).get('status') != 'eligible_structural_only':
         return {**result, 'reason': 'structural_presentation_not_eligible'}
     region = call['error_region']
     if 'shared_epilogue' not in region:
-        return {**result, 'reason': 'bounded_success_interval_missing'}
-    evidence = []; constants = {}
+        return {**result, 'reason': f'bounded_{path}_interval_missing'}
+    evidence = []; constants = {}; opaque_calls = 0
     try:
-        interval = region['success_interval']
+        interval = region if error else region['success_interval']
         start, end = int(interval['start_pc'], 16), int(interval['end_pc_exclusive'], 16)
         join = int(region['join_pc'], 16)
-        if not 1 <= (end - start) // 4 <= SHARED_WORDS:
+        if not 1 <= (end - start) // 4 <= (REGION_WORDS if error else SHARED_WORDS):
             raise ValueError('Success interval bound')
         for pc in range(start, end, 4):
             instruction, row = _bounded_instruction(data, function, pc)
-            evidence.append({**row, 'phase': 'success'})
+            evidence.append({**row, 'phase': path})
             if instruction.kind == 'nop':
                 continue
             if instruction.kind == 'b' and pc == end - 4 and pc + instruction.immediate == join:
                 continue
+            if error and instruction.kind == 'bl':
+                constants.clear()
+                opaque_calls += 1
+                evidence[-1]['constant_state'] = 'cleared_after_opaque_call'
+                continue
             if instruction.kind not in ('mov', 'movz', 'movn'):
-                return {**result, 'reason': 'success_constant_instruction_unsupported', 'instructions': evidence}
+                return {**result, 'reason': f'{path}_constant_instruction_unsupported', 'instructions': evidence}
             destination = instruction.rd
             if destination == 31:
                 continue  # XZR discards writes; it is not a storage location.
@@ -622,12 +631,13 @@ def _success_constant(data: bytes, function, call: dict) -> dict:
             return {**result, 'reason': 'bounded_return_tail_missing', 'instructions': evidence}
         evidence.extend({**row, 'phase': 'return_tail'} for row in tail['instructions'])
         if 0 not in constants:
-            return {**result, 'reason': 'success_x0_constant_not_known', 'instructions': evidence}
+            return {**result, 'reason': f'{path}_x0_constant_not_known', 'instructions': evidence}
         return {**result, 'status': 'constant_register_candidate',
-                'reason': 'recorded_success_path_assigns_constant',
+                'reason': f'recorded_{path}_path_assigns_constant',
                 'constant_bits': f'0x{constants[0]:016x}', 'bit_width': 64,
                 'depends_on_call_result': False, 'call_pc': call['call_pc'],
-                'success_pc': call['success_pc'], 'return_pc': tail['instructions'][-1]['pc'],
+                path + '_pc': call[path + '_pc'],
+                **({'opaque_call_count': opaque_calls} if error else {}), 'return_pc': tail['instructions'][-1]['pc'],
                 'instructions': evidence}
     except (KeyError, TypeError, ValueError, ModelError):
         return {**result, 'reason': 'bounded_constant_evidence_unavailable', 'instructions': evidence}
@@ -704,7 +714,8 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
             if include_structured_presentation:
                 row['presentation'] = _presentation_eligibility(row)
                 row['success_result'] = _success_result(data, function, row, direct_scan)
-                row['success_constant'] = _success_constant(data, function, row)
+                row['success_constant'] = _path_constant(data, function, row)
+                row['error_constant'] = _path_constant(data, function, row, error=True)
     recovered = sum(row['status'] == 'recovered_candidate' for row in calls)
     report = {'schema_version': 1, 'report_kind': 'airs.swift_error_flow', 'model_version': MODEL,
             'scope': 'structural_call_return_edges', 'address_space': 'preferred_vm',
@@ -738,6 +749,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         report['structured_presentation_model_version'] = PRESENTATION_MODEL
         report['success_result_model_version'] = SUCCESS_RESULT_MODEL
         report['success_constant_model_version'] = SUCCESS_CONSTANT_MODEL
+        report['error_constant_model_version'] = ERROR_CONSTANT_MODEL
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     return report
