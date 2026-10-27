@@ -1471,3 +1471,21 @@ subset. Independent review found and prompted correction of a stale-arm
 binding gap; a changed supported instruction is now refused. The focused and
 affected checks passed after updating an obsolete refusal expectation; prior
 compiler, binary and native results retain their existing scope.
+
+## CMP/B.NE forward error regions
+
+`swift-sync-error-edges-v19`, `swift-sync-error-region-v15` and
+`swift-region-direct-entries-v7` admit a screened CMP-zero/B.NE success-
+fallthrough, forward-error region through the existing bounded arm and shared
+return recognizer. The actual adjacent compare and B.NE words, recorded window,
+tested register, branch target, and forward geometry must agree. Flag-window
+screening is required; the incoming-entry exemption applies only to the exact
+recorded canonical B.NE edge. Other caller-local entries remain conflicts.
+
+This is a structural region candidate only. CMP/B.NE presentation and outcomes
+remain withheld; call return, reachability, exclusive entry, flag state,
+handler meaning, restored state and source reconstruction are not proven.
+Eight new methods and the affected selection passed after two older refusal
+expectations were updated to the forward recognizer's refusal reason. Independent
+semantic review found no blocking issue. Prior compiler, binary and native
+results remain valid only within their existing scope.

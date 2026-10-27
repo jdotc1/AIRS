@@ -55,7 +55,7 @@ class CmpHandlerBoundaryTests(unittest.TestCase):
 
     def test_ne_handler_layout_stays_declined(self):
         region = self.region((WORDS[0], WORDS[1] | 1, *WORDS[2:]))
-        self.assertEqual(region['reason'], 'compare_handler_layout_not_qualified')
+        self.assertEqual(region['reason'], 'success_region_control_flow_unmodeled')
 
     def test_live_copy_before_comparison_can_feed_handler(self):
         call = report((0xaa1503f3, 0xf100027f, 0x54000080,
@@ -210,7 +210,7 @@ class CmpHandlerDeliveryTests(unittest.TestCase):
                     self.assertIn('Condition (structural):', output.getvalue())
                 else:
                     value = json.loads(output.getvalue())
-                    self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v14')
+                    self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v15')
                     self.assertEqual(value['calls'][0]['error_region']['status'], 'structural_region_candidate')
                     self.assertEqual(value['calls'][0]['presentation']['status'], 'eligible_structural_only')
 
