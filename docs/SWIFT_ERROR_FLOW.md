@@ -1578,3 +1578,26 @@ handler meaning, restored state or source reconstruction. Thirteen new and 336
 affected methods passed after updating an older clobbered-result expectation.
 Independent review found no blocker. Prior compiler, binary and native evidence
 retains its existing scope; qualifying NE evidence uses bounded caller rescans.
+
+## Owned assembler-backed CMP/B.NE literal qualification
+
+OwnedCmpNeHandlers.s supplies a fixed owned success-fallthrough, forward-error
+handler that calls the previously built OwnedEpilogueProvider object. The new
+handler was assembled, linked and disassembled once; the resulting image was
+admitted and analyzed once, and never loaded or executed. The prior provider
+object was reused without repeating its build or verification.
+
+The bounded image scan covered 208 instruction words and retained all 19 direct
+calls: one recovered candidate and 18 explicit declines. The selected call at
+VM 0xb74 records CMP/B.NE, a success literal of 0x0000000000001234 and an error
+literal of 0xffffffffffffffff at the shared return 0xb94. Eight retained
+compare, branch, arm and tail words matched the disassembly and relocated
+regression tuple. Five new methods passed, covering both literals, missing
+success seed, opaque-call invalidation, side entries and CLI output. Synthetic
+relocation is separate from original-image admission.
+
+This qualifies an assembler/linker-produced structural example; it does not
+establish Swift frontend emission of the handler, runtime execution, ABI or CFI
+correctness, restored state, clean-host behavior or native app/release
+acceptance. Existing proof flags remain false, and prior results retain their
+original scope. Analyzer semantics and models are unchanged.

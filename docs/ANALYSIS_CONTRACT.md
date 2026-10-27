@@ -1452,3 +1452,13 @@ shared-tail bindings are required. `swift-return-choice-v20` may pair exactly
 one qualified success literal or preserved Int result with an error literal.
 Unknown values and conflicts remain unresolved; no runtime, source, call-return,
 exclusive-entry, handler or restored-state proof is implied.
+
+## Owned CMP/B.NE fixture qualification
+
+One newly assembled and linked owned CMP/B.NE forward handler was analyzed as
+input without execution. Its success and error literal choice and eight recorded
+instruction words matched retained disassembly and a relocated regression
+fixture. Five new methods passed, including refusal cases. This is structural
+assembler-backed evidence; it does not qualify Swift frontend emission, runtime,
+ABI/CFI, restored state or native release behavior. The existing provider object
+and prior results were reused.
