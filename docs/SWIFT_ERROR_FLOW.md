@@ -1103,3 +1103,24 @@ and were reused without unrelated repeats.
 Independent fixture review found no blocking issue and confirmed word-window
 fidelity, outcome bits and the assembler-versus-Swift-frontend distinction.
 No runtime, ABI or CFI attestation is added.
+
+## Adjacent compare-zero return edges
+
+The current edge model is `swift-sync-error-edges-v5`. In the existing eight-word
+post-call window, exact unshifted `SUBS XZR,Xn,#0` (the 64-bit CMP alias) may test
+a live x21 alias when immediately followed by B.EQ or B.NE. EQ targets success;
+NE targets error. Both successors must remain distinct, forward and inside the
+caller. Raw comparison/branch words, comparison PC, condition and tested register
+are retained. W comparisons, nonzero/shifted immediates, unrelated registers,
+intervening instructions and other conditions are refused.
+
+This addition recovers selected-word edges only. For this form, error-region
+recovery declines with `compare_branch_region_not_qualified`; incoming-entry,
+structured presentation and outcome recovery remain withheld. In particular,
+no flag-entry or general NZCV dataflow proof is claimed. Existing CBZ/CBNZ region
+behavior retains its prior qualification. Compiler-produced CMP emission,
+flag-entry qualification and native/release acceptance remain open.
+
+Ten new focused methods and 94 affected edge/signature/tail/CLI/rendering methods
+passed. Prior owned-image qualification is reused without recompilation,
+disassembly, binary admission or hashing.

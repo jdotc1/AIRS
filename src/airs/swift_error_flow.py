@@ -19,7 +19,7 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v4'
+MODEL = 'swift-sync-error-edges-v5'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v12'
 REGION_WORDS = 16
@@ -132,43 +132,59 @@ def _symbol_groups(image: MachOImage) -> dict:
 
 
 def _edges(data: bytes, function, call_offset: int) -> dict:
-    aliases = {21}; window = []
+    aliases = {21}; window = []; comparison = None
     for offset in range(call_offset + 4, min(len(data), call_offset + 4 + WINDOW_WORDS * 4), 4):
         address = function.start + offset
         word = struct.unpack_from('<I', data, offset)[0]
         try:
             instruction = decode_instruction(word, address)
         except ModelError:
-            return {'reason': 'intervening_instruction_unmodeled', 'window': window}
+            return {'reason': 'comparison_branch_unmodeled' if comparison else 'intervening_instruction_unmodeled', 'window': window}
         window.append({'pc': hex(address), 'word': f'0x{word:08x}', 'kind': instruction.kind})
-        if instruction.kind == 'nop':
-            continue
-        if instruction.kind == 'mov':
-            if instruction.rd != 31:
-                if instruction.rn in aliases:
-                    aliases.add(instruction.rd)
-                else:
-                    aliases.discard(instruction.rd)
-            if not aliases:
-                return {'reason': 'error_value_clobbered', 'window': window}
-            continue
-        if instruction.kind in ('wcbz', 'wcbnz'):
-            return {'reason': 'narrow_error_test', 'window': window}
-        if instruction.kind not in ('xcbz', 'xcbnz'):
-            return {'reason': 'intervening_instruction_unmodeled', 'window': window}
-        if instruction.rn not in aliases:
-            return {'reason': 'not_error_result_test', 'window': window}
+        metadata = {}
+        if comparison is not None:
+            if instruction.kind != 'bcond' or instruction.addressing not in ('0', '1'):
+                return {'reason': 'comparison_branch_not_adjacent_or_supported', 'window': window}
+            register, comparison_pc = comparison
+            zero_target = instruction.addressing == '0'
+            metadata = {'test_kind': 'cmp_zero_bcond', 'comparison_pc': hex(comparison_pc),
+                        'test_condition': 'eq' if zero_target else 'ne'}
+        else:
+            if instruction.kind == 'nop':
+                continue
+            if instruction.kind == 'mov':
+                if instruction.rd != 31:
+                    if instruction.rn in aliases:
+                        aliases.add(instruction.rd)
+                    else:
+                        aliases.discard(instruction.rd)
+                if not aliases:
+                    return {'reason': 'error_value_clobbered', 'window': window}
+                continue
+            # Exact SUBS XZR,Xn,#0, unshifted. No general flag-state recovery.
+            if word & 0xfffffc1f == 0xf100001f:
+                if instruction.rn not in aliases:
+                    return {'reason': 'not_error_result_comparison', 'window': window}
+                comparison = (instruction.rn, address)
+                continue
+            if instruction.kind in ('wcbz', 'wcbnz'):
+                return {'reason': 'narrow_error_test', 'window': window}
+            if instruction.kind not in ('xcbz', 'xcbnz'):
+                return {'reason': 'intervening_instruction_unmodeled', 'window': window}
+            if instruction.rn not in aliases:
+                return {'reason': 'not_error_result_test', 'window': window}
+            register = instruction.rn
+            zero_target = instruction.kind == 'xcbz'
         target = address + instruction.immediate
         fallthrough = address + 4
         if (target <= address or target == fallthrough or target % 4
-                or not function.start <= target < function.end
-                or not function.start <= fallthrough < function.end):
+                or not function.start <= target < function.end or not function.start <= fallthrough < function.end):
             return {'reason': 'unsupported_successor_region', 'window': window}
-        success, error = (target, fallthrough) if instruction.kind == 'xcbz' else (fallthrough, target)
+        success, error = (target, fallthrough) if zero_target else (fallthrough, target)
         return {'status': 'recovered_candidate', 'test_pc': hex(address),
-                'tested_register': f'x{instruction.rn}', 'success_pc': hex(success),
-                'error_pc': hex(error), 'window': window}
-    return {'reason': 'postcall_window_exhausted', 'window': window}
+                'tested_register': f'x{register}', 'success_pc': hex(success),
+                'error_pc': hex(error), 'window': window, **metadata}
+    return {'reason': 'comparison_branch_missing_or_outside_window' if comparison else 'postcall_window_exhausted', 'window': window}
 
 
 def _bounded_instruction(data: bytes, function, pc: int):
@@ -328,6 +344,8 @@ def _error_region(data: bytes, function, edge: dict) -> dict:
     shared restore/return tail may lie later; neither boundary proves a postdominator. Input data is the already bounded caller scan prefix.
     """
     result = {'status': 'declined', 'instructions': []}
+    if edge.get('test_kind') == 'cmp_zero_bcond':
+        return {**result, 'reason': 'compare_branch_region_not_qualified'}
     start, join, test = (int(edge[key], 16) for key in ('error_pc', 'success_pc', 'test_pc'))
     if join == test + 4 and start > join:
         return _forward_error_region(data, function, edge)
@@ -885,6 +903,8 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         report['return_choice_model_version'] = RETURN_CHOICE_MODEL
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
+    if any(row.get('test_kind') == 'cmp_zero_bcond' for row in calls):
+        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; flag-entry, handler-region and structured-outcome qualification remains open.')
     return report
 
 

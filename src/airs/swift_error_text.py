@@ -106,7 +106,7 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
             if report.get('return_choice_model_version') != RETURN_CHOICE_MODEL:
                 raise InputError('swift_text_models', 'Return-choice evidence requires its current model')
             line('  Return choice (structural outcomes; source disabled)', call['return_choice'])
-        line('  Recorded return edges', {key: call[key] for key in ('test_pc', 'tested_register', 'success_pc', 'error_pc') if key in call})
+        line('  Recorded return edges', {key: call[key] for key in ('comparison_pc', 'test_pc', 'test_kind', 'test_condition', 'tested_register', 'success_pc', 'error_pc') if key in call})
         rows('  Post-call instruction evidence', call.get('window', []), MAX_WINDOW_ROWS)
         line('  Presentation', {key: presentation[key] for key in ('status', 'reason')})
         if presentation['status'] == 'eligible_structural_only':
