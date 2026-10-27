@@ -491,3 +491,13 @@ success literal or direct/copied call result. Missing or inconsistent outcomes
 remain unresolved. Literal equality is unknown for a call-result/literal pair;
 all runtime/source proof restrictions and existing models remain unchanged.
 Twelve new and 38 affected synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md.
+
+## Owned return-choice layout coverage
+
+A fresh optimized owned Swift input qualified two Int throwing-call layouts.
+Error-constant v2 and return-choice v2 close the observed success-entry-tail gap
+by binding to the already validated result candidate, exact tail words, call and
+entry identities and x0. Explicit source/layout guards reject mixed metadata.
+Eleven new and 50 affected synthetic/CLI controls passed; a seven-word replay
+of retained owned evidence qualified the changed boundary without rebuilding,
+rehashing or readmitting the binary. See SWIFT_ERROR_FLOW.md for evidence scopes.
