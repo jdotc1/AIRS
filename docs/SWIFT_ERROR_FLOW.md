@@ -1186,3 +1186,34 @@ and exact downstream refusal states. Two hundred eight affected methods passed.
 Accepted pre-pause results were reused; only changed failed/strengthened and
 new selections ran after resumption. No compiler, disassembly, binary admission,
 provenance hashing or native workflow was repeated.
+
+## CMP structural presentation eligibility
+
+The current edge model is `swift-sync-error-edges-v8` and the presentation model
+is `swift-structural-presentation-v4`. A qualified CMP-zero/B.EQ simple
+error-fallthrough region may now receive an `eligible_structural_only` display
+plan. Both flag-window inspection and ordinary handler-entry inspection must be
+complete, fully classified and free of observed conflicts. Flag bounds must match
+the same call/window; comparison and branch PCs must be adjacent. The raw CMP
+must be the canonical 64-bit zero comparison of the recorded register, and the
+raw B.EQ must target the recorded success entry. Shared and forward-error layouts
+remain outside this presentation subset.
+
+The condition retains `comparison_pc`, `test_pc`, `test_kind` and
+`test_condition: eq`, alongside `error_when: nonzero`. EQ describes the encoded
+branch to success; nonzero describes the logical error predicate. Raw words,
+opaque calls, image identity, bounds and entry evidence remain visible in JSON
+and terminal-safe text. Missing or inconsistent evidence remains blocked or
+unresolved. This consumes current in-process producer evidence; it does not admit
+arbitrary saved reports or establish flag state, reachability or exclusive entry.
+
+Presentation eligibility does not enable CMP outcome recovery. Explicit guards
+keep success-result, success-constant and error-constant records declined and
+return choices unresolved, with `compare_outcome_recovery_not_qualified`.
+Source reconstruction remains disabled. B.NE handlers, shared CMP tails,
+compiler-emission qualification and native/runtime/release gates remain open.
+
+Twelve new focused methods and 206 affected methods passed in composed bounded
+runs. Two text assertions were corrected to reflect per-call structural plans
+rather than the earlier blocked layout; accepted passing selections were retained.
+Prior owned-image and compiler results were reused without repeating workflows.

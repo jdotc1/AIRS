@@ -633,3 +633,12 @@ screening. Raw instructions, opaque calls and interval incoming conflicts remain
 visible in JSON/text. Twenty-one new and 208 affected methods passed. CMP-based
 B.NE handlers, shared epilogues and structured presentation/outcomes remain open,
 as do compiler-emission and runtime qualification. See SWIFT_ERROR_FLOW.md.
+
+## CMP structural presentation eligibility
+
+Screened CMP-zero/B.EQ simple handler intervals now have bounded structural
+plans in JSON/text, retaining both instruction PCs, raw words, encoded EQ and
+the nonzero error predicate. Flag-window and handler-entry gates are independent.
+Twelve new and 206 affected methods passed. Explicit CMP outcome guards remain
+closed; result/constant/choice recovery, B.NE/shared CMP layouts, compiler-emission
+and runtime qualification are still open. See SWIFT_ERROR_FLOW.md.

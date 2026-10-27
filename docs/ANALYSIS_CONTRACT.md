@@ -1271,3 +1271,15 @@ apply. Error-interval incoming conflicts remain separate from flag-window checks
 B.NE, shared tails and all CMP structured outcomes remain withheld. This is
 structural evidence, not NZCV, dominance, exclusive-entry, source or runtime
 proof. Twenty-one new and 208 affected methods passed; prior results were reused.
+
+## CMP structural display plans
+
+`swift-sync-error-edges-v8` and `swift-structural-presentation-v4` allow structural
+plans for screened CMP-zero/B.EQ simple error-fallthrough regions only. Exact
+call/window binding, raw comparison/branch meaning and complete clear flag/handler
+entry evidence are required independently. The plan records the comparison PC,
+branch PC, encoded EQ condition and nonzero error predicate. Shared/forward layouts
+remain ineligible. Explicit outcome guards preserve declined results/constants,
+unresolved choices and disabled source reconstruction. Twelve new and 206 affected
+methods passed; runtime, compiler-emission and native/release qualification remain
+separate gates.
