@@ -445,3 +445,12 @@ Forty-nine affected renderer, declaration, forward-arm and shared-tail controls
 passed once. Existing owned-image results are reused only for their original
 scopes; this increment has synthetic analysis/CLI qualification and no new native
 app, compiled-image, installed-app or release qualification.
+
+## Bounded success-result copies
+
+Success-result v2 adds live 64-bit MOV result-copy tracking across existing
+bounded post-call/success paths. Overwritten copies are removed and XZR is
+excluded; x0 must hold a live copy before the existing return tail. Copied
+candidates are distinguished from direct preservation. Other component models,
+24-word maximum and all proof restrictions are unchanged. Eight new and
+25 affected synthetic controls passed. See SWIFT_ERROR_FLOW.md for exact scope.

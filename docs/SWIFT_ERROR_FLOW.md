@@ -554,3 +554,34 @@ Forty-nine affected renderer, declaration, forward-arm and shared-tail controls
 passed once. Existing owned-image results are reused only for their original
 scopes; this increment has synthetic analysis/CLI qualification and no new native
 app, compiled-image, installed-app or release qualification.
+
+## Bounded result-copy recovery (success-result v2)
+
+The v2 result model tracks exact 64-bit MOV copies of the call result across
+the existing bounded post-call and success intervals. The initial live set is
+{x0}; MOV from a live source adds its destination, and other MOV/MOVZ/MOVN
+writes remove that destination. XZR is never a live result location. A saved
+copy can survive an x0 overwrite, but a candidate requires x0 to be restored
+before entering the unchanged shared tail. The tail may overwrite saved aliases,
+so `result_registers_before_tail` explicitly describes the pre-tail state only.
+
+A MOV into x0 from another live result register produces
+`copied_register_candidate`; paths without such a move retain
+`preserved_register_candidate`. An x0 self-copy is now admitted. W-register
+copies, intervening calls, unsupported instructions, missing copies and
+unrestored x0 withhold recovery. Bounds remain eight post-call, eight success
+and eight tail words; old edge/region/incoming/presentation models are unchanged.
+Runtime-value, exclusive-path, caller-return-type and source-reconstruction
+proof flags remain false. Only selected-path register evidence is claimed.
+
+Eight new focused methods and 25 affected success-result/renderer methods passed
+in composed runs. They cover restoration after clobber, transitive aliases,
+alias kills, constants, narrow/XZR refusals, missing restore, self-copy and both
+arm layouts. This is synthetic source/text qualification; prior owned-image,
+native and release results are reused only within their original scopes.
+
+Independent semantic review found no blocking alias-tracking defect. Two changed
+copy-kill controls additionally confirmed eligible presentation and the exact
+result-layer refusal reason; only those changed methods were run again. The
+narrow-copy control establishes end-to-end pipeline refusal, not direct modeling
+of W-register copies.
