@@ -755,3 +755,11 @@ Screened B.NE forward handlers can now retain selected-path preserved or copied
 Int call-result evidence. Twelve new and 280 affected methods passed with
 independent semantic review. Success literals, return choices and runtime
 qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+## CMP/B.NE return choices
+
+Screened forward B.NE paths can now pair a preserved or copied Int result with
+an error literal as structural evidence. Ten new and 314 affected methods
+passed after updating an older refusal expectation; independent review found no
+blocker. Success literals and runtime qualification remain open. See
+SWIFT_ERROR_FLOW.md.
