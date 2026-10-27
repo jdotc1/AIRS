@@ -97,10 +97,10 @@ class SuccessEntryErrorConstantEvidenceTests(unittest.TestCase):
                     choice = value['calls'][0]['return_choice']
                     self.assertEqual(choice['success']['kind'], 'call_result')
                     self.assertEqual(choice['error']['constant_bits'], '0xffffffffffffffff')
-                    self.assertEqual(value['return_choice_model_version'], 'swift-return-choice-v3')
+                    self.assertEqual(value['return_choice_model_version'], 'swift-return-choice-v4')
                 else:
                     self.assertIn('structural_choice_candidate', output.getvalue())
-                    self.assertIn('swift-error-constant-v3', output.getvalue())
+                    self.assertIn('swift-error-constant-v4', output.getvalue())
                     self.assertIn('Source reconstruction: disabled', output.getvalue())
 
 class SuccessEntryErrorConstantBindingTests(unittest.TestCase):

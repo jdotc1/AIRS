@@ -799,3 +799,36 @@ all-ones, with shared RET 0xa04. No old binary was reopened or rehashed; no
 compilation, disassembly, image admission or caller-entry scan was repeated.
 This is incremental helper-context qualification over retained owned evidence,
 not a new complete-image, runtime, native UI or release acceptance claim.
+
+## Known-seeded 64-bit MOVK outcome literals
+
+Region v6 adds only the existing decoder's X-width MOVK form to the bounded
+success/error arm whitelists. The outcome constant walkers can now construct
+full-width literal patterns from a complete known seed and partial replacements.
+The existing CFG decoder is reused unchanged; no new core instruction admission
+or unwind rule is introduced. Edge v4, incoming v3 and presentation v3 keep their
+scopes. Result v4, success-constant v3, error-constant v4 and return-choice v4
+record the expanded outcome semantics.
+
+Following Arm's MOVK definition, each update clears and replaces the selected
+16-bit lane while retaining the other bits. X shifts are 0, 16, 32 and 48. The
+constant must already be completely known, whether seeded by MOVZ/MOVN or a
+known MOV/XZR value. Unknown registers stay unknown even after four lane writes;
+this subset does not track partial-known bits. Unknown overwrites and opaque
+error calls still discard knowledge. XZR writes are ignored.
+
+MOVK conservatively kills its destination's call-result alias, even when a
+particular write might be a no-op. Other live aliases remain available. W MOVK
+and MOVK inside the post-call error-test window remain refused. Return-tail
+whitelists, arm/evidence budgets and all runtime/source proof flags are unchanged.
+
+Thirteen new methods and 171 affected region/outcome/renderer/model controls
+passed in composed runs. New cases cover four-lane assembly, MOVN seeds, repeated
+lane replacement, unknown and overwritten seeds, saved-result invalidation,
+other-register preservation, XZR, opaque calls, both arm geometries, exact bounds
+and CLI JSON/text with raw update evidence. Independent semantic review found no
+blocking correctness issue. This is synthetic source and CLI qualification; no
+new compiled-image, native app or release acceptance is claimed. Existing owned
+image evidence remains accepted only within its original instruction scope.
+
+Instruction semantics reference: [Arm A64 MOVK](https://support.arm.com/documentation/ddi0596/2021-06/Base-Instructions/MOVK--Move-wide-with-keep-).

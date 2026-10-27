@@ -20,15 +20,15 @@ from .types import InputError, Limits, MachOImage
 
 MODEL = 'swift-sync-error-edges-v4'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v5'
+REGION_MODEL = 'swift-sync-error-region-v6'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v3'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v3'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v3'
-SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v2'
-ERROR_CONSTANT_MODEL = 'swift-error-constant-v3'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v3'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v4'
+SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v3'
+ERROR_CONSTANT_MODEL = 'swift-error-constant-v4'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v4'
 SHARED_WORDS = 8
 
 
@@ -206,7 +206,7 @@ def _shared_epilogue(data: bytes, function, success: int, join: int) -> dict | N
     try:
         for pc in range(success, join, 4):
             instruction, row = _bounded_instruction(data, function, pc)
-            if instruction.kind not in ('nop', 'mov', 'movz', 'movn'):
+            if instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk'):
                 return None
             words.append({**row, 'kind': instruction.kind})
     except (ModelError, ValueError):
@@ -249,7 +249,7 @@ def _forward_error_region(data: bytes, function, edge: dict) -> dict:
                     row['target_pc'] = hex(join)
                 else:
                     row['target_reason'] = 'outside_vm_address_space'
-            elif instruction.kind not in ('nop', 'mov', 'movz', 'movn'):
+            elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk'):
                 return {**result, 'reason': 'success_region_control_flow_unmodeled'}
         if not start < join < function.end or join % 4:
             return {**result, 'reason': 'unsupported_error_region_layout'}
@@ -263,7 +263,7 @@ def _forward_error_region(data: bytes, function, edge: dict) -> dict:
                 if not 0 <= target < (1 << 64) or target % 4:
                     return {**result, 'reason': 'error_region_call_target_invalid'}
                 row.update(call_target_pc=hex(target), semantics='opaque_call'); calls += 1
-            elif instruction.kind not in ('nop', 'mov', 'movz', 'movn'):
+            elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk'):
                 return {**result, 'reason': 'error_region_instruction_unmodeled'}
     except ModelError:
         return {**result, 'reason': 'error_region_instruction_unmodeled'}
@@ -321,7 +321,7 @@ def _error_region(data: bytes, function, edge: dict) -> dict:
                     return {**result, 'reason': 'error_region_control_flow_unmodeled'}
                 join = target
             row['target_pc'] = hex(join)
-        elif instruction.kind not in ('nop', 'mov', 'movz', 'movn'):
+        elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk'):
             return {**result, 'reason': 'error_region_instruction_unmodeled'}
     return {**result, 'status': 'structural_region_candidate', 'start_pc': hex(start),
             'join_pc': hex(join), 'end_pc_exclusive': hex(boundary), 'opaque_call_count': calls, **shared,
@@ -533,7 +533,7 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
             evidence.append({**row, 'phase': 'success'})
             if instruction.kind == 'nop':
                 continue
-            if instruction.kind in ('mov', 'movz', 'movn'):
+            if instruction.kind in ('mov', 'movz', 'movn', 'xmovk'):
                 transfer(instruction)
                 if aliases:
                     continue
@@ -619,7 +619,7 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False) ->
                 opaque_calls += 1
                 evidence[-1]['constant_state'] = 'cleared_after_opaque_call'
                 continue
-            if instruction.kind not in ('mov', 'movz', 'movn'):
+            if instruction.kind not in ('mov', 'movz', 'movn', 'xmovk'):
                 return {**result, 'reason': f'{path}_constant_instruction_unsupported', 'instructions': evidence}
             destination = instruction.rd
             if destination == 31:
@@ -627,6 +627,13 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False) ->
             if instruction.kind in ('movz', 'movn'):
                 constants[destination] = (instruction.immediate if instruction.kind == 'movz'
                                           else ~instruction.immediate) & ((1 << 64) - 1)
+            elif instruction.kind == 'xmovk':
+                if destination in constants:
+                    shift = int(instruction.addressing)
+                    mask = 0xffff << shift
+                    constants[destination] = ((constants[destination] & ~mask)
+                                               | (instruction.immediate << shift)) & ((1 << 64) - 1)
+                # Partial update of an unknown register does not create known bits.
             elif instruction.rn == 31:
                 constants[destination] = 0
             elif instruction.rn in constants:
