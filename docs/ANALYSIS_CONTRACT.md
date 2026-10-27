@@ -1403,3 +1403,12 @@ words, target geometry, complete flag-window screening and the bounded forward
 arm and tail recognizer remain mandatory. Only the exact B.NE edge is exempted
 from incoming conflicts. Presentation and outcomes remain gated; no runtime,
 source, exclusive-entry, flag-state or restored-state proof is implied.
+
+## CMP/B.NE forward presentation
+
+A screened CMP-zero/B.NE forward-error region can receive a structural plan
+under `swift-sync-error-edges-v20` and `swift-structural-presentation-v6`.
+Exact caller-byte binding and complete forward-region reconstruction supplement
+the existing compare, geometry and caller-local entry checks. Outcome recovery
+remains explicitly gated. This does not prove source, runtime behavior, flag
+state, exclusive entry, handler semantics or restored state.

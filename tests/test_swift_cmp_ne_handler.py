@@ -14,7 +14,7 @@ def report(words=WORDS, **kwargs):
 
 
 class CmpNeHandlerFirstTests(unittest.TestCase):
-    def test_forward_region_remains_structural_and_presentation_is_blocked(self):
+    def test_forward_region_and_presentation_remain_structural(self):
         call = report()['calls'][0]
         region = call['error_region']
         self.assertEqual(region['status'], 'structural_region_candidate')
@@ -22,7 +22,7 @@ class CmpNeHandlerFirstTests(unittest.TestCase):
         self.assertEqual(region['incoming_validation']['status'], 'no_unexpected_direct_entries')
         self.assertFalse(region['call_return_proven'])
         self.assertFalse(region['shared_epilogue']['restore_state_proven'])
-        self.assertNotEqual(call['presentation']['status'], 'eligible_structural_only')
+        self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
         self.assertEqual(call['return_choice']['status'], 'unresolved')
 
 

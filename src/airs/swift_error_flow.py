@@ -20,14 +20,14 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v19'
+MODEL = 'swift-sync-error-edges-v20'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v15'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v7'
 INCOMING_EVIDENCE_LIMIT = 16
-PRESENTATION_MODEL = 'swift-structural-presentation-v5'
+PRESENTATION_MODEL = 'swift-structural-presentation-v6'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v12'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v15'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v17'
@@ -548,7 +548,7 @@ def _region_incoming(scan: dict, region: dict, call: dict | None = None) -> dict
             'entry_details_complete': count == len(entries), 'exclusive_entry_proven': False}
 
 
-def _presentation_eligibility(call: dict) -> dict:
+def _presentation_eligibility(call: dict, data: bytes | None = None, function=None) -> dict:
     """Consume in-process producer results; this is not a saved-report decoder."""
     result = {'status': 'unresolved', 'source_reconstruction_allowed': False,
               'limitations': ['Structural candidate only; not reconstructed Swift source.',
@@ -587,8 +587,11 @@ def _presentation_eligibility(call: dict) -> dict:
             flag = call.get('flag_entry_validation', {})
             if not isinstance(flag, dict):
                 raise ValueError('Missing compare flag-entry evidence')
-            if (call.get('test_condition') != 'eq' or forward
-                    or start != test + 4 or success <= start
+            cmp_ne_forward = call.get('test_condition') == 'ne' and forward
+            cmp_eq_fallthrough = call.get('test_condition') == 'eq' and not forward
+            if (not (cmp_ne_forward or cmp_eq_fallthrough)
+                    or (cmp_ne_forward and not (success == test + 4 and success < start))
+                    or (cmp_eq_fallthrough and not (start == test + 4 and start < success))
                     or address(call['comparison_pc']) != test - 4
                     or flag.get('status') != 'no_unexpected_direct_entries'
                     or flag.get('scope') != 'caller_local_direct_edges_into_postcall_flag_window'
@@ -610,9 +613,9 @@ def _presentation_eligibility(call: dict) -> dict:
             decoded = decode_instruction(branch_word, test)
             if (compare_word & 0xfffffc1f != 0xf100001f
                     or call['tested_register'] != f'x{(compare_word >> 5) & 31}'
-                    or branch_word & 0xff00001f != 0x54000000
-                    or decoded.kind != 'bcond' or decoded.addressing != '0'
-                    or test + decoded.immediate != success):
+                    or branch_word & 0xff00001f != (0x54000001 if cmp_ne_forward else 0x54000000)
+                    or decoded.kind != 'bcond' or decoded.addressing != ('1' if cmp_ne_forward else '0')
+                    or test + decoded.immediate != (start if cmp_ne_forward else success)):
                 raise ValueError('Inconsistent compare branch meaning')
         end = address(region['end_pc_exclusive']) if forward else success
         if forward and ('shared_epilogue' not in region
@@ -655,12 +658,26 @@ def _presentation_eligibility(call: dict) -> dict:
                     raise ValueError('Inconsistent encoded error exit')
                 success_words = region['success_interval']['instructions']
                 tail_words = region['shared_epilogue']['instructions']
-                packed = b''.join(struct.pack('<I', int(item['word'], 16))
-                                  for item in (*success_words, *tail_words))
                 synthetic = SimpleNamespace(start=success, end=address(region['shared_epilogue']['end_pc_exclusive']))
-                if _shared_epilogue(packed, synthetic, success, join) != {
-                        'success_interval': region['success_interval'], 'shared_epilogue': region['shared_epilogue']}:
-                    raise ValueError('Inconsistent encoded shared intervals')
+                if forward:
+                    if data is None or function is None:
+                        raise ValueError('Missing forward caller bytes')
+                    for item in (*call['window'][-2:], *success_words, *words, *tail_words):
+                        _, actual = _bounded_instruction(data, function, address(item['pc']))
+                        if actual['word'] != item['word']:
+                            raise ValueError('Forward instruction differs from caller')
+                    packed = b''.join(struct.pack('<I', int(item['word'], 16))
+                                      for item in (*success_words, *words, *tail_words))
+                    rebuilt = _forward_error_region(packed, synthetic, call)
+                    expected = {key: value for key, value in region.items() if key != 'incoming_validation'}
+                    if rebuilt != expected:
+                        raise ValueError('Inconsistent encoded forward intervals')
+                else:
+                    packed = b''.join(struct.pack('<I', int(item['word'], 16))
+                                      for item in (*success_words, *tail_words))
+                    if _shared_epilogue(packed, synthetic, success, join) != {
+                            'success_interval': region['success_interval'], 'shared_epilogue': region['shared_epilogue']}:
+                        raise ValueError('Inconsistent encoded shared intervals')
     except (KeyError, TypeError, ValueError, ModelError):
         return {**result, 'reason': 'presentation_evidence_inconsistent'}
     return {**result, 'status': 'eligible_structural_only', 'reason': 'complete_caller_local_direct_validation',
@@ -682,6 +699,8 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
     result = {'status': 'declined', 'register': 'x0',
               'runtime_value_proven': False, 'source_reconstruction_allowed': False,
               'exclusive_path_proven': False, 'caller_return_type_proven': False}
+    if call.get('test_kind') == 'cmp_zero_bcond' and call.get('test_condition') == 'ne':
+        return {**result, 'reason': 'compare_ne_outcomes_not_qualified'}
     if call.get('callee', {}).get('result') != 'Swift.Int':
         return {**result, 'reason': 'callee_result_not_scalar_int'}
     if call.get('presentation', {}).get('status') != 'eligible_structural_only':
@@ -802,6 +821,8 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False, sc
               'caller_return_type_proven': False}
     if error:
         result.update(call_return_proven=False, handler_semantics_proven=False)
+    if call.get('test_kind') == 'cmp_zero_bcond' and call.get('test_condition') == 'ne':
+        return {**result, 'reason': 'compare_ne_outcomes_not_qualified'}
     cmp_success = call.get('test_kind') == 'cmp_zero_bcond' and not error
     if call.get('callee', {}).get('result') not in ('Swift.Int', 'Swift.Void'):
         return {**result, 'reason': 'callee_result_outside_admitted_subset'}
@@ -950,6 +971,8 @@ def _return_choice(call: dict) -> dict:
               'runtime_value_proven': False, 'exclusive_path_proven': False,
               'caller_return_type_proven': False, 'call_return_proven': False,
               'handler_semantics_proven': False}
+    if call.get('test_kind') == 'cmp_zero_bcond' and call.get('test_condition') == 'ne':
+        return {**result, 'reason': 'compare_ne_outcomes_not_qualified'}
     if call.get('presentation', {}).get('status') != 'eligible_structural_only':
         return {**result, 'reason': 'structural_presentation_not_eligible'}
     error = call.get('error_constant', {})
@@ -1082,7 +1105,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
             if row['status'] == 'declined':
                 reasons[row['reason']] += 1
             if include_structured_presentation:
-                row['presentation'] = _presentation_eligibility(row)
+                row['presentation'] = _presentation_eligibility(row, data, function)
                 row['success_result'] = _success_result(data, function, row, direct_scan)
                 row['success_constant'] = _path_constant(data, function, row, scan=direct_scan)
                 row['error_constant'] = _path_constant(data, function, row, error=True)
@@ -1126,7 +1149,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     if any(row.get('test_kind') == 'cmp_zero_bcond' for row in calls):
-        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ shared tails may pair a preserved call result or success literal with error literal bits; NE forward regions are structural only; NE presentation and outcomes remain withheld.')
+        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ shared tails may pair a preserved call result or success literal with error literal bits; screened NE forward presentation is structural only; NE outcomes remain withheld.')
     return report
 
 

@@ -139,7 +139,7 @@ class ForwardErrorCLIControls(unittest.TestCase):
                     '--validate-region-entries', '--include-structured-presentation', '--format', 'text'])
             self.assertEqual(status, 0)
             for value in ('swift-sync-error-region-v15', 'swift-region-direct-entries-v7',
-                          'swift-structural-presentation-v5', '0xb5000075', '0x14000004',
+                          'swift-structural-presentation-v6', '0xb5000075', '0x14000004',
                           'Success-arm interval evidence', 'Shared tail interval evidence', 'Source reconstruction: disabled'):
                 self.assertIn(value, output.getvalue())
 
