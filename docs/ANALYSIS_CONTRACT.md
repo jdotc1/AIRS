@@ -1307,3 +1307,13 @@ cached caller-local tail-entry validation. Error-tail reuse and choice require
 exact outcome identity/proof binding and exactly one success source. Prefix/tail
 bounds remain eight words each. W/MOVK prefixes, NE/shared layouts and runtime or
 source proof remain withheld. Twenty-four new and 256 affected methods passed.
+
+## CMP X MOVK literal updates
+
+`swift-sync-error-edges-v11`, `swift-success-constant-v11`,
+`swift-error-constant-v13` and `swift-return-choice-v13` admit X MOVK updates in
+bounded CMP success prefixes. Existing transfer updates known bits only; unknown
+values remain unknown. Destinations invalidate error aliases, prefixes cannot
+widen CBZ/CBNZ, and W prefixes remain refused. Existing eight-word prefix/tail,
+entry, identity and false-proof constraints retain their scopes. Fifteen new and
+268 affected methods passed; compiler/runtime/native qualification remains open.
