@@ -57,10 +57,10 @@ class MovkOutcomeBoundaryTests(unittest.TestCase):
         result = error_arm((movz(1), 0x94000100, movk(2,16)))['calls'][0]['error_constant']
         self.assertEqual(result['reason'], 'error_x0_constant_not_known')
 
-    def test_w_forms_and_postcall_updates_remain_refused(self):
+    def test_w_reserved_forms_and_postcall_updates_remain_refused(self):
         from test_swift_success_result import report
         from test_swift_shared_epilogue import WORDS
-        for word in (0x72800020, 0x72c00020):
+        for word in (0x72c00020, 0x72e00020):
             self.assertEqual(success((movz(1),word))['calls'][0]['success_constant']['status'], 'declined')
         call = report((movk(1,rd=19),) + WORDS)['calls'][0]
         self.assertEqual(call['status'], 'declined')
@@ -94,7 +94,7 @@ class MovkOutcomeCLIControls(unittest.TestCase):
                 if format=='json':
                     value=json.loads(output.getvalue())
                     self.assertEqual(value['calls'][0]['success_constant']['constant_bits'],'0xabcd000000001234')
-                    self.assertEqual(value['error_region_model_version'],'swift-sync-error-region-v7')
+                    self.assertEqual(value['error_region_model_version'],'swift-sync-error-region-v8')
                 else:
                     self.assertIn('0xabcd000000001234',output.getvalue())
                     self.assertIn('xmovk',output.getvalue())

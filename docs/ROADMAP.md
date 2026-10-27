@@ -529,3 +529,12 @@ Literal patterns zero-extend from 32 bits; result aliases are invalidated at the
 written destination. Core decoding/admission, post-call windows and return-tail
 whitelists remain unchanged. Twelve new and 218 affected synthetic/CLI controls
 passed. See SWIFT_ERROR_FLOW.md for model identities, bounds and exclusions.
+
+## Known-seeded W MOVK outcome updates
+
+Bounded arms now admit the existing decoded W MOVK form. Known values receive
+exact lane replacement with zero extension; unknown values stay unknown and
+written result aliases are invalidated. Decoder/admission, entry classification,
+post-call windows, tail whitelists and evidence limits retain prior scope.
+Twelve new and 196 affected controls passed in composed runs with independent
+review. See SWIFT_ERROR_FLOW.md for model identities and qualification limits.
