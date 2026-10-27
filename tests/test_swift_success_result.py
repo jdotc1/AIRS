@@ -20,7 +20,7 @@ class SuccessResultFirstTests(unittest.TestCase):
         self.assertEqual(result['return_pc'], hex(BASE + 40))
         self.assertFalse(result['runtime_value_proven'])
         self.assertFalse(result['source_reconstruction_allowed'])
-        self.assertEqual(value['success_result_model_version'], 'swift-success-result-v2')
+        self.assertEqual(value['success_result_model_version'], 'swift-success-result-v3')
 
 class SuccessResultBoundaryTests(unittest.TestCase):
     def test_success_x0_writes_are_not_preservation(self):
@@ -63,12 +63,12 @@ class SuccessResultBoundaryTests(unittest.TestCase):
         value = report(limits=replace(DEFAULT_LIMITS, max_instructions_per_function=10))
         self.assertEqual(value['calls'][0]['success_result']['status'], 'declined')
 
-    def test_default_output_unchanged_and_no_shared_tail_declines(self):
+    def test_default_output_unchanged_and_direct_return_accepted(self):
         value = recover_swift_error_flow(image())
         self.assertNotIn('success_result_model_version', value)
         self.assertNotIn('success_result', value['calls'][0])
         value = report((0xb4000075, NOP, 0x14000001, 0xd65f03c0))
-        self.assertEqual(value['calls'][0]['success_result']['status'], 'declined')
+        self.assertEqual(value['calls'][0]['success_result']['status'], 'preserved_register_candidate')
 
     def test_renderer_exposes_bounds_and_proof_limits(self):
         from airs.swift_error_text import render_swift_error_text
@@ -116,4 +116,4 @@ class SuccessResultBoundControls(unittest.TestCase):
 
     def test_text_displays_result_model_identity(self):
         from airs.swift_error_text import render_swift_error_text
-        self.assertIn('Success-result model: "swift-success-result-v2"', render_swift_error_text(report()))
+        self.assertIn('Success-result model: "swift-success-result-v3"', render_swift_error_text(report()))
