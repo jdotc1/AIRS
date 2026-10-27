@@ -1489,3 +1489,21 @@ Eight new methods and the affected selection passed after two older refusal
 expectations were updated to the forward recognizer's refusal reason. Independent
 semantic review found no blocking issue. Prior compiler, binary and native
 results remain valid only within their existing scope.
+
+## CMP/B.NE forward structural presentation
+
+`swift-sync-error-edges-v20` and `swift-structural-presentation-v6` allow a
+screened CMP-zero/B.NE success-fallthrough, forward-error region to receive a
+structural plan. Exact compare and branch semantics, complete caller-local flag
+and entry screens, bounded intervals and a shared tail remain mandatory. The
+plan requires the actual bounded caller bytes: recorded comparison, branch,
+success, error and tail words must match them. It then rebuilds the entire
+forward region from those words with the existing recognizer and matches the
+complete recorded region apart from the separately validated incoming record.
+
+This is not source reconstruction or a proof of runtime values, exclusive
+entry, flag state, handler behavior or restored state. B.NE success-result,
+success-literal, error-literal and return-choice outcomes remain explicitly
+gated. Eleven new and 232 affected methods passed. Independent review found no
+remaining blocker after a focused stale-instruction binding correction. Prior
+compiler, binary and native results retain their existing scope.

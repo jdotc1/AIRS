@@ -732,3 +732,11 @@ recorded as bounded structural evidence, with exact instruction and entry
 binding. Eight new methods and affected checks passed, and independent review
 found no blocker. Presentation, outcomes and runtime qualification remain open.
 See SWIFT_ERROR_FLOW.md.
+
+## CMP/B.NE forward presentation
+
+Screened CMP/B.NE forward-error regions now have structural display plans with
+caller-byte binding and full bounded-region consistency checks. Eleven new and
+232 affected methods passed, with independent review after a stale-word binding
+correction. B.NE outcomes and runtime qualification remain open. See
+SWIFT_ERROR_FLOW.md.
