@@ -895,3 +895,35 @@ correctness issue. Qualification is synthetic analysis/output; no compiled-image
 native GUI or release acceptance is added. Existing owned results retain scope.
 
 Instruction semantics reference: [Arm A64 MOVK](https://support.arm.com/documentation/ddi0596/2021-06/Base-Instructions/MOVK--Move-wide-with-keep-).
+
+## Canonical W-register outcome copies
+
+Region v9 admits only the canonical W MOV register alias: ORR Wd,WZR,Wm with
+unshifted LSL zero and no inversion. The Swift-local adapter reuses existing
+logical-register field decoding and retains the original word. General ORR,
+shifted/rotated forms and inverted-source forms are not admitted by this rule.
+The global decoder/admission and existing entry-classification scope are unchanged.
+
+A known source constant is truncated to 32 bits and zero-extended into the
+destination X register. Unknown sources clear destination knowledge, including
+a previously known constant. WZR reads establish zero and WZR writes are
+discarded. Transitive and self copies follow the same width rule. A W copy never
+propagates an unknown 64-bit call-result alias: its written destination loses
+that alias, even for MOV w0,w0. Unmodified result locations remain available.
+
+Result v7, success-constant v6, error-constant v7 and return-choice v7 record the
+new outcome scope. Post-call error windows and return tails continue to refuse
+W copies. Arm/evidence bounds, opaque-call invalidation, entry checks and all
+runtime/source proof restrictions retain their prior behavior.
+
+Twelve new methods and 208 affected controls passed in composed runs. Coverage
+includes exact alias fields and near misses, W versus X bit patterns, copies and
+self copies, unknown-source kills, result-alias refusal, WZR, opaque calls, both
+arm geometries, limits and CLI JSON/text after an admitted Void call. This is
+synthetic analysis/output qualification; no compiled-image, native GUI or release
+acceptance is added. Prior owned evidence retains its original scope.
+
+Instruction semantics reference: [Arm MOV register alias](https://documentation-service.arm.com/static/5f3fa899428f7a6b3328fd44).
+
+Independent semantic review found no blocking issue and confirmed the exact
+alias mask, source-field reuse, zero extension and conservative alias invalidation.
