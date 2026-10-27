@@ -1034,3 +1034,36 @@ Instruction semantics reference: [Arm LDR immediate reference](https://documenta
 Independent semantic review found no blocking issue. The new instruction kind
 is confined to nonexecuting Swift structural helpers and explicit writeback
 metadata; generic core SP-effect/state simulation is not extended to this kind.
+
+## Exact split FP/LR restore sequence
+
+Region v12 adds one exact composition after the existing FP-to-SP reset:
+MOV sp,x29; unsigned LDR x30,[sp,#8]; post-index LDR x29,[sp],#16; RET x30.
+It recognizes the LR load from the upper eight-byte slot before the FP pop
+from the lower slot. Swapped registers/order, other offsets or increments,
+near-match resets and intervening instructions remain outside this rule.
+The existing reset/pair-pop/return form retains its earlier scope.
+
+The four-word composition must fit wholly within the eight-word tail and
+scanned prefix. It uses already admitted scalar decoding and writeback
+metadata; no decoder, entry-classifier, core execution, arm or post-call
+whitelist is expanded. Result v10, success-constant v9, error-constant v10
+and return-choice v10 identify the expanded tail scope. Entry and presentation
+identities retain their prior meanings.
+
+This shape cannot write x0. Actual frame location, memory contents, restored
+FP/LR, memory-access success and runtime return remain unproven. The copied
+word evidence retains the explicit 16-byte SP writeback, while
+`restore_state_proven` and all runtime/source proof flags remain false.
+
+Twelve new methods and 250 affected tail/outcome/renderer controls passed in
+composed runs. New cases cover exact reset and scalar fields, order/adjacency,
+all lookahead prefix cuts, exact/over-limit tail budgets, entries into each of
+the four words, both arm layouts, success-entry fallback, old pair composition
+and raw CLI evidence. Qualification is synthetic source/output only; no new
+compiled-image, native GUI or release acceptance is claimed. Prior owned
+results retain their original instruction/layout scopes.
+
+Independent semantic review found no blocking issue and confirmed exact field
+bindings, bounded lookahead and unchanged pair-pop handling. Actual frame
+provenance and restored-state/runtime proofs remain open.

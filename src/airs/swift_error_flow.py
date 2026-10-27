@@ -21,15 +21,15 @@ from .types import InputError, Limits, MachOImage
 
 MODEL = 'swift-sync-error-edges-v4'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v11'
+REGION_MODEL = 'swift-sync-error-region-v12'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v5'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v3'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v9'
-SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v8'
-ERROR_CONSTANT_MODEL = 'swift-error-constant-v9'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v9'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v10'
+SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v9'
+ERROR_CONSTANT_MODEL = 'swift-error-constant-v10'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v10'
 SHARED_WORDS = 8
 
 
@@ -222,6 +222,14 @@ def _shared_return_tail(data: bytes, function, join: int) -> dict | None:
                         and 0 < restore.immediate <= 496 and restore.immediate % 16 == 0
                         and terminal.kind == 'ret'):
                     continue
+                # Split pair: LR from SP+8, then pop FP from SP+0 and advance by 16.
+                if (restore.kind == 'xldr' and restore.rn == 31 and restore.rd == 30
+                        and restore.immediate == 8 and terminal.kind == 'xldr_post'
+                        and terminal.rn == 31 and terminal.rd == 29 and terminal.immediate == 16
+                        and index + 3 < SHARED_WORDS):
+                    following, _ = _bounded_instruction(data, function, pc + 12)
+                    if following.kind == 'ret':
+                        continue
                 return None
             if (instruction.kind == 'add' and instruction.rd == instruction.rn == 31
                     and 0 < instruction.immediate <= 4096 and instruction.immediate % 16 == 0):

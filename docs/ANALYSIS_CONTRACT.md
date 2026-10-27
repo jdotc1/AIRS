@@ -1207,3 +1207,12 @@ word decoding reuses existing field/sign helpers; explicit writeback evidence
 does not establish frame or runtime state. Bounds, source proof restrictions
 and arm/post-call subsets retain prior scope. Twelve new and 272 affected
 synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md for model identities.
+
+## Exact split FP/LR restore tails
+
+After an exact FP-to-SP reset, a bounded LDR x30,[sp,#8], post-index LDR
+x29,[sp],#16 and RET x30 sequence is now admitted as a structural tail.
+Wrong order/fields and incomplete or over-budget lookahead are refused.
+Existing decoding, entry protection and runtime/source proof restrictions
+remain unchanged. Twelve new and 250 affected synthetic/CLI controls passed.
+See SWIFT_ERROR_FLOW.md for model identities and qualification scope.
