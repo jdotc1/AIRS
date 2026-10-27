@@ -89,11 +89,12 @@ class CmpHandlerBoundaryTests(unittest.TestCase):
         over = self.region((0xf10002bf, 0x54000240, *(0xd503201f,)*17, 0xd65f03c0))
         self.assertEqual(over['reason'], 'error_region_budget')
 
-    def test_shared_tail_remains_unqualified(self):
+    def test_shared_tail_is_a_bounded_region(self):
         # EQ -> success +28; final error B at +24 -> shared RET +32.
         region = self.region((0xf10002bf, 0x540000a0, 0xaa1503e0,
             0x9400000c, 0x92800000, 0x14000002, 0xd2800000, 0xd65f03c0))
-        self.assertEqual(region['reason'], 'compare_shared_epilogue_not_qualified')
+        self.assertEqual(region['status'], 'structural_region_candidate')
+        self.assertEqual(region['incoming_validation']['status'], 'no_unexpected_direct_entries')
 
     def test_region_and_presentation_enable_only_bounded_outcomes(self):
         call = report(include_structured_presentation=True)['calls'][0]
@@ -209,7 +210,7 @@ class CmpHandlerDeliveryTests(unittest.TestCase):
                     self.assertIn('Condition (structural):', output.getvalue())
                 else:
                     value = json.loads(output.getvalue())
-                    self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v13')
+                    self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v14')
                     self.assertEqual(value['calls'][0]['error_region']['status'], 'structural_region_candidate')
                     self.assertEqual(value['calls'][0]['presentation']['status'], 'eligible_structural_only')
 

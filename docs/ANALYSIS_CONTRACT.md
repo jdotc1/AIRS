@@ -1350,3 +1350,13 @@ do not preserve unknown full-width call results. WZR semantics and existing
 bounds, entry and proof gates remain intact. Fifteen new and 301 affected methods
 passed with independent review. Unsupported layouts and runtime/source proof
 remain withheld.
+
+## CMP shared restore-tail region evidence
+
+`swift-sync-error-edges-v15`, `swift-sync-error-region-v14` and
+`swift-region-direct-entries-v6` admit bounded flag-screened CMP/B.EQ
+error-fallthrough regions with an existing recognized shared restore/RET tail.
+Only the exact recorded EQ branch to success and qualifying terminal error branch
+are expected entries; other direct entries into protected intervals conflict.
+Shared CMP presentation/outcomes, NE/forward layouts and runtime/source proof
+remain withheld. Thirteen new and 364 affected methods passed in composed runs.

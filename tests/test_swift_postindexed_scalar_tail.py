@@ -103,7 +103,7 @@ class PostScalarCLIControls(unittest.TestCase):
                     value=json.loads(output.getvalue());tail=value['calls'][0]['error_region']['shared_epilogue']
                     self.assertEqual(tail['instructions'][0]['sp_writeback_bytes'],16)
                     self.assertFalse(tail['restore_state_proven'])
-                    self.assertEqual(value['region_incoming_model_version'],'swift-region-direct-entries-v5')
+                    self.assertEqual(value['region_incoming_model_version'],'swift-region-direct-entries-v6')
                 else:
                     self.assertIn('0xf84107f3',output.getvalue())
                     self.assertIn('sp_writeback_bytes',output.getvalue())

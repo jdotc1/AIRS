@@ -1382,3 +1382,31 @@ finding no blocking issue. New controls cover known/unknown and self copies,
 upper-bit clearing, aliases, WZR, canonical encodings, bounds, conflicts and
 JSON/text evidence. B.NE/shared CMP handlers and compiler/runtime/native
 qualification remain open. No decoder, dependency or binary workflow was added.
+
+## Bounded CMP shared-epilogue regions
+
+The current edge model is `swift-sync-error-edges-v15`, region model is
+`swift-sync-error-region-v14` and incoming-entry model is
+`swift-region-direct-entries-v6`. A flag-screened CMP-zero/B.EQ error-fallthrough
+candidate may now reuse the existing bounded success-arm and shared restore/RET
+tail recognizer. The error interval, success arm and shared tail retain their
+raw words, preferred VM bounds and false call-return, join-reachability and
+restore-state proof flags.
+
+Caller-local entry inspection exempts only the exact recorded canonical B.EQ
+at the recorded test PC when its decoded target is the recorded success entry.
+The qualifying terminal error branch remains the only expected error exit into
+the shared tail. Other direct entries into the error interval, success arm or
+tail remain conflicts. Incomplete or unclassified flag windows withhold region
+recovery; an incomplete scan cannot establish absence of entries.
+
+CMP shared-tail presentation and outcomes remain explicitly blocked. B.NE and
+forward-error CMP layouts remain unqualified. No flag-state, dominance, runtime,
+exclusive-entry, restored-state, source reconstruction or handler-semantics
+proof is introduced. Prefix, success-arm and tail limits retain their existing
+bounds; compiler-emission and native/release qualification remain open.
+
+Thirteen new and 364 affected methods passed in bounded composed runs. A prior
+test expectation was updated from unresolved to blocked for shared presentation;
+126 preceding passing selections were retained. No compiler, binary admission or
+native workflow was repeated.
