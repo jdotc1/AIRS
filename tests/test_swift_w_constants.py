@@ -62,10 +62,10 @@ class WConstantBoundaryTests(unittest.TestCase):
         self.assertEqual(call['return_choice']['success']['constant_bits'],'0x0000000000000001')
         self.assertEqual(call['return_choice']['error']['constant_bits'],'0x00000000ffffffff')
 
-    def test_w_movk_postcall_seeds_and_tail_seeds_remain_outside_scope(self):
+    def test_reserved_w_movk_postcall_seeds_and_tail_seeds_remain_outside_scope(self):
         from test_swift_success_result import report
         from test_swift_shared_epilogue import WORDS
-        self.assertEqual(success((wide(1),0x72800020))['calls'][0]['success_constant']['status'],'declined')
+        self.assertEqual(success((wide(1),0x72c00020))['calls'][0]['success_constant']['status'],'declined')
         self.assertEqual(report((wide(1,rd=19),)+WORDS)['calls'][0]['status'],'declined')
         call=report(WORDS[:6]+(wide(1),0xd65f03c0))['calls'][0]
         self.assertEqual(call['success_constant']['status'],'declined')

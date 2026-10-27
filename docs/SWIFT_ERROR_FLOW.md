@@ -867,3 +867,31 @@ Instruction semantics reference: [Arm A64 instruction reference](https://documen
 
 Independent semantic review found no blocking issue and confirmed local adapter
 scope, original-word retention, zero extension and unchanged global decoding.
+
+## Known-seeded W MOVK outcome updates
+
+Region v8 admits the existing decoder's W MOVK form within bounded success/error
+arms. Result v6, success-constant v5, error-constant v6 and return-choice v6
+record the expanded outcome semantics. Incoming v4 is unchanged because the
+existing decoder already classified W MOVK as non-control flow. The Swift seed
+adapter, core decoder/admission, post-call windows and tail whitelists remain
+unchanged. Reserved W shifts 32/48 remain rejected.
+
+For a completely known prior value, MOVK replaces the selected 16-bit lane and
+masks the result to 32 bits, clearing the upper X-register bits. This applies
+even when the seed came from a 64-bit instruction. Unknown values remain unknown,
+including after both W lanes are written; partial-known-bit tracking is outside
+this subset. Unknown overwrites and opaque calls still invalidate state. WZR
+writes are discarded and updated result aliases are conservatively removed.
+
+Twelve new methods and 196 affected controls passed in composed runs. The new
+cases cover seed assembly, upper-bit clearing, repeated lane replacement, unknown
+and invalidated seeds, aliases, WZR, both layouts, opaque calls, reserved shifts,
+bounds and CLI JSON/text. The affected run stopped at an older negative control
+that rejected the newly admitted known-seeded form; that control was changed to
+reserved W encodings. Its corrected run and previously unrun cases passed, while
+165 earlier passes were reused. Independent semantic review found no blocking
+correctness issue. Qualification is synthetic analysis/output; no compiled-image,
+native GUI or release acceptance is added. Existing owned results retain scope.
+
+Instruction semantics reference: [Arm A64 MOVK](https://support.arm.com/documentation/ddi0596/2021-06/Base-Instructions/MOVK--Move-wide-with-keep-).
