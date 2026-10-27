@@ -37,7 +37,7 @@ class NoArgThrowsBoundaryTests(unittest.TestCase):
 
     def test_other_parameterless_result_types_remain_outside_subset(self):
         prefix = '_$s10AIRSNoArgs8validate'
-        for suffix in ('SiyKF', 'SSyKF', 'SbyKF', 'yKF', 'yyyKF'):
+        for suffix in ('SSyKF', 'SbyKF', 'yKF', 'yyyKF'):
             self.assertIsNone(throwing_declaration(prefix + suffix), suffix)
 
     def test_context_identifiers_and_control_bytes_stay_refused(self):
@@ -76,7 +76,7 @@ class NoArgThrowsBoundaryTests(unittest.TestCase):
         self.assertEqual(call['error_region']['layout'], 'success_fallthrough_error_forward')
         self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
         self.assertFalse(call['presentation']['source_reconstruction_allowed'])
-        self.assertEqual(value['model_version'], 'swift-sync-error-edges-v3')
+        self.assertEqual(value['model_version'], 'swift-sync-error-edges-v4')
         self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v5')
         self.assertEqual(value['region_incoming_model_version'], 'swift-region-direct-entries-v3')
         self.assertEqual(value['structured_presentation_model_version'], 'swift-structural-presentation-v3')
@@ -100,7 +100,7 @@ class NoArgThrowsCLIControls(unittest.TestCase):
             self.assertEqual(status, 0)
             value = json.loads(output.getvalue())
             self.assertEqual(value['calls'][0]['callee']['parameters'], [])
-            self.assertEqual(value['model_version'], 'swift-sync-error-edges-v3')
+            self.assertEqual(value['model_version'], 'swift-sync-error-edges-v4')
         from test_swift_forward_error_arm import WORDS
         from airs.swift_error_text import render_swift_error_text
         value = recover_swift_error_flow(image(WORDS, symbol=SYMBOL), include_error_regions=True,

@@ -1029,3 +1029,18 @@ Other parameterless returns, async/typed/generic/method/thunk forms still refuse
 Region v5, entry v3, presentation v3 and unwind identities are unchanged. One new
 owned compiler case and focused source/CLI/renderer controls qualify this subset;
 symbol declarations do not authenticate runtime targets. See SWIFT_ERROR_FLOW.md.
+
+## Parameterless throwing Int extension
+
+Edge v4 adds only exact `SiyKF` free-function declarations: no parameters and
+Swift.Int result, ordinary synchronous untyped throws. Prior declaration facts
+remain unchanged. Other result types, methods, async, typed throws, generics and
+thunks remain refused. Region v5, incoming v3 and presentation v3 are unchanged;
+source reconstruction and runtime identity proof remain disabled.
+
+Five new focused tests and 38 affected declaration/renderer/component controls
+passed in composed runs. One initial test incorrectly compared a declaration
+with a call record containing additional attribution fields; only that changed
+test was rerun after correcting its comparison. Existing owned-image results
+are reused for their original signatures; this extension has synthetic source
+and renderer qualification, not a new compiled-image or installed-app claim.
