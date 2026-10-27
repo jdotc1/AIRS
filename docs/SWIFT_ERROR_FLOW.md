@@ -1156,3 +1156,33 @@ qualification. Existing CBZ/CBNZ behavior retains its scope. Twenty new focused
 methods and 121 affected methods passed; independent semantic review found no
 blocking issue. Prior owned-image results were reused without repeating compiler,
 disassembly, hashing, or binary-admission workflows.
+
+## Bounded CMP/B.EQ error-fallthrough regions
+
+The current edge model is `swift-sync-error-edges-v7` and the region model is
+`swift-sync-error-region-v13`. A recovered CMP-zero/B.EQ edge can now feed the
+existing bounded error-interval decoder when caller-local flag-entry inspection
+is complete, fully classified and free of observed conflicts. Its record must
+match this call's protected window and adjacent comparison. Error starts at the
+branch fallthrough; success must be later. Missing, stale, partial, unknown or
+conflicting flag-entry evidence declines region recovery.
+
+The existing 16-word region bound and instruction subset apply. Raw words,
+preferred VM bounds, opaque call targets, ordinary incoming-entry evidence and
+false call-return/join-reachability proof flags remain explicit. A direct entry
+into the error interval remains visible as an incoming conflict, independently
+of the flag window. B.NE/forward-error layouts and shared epilogues remain
+unqualified for CMP-based handlers. Other instruction forms remain conservative.
+
+All CMP-based structured presentation and outcomes remain explicitly blocked,
+even when this simple region is recovered. The candidate does not establish
+catch types, handler meaning, NZCV state, dominance, exclusive entry, source
+reconstruction or runtime behavior. Compiler-emission and native/release gates
+remain open. Existing CBZ/CBNZ behavior retains its prior scope.
+
+Twenty-one new methods passed across bounded runs, including geometry/window
+binding, opaque intervals, refusals, limits, incoming conflicts, CLI JSON/text
+and exact downstream refusal states. Two hundred eight affected methods passed.
+Accepted pre-pause results were reused; only changed failed/strengthened and
+new selections ran after resumption. No compiler, disassembly, binary admission,
+provenance hashing or native workflow was repeated.

@@ -1259,3 +1259,15 @@ No NZCV, dominance, exclusive-entry, indirect/external-entry or runtime proof is
 implied by a complete scan with no observed conflict. Handler and structured
 outcome gates remain closed for this form. Twenty new and 121 affected controls
 passed with independent review; no owned binary workflow was repeated.
+
+## Screened CMP/B.EQ handler intervals
+
+`swift-sync-error-edges-v7` with `swift-sync-error-region-v13` admits bounded
+error-fallthrough interval candidates for CMP-zero/B.EQ only. Recovery requires
+complete clear caller-local flag-entry evidence bound to the exact call/window,
+adjacent comparison and consistent fallthrough/success geometry. The existing
+instruction subset, 16-word limit, raw evidence and opaque-call restrictions
+apply. Error-interval incoming conflicts remain separate from flag-window checks.
+B.NE, shared tails and all CMP structured outcomes remain withheld. This is
+structural evidence, not NZCV, dominance, exclusive-entry, source or runtime
+proof. Twenty-one new and 208 affected methods passed; prior results were reused.

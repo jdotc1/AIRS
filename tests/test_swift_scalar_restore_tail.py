@@ -103,7 +103,7 @@ class ScalarRestoreCLIControls(unittest.TestCase):
                     value=json.loads(output.getvalue());call=value['calls'][0]
                     self.assertEqual(call['success_result']['status'],'preserved_register_candidate')
                     self.assertFalse(call['error_region']['shared_epilogue']['restore_state_proven'])
-                    self.assertEqual(value['error_region_model_version'],'swift-sync-error-region-v12')
+                    self.assertEqual(value['error_region_model_version'],'swift-sync-error-region-v13')
                 else:
                     self.assertIn('0xf9400bf3',output.getvalue())
                     self.assertIn('xldr',output.getvalue())

@@ -21,7 +21,7 @@ class FlagEntryFirstTests(unittest.TestCase):
         self.assertEqual(entry['protected_end_pc_exclusive'], hex(BASE+12))
         self.assertFalse(entry['flag_state_proven'])
         self.assertFalse(entry['exclusive_entry_proven'])
-        self.assertEqual(call['error_region']['reason'], 'compare_branch_region_not_qualified')
+        self.assertEqual(call['error_region']['reason'], 'error_region_instruction_unmodeled')
 
 class FlagEntryBoundaryTests(unittest.TestCase):
     def entry(self, tail=(), **kwargs):
