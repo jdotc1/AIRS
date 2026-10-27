@@ -651,3 +651,12 @@ tail checks. Both PCs and the encoded/logical condition remain bound in the choi
 Fifteen new and 215 affected methods passed. Success-path literals, B.NE/shared
 CMP layouts, compiler-emission and runtime proof remain open. No native release
 or installed-app qualification is added. See SWIFT_ERROR_FLOW.md.
+
+## CMP success-literal recovery
+
+Screened simple CMP/B.EQ handlers now support bounded X MOVZ/MOVN success seeds
+and copies, with independent protected-tail validation and literal-versus-literal
+choices. Error aliases, exact raw-word binding and false proof flags remain
+conservative. Twenty-four new and 256 affected methods passed. W/MOVK success
+prefixes, B.NE/shared CMP layouts and compiler/runtime/native qualification remain
+open. See SWIFT_ERROR_FLOW.md.

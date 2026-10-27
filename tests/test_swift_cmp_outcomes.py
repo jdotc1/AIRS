@@ -91,9 +91,9 @@ class CmpOutcomeBoundaryTests(unittest.TestCase):
             call['presentation']['display_plan']['condition'][key] = replacement
             self.assertEqual(_return_choice(call)['status'], 'unresolved')
 
-    def test_success_literal_gate_and_proof_flags_remain_closed(self):
+    def test_unknown_success_literal_and_proof_flags_remain_closed(self):
         call = report()['calls'][0]
-        self.assertEqual(call['success_constant']['reason'], 'compare_outcome_recovery_not_qualified')
+        self.assertEqual(call['success_constant']['reason'], 'success_x0_constant_not_known')
         for key in ('success_result', 'error_constant', 'return_choice'):
             for proof in ('runtime_value_proven', 'source_reconstruction_allowed',
                           'exclusive_path_proven', 'caller_return_type_proven'):

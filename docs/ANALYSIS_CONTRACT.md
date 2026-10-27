@@ -1295,3 +1295,15 @@ condition/outcome binding remain checked. Success-path literals, B.NE and shared
 CMP tails remain withheld. Every source/runtime/exclusive-path/caller-return-type
 proof flag remains false. Fifteen new and 215 affected methods passed; prior
 compiler, binary and native qualification retain their original scopes.
+
+## CMP success-literal evidence
+
+`swift-sync-error-edges-v10`, `swift-success-constant-v10`,
+`swift-error-constant-v12` and `swift-return-choice-v12` admit bounded X MOVZ/MOVN
+success prefixes for screened simple CMP/B.EQ handlers. Seed writes invalidate
+error aliases; literal prefixes never widen CBZ/CBNZ. Constant knowledge starts
+empty, exact CMP/EQ words remain bound, and success literals receive independent
+cached caller-local tail-entry validation. Error-tail reuse and choice require
+exact outcome identity/proof binding and exactly one success source. Prefix/tail
+bounds remain eight words each. W/MOVK prefixes, NE/shared layouts and runtime or
+source proof remain withheld. Twenty-four new and 256 affected methods passed.
