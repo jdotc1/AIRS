@@ -76,9 +76,9 @@ class NoArgThrowsBoundaryTests(unittest.TestCase):
         self.assertEqual(call['error_region']['layout'], 'success_fallthrough_error_forward')
         self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
         self.assertFalse(call['presentation']['source_reconstruction_allowed'])
-        self.assertEqual(value['model_version'], 'swift-sync-error-edges-v14')
-        self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v13')
-        self.assertEqual(value['region_incoming_model_version'], 'swift-region-direct-entries-v5')
+        self.assertEqual(value['model_version'], 'swift-sync-error-edges-v15')
+        self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v14')
+        self.assertEqual(value['region_incoming_model_version'], 'swift-region-direct-entries-v6')
         self.assertEqual(value['structured_presentation_model_version'], 'swift-structural-presentation-v4')
         self.assertIn('Swift.Void', render_swift_error_text(value))
 
@@ -100,7 +100,7 @@ class NoArgThrowsCLIControls(unittest.TestCase):
             self.assertEqual(status, 0)
             value = json.loads(output.getvalue())
             self.assertEqual(value['calls'][0]['callee']['parameters'], [])
-            self.assertEqual(value['model_version'], 'swift-sync-error-edges-v14')
+            self.assertEqual(value['model_version'], 'swift-sync-error-edges-v15')
         from test_swift_forward_error_arm import WORDS
         from airs.swift_error_text import render_swift_error_text
         value = recover_swift_error_flow(image(WORDS, symbol=SYMBOL), include_error_regions=True,

@@ -691,3 +691,11 @@ zero extension, unknown-state invalidation and conservative error-alias handling
 Fifteen new and 301 affected methods passed with independent review. Narrow call
 results remain unpreserved; B.NE/shared CMP layouts and compiler/runtime/native
 qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+## CMP shared-epilogue regions
+
+Flag-screened CMP/B.EQ error-fallthrough regions now retain bounded success arms,
+shared restore/RET tail words and caller-local entry evidence. The exact recorded
+EQ edge is distinguished from unexpected entries. Thirteen new and 364 affected
+methods passed. Shared CMP presentation/outcomes, NE/forward handlers and
+compiler/runtime/native qualification remain open. See SWIFT_ERROR_FLOW.md.

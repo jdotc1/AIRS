@@ -19,12 +19,12 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v14'
+MODEL = 'swift-sync-error-edges-v15'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v13'
+REGION_MODEL = 'swift-sync-error-region-v14'
 REGION_WORDS = 16
-INCOMING_MODEL = 'swift-region-direct-entries-v5'
+INCOMING_MODEL = 'swift-region-direct-entries-v6'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v4'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v11'
@@ -411,8 +411,6 @@ def _error_region(data: bytes, function, edge: dict) -> dict:
             row['target_pc'] = hex(join)
         elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk', 'wmov'):
             return {**result, 'reason': 'error_region_instruction_unmodeled'}
-    if edge.get('test_kind') == 'cmp_zero_bcond' and shared:
-        return {**result, 'reason': 'compare_shared_epilogue_not_qualified'}
     return {**result, 'status': 'structural_region_candidate', 'start_pc': hex(start),
             'join_pc': hex(join), 'end_pc_exclusive': hex(boundary), 'opaque_call_count': calls, **shared,
             'call_return_proven': False, 'join_reachability_proven': False}
@@ -478,9 +476,22 @@ def _region_incoming(scan: dict, region: dict, call: dict | None = None) -> dict
             forward = region.get('layout') == 'success_fallthrough_error_forward'
             success = int(region['success_interval']['start_pc'], 16)
             success_end = int(region['success_interval']['end_pc_exclusive'], 16)
-            expected_test = (call is not None and source == int(call['test_pc'], 16)
+            expected_test = (call is not None and call.get('test_kind') != 'cmp_zero_bcond'
+                             and source == int(call['test_pc'], 16)
                              and edge['kind'] == ('xcbnz' if forward else 'xcbz')
                              and target == (start if forward else success))
+            if (call is not None and not forward and call.get('test_kind') == 'cmp_zero_bcond'
+                    and call.get('test_condition') == 'eq' and source == int(call['test_pc'], 16)
+                    and target == success and edge['kind'] == 'bcond'):
+                try:
+                    recorded = call['window'][-1]
+                    word = edge['word']
+                    expected_test = (recorded['pc'] == call['test_pc'] and recorded['word'] == word
+                                     and re.fullmatch(r'0x[0-9a-f]{8}', word) is not None
+                                     and int(word, 16) & 0xff00001f == 0x54000000
+                                     and source + decode_instruction(int(word, 16), source).immediate == target)
+                except (KeyError, TypeError, IndexError, ValueError, ModelError):
+                    expected_test = False
             expected_exit = (source == (success_end - 4 if forward else end - 4)
                              and edge['kind'] == 'b' and target == join)
             if expected_test:
@@ -517,6 +528,8 @@ def _presentation_eligibility(call: dict) -> dict:
     region = call.get('error_region')
     if not isinstance(region, dict) or region.get('status') != 'structural_region_candidate':
         return {**result, 'status': 'blocked', 'reason': 'region_not_recovered'}
+    if call.get('test_kind') == 'cmp_zero_bcond' and 'shared_epilogue' in region:
+        return {**result, 'status': 'blocked', 'reason': 'compare_shared_presentation_not_qualified'}
     entry = region.get('incoming_validation')
     if not isinstance(entry, dict):
         return {**result, 'reason': 'incoming_validation_missing'}
@@ -1059,7 +1072,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     if any(row.get('test_kind') == 'cmp_zero_bcond' for row in calls):
-        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ intervals may pair a call result or bounded X/W success literal with error literal bits; W copies do not preserve unknown full-width call results or error aliases. Shared tails and NE handlers remain withheld.')
+        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ shared-tail regions remain structural evidence; their presentation and outcomes, and NE handlers, remain withheld.')
     return report
 
 
