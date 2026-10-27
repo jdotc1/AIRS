@@ -1442,3 +1442,13 @@ error-path literal. Full condition, call, arm and shared-return bindings and
 false proof flags are required. B.NE success literals remain withheld. The
 result is structural evidence and does not establish runtime behavior, source,
 call return, handler semantics, exclusive entry or restored state.
+
+## CMP/B.NE success-literal evidence
+
+For screened CMP-zero/B.NE forward-error regions, `swift-success-constant-v16`
+tracks literal bits through the caller-bound post-call prefix and fallthrough
+success arm. Complete flag and entry evidence and exact terminal-branch and
+shared-tail bindings are required. `swift-return-choice-v20` may pair exactly
+one qualified success literal or preserved Int result with an error literal.
+Unknown values and conflicts remain unresolved; no runtime, source, call-return,
+exclusive-entry, handler or restored-state proof is implied.

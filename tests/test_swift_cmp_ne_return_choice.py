@@ -29,8 +29,8 @@ class NeReturnChoiceBoundaryTests(unittest.TestCase):
 
     def test_clobbered_or_narrow_result_cannot_become_choice(self):
         from test_swift_cmp_ne_handler import WORDS
-        for words in (WORDS, (0x2a0003e0, *PRESERVED)):
-            self.assertEqual(report(words)['calls'][0]['return_choice']['status'], 'unresolved')
+        self.assertEqual(report(WORDS)['calls'][0]['return_choice']['success']['kind'], 'constant_bits')
+        self.assertEqual(report((0x2a0003e0, *PRESERVED))['calls'][0]['return_choice']['status'], 'unresolved')
 
     def test_error_literal_before_opaque_call_is_not_choice(self):
         words = (*PRESERVED[:4], 0x92800000, 0x94000010, PRESERVED[6])

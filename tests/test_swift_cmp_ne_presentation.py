@@ -13,10 +13,10 @@ class NePresentationFirstTests(unittest.TestCase):
         self.assertEqual(presentation['display_plan']['condition']['error_when'], 'nonzero')
         self.assertEqual(presentation['display_plan']['error_interval']['start_pc'], hex(BASE+20))
         self.assertFalse(presentation['source_reconstruction_allowed'])
-        for key in ('success_result', 'success_constant'):
-            self.assertEqual(call[key]['status'], 'declined')
+        self.assertEqual(call['success_result']['status'], 'declined')
+        self.assertEqual(call['success_constant']['status'], 'constant_register_candidate')
         self.assertEqual(call['error_constant']['status'], 'constant_register_candidate')
-        self.assertEqual(call['return_choice']['status'], 'unresolved')
+        self.assertEqual(call['return_choice']['status'], 'structural_choice_candidate')
 
 
 def inspect(call):
@@ -89,13 +89,13 @@ class NePresentationBoundaryTests(unittest.TestCase):
         call = deepcopy(report()['calls'][0])
         call['success_constant'] = {'status': 'constant_register_candidate'}
         call['error_constant'] = {'status': 'constant_register_candidate'}
-        self.assertEqual(_return_choice(call)['reason'], 'compare_ne_outcomes_not_qualified')
+        self.assertEqual(_return_choice(call)['status'], 'unresolved')
 
     def test_text_exposes_ne_plan_and_withheld_outcomes(self):
         from airs.swift_error_text import render_swift_error_text
         text = render_swift_error_text(report())
         for expected in ('Condition (structural):', '"test_condition": "ne"',
-                         'compare_ne_outcomes_not_qualified', 'Source reconstruction: disabled'):
+                         'structural_choice_candidate', 'Source reconstruction: disabled'):
             self.assertIn(expected, text)
 
     def test_missing_caller_bytes_and_forged_call_metadata_decline(self):
@@ -132,4 +132,4 @@ class NePresentationBoundaryTests(unittest.TestCase):
             self.assertEqual(status, 0)
             call = json.loads(output.getvalue())['calls'][0]
             self.assertEqual(call['presentation']['display_plan']['condition']['test_condition'], 'ne')
-            self.assertEqual(call['return_choice']['reason'], 'compare_ne_outcomes_not_qualified')
+            self.assertEqual(call['return_choice']['status'], 'structural_choice_candidate')

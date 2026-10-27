@@ -28,7 +28,7 @@ class NeSuccessResultBoundaryTests(unittest.TestCase):
     def test_literal_clobber_or_unrestored_result_is_declined(self):
         call = report()['calls'][0]
         self.assertEqual(call['success_result']['status'], 'declined')
-        self.assertEqual(call['return_choice']['status'], 'unresolved')
+        self.assertEqual(call['return_choice']['success']['kind'], 'constant_bits')
         words = (0xaa0003f3, 0xaa1f03e0, *PRESERVED)
         self.assertEqual(report(words)['calls'][0]['success_result']['reason'], 'result_not_restored_to_x0')
 
@@ -80,7 +80,7 @@ class NeSuccessResultBoundaryTests(unittest.TestCase):
     def test_text_retains_candidate_and_closed_choice(self):
         from airs.swift_error_text import render_swift_error_text
         text = render_swift_error_text(report(PRESERVED))
-        for expected in ('preserved_register_candidate', 'compare_ne_outcomes_not_qualified', 'Source reconstruction: disabled'):
+        for expected in ('preserved_register_candidate', 'success_x0_constant_not_known', 'Source reconstruction: disabled'):
             self.assertIn(expected, text)
 
     def test_void_callee_and_x0_error_alias_are_not_result_candidates(self):
@@ -96,7 +96,7 @@ class NeSuccessResultBoundaryTests(unittest.TestCase):
         from copy import deepcopy
         from airs.swift_error_flow import _return_choice
         call = report(PRESERVED)['calls'][0]
-        self.assertEqual(call['success_constant']['reason'], 'compare_ne_outcomes_not_qualified')
+        self.assertEqual(call['success_constant']['reason'], 'success_x0_constant_not_known')
         altered = deepcopy(call); altered['return_choice'] = {}; altered['error_constant'] = {'status': 'constant_register_candidate'}
         self.assertEqual(_return_choice(altered)['status'], 'unresolved')
 
