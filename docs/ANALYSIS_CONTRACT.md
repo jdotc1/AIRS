@@ -1198,3 +1198,12 @@ x19..x30 at scaled offsets through 4096 bytes. No x0, W-width, FP-base or indexe
 load is added. Tail/prefix/entry bounds remain unchanged and restored-state/frame
 proof stays false. Twelve new and 226 affected synthetic/CLI controls passed
 with independent review. See SWIFT_ERROR_FLOW.md for model scopes and limits.
+
+## Terminal scalar post-index tail candidates
+
+Bounded tails now admit SP post-index 64-bit LDR into x19..x30 with positive
+16-byte-aligned increments through 240, immediately followed by RET x30. Local
+word decoding reuses existing field/sign helpers; explicit writeback evidence
+does not establish frame or runtime state. Bounds, source proof restrictions
+and arm/post-call subsets retain prior scope. Twelve new and 272 affected
+synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md for model identities.

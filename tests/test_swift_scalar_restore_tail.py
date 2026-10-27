@@ -28,7 +28,7 @@ class ScalarRestoreBoundaryTests(unittest.TestCase):
         self.assertEqual(with_tail((load(19,4104),0xd65f03c0))['calls'][0]['success_result']['status'],'declined')
 
     def test_result_volatile_zero_and_frame_base_loads_refuse(self):
-        for word in (load(0),load(18),load(31),load(19,rn=29),0xb9400bf3,0xf84107f3):
+        for word in (load(0),load(18),load(31),load(19,rn=29),0xb9400bf3,0xf8410ff3):
             self.assertEqual(with_tail((word,0xd65f03c0))['calls'][0]['success_result']['status'],'declined')
 
     def test_mixed_pair_scalar_and_stack_adjustment_tail(self):
@@ -103,7 +103,7 @@ class ScalarRestoreCLIControls(unittest.TestCase):
                     value=json.loads(output.getvalue());call=value['calls'][0]
                     self.assertEqual(call['success_result']['status'],'preserved_register_candidate')
                     self.assertFalse(call['error_region']['shared_epilogue']['restore_state_proven'])
-                    self.assertEqual(value['error_region_model_version'],'swift-sync-error-region-v10')
+                    self.assertEqual(value['error_region_model_version'],'swift-sync-error-region-v11')
                 else:
                     self.assertIn('0xf9400bf3',output.getvalue())
                     self.assertIn('xldr',output.getvalue())
