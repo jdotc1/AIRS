@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from .report_summary_text import _BoundedText
-from .swift_error_flow import MODEL, REGION_MODEL, INCOMING_MODEL, PRESENTATION_MODEL
+from .swift_error_flow import MODEL, REGION_MODEL, INCOMING_MODEL, PRESENTATION_MODEL, SUCCESS_RESULT_MODEL
 from .types import InputError
 
 MAXIMUM_TEXT_BYTES = 1024 * 1024
@@ -28,6 +28,8 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
             or report.get('region_incoming_model_version') != INCOMING_MODEL
             or report.get('structured_presentation_model_version') != PRESENTATION_MODEL):
         raise InputError('swift_text_models', 'Swift text requires current in-process edge, region, entry and presentation models')
+    if report.get('success_result_model_version') not in (None, SUCCESS_RESULT_MODEL):
+        raise InputError('swift_text_models', 'Unsupported success-result evidence model')
     lines = _BoundedText(min(maximum_bytes, MAXIMUM_TEXT_BYTES))
 
     def line(label, value):
@@ -46,6 +48,8 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
     line('Image identity (producer facts; not reverified)', report['image'])
     line('Models', {key: report[key] for key in ('model_version', 'error_region_model_version',
                                                'region_incoming_model_version', 'structured_presentation_model_version')})
+    if 'success_result_model_version' in report:
+        line('Success-result model', report['success_result_model_version'])
     line('Full producer summary (not filtered by displayed rows)', report['summary'])
     line('Word scan complete', report['word_scan_complete'])
     line('Call details complete', report['call_details_complete'])
@@ -65,6 +69,13 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
             line('  Callee declaration (not runtime identity)', call['callee'])
         if 'reason' in call:
             line('  Edge decline reason', call['reason'])
+        if 'success_result' in call:
+            if report.get('success_result_model_version') != SUCCESS_RESULT_MODEL:
+                raise InputError('swift_text_models', 'Success-result evidence requires its current model')
+            result = call['success_result']
+            line('  Success result (selected-path register evidence only)',
+                 {key: value for key, value in result.items() if key != 'instructions'})
+            rows('    Result-path instruction', result.get('instructions', []), 24)
         line('  Recorded return edges', {key: call[key] for key in ('test_pc', 'tested_register', 'success_pc', 'error_pc') if key in call})
         rows('  Post-call instruction evidence', call.get('window', []), MAX_WINDOW_ROWS)
         line('  Presentation', {key: presentation[key] for key in ('status', 'reason')})
