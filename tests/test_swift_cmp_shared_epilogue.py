@@ -25,7 +25,7 @@ class CmpSharedFirstTests(unittest.TestCase):
         self.assertEqual(region['incoming_validation']['status'], 'no_unexpected_direct_entries')
         self.assertFalse(region['shared_epilogue']['restore_state_proven'])
         self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
-        self.assertEqual(call['return_choice']['status'], 'unresolved')
+        self.assertEqual(call['return_choice']['status'], 'structural_choice_candidate')
 
 class CmpSharedBoundaryTests(unittest.TestCase):
     def test_direct_entries_into_error_success_or_tail_remain_conflicts(self):
@@ -94,13 +94,13 @@ class CmpSharedBoundaryTests(unittest.TestCase):
                 incoming = _region_incoming(modified, region, altered)
                 self.assertEqual(incoming['status'], 'unexpected_direct_entries')
 
-    def test_shared_region_enables_presentation_but_not_outcomes(self):
+    def test_shared_region_enables_bounded_outcomes(self):
         call = report()['calls'][0]
         self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
-        for key in ('success_result', 'success_constant'):
-            self.assertEqual(call[key]['status'], 'declined')
+        self.assertEqual(call['success_result']['status'], 'declined')
+        self.assertEqual(call['success_constant']['status'], 'constant_register_candidate')
         self.assertEqual(call['error_constant']['status'], 'constant_register_candidate')
-        self.assertEqual(call['return_choice']['status'], 'unresolved')
+        self.assertEqual(call['return_choice']['status'], 'structural_choice_candidate')
 
 class CmpSharedEvidenceTests(unittest.TestCase):
     def test_opaque_error_call_into_success_or_tail_is_a_conflict(self):
@@ -120,7 +120,7 @@ class CmpSharedEvidenceTests(unittest.TestCase):
         from airs.swift_error_text import render_swift_error_text
         text = render_swift_error_text(report())
         for expected in ('Shared tail interval evidence', '0xa9427bfd', '0xd65f03c0',
-                         'Incoming validation', 'compare_shared_success_literal_not_qualified',
+                         'Incoming validation', 'structural_choice_candidate',
                          'Condition (structural):', 'Source reconstruction: disabled'):
             self.assertIn(expected, text)
 

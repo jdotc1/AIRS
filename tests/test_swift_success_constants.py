@@ -13,7 +13,7 @@ class SuccessConstantFirstTests(unittest.TestCase):
         self.assertFalse(constant['depends_on_call_result'])
         self.assertFalse(constant['runtime_value_proven'])
         self.assertEqual(call['success_result']['status'], 'declined')
-        self.assertEqual(value['success_constant_model_version'], 'swift-success-constant-v14')
+        self.assertEqual(value['success_constant_model_version'], 'swift-success-constant-v15')
 
 def success(body, tail=None, error_call=0x94000010):
     if tail is None:
@@ -85,7 +85,7 @@ class SuccessConstantBoundaryTests(unittest.TestCase):
         self.assertNotIn('success_constant_model_version', value)
         value = report(WORDS)
         text = render_swift_error_text(value)
-        self.assertIn('Success-constant model: "swift-success-constant-v14"', text)
+        self.assertIn('Success-constant model: "swift-success-constant-v15"', text)
         self.assertIn('0x0000000000000000', text)
         self.assertIn('Constant-path instruction', text)
         value['success_constant_model_version'] = 'foreign'

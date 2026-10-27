@@ -715,3 +715,12 @@ binding. Fourteen new and 284 affected methods passed, and independent review
 found no blocking issue. Shared CMP success literals and NE/forward layouts
 remain open; compiler, runtime and native qualification retain their existing
 scope. See SWIFT_ERROR_FLOW.md.
+
+## CMP shared success literals
+
+Screened CMP/B.EQ shared outcomes now include bounded success literals, with
+ordered prefix and success-arm transfer and exact recorded-arm and tail binding.
+Independent review prompted a stale-arm fix, and focused and affected checks
+passed after an obsolete refusal expectation was updated. Runtime, compiler and
+native qualification remain within their earlier scope; NE and forward CMP
+handlers remain open. See SWIFT_ERROR_FLOW.md.

@@ -1383,3 +1383,13 @@ clobbered; the return choice then remains unresolved. Shared CMP success
 literals, NE/forward layouts and runtime/source/exclusive-entry/restore-state
 proof remain withheld. Fourteen new and 284 affected methods passed, with an
 independent semantic review; prior compiler and native evidence was reused.
+
+## CMP shared success literal evidence
+
+For screened CMP-zero/B.EQ shared tails, `swift-success-constant-v15` tracks
+literal assignments through the post-call prefix and selected success arm.
+The decoded arm and shared tail must match the recorded evidence;
+`swift-return-choice-v18` binds the condition and shared return as before.
+The result is structural only and does not establish execution, exclusive
+entry, caller return type, handler behavior, restored state or source. NE and
+forward CMP handlers remain withheld.
