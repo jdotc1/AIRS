@@ -965,3 +965,35 @@ repeat checks.
 Independent review found no blocking fixture or evidence issue. It confirmed
 that the relocated windows match retained disassembly and that compiled W-copy
 coverage must remain open. No source equivalence or runtime claim is added.
+
+## Scalar SP-relative restore-tail candidates
+
+Region v10 also admits the existing decoder's unsigned scaled 64-bit LDR form
+inside bounded return tails. The destination must be x19..x30, the base must
+be SP and the decoded byte offset must be an eight-byte multiple from zero to
+4096. The offset ceiling is this structural subset's bound, not a statement
+about actual frame size. Existing core decoding and image admission are reused.
+
+Scalar loads may mix with existing pair loads and SP adjustments within the
+eight-word tail limit, ending in exact RET x30. W loads, x0/volatile/xzr
+destinations, FP-based loads, stores, indexed loads and larger offsets remain
+refused. No new instruction is admitted in error/success arms or post-call
+windows. Result v8, success-constant v7, error-constant v8 and return-choice v8
+record the expanded tail scope; edge, entry and presentation identities retain
+their prior meaning.
+
+The new loads cannot write x0. Recorded result aliases describe the state
+before the tail, not saved registers after the loads. `restore_state_proven`
+remains false: stack contents, frame validity, restored LR, memory-access success
+and runtime return are not established. All runtime/source proof restrictions,
+scanned-prefix and direct-entry protections remain in force.
+
+Twelve new methods and 226 affected controls passed in composed runs. New cases
+cover register/offset boundaries, excluded modes, scalar/pair mixing, exact and
+over-limit tails, missing/nonstandard returns, both arm geometries, success-entry
+fallback, entry conflicts, partial scans, copied results and CLI raw words.
+Independent semantic review found no blocking correctness issue. Qualification
+is synthetic analysis and output; no new compiled-image, native GUI or release
+acceptance is claimed. Previous owned results retain their original scope.
+
+Instruction semantics reference: [Arm LDR immediate reference](https://documentation-service.arm.com/static/6245c734b059dc5ff9a8bdab).

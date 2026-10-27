@@ -21,15 +21,15 @@ from .types import InputError, Limits, MachOImage
 
 MODEL = 'swift-sync-error-edges-v4'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v9'
+REGION_MODEL = 'swift-sync-error-region-v10'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v4'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v3'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v7'
-SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v6'
-ERROR_CONSTANT_MODEL = 'swift-error-constant-v7'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v7'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v8'
+SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v7'
+ERROR_CONSTANT_MODEL = 'swift-error-constant-v8'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v8'
 SHARED_WORDS = 8
 
 
@@ -185,6 +185,10 @@ def _shared_return_tail(data: bytes, function, join: int) -> dict | None:
                 return {'start_pc': hex(join), 'end_pc_exclusive': hex(pc + 4),
                         'instructions': tail, 'restore_state_proven': False}
             if instruction.kind == 'nop':
+                continue
+            if (instruction.kind == 'xldr' and instruction.rn == 31
+                    and 19 <= instruction.rd <= 30 and 0 <= instruction.immediate <= 4096
+                    and instruction.immediate % 8 == 0):
                 continue
             if (instruction.kind == 'ldp' and instruction.rn == 31 and instruction.addressing == 'offset'
                     and instruction.immediate >= 0 and 19 <= instruction.rd <= 30 and 19 <= instruction.rt2 <= 30):
