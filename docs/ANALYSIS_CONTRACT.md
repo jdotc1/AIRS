@@ -1462,3 +1462,13 @@ fixture. Five new methods passed, including refusal cases. This is structural
 assembler-backed evidence; it does not qualify Swift frontend emission, runtime,
 ABI/CFI, restored state or native release behavior. The existing provider object
 and prior results were reused.
+
+## Owned frontend post-call arithmetic observation
+
+A newly compiled owned Swift throwing-call example emitted CBZ and a wrapping
+ADD on its success path. The call edge was recovered; the shared error region,
+structural plan and return choice remained declined or unresolved. Ten emitted
+words matched the relocated regression fixture and five report words matched
+retained disassembly; four new regression methods passed. The image was not
+executed. This is a conservative refusal, not CMP/B.NE frontend qualification or
+runtime, ABI/CFI, arithmetic-recovery or native release proof.
