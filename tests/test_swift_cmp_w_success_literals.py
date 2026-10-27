@@ -54,10 +54,10 @@ class CmpWBoundaryTests(unittest.TestCase):
         self.assertEqual(call['success_constant']['constant_bits'], '0x000000000000002a')
         self.assertEqual(call['return_choice']['status'], 'structural_choice_candidate')
 
-    def test_w_copy_remains_unmodeled(self):
+    def test_unknown_w_copy_does_not_create_literal(self):
         for word in (0x2a1303e0,):
             call = report((0x52800540, word, *WORDS[1:], 0xd65f03c0))['calls'][0]
-            self.assertEqual(call['status'], 'declined')
+            self.assertEqual(call['success_constant']['status'], 'declined')
 
     def test_w_seed_does_not_enable_cbz_or_narrow_error_test(self):
         for branch in (0xb4000095, 0xb5000095, 0x34000095):

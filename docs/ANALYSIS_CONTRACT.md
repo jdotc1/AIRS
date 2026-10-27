@@ -1339,3 +1339,14 @@ remains unknown; full error aliases are invalidated. Reserved shifts, W-copy
 prefixes and unsupported handler layouts remain refused. Fifteen new and 286
 affected methods passed with independent review. Proof and release gates retain
 their prior scopes.
+
+## CMP W literal copies
+
+`swift-sync-error-edges-v14`, `swift-success-constant-v14`,
+`swift-error-constant-v16` and `swift-return-choice-v16` admit canonical W MOV in
+bounded CMP literal prefixes. Known sources zero-extend low 32 bits; unknown
+sources invalidate knowledge. W copies kill full destination error aliases and
+do not preserve unknown full-width call results. WZR semantics and existing
+bounds, entry and proof gates remain intact. Fifteen new and 301 affected methods
+passed with independent review. Unsupported layouts and runtime/source proof
+remain withheld.
