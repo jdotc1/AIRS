@@ -505,3 +505,18 @@ never loaded or executed. This establishes one owned compiler case, not broad
 compiler/layout coverage, native UI, clean-host or release qualification. No
 sealed earlier binary was reread/rehashed/recompiled, and no installed app or
 production settings/stores were modified.
+
+## Parameterless throwing Int declarations (edge v4)
+
+Edge v4 adds only exact `SiyKF` free-function declarations: no parameters and
+Swift.Int result, ordinary synchronous untyped throws. Prior declaration facts
+remain unchanged. Other result types, methods, async, typed throws, generics and
+thunks remain refused. Region v5, incoming v3 and presentation v3 are unchanged;
+source reconstruction and runtime identity proof remain disabled.
+
+Five new focused tests and 38 affected declaration/renderer/component controls
+passed in composed runs. One initial test incorrectly compared a declaration
+with a call record containing additional attribution fields; only that changed
+test was rerun after correcting its comparison. Existing owned-image results
+are reused for their original signatures; this extension has synthetic source
+and renderer qualification, not a new compiled-image or installed-app claim.

@@ -396,3 +396,18 @@ new owned ARM64 compiler example recovered a parameterless call and structurally
 eligible handler, with 14 other calls explicitly declined. No old binary checks
 were repeated; native UI, installation and release qualification remain separate.
 MacScope, installed build 13 and production settings/stores are unchanged.
+
+## Bounded parameterless throwing Int recovery
+
+Edge v4 adds only exact `SiyKF` free-function declarations: no parameters and
+Swift.Int result, ordinary synchronous untyped throws. Prior declaration facts
+remain unchanged. Other result types, methods, async, typed throws, generics and
+thunks remain refused. Region v5, incoming v3 and presentation v3 are unchanged;
+source reconstruction and runtime identity proof remain disabled.
+
+Five new focused tests and 38 affected declaration/renderer/component controls
+passed in composed runs. One initial test incorrectly compared a declaration
+with a call record containing additional attribution fields; only that changed
+test was rerun after correcting its comparison. Existing owned-image results
+are reused for their original signatures; this extension has synthetic source
+and renderer qualification, not a new compiled-image or installed-app claim.
