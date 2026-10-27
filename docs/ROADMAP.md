@@ -740,3 +740,11 @@ caller-byte binding and full bounded-region consistency checks. Eleven new and
 232 affected methods passed, with independent review after a stale-word binding
 correction. B.NE outcomes and runtime qualification remain open. See
 SWIFT_ERROR_FLOW.md.
+
+## CMP/B.NE error literals
+
+Screened forward-error arms can now retain structural literal candidates after
+binding caller entries and instructions to the supplied bytes. Nine new and
+260 affected methods passed, and independent review found no blocker. B.NE
+success outcomes, return choices and runtime qualification remain open. See
+SWIFT_ERROR_FLOW.md.

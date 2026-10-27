@@ -13,8 +13,9 @@ class NePresentationFirstTests(unittest.TestCase):
         self.assertEqual(presentation['display_plan']['condition']['error_when'], 'nonzero')
         self.assertEqual(presentation['display_plan']['error_interval']['start_pc'], hex(BASE+20))
         self.assertFalse(presentation['source_reconstruction_allowed'])
-        for key in ('success_result', 'success_constant', 'error_constant'):
+        for key in ('success_result', 'success_constant'):
             self.assertEqual(call[key]['status'], 'declined')
+        self.assertEqual(call['error_constant']['status'], 'constant_register_candidate')
         self.assertEqual(call['return_choice']['status'], 'unresolved')
 
 

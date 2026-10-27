@@ -1412,3 +1412,14 @@ Exact caller-byte binding and complete forward-region reconstruction supplement
 the existing compare, geometry and caller-local entry checks. Outcome recovery
 remains explicitly gated. This does not prove source, runtime behavior, flag
 state, exclusive entry, handler semantics or restored state.
+
+## CMP/B.NE error-literal evidence
+
+For screened CMP-zero/B.NE forward error regions, `swift-error-constant-v18`
+can report selected-path constant bits. Caller-local entries are rederived from
+the supplied bounded bytes and must match the recorded flag and region screens;
+the structural plan must also match those bytes. Existing conservative transfer
+rules clear constants at opaque calls and preserve unknown values. This does not
+prove runtime behavior, call return, handler semantics, exclusive entry, caller
+return type, restored state or source. B.NE success outcomes and return choices
+remain gated.

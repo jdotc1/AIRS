@@ -1507,3 +1507,21 @@ success-literal, error-literal and return-choice outcomes remain explicitly
 gated. Eleven new and 232 affected methods passed. Independent review found no
 remaining blocker after a focused stale-instruction binding correction. Prior
 compiler, binary and native results retain their existing scope.
+
+## CMP/B.NE forward error literals
+
+`swift-sync-error-edges-v21` and `swift-error-constant-v18` admit an error-arm
+literal candidate for a screened CMP-zero/B.NE forward-error region. The
+analyzer derives a bounded caller-local edge scan from the supplied bytes and
+requires exact agreement with the flag-window and incoming-entry records. It
+also rechecks the structural plan against actual compare, branch, arm and tail
+bytes before applying the existing error-path constant transfer. Opaque calls
+clear known constants; a later complete assignment may establish new bits. W
+assignments zero-extend, and unknown copies or partial updates remain unknown.
+
+The candidate is selected-path structural evidence, not proof of call return,
+handler meaning, runtime value, exclusive entry, caller return type, restored
+state or reconstructed source. B.NE success outcomes and return choice remain
+gated. Nine new and 260 affected methods passed; independent review found no
+blocking issue. The per-call caller rescan is bounded by the existing function
+scan limits. Prior compiler, binary and native evidence retains its earlier scope.
