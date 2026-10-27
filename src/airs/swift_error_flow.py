@@ -21,22 +21,25 @@ from .types import InputError, Limits, MachOImage
 
 MODEL = 'swift-sync-error-edges-v4'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v8'
+REGION_MODEL = 'swift-sync-error-region-v9'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v4'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v3'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v6'
-SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v5'
-ERROR_CONSTANT_MODEL = 'swift-error-constant-v6'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v6'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v7'
+SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v6'
+ERROR_CONSTANT_MODEL = 'swift-error-constant-v7'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v7'
 SHARED_WORDS = 8
 
 
 def decode_instruction(word: int, address: int = 0):
-    """Swift-arm-only W move-wide seeds; core decoder/admission is unchanged."""
+    """Swift-local W literal seeds and canonical copies; core decoding is unchanged."""
     if not 0 <= word <= 0xffffffff:
         return decode_cfg_instruction(word, address)
+    if word & 0xffe0ffe0 == 0x2a0003e0:
+        decoded = decode_cfg_instruction(word, address)
+        return replace(decoded, kind='wmov', rn=decoded.rt2, rt2=0, addressing='')
     if word & 0xff800000 in (0x52800000, 0x12800000):
         if ((word >> 21) & 3) >= 2:
             raise ModelError('swift_wide_shift', 'W move-wide permits shifts 0 and 16 only', address)
@@ -220,7 +223,7 @@ def _shared_epilogue(data: bytes, function, success: int, join: int) -> dict | N
     try:
         for pc in range(success, join, 4):
             instruction, row = _bounded_instruction(data, function, pc)
-            if instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk'):
+            if instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk', 'wmov'):
                 return None
             words.append({**row, 'kind': instruction.kind})
     except (ModelError, ValueError):
@@ -263,7 +266,7 @@ def _forward_error_region(data: bytes, function, edge: dict) -> dict:
                     row['target_pc'] = hex(join)
                 else:
                     row['target_reason'] = 'outside_vm_address_space'
-            elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk'):
+            elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk', 'wmov'):
                 return {**result, 'reason': 'success_region_control_flow_unmodeled'}
         if not start < join < function.end or join % 4:
             return {**result, 'reason': 'unsupported_error_region_layout'}
@@ -277,7 +280,7 @@ def _forward_error_region(data: bytes, function, edge: dict) -> dict:
                 if not 0 <= target < (1 << 64) or target % 4:
                     return {**result, 'reason': 'error_region_call_target_invalid'}
                 row.update(call_target_pc=hex(target), semantics='opaque_call'); calls += 1
-            elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk'):
+            elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk', 'wmov'):
                 return {**result, 'reason': 'error_region_instruction_unmodeled'}
     except ModelError:
         return {**result, 'reason': 'error_region_instruction_unmodeled'}
@@ -335,7 +338,7 @@ def _error_region(data: bytes, function, edge: dict) -> dict:
                     return {**result, 'reason': 'error_region_control_flow_unmodeled'}
                 join = target
             row['target_pc'] = hex(join)
-        elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk'):
+        elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk', 'wmov'):
             return {**result, 'reason': 'error_region_instruction_unmodeled'}
     return {**result, 'status': 'structural_region_candidate', 'start_pc': hex(start),
             'join_pc': hex(join), 'end_pc_exclusive': hex(boundary), 'opaque_call_count': calls, **shared,
@@ -547,7 +550,7 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
             evidence.append({**row, 'phase': 'success'})
             if instruction.kind == 'nop':
                 continue
-            if instruction.kind in ('mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk'):
+            if instruction.kind in ('mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk', 'wmov'):
                 transfer(instruction)
                 if aliases:
                     continue
@@ -633,7 +636,7 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False) ->
                 opaque_calls += 1
                 evidence[-1]['constant_state'] = 'cleared_after_opaque_call'
                 continue
-            if instruction.kind not in ('mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk'):
+            if instruction.kind not in ('mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk', 'wmov'):
                 return {**result, 'reason': f'{path}_constant_instruction_unsupported', 'instructions': evidence}
             destination = instruction.rd
             if destination == 31:
@@ -652,7 +655,8 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False) ->
             elif instruction.rn == 31:
                 constants[destination] = 0
             elif instruction.rn in constants:
-                constants[destination] = constants[instruction.rn]
+                constants[destination] = (constants[instruction.rn] & 0xffffffff if instruction.kind == 'wmov'
+                                          else constants[instruction.rn])
             else:
                 constants.pop(destination, None)
         tail = _shared_return_tail(data, function, join)

@@ -538,3 +538,12 @@ written result aliases are invalidated. Decoder/admission, entry classification,
 post-call windows, tail whitelists and evidence limits retain prior scope.
 Twelve new and 196 affected controls passed in composed runs with independent
 review. See SWIFT_ERROR_FLOW.md for model identities and qualification limits.
+
+## Canonical W-register outcome copies
+
+Exact unshifted W MOV copies now propagate known zero-extended literal patterns
+within bounded outcome arms. Unknown sources invalidate constants; W copies do
+not preserve original 64-bit call-result aliases. The existing logical decoder
+is reused through a local canonical-alias adapter. Core decoding, post-call
+windows, return tails and evidence limits retain prior scope. Twelve new and
+208 affected synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md for details.
