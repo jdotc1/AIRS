@@ -1249,3 +1249,44 @@ remain open. Fifteen new and 215 affected methods passed in bounded composed
 runs. One affected test expectation was corrected: replacing an error literal
 with a branch does not produce constant evidence. Prior passed selections and
 owned-image/compiler results were reused without repeated binary workflows.
+
+## Bounded CMP success literals
+
+The current edge model is `swift-sync-error-edges-v10`, success-constant model is
+`swift-success-constant-v10`, error-constant model is `swift-error-constant-v12`
+and return-choice model is `swift-return-choice-v12`. The existing eight-word
+post-call window now admits X MOVZ/MOVN seeds before an adjacent CMP-zero branch.
+Seed destinations invalidate error aliases; a surviving alias is still required.
+A literal prefix cannot enable CBZ/CBNZ recovery. W seeds and MOVK prefixes remain
+outside this subset.
+
+Qualified simple CMP/B.EQ presentation can interpret the prefix using existing
+constant transfer, starting with no known values. X MOV copies, XZR and NOP keep
+their established semantics; unknown-source copies invalidate knowledge. Only the
+exact comparison and EQ branch are skipped, after re-decoding and binding their
+register, PCs and success target. The prefix remains bounded to eight words.
+
+A success literal requires its own bounded restore/RET tail and cached caller
+entry check: a failed call-result preservation record is not tail authority.
+Only the exact EQ success edge and qualifying terminal error branch may enter
+the tail without conflict. Other entries withhold recovery, retaining exact
+counts and up to 16 details. Tail evidence remains bounded to eight words.
+
+Error-literal recovery may reuse a success-literal tail only when its captured
+instructions, call/entry/return identity and false proof flags match. Return
+choice accepts exactly one success source: preserved/copied call result or
+literal bits, with a bound success-entry tail. Equality compares explicit bits
+only. Int/Void callee contexts do not establish the caller's return type.
+
+B.NE handlers, shared CMP tails, W/MOVK success prefixes, compiler-emission and
+native/runtime/release qualification remain open. All source/runtime/exclusive
+path/caller-return-type proof flags remain false. Twenty-four new and 256 affected
+methods passed in bounded runs. A copied-seed fixture was extended to keep its
+success target inside its declared caller; prior passing selections were reused.
+No compiler, binary-admission or native workflow was repeated.
+
+CMP success-prefix evidence is labeled `post_call`: those assignments precede
+the conditional branch and are not exclusive to success. The reported success
+entry is bound to the decoded EQ target and region join. Inspected tail words
+remain visible even when an entry conflict withholds the literal; successful
+records retain the same tail once, without duplicate evidence.

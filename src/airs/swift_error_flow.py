@@ -19,7 +19,7 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v9'
+MODEL = 'swift-sync-error-edges-v10'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v13'
@@ -28,9 +28,9 @@ INCOMING_MODEL = 'swift-region-direct-entries-v5'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v4'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v11'
-SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v9'
-ERROR_CONSTANT_MODEL = 'swift-error-constant-v11'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v11'
+SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v10'
+ERROR_CONSTANT_MODEL = 'swift-error-constant-v12'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v12'
 SHARED_WORDS = 8
 
 
@@ -133,7 +133,7 @@ def _symbol_groups(image: MachOImage) -> dict:
 
 
 def _edges(data: bytes, function, call_offset: int) -> dict:
-    aliases = {21}; window = []; comparison = None
+    aliases = {21}; window = []; comparison = None; literal_prefix = False
     for offset in range(call_offset + 4, min(len(data), call_offset + 4 + WINDOW_WORDS * 4), 4):
         address = function.start + offset
         word = struct.unpack_from('<I', data, offset)[0]
@@ -153,6 +153,12 @@ def _edges(data: bytes, function, call_offset: int) -> dict:
         else:
             if instruction.kind == 'nop':
                 continue
+            if instruction.kind in ('movz', 'movn'):
+                literal_prefix = True
+                aliases.discard(instruction.rd)
+                if not aliases:
+                    return {'reason': 'error_value_clobbered', 'window': window}
+                continue
             if instruction.kind == 'mov':
                 if instruction.rd != 31:
                     if instruction.rn in aliases:
@@ -170,6 +176,8 @@ def _edges(data: bytes, function, call_offset: int) -> dict:
                 continue
             if instruction.kind in ('wcbz', 'wcbnz'):
                 return {'reason': 'narrow_error_test', 'window': window}
+            if literal_prefix:
+                return {'reason': 'literal_prefix_requires_compare_test', 'window': window}
             if instruction.kind not in ('xcbz', 'xcbnz'):
                 return {'reason': 'intervening_instruction_unmodeled', 'window': window}
             if instruction.rn not in aliases:
@@ -730,39 +738,61 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
         return {**result, 'reason': 'bounded_result_evidence_unavailable', 'instructions': evidence}
 
 
-def _path_constant(data: bytes, function, call: dict, *, error: bool = False) -> dict:
-    """Constants defined on one recorded arm, not caller or runtime facts."""
+def _path_constant(data: bytes, function, call: dict, *, error: bool = False, scan: dict | None = None) -> dict:
+    """Constants assigned along a recorded path, not caller or runtime facts."""
     path = 'error' if error else 'success'
     result = {'status': 'declined', 'register': 'x0', 'runtime_value_proven': False,
               'source_reconstruction_allowed': False, 'exclusive_path_proven': False,
               'caller_return_type_proven': False}
     if error:
         result.update(call_return_proven=False, handler_semantics_proven=False)
-    if call.get('test_kind') == 'cmp_zero_bcond' and not error:
-        return {**result, 'reason': 'compare_outcome_recovery_not_qualified'}
+    cmp_success = call.get('test_kind') == 'cmp_zero_bcond' and not error
     if call.get('callee', {}).get('result') not in ('Swift.Int', 'Swift.Void'):
         return {**result, 'reason': 'callee_result_outside_admitted_subset'}
     if call.get('presentation', {}).get('status') != 'eligible_structural_only':
         return {**result, 'reason': 'structural_presentation_not_eligible'}
     region = call['error_region']
     shared = 'shared_epilogue' in region
-    if not shared and not error:
+    if not shared and not error and not cmp_success:
         return {**result, 'reason': f'bounded_{path}_interval_missing'}
-    if not shared:
+    if not shared and not cmp_success:
         success_result = call.get('success_result', {})
+        if (call.get('test_kind') == 'cmp_zero_bcond'
+                and success_result.get('status') not in ('preserved_register_candidate', 'copied_register_candidate')):
+            success_result = call.get('success_constant', {})
         if (success_result.get('status') not in ('preserved_register_candidate', 'copied_register_candidate')
-                or success_result.get('return_tail_layout') != 'success_entry'):
+                and not (call.get('test_kind') == 'cmp_zero_bcond'
+                         and success_result.get('status') == 'constant_register_candidate')):
+            return {**result, 'reason': 'validated_success_return_tail_missing'}
+        if success_result.get('return_tail_layout') != 'success_entry':
             return {**result, 'reason': 'validated_success_return_tail_missing'}
     evidence = []; constants = {}; opaque_calls = 0
     try:
-        interval = region if error else region['success_interval']
+        interval = ({'start_pc': hex(int(call['call_pc'], 16) + 4),
+                     'end_pc_exclusive': hex(int(call['test_pc'], 16) + 4)} if cmp_success else
+                    region if error else region['success_interval'])
         start, end = int(interval['start_pc'], 16), int(interval['end_pc_exclusive'], 16)
         join = int(region['join_pc'], 16)
+        if cmp_success and join != int(call['success_pc'], 16):
+            return {**result, 'reason': 'success_entry_binding_inconsistent', 'instructions': evidence}
         if not 1 <= (end - start) // 4 <= (REGION_WORDS if error else SHARED_WORDS):
             raise ValueError('Success interval bound')
         for pc in range(start, end, 4):
             instruction, row = _bounded_instruction(data, function, pc)
-            evidence.append({**row, 'phase': path})
+            evidence.append({**row, 'phase': 'post_call' if cmp_success else path})
+            if cmp_success and pc == int(call['test_pc'], 16) - 4:
+                if (pc != int(call['comparison_pc'], 16)
+                        or instruction.word & 0xfffffc1f != 0xf100001f
+                        or call['tested_register'] != f'x{instruction.rn}'):
+                    return {**result, 'reason': 'unsupported_success_comparison', 'instructions': evidence}
+                continue
+            if cmp_success and pc == int(call['test_pc'], 16):
+                if (call.get('test_condition') != 'eq' or instruction.kind != 'bcond'
+                        or instruction.addressing != '0' or pc + instruction.immediate != join):
+                    return {**result, 'reason': 'unsupported_success_test', 'instructions': evidence}
+                continue
+            if cmp_success and instruction.kind not in ('nop', 'mov', 'movz', 'movn'):
+                return {**result, 'reason': 'success_constant_instruction_unsupported', 'instructions': evidence}
             if instruction.kind == 'nop':
                 continue
             if instruction.kind == 'b' and pc == end - 4 and pc + instruction.immediate == join:
@@ -798,7 +828,28 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False) ->
         tail = _shared_return_tail(data, function, join)
         if tail is None or (shared and tail != region['shared_epilogue']):
             return {**result, 'reason': 'bounded_return_tail_missing', 'instructions': evidence}
-        if not shared:
+        if cmp_success:
+            evidence.extend({**row, 'phase': 'return_tail'} for row in tail['instructions'])
+            if (shared or scan is None or scan.get('caller_scan_complete') is not True
+                    or scan.get('unclassified_word_count') != 0):
+                return {**result, 'reason': 'return_tail_entries_unresolved', 'instructions': evidence}
+            tail_end = int(tail['end_pc_exclusive'], 16)
+            conflicts = []; conflict_count = 0
+            for edge in scan['direct_edges']:
+                source, target = int(edge['source_pc'], 16), int(edge['target_pc'], 16)
+                expected_test = source == int(call['test_pc'], 16) and edge['kind'] == 'bcond' and target == join
+                expected_exit = (source == int(region['end_pc_exclusive'], 16) - 4
+                                 and edge['kind'] == 'b' and target == join)
+                if join <= target < tail_end and not (expected_test or expected_exit):
+                    conflict_count += 1
+                    if len(conflicts) < INCOMING_EVIDENCE_LIMIT:
+                        conflicts.append(edge)
+            if conflicts:
+                return {**result, 'reason': 'unexpected_return_tail_entry',
+                        'unexpected_tail_entries': conflicts,
+                        'unexpected_tail_entry_count': conflict_count,
+                        'tail_entry_details_complete': conflict_count == len(conflicts), 'instructions': evidence}
+        elif not shared:
             captured_tail = [{key: value for key, value in row.items() if key != 'phase'}
                              for row in success_result.get('instructions', []) if row.get('phase') == 'return_tail']
             if (success_result.get('register') != 'x0'
@@ -810,7 +861,8 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False) ->
                     or any(success_result.get(key) is not False for key in ('runtime_value_proven',
                         'source_reconstruction_allowed', 'exclusive_path_proven', 'caller_return_type_proven'))):
                 return {**result, 'reason': 'validated_success_return_tail_inconsistent', 'instructions': evidence}
-        evidence.extend({**row, 'phase': 'return_tail'} for row in tail['instructions'])
+        if not cmp_success:
+            evidence.extend({**row, 'phase': 'return_tail'} for row in tail['instructions'])
         if 0 not in constants:
             return {**result, 'reason': f'{path}_x0_constant_not_known', 'instructions': evidence}
         return {**result, 'status': 'constant_register_candidate',
@@ -818,6 +870,7 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False) ->
                 'constant_bits': f'0x{constants[0]:016x}', 'bit_width': 64,
                 'depends_on_call_result': False, 'call_pc': call['call_pc'],
                 path + '_pc': call[path + '_pc'],
+                **({'return_tail_layout': 'success_entry'} if cmp_success else {}),
                 **({'opaque_call_count': opaque_calls} if error else {}), 'return_pc': tail['instructions'][-1]['pc'],
                 'instructions': evidence}
     except (KeyError, TypeError, ValueError, ModelError):
@@ -854,11 +907,13 @@ def _return_choice(call: dict) -> dict:
                 or plan['error_interval']['start_pc'] != call['error_pc']):
             raise ValueError('Presentation binding')
         region = call['error_region']
-        if 'shared_epilogue' not in region and (not returned_known or constant_known
-                or returned.get('return_tail_layout') != 'success_entry'):
+        if ('shared_epilogue' not in region
+                and not ((returned_known and not constant_known and returned.get('return_tail_layout') == 'success_entry')
+                         or (call.get('test_kind') == 'cmp_zero_bcond' and constant_known and not returned_known
+                             and constant.get('return_tail_layout') == 'success_entry'))):
             raise ValueError('Success-entry outcome source')
         return_pc = (region['shared_epilogue']['instructions'][-1]['pc'] if 'shared_epilogue' in region
-                     else returned['return_pc'])
+                     else success['return_pc'])
         for path, outcome in (('success', success), ('error', error)):
             if (outcome['register'] != 'x0' or outcome['call_pc'] != call['call_pc']
                     or outcome[path + '_pc'] != call[path + '_pc']
@@ -962,7 +1017,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
             if include_structured_presentation:
                 row['presentation'] = _presentation_eligibility(row)
                 row['success_result'] = _success_result(data, function, row, direct_scan)
-                row['success_constant'] = _path_constant(data, function, row)
+                row['success_constant'] = _path_constant(data, function, row, scan=direct_scan)
                 row['error_constant'] = _path_constant(data, function, row, error=True)
                 row['return_choice'] = _return_choice(row)
     recovered = sum(row['status'] == 'recovered_candidate' for row in calls)
@@ -982,7 +1037,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
             'limitations': ['Structural instruction-word candidates, not runtime reachability or dominance proof.',
                             'Exact symbol declarations are not authenticated runtime targets or function identity.',
                             'Only ordinary synchronous untyped Swift Int-to-Int, Int-to-Void or parameterless Int/Void free-function declarations are admitted.',
-                            'Only bounded 64-bit MOV/NOP and forward CBZ/CBNZ or adjacent CMP-zero EQ/NE return windows are recovered.',
+                            'Only bounded 64-bit MOV/NOP, CMP-only X MOVZ/MOVN prefixes, and forward CBZ/CBNZ or adjacent CMP-zero EQ/NE return windows are recovered.',
                             'Embedded-data, relocation and symbol-only function boundaries are excluded by existing admission tags.',
                             'No catch type, handler semantics, source equivalence, unwind verdict or async claim is made.']}
     if include_error_regions:
@@ -1004,7 +1059,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     if any(row.get('test_kind') == 'cmp_zero_bcond' for row in calls):
-        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ intervals may pair a preserved call result with error literal bits; shared tails, NE handlers and success-path literal recovery remain withheld.')
+        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ intervals may pair a call result or bounded X-seeded success literal with error literal bits; shared tails, NE handlers and W/MOVK success prefixes remain withheld.')
     return report
 
 

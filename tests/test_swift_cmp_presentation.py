@@ -102,10 +102,10 @@ class CmpPresentationBoundaryTests(unittest.TestCase):
             call['error_region']['incoming_validation'][key] = replacement
             self.assertEqual(_presentation_eligibility(call)['status'], 'unresolved')
 
-    def test_success_literal_gate_stays_closed_with_eligible_presentation(self):
+    def test_unknown_success_literal_stays_declined_with_eligible_presentation(self):
         call = report()['calls'][0]
         for key in ('success_constant',):
-            self.assertEqual(call[key]['reason'], 'compare_outcome_recovery_not_qualified')
+            self.assertEqual(call[key]['reason'], 'success_x0_constant_not_known')
             self.assertFalse(call[key]['source_reconstruction_allowed'])
             self.assertFalse(call[key]['runtime_value_proven'])
 
@@ -116,7 +116,7 @@ class CmpPresentationDeliveryTests(unittest.TestCase):
         text = render_swift_error_text(report())
         for expected in ('Condition (structural):', 'comparison_pc', 'cmp_zero_bcond',
                          'test_condition', '0xf10002bf', '0x54000080',
-                         'Source reconstruction: disabled', 'compare_outcome_recovery_not_qualified'):
+                         'Source reconstruction: disabled', 'success_x0_constant_not_known'):
             self.assertIn(expected, text)
         first_call = text.split('Call candidate\n')[1]
         self.assertNotIn('Structured plan: withheld', first_call)
