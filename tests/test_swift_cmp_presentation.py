@@ -22,9 +22,10 @@ class CmpPresentationFirstTests(unittest.TestCase):
         self.assertEqual(condition['test_kind'], 'cmp_zero_bcond')
         self.assertEqual(condition['test_condition'], 'eq')
         self.assertEqual(condition['error_when'], 'nonzero')
-        for key in ('success_result', 'success_constant', 'error_constant'):
-            self.assertEqual(call[key]['status'], 'declined')
-        self.assertEqual(call['return_choice']['status'], 'unresolved')
+        self.assertEqual(call['success_result']['status'], 'preserved_register_candidate')
+        self.assertEqual(call['error_constant']['status'], 'constant_register_candidate')
+        self.assertEqual(call['success_constant']['status'], 'declined')
+        self.assertEqual(call['return_choice']['status'], 'structural_choice_candidate')
 
 class CmpPresentationBoundaryTests(unittest.TestCase):
     def test_missing_or_inconsistent_flag_records_never_become_eligible(self):
@@ -101,9 +102,9 @@ class CmpPresentationBoundaryTests(unittest.TestCase):
             call['error_region']['incoming_validation'][key] = replacement
             self.assertEqual(_presentation_eligibility(call)['status'], 'unresolved')
 
-    def test_outcome_helpers_stay_closed_even_with_eligible_presentation(self):
+    def test_success_literal_gate_stays_closed_with_eligible_presentation(self):
         call = report()['calls'][0]
-        for key in ('success_result', 'success_constant', 'error_constant', 'return_choice'):
+        for key in ('success_constant',):
             self.assertEqual(call[key]['reason'], 'compare_outcome_recovery_not_qualified')
             self.assertFalse(call[key]['source_reconstruction_allowed'])
             self.assertFalse(call[key]['runtime_value_proven'])
@@ -142,17 +143,17 @@ class CmpPresentationDeliveryTests(unittest.TestCase):
                 else:
                     call = json.loads(output.getvalue())['calls'][0]
                     self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
-                    self.assertEqual(call['error_constant']['status'], 'declined')
+                    self.assertEqual(call['error_constant']['status'], 'constant_register_candidate')
 
 class CmpPresentationAdditionalShapeTests(unittest.TestCase):
-    def test_copied_error_alias_can_be_displayed_without_outcomes(self):
+    def test_copied_error_alias_can_be_displayed_with_bounded_outcomes(self):
         call = report((0xaa1503f3, 0xf100027f, 0x54000080,
                        0xaa1303e0, 0x9400000b, 0x92800000))['calls'][0]
         self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
         condition = call['presentation']['display_plan']['condition']
         self.assertEqual(condition['register'], 'x19')
         self.assertEqual(condition['comparison_pc'], hex(BASE+8))
-        self.assertEqual(call['return_choice']['status'], 'unresolved')
+        self.assertEqual(call['return_choice']['status'], 'structural_choice_candidate')
 
     def test_terminal_error_branch_to_success_remains_displayable(self):
         call = report((*WORDS[:-1], 0x14000001))['calls'][0]

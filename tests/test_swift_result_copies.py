@@ -58,4 +58,4 @@ class ResultCopiesBoundaryTests(unittest.TestCase):
         for key in ('runtime_value_proven', 'exclusive_path_proven', 'caller_return_type_proven', 'source_reconstruction_allowed'):
             self.assertFalse(result[key])
         self.assertIn('copied_register_candidate', render_swift_error_text(value))
-        self.assertIn('swift-success-result-v10', render_swift_error_text(value))
+        self.assertIn('swift-success-result-v11', render_swift_error_text(value))

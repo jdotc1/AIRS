@@ -19,7 +19,7 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v8'
+MODEL = 'swift-sync-error-edges-v9'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v13'
@@ -27,10 +27,10 @@ REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v5'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v4'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v10'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v11'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v9'
-ERROR_CONSTANT_MODEL = 'swift-error-constant-v10'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v10'
+ERROR_CONSTANT_MODEL = 'swift-error-constant-v11'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v11'
 SHARED_WORDS = 8
 
 
@@ -618,8 +618,6 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
     result = {'status': 'declined', 'register': 'x0',
               'runtime_value_proven': False, 'source_reconstruction_allowed': False,
               'exclusive_path_proven': False, 'caller_return_type_proven': False}
-    if call.get('test_kind') == 'cmp_zero_bcond':
-        return {**result, 'reason': 'compare_outcome_recovery_not_qualified'}
     if call.get('callee', {}).get('result') != 'Swift.Int':
         return {**result, 'reason': 'callee_result_not_scalar_int'}
     if call.get('presentation', {}).get('status') != 'eligible_structural_only':
@@ -646,6 +644,7 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
     try:
         test = int(call['test_pc'], 16)
         first = int(call['call_pc'], 16) + 4
+        compare = call.get('test_kind') == 'cmp_zero_bcond'
         if not 0 <= test - first < WINDOW_WORDS * 4:
             raise ValueError('Post-call bound')
         # Reuse exact admitted caller bytes; never infer writes from rendered labels.
@@ -653,8 +652,18 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
             instruction, row = _bounded_instruction(data, function, pc)
             evidence.append({**row, 'phase': 'post_call'})
             if pc == test:
-                if instruction.kind not in ('xcbz', 'xcbnz') or instruction.rn == 0:
+                if compare:
+                    if (call.get('test_condition') != 'eq' or instruction.kind != 'bcond'
+                            or instruction.addressing != '0' or call['tested_register'] == 'x0'
+                            or pc + instruction.immediate != int(call['success_pc'], 16)):
+                        return {**result, 'reason': 'unsupported_result_test', 'instructions': evidence}
+                elif instruction.kind not in ('xcbz', 'xcbnz') or instruction.rn == 0:
                     return {**result, 'reason': 'unsupported_result_test', 'instructions': evidence}
+            elif compare and pc == test - 4:
+                if (int(call['comparison_pc'], 16) != pc
+                        or instruction.word & 0xfffffc1f != 0xf100001f
+                        or call['tested_register'] != f'x{instruction.rn}'):
+                    return {**result, 'reason': 'unsupported_result_comparison', 'instructions': evidence}
             elif instruction.kind == 'nop':
                 continue
             elif instruction.kind == 'mov':
@@ -697,7 +706,8 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
             conflicts = []; conflict_count = 0
             for edge in scan['direct_edges']:
                 source, target = int(edge['source_pc'], 16), int(edge['target_pc'], 16)
-                expected_test = source == test and edge['kind'] == 'xcbz' and target == join
+                expected_test = (source == test and target == join
+                                 and edge['kind'] == ('bcond' if compare else 'xcbz'))
                 expected_error_exit = (source == int(region['end_pc_exclusive'], 16) - 4
                                        and edge['kind'] == 'b' and target == join)
                 if join <= target < tail_end and not (expected_test or expected_error_exit):
@@ -728,7 +738,7 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False) ->
               'caller_return_type_proven': False}
     if error:
         result.update(call_return_proven=False, handler_semantics_proven=False)
-    if call.get('test_kind') == 'cmp_zero_bcond':
+    if call.get('test_kind') == 'cmp_zero_bcond' and not error:
         return {**result, 'reason': 'compare_outcome_recovery_not_qualified'}
     if call.get('callee', {}).get('result') not in ('Swift.Int', 'Swift.Void'):
         return {**result, 'reason': 'callee_result_outside_admitted_subset'}
@@ -820,8 +830,6 @@ def _return_choice(call: dict) -> dict:
               'runtime_value_proven': False, 'exclusive_path_proven': False,
               'caller_return_type_proven': False, 'call_return_proven': False,
               'handler_semantics_proven': False}
-    if call.get('test_kind') == 'cmp_zero_bcond':
-        return {**result, 'reason': 'compare_outcome_recovery_not_qualified'}
     if call.get('presentation', {}).get('status') != 'eligible_structural_only':
         return {**result, 'reason': 'structural_presentation_not_eligible'}
     error = call.get('error_constant', {})
@@ -838,6 +846,8 @@ def _return_choice(call: dict) -> dict:
     try:
         plan = call['presentation']['display_plan']
         expected_condition = {'test_pc': call['test_pc'], 'register': call['tested_register'], 'error_when': 'nonzero'}
+        if call.get('test_kind') == 'cmp_zero_bcond':
+            expected_condition.update({key: call[key] for key in ('comparison_pc', 'test_kind', 'test_condition')})
         if (call['presentation'].get('source_reconstruction_allowed') is not False
                 or plan['condition'] != expected_condition
                 or plan['success_entry_pc'] != call['success_pc']
@@ -870,7 +880,7 @@ def _return_choice(call: dict) -> dict:
         error_description = literal(error)
         return {**result, 'status': 'structural_choice_candidate',
                 'reason': 'bound_selected_path_outcomes', 'call_pc': call['call_pc'],
-                'condition': {'test_pc': call['test_pc'], 'register': call['tested_register'], 'error_when': 'nonzero'},
+                'condition': dict(expected_condition),
                 'success': success_description, 'error': error_description, 'return_pc': return_pc,
                 'same_constant_bits': success['constant_bits'] == error['constant_bits'] if constant_known else None}
     except (KeyError, TypeError, ValueError):
@@ -994,7 +1004,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     if any(row.get('test_kind') == 'cmp_zero_bcond' for row in calls):
-        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ error-fallthrough intervals may have structural display plans; shared tails, NE handlers and outcome recovery remain withheld.')
+        report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ intervals may pair a preserved call result with error literal bits; shared tails, NE handlers and success-path literal recovery remain withheld.')
     return report
 
 

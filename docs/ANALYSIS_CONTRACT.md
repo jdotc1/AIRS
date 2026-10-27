@@ -1283,3 +1283,15 @@ remain ineligible. Explicit outcome guards preserve declined results/constants,
 unresolved choices and disabled source reconstruction. Twelve new and 206 affected
 methods passed; runtime, compiler-emission and native/release qualification remain
 separate gates.
+
+## CMP selected-path outcomes
+
+`swift-sync-error-edges-v9`, `swift-success-result-v11`,
+`swift-error-constant-v11` and `swift-return-choice-v11` allow qualified simple
+CMP-zero/B.EQ plans to pair a preserved/copied call result with error literal
+bits through a validated bounded success-entry return tail. Raw comparison and
+branch meaning, direct tail entries, opaque-call constant invalidation and full
+condition/outcome binding remain checked. Success-path literals, B.NE and shared
+CMP tails remain withheld. Every source/runtime/exclusive-path/caller-return-type
+proof flag remains false. Fifteen new and 215 affected methods passed; prior
+compiler, binary and native qualification retain their original scopes.
