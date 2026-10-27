@@ -614,3 +614,13 @@ flag-entry qualification and native/release acceptance remain open.
 Ten new focused methods and 94 affected edge/signature/tail/CLI/rendering methods
 passed. Prior owned-image qualification is reused without recompilation,
 disassembly, binary admission or hashing.
+
+## Bounded compare-window flag-entry inspection
+
+Retained recovered CMP-zero edges now have opt-in caller-local direct-entry
+inspection, reusing the bounded caller scan. Entries into aliases, CMP or B.cond
+are conflicts; unknown/partial scans preserve unresolved absence. JSON and text
+retain counts, capped evidence, model identity and false proof flags. Nineteen
+new and 121 affected controls passed with independent review. General NZCV and
+indirect/external-entry proof, compiler-emission qualification, comparison-based
+handler regions and structured outcomes remain open. See SWIFT_ERROR_FLOW.md.

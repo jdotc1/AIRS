@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from .report_summary_text import _BoundedText
-from .swift_error_flow import MODEL, REGION_MODEL, INCOMING_MODEL, PRESENTATION_MODEL, SUCCESS_RESULT_MODEL, SUCCESS_CONSTANT_MODEL, ERROR_CONSTANT_MODEL, RETURN_CHOICE_MODEL
+from .swift_error_flow import MODEL, REGION_MODEL, INCOMING_MODEL, PRESENTATION_MODEL, SUCCESS_RESULT_MODEL, SUCCESS_CONSTANT_MODEL, ERROR_CONSTANT_MODEL, RETURN_CHOICE_MODEL, FLAG_ENTRY_MODEL
 from .types import InputError
 
 MAXIMUM_TEXT_BYTES = 1024 * 1024
@@ -108,6 +108,15 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
             line('  Return choice (structural outcomes; source disabled)', call['return_choice'])
         line('  Recorded return edges', {key: call[key] for key in ('comparison_pc', 'test_pc', 'test_kind', 'test_condition', 'tested_register', 'success_pc', 'error_pc') if key in call})
         rows('  Post-call instruction evidence', call.get('window', []), MAX_WINDOW_ROWS)
+        if 'flag_entry_validation' in call:
+            if report.get('flag_entry_model_version') != FLAG_ENTRY_MODEL:
+                raise InputError('swift_text_models', 'Flag-entry evidence requires its current model')
+            line('  Flag-entry model', report['flag_entry_model_version'])
+            entry = call['flag_entry_validation']
+            line('  Flag-entry validation', {key: value for key, value in entry.items()
+                                          if key not in ('unexpected_entries', 'unclassified_words')})
+            rows('    Unexpected flag-window entry', entry['unexpected_entries'], MAX_ENTRY_ROWS)
+            rows('    Unclassified flag-scan word', entry['unclassified_words'], MAX_ENTRY_ROWS)
         line('  Presentation', {key: presentation[key] for key in ('status', 'reason')})
         if presentation['status'] == 'eligible_structural_only':
             plan = presentation['display_plan']

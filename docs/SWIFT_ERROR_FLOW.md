@@ -1124,3 +1124,35 @@ flag-entry qualification and native/release acceptance remain open.
 Ten new focused methods and 94 affected edge/signature/tail/CLI/rendering methods
 passed. Prior owned-image qualification is reused without recompilation,
 disassembly, binary admission or hashing.
+
+## Bounded compare-window flag-entry inspection
+
+The current edge model is `swift-sync-error-edges-v6`. With error-region recovery
+and entry validation enabled, retained recovered CMP-zero edges receive a
+separate `flag_entry_validation` record under `swift-compare-flag-entries-v1`.
+The existing bounded caller classification is reused once per caller. Its
+protected interval starts immediately after the throwing call and ends after
+the conditional branch, including alias copies, CMP and B.cond.
+
+Every observed caller-local direct branch or call into that interval is a
+conflict. No absence claim is made when the admitted caller prefix is partial
+or contains unclassified words. An observed conflict takes precedence over
+those gaps. Counts remain exact while entry and unknown-word details are each
+capped at 16, with explicit completeness fields. Default edge recovery remains
+opt-in-free; declined comparison sequences receive no flag-entry record.
+
+The record distinguishes `unexpected_direct_entries`, `unresolved`, and
+`no_unexpected_direct_entries`. The last status is only an absence of observed
+caller-local direct entries. It does not prove NZCV state, dominance, reachability,
+exclusive entry, or absence of indirect/external entries. Both
+`flag_state_proven` and `exclusive_entry_proven` remain false. Text output binds
+the dedicated model and retains conflict/unknown evidence independently of the
+withheld handler plan.
+
+Comparison-based handler regions and structured outcomes still decline with
+`compare_branch_region_not_qualified`, regardless of flag-entry status. This
+increment does not implement general flag-state dataflow or compiler-emission
+qualification. Existing CBZ/CBNZ behavior retains its scope. Twenty new focused
+methods and 121 affected methods passed; independent semantic review found no
+blocking issue. Prior owned-image results were reused without repeating compiler,
+disassembly, hashing, or binary-admission workflows.
