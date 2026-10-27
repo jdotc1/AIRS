@@ -1312,3 +1312,28 @@ Fifteen new methods and 268 affected methods passed. New controls cover all four
 halfwords, repeated updates, MOVN seeds, known/unknown copies, error aliases,
 unseeded refusal, XZR, bounds, tail conflicts and CLI/text evidence. Prior owned
 image/compiler results were reused without repeating their workflows.
+
+## Bounded CMP W-register success seeds
+
+The current edge model is `swift-sync-error-edges-v12`, success-constant model is
+`swift-success-constant-v12`, error-constant model is `swift-error-constant-v14`
+and return-choice model is `swift-return-choice-v14`. CMP success prefixes now
+admit W MOVZ/MOVN seeds through the existing local decoder and constant transfer.
+Legal shifts are 0 and 16; reserved W halfword encodings remain refused.
+
+A W seed establishes 32 bits and clears the corresponding X register's upper
+32 bits. Thus W MOVN zero gives `0x00000000ffffffff`, independently of an X MOVN
+error literal of `0xffffffffffffffff`. The full destination error alias is
+invalidated by a W write. A separately saved full-width alias can survive; a
+narrow write cannot preserve or create full-width error provenance.
+
+Existing X copies and X MOVK updates may consume the zero-extended literal.
+W copies and W MOVK remain outside the prefix subset. CBZ/CBNZ literal-prefix
+widening and narrow error tests remain refused. Prefix/tail bounds, cached entry
+checks, raw-word binding and false proof flags retain their prior scopes.
+B.NE/shared CMP handlers and compiler/runtime/native acceptance remain open.
+
+Fifteen new methods and 271 affected methods passed. New controls cover both
+legal shifts, reserved encodings, high-bit clearing, aliases, excluded forms,
+zero-register writes, bounds, conflicts and JSON/text evidence. No decoder,
+dependency, compiler, binary-admission or native workflow was added or repeated.
