@@ -1707,3 +1707,26 @@ handler meaning, restored state or reconstructed Swift source. Eleven new and
 467 affected methods passed, and independent semantic review found no blocker.
 This synthetic increment adds no compiler, binary, runtime or native release
 qualification; prior results retain their original scope.
+
+## Success arithmetic on a tracked register
+
+`swift-sync-error-edges-v28`, `swift-sync-error-region-v19`,
+`swift-success-result-v17` and `swift-return-choice-v24` extend the screened
+CBZ shared-tail arithmetic subset to a tracked full-width register from x0
+through x30. The single unshifted, nonflagging 64-bit ADD or SUB immediate
+must use the same register as source and destination, with an immediate from
+1 through 4095. That register must hold a live copy of the original Int call
+result before the operation. The operation invalidates the original alias set;
+the adjusted result must be copied back to x0 before the shared return.
+Register 31, distinct source/destination registers, narrow or flag-setting
+forms, shifted immediates and multiple arithmetic operations remain excluded.
+
+The recorded adjustment register and immediate are bound to the exact captured
+instruction for both the structural choice and text summary. Caller-byte,
+entry, arm and shared-tail bindings and the existing evidence limits remain in
+force. The expression is modulo-64 machine evidence, not proof of runtime
+values, call return, exclusive entry, caller return type, handler meaning,
+restored state or Swift source. Twelve new and 478 affected methods passed;
+independent semantic review found no blocker. This synthetic increment adds no
+Swift-frontend, binary, runtime or native release qualification. Prior evidence
+retains its existing scope.

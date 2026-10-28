@@ -819,3 +819,11 @@ one admitted ADD or SUB while distinguishing original and adjusted values.
 Eleven new and 467 affected methods passed with independent semantic review.
 The increment is synthetic structural evidence; frontend and runtime
 qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+## Arithmetic on a tracked result register
+
+Screened success arms can now adjust a live full-width result copy in x0–x30
+and restore it to x0 before returning. Twelve new and 478 affected methods
+passed with independent semantic review. The increment is synthetic structural
+evidence; frontend and runtime qualification remain open. See
+SWIFT_ERROR_FLOW.md.
