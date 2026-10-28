@@ -1649,3 +1649,14 @@ is used in a relocated regression. Fourteen new and 425 affected methods passed,
 including an updated regression for the observed ADD; independent semantic
 review found no blocker. Prior compiler, binary and native results retain their
 original scope.
+
+## ADD result text summary
+
+The bounded structural text renderer can summarize a qualified adjusted result
+as a 64-bit modulo addition on the call result. The summary is labeled
+structural and runtime-unproven and appears only when the current producer choice,
+success-result record, condition, call and shared return agree and their proof
+flags remain false. The existing structured records remain visible; inconsistent
+or malformed records do not produce the new summary. Source reconstruction
+remains disabled. Ten focused and 14 affected text/CLI methods passed; the
+analysis models and semantics are unchanged.
