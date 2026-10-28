@@ -1660,3 +1660,29 @@ flags remain false. The existing structured records remain visible; inconsistent
 or malformed records do not produce the new summary. Source reconstruction
 remains disabled. Ten focused and 14 affected text/CLI methods passed; the
 analysis models and semantics are unchanged.
+
+## Bounded success-path SUB-immediate result
+
+`swift-sync-error-edges-v26`, `swift-sync-error-region-v17`,
+`swift-success-result-v15` and `swift-return-choice-v22` extend the screened
+CBZ shared-tail subset to one unshifted nonflagging 64-bit
+`SUB X0, X0, #imm` with immediate 1 through 4095. The success arm otherwise
+contains only NOPs and the original Int call result must reach X0 before the
+operation. Existing caller-byte, direct-entry and shared-tail checks apply.
+
+The candidate and return choice express a modulo-64 machine subtraction;
+runtime values, call return, exclusive entry, caller return type, handler
+meaning, restored state and source remain unproven. Shifted, narrow,
+flag-setting, alternate-register, repeated or mixed arithmetic, CBNZ and CMP
+layouts remain outside this subset. Text summaries distinguish addition and
+subtraction only after binding the instruction sequence to producer region and
+plan; malformed or oversized evidence withholds the summary. Producer evidence
+processing retains the eight-word arm and 24-word result limits.
+
+This is a synthetic instruction-boundary increment; it does not claim Swift
+frontend emission or new binary, runtime, ABI/CFI or native qualification.
+Seventeen new and 449 affected methods passed before the final bounded-renderer
+ordering adjustment. Its new oversized-tail test and 28 focused text/CLI
+methods passed afterward. Independent review found no remaining blocker after
+instruction binding, malformed-row and bounded-output corrections. Prior
+accepted results retain their original scope.

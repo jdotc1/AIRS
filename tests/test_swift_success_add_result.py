@@ -29,7 +29,7 @@ class SuccessAddBoundaryTests(unittest.TestCase):
     def test_unadmitted_width_flags_shift_operands_and_sub_refuse(self):
         from test_swift_owned_postcall_arithmetic import WORDS
         for word in (0x91000000, 0x91400400, 0x11001400, 0xb1001400,
-                     0xd1001400, 0x91001401, 0x91001420, 0x910017ff):
+                     0xd1001401, 0x91001401, 0x91001420, 0x910017ff):
             call = report((*WORDS[:5], word, *WORDS[6:]))['calls'][0]
             self.assertNotEqual(call['presentation']['status'], 'eligible_structural_only')
             self.assertEqual(call['return_choice']['status'], 'unresolved')

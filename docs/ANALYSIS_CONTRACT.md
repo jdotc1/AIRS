@@ -1483,3 +1483,14 @@ and shared tail are bound before a candidate is reported. Unsupported operands,
 widths, shifted or flag-setting forms, multiple adds and unpreserved results
 remain refused. This is machine-level selected-path evidence, not runtime or
 source proof.
+
+## Bounded shared success SUB evidence
+
+For screened CBZ error-fallthrough shared tails, AIRS can represent one
+unshifted nonflagging 64-bit `SUB X0, X0, #imm` (1–4095) as a modulo-64
+operation on a preserved Int call result. The bounded success arm otherwise
+contains only NOPs. Caller words, entry evidence, success arm and shared tail
+must agree. Operation and immediate are bound to recorded words; malformed,
+conflicting or oversized records are refused. Unsupported operands, widths,
+shifted or flag-setting forms and multiple operations remain outside scope.
+This is machine-level selected-path evidence, not runtime or source proof.
