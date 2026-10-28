@@ -1805,3 +1805,31 @@ instruction, CLI and rendering checks. No new compiler-emission, owned-binary,
 native-app or runtime qualification is claimed. The result remains selected-path
 modulo-64 structural evidence; source reconstruction, runtime value, caller
 return type, call return, handler semantics and exclusive-path proof remain false.
+
+## CMP/B.NE forward success arithmetic
+
+`swift-sync-error-edges-v32`, `swift-sync-error-region-v23`,
+`swift-structural-presentation-v8`, `swift-success-result-v21` and
+`swift-return-choice-v28` admit the complementary screened CMP-zero/B.NE
+layout: success falls through, performs one bounded X-register ADD or SUB
+immediate, then branches over the error arm to the shared return. The same
+instruction predicate, optional 12-bit shift, full-width alias tracking and
+adjusted-value requirement are reused. The terminal skip branch counts toward
+the eight-word success-arm limit and must target the recorded shared join.
+
+The complete forward region and presentation are reconstructed from caller
+bytes. Recovery also re-derives flag-window and incoming-edge evidence and
+binds the exact post-call window, B.NE error target, success fallthrough,
+arithmetic, skip branch, error arm and return tail. Conflicting entries,
+incomplete scans, stale records, missing adjusted-result restoration, repeated
+operations and unsupported encodings remain unresolved. CBNZ arithmetic is
+not admitted by this change.
+
+Sixteen new methods and 733 affected Swift methods passed in bounded runs;
+independent semantic review found no blocking issue. The tests include
+synthetic instruction fixtures, CLI output and text rendering. Return-choice
+validation binds both outcome returns; the concise arithmetic text describes
+only the independently bound success operation. Prior compiler, binary and
+native-app results are reused within their original scope. This change adds
+no new compiler-emission or runtime qualification, and all source-reconstruction
+and runtime-proof limits remain in place.

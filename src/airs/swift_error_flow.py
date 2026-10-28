@@ -20,18 +20,18 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v31'
+MODEL = 'swift-sync-error-edges-v32'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v22'
+REGION_MODEL = 'swift-sync-error-region-v23'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v7'
 INCOMING_EVIDENCE_LIMIT = 16
-PRESENTATION_MODEL = 'swift-structural-presentation-v7'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v20'
+PRESENTATION_MODEL = 'swift-structural-presentation-v8'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v21'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v16'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v18'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v27'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v28'
 SHARED_WORDS = 8
 
 
@@ -266,6 +266,14 @@ def _shared_return_tail(data: bytes, function, join: int) -> dict | None:
     return None
 
 
+def _is_result_arithmetic(instruction) -> bool:
+    """One nonzero nonflagging X-register immediate operation, without SP."""
+    return (instruction.kind in ('add', 'sub')
+            and instruction.word & 0xff800000 == (0x91000000 if instruction.kind == 'add' else 0xd1000000)
+            and instruction.rd != 31 and instruction.rn != 31
+            and (instruction.word >> 10) & 0xfff != 0)
+
+
 def _shared_epilogue(data: bytes, function, success: int, join: int, *, allow_result_arithmetic: bool = False) -> dict | None:
     """Bounded straight-line success arm and shared restore/return shape."""
     if not success < join < function.end or (success | join) % 4 or join - success > SHARED_WORDS * 4:
@@ -274,10 +282,7 @@ def _shared_epilogue(data: bytes, function, success: int, join: int, *, allow_re
     try:
         for pc in range(success, join, 4):
             instruction, row = _bounded_instruction(data, function, pc)
-            is_arithmetic = (allow_result_arithmetic and instruction.kind in ('add', 'sub')
-                      and instruction.word & 0xff800000 == (0x91000000 if instruction.kind == 'add' else 0xd1000000)
-                      and instruction.rd != 31 and instruction.rn != 31
-                      and (instruction.word >> 10) & 0xfff != 0)
+            is_arithmetic = allow_result_arithmetic and _is_result_arithmetic(instruction)
             if is_arithmetic:
                 if has_arithmetic:
                     return None
@@ -304,7 +309,8 @@ def _forward_error_region(data: bytes, function, edge: dict) -> dict:
         return {**result, 'reason': 'unsupported_error_region_layout'}
     if start - success > SHARED_WORDS * 4:
         return {**result, 'reason': 'success_region_budget'}
-    words = []; calls = 0
+    words = []; calls = 0; has_arithmetic = False
+    allow_result_arithmetic = edge.get('test_kind') == 'cmp_zero_bcond' and edge.get('test_condition') == 'ne'
     success_evidence = {'start_pc': hex(success), 'end_pc_exclusive': hex(start),
                         'instructions': words, 'instructions_complete': False}
     result['success_interval'] = success_evidence
@@ -327,8 +333,14 @@ def _forward_error_region(data: bytes, function, edge: dict) -> dict:
                     row['target_pc'] = hex(join)
                 else:
                     row['target_reason'] = 'outside_vm_address_space'
+            elif allow_result_arithmetic and _is_result_arithmetic(instruction):
+                if has_arithmetic:
+                    return {**result, 'reason': 'success_region_control_flow_unmodeled'}
+                has_arithmetic = True
             elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk', 'wmov'):
                 return {**result, 'reason': 'success_region_control_flow_unmodeled'}
+        if has_arithmetic and any(row['kind'] not in ('nop', 'mov', 'add', 'sub') for row in words[:-1]):
+            return {**result, 'reason': 'success_region_control_flow_unmodeled'}
         if not start < join < function.end or join % 4:
             return {**result, 'reason': 'unsupported_error_region_layout'}
         if join - start > REGION_WORDS * 4:
@@ -789,14 +801,15 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
         join = int(region['join_pc'], 16)
         has_arithmetic = shared and any(row.get('kind') in ('add', 'sub') for row in interval['instructions'])
         if has_arithmetic:
-            if (scan is None or (compare and call.get('test_condition') != 'eq')
+            if (scan is None or (compare and call.get('test_condition') not in ('eq', 'ne'))
                     or (not compare and call['window'][-1].get('kind') != 'xcbz')):
                 return {**result, 'reason': 'success_add_layout_not_qualified', 'instructions': evidence}
             fresh_scan = _caller_direct_edges(data, function)
-            decoded = _shared_epilogue(data, function, start, join, allow_result_arithmetic=True)
+            decoded = (_forward_error_region(data, function, call) if cmp_ne else
+                       _shared_epilogue(data, function, start, join, allow_result_arithmetic=True))
             if (fresh_scan != scan or _region_incoming(fresh_scan, region, call) != region['incoming_validation']
-                    or decoded is None or decoded['success_interval'] != interval
-                    or decoded['shared_epilogue'] != region['shared_epilogue']):
+                    or decoded is None or decoded.get('success_interval') != interval
+                    or decoded.get('shared_epilogue') != region['shared_epilogue']):
                 return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
             if compare and (_flag_entries(fresh_scan, call) != call.get('flag_entry_validation')
                     or _error_region(data, function, call) != {key: value for key, value in region.items() if key != 'incoming_validation'}
@@ -810,10 +823,12 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
                 if item != {**raw, 'kind': ins.kind}:
                     return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
             test_ins, _ = _bounded_instruction(data, function, test)
-            if ((test_ins.kind != 'bcond' or test_ins.addressing != '0') if compare else
+            if ((test_ins.kind != 'bcond' or test_ins.addressing != ('1' if cmp_ne else '0')) if compare else
                     (test_ins.kind != 'xcbz' or call['tested_register'] != f'x{test_ins.rn}')):
                 return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
-            if test + test_ins.immediate != start or int(call['error_pc'], 16) != test + 4:
+            error_pc = int(call['error_pc'], 16)
+            if ((test + test_ins.immediate != error_pc or start != test + 4) if cmp_ne else
+                    (test + test_ins.immediate != start or error_pc != test + 4)):
                 return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
         for pc in range(start, end, 4):
             instruction, row = _bounded_instruction(data, function, pc)

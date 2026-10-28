@@ -99,7 +99,7 @@ class WMovkCLIControls(unittest.TestCase):
                 if format=='json':
                     value=json.loads(output.getvalue())
                     self.assertEqual(value['calls'][0]['success_constant']['constant_bits'],'0x00000000abcd1234')
-                    self.assertEqual(value['error_region_model_version'],'swift-sync-error-region-v22')
+                    self.assertEqual(value['error_region_model_version'],'swift-sync-error-region-v23')
                 else:
                     self.assertIn('wmovk',output.getvalue())
                     self.assertIn('0x00000000abcd1234',output.getvalue())

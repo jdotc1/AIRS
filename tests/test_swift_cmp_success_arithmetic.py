@@ -101,9 +101,11 @@ class CmpArithmeticBoundaryTests(unittest.TestCase):
             arm = (0x91001400, *((0xd503201f,)*(count-1)))
             self.assertEqual(report(with_cmp_arm(arm))['calls'][0]['return_choice']['status'], expected)
 
-    def test_ne_forward_arithmetic_stays_outside_this_increment(self):
+    def test_ne_forward_arithmetic_uses_its_separate_layout(self):
         from test_swift_cmp_ne_handler import WORDS as NE, report as ne_report
-        self.assertEqual(ne_report((*NE[:2], 0x91001400, *NE[3:]))['calls'][0]['return_choice']['status'], 'unresolved')
+        call = ne_report((*NE[:2], 0x91001400, *NE[3:]))['calls'][0]
+        self.assertEqual(call['error_region']['layout'], 'success_fallthrough_error_forward')
+        self.assertEqual(call['return_choice']['success']['kind'], 'call_result_add_immediate')
 
     def test_void_callee_cannot_supply_an_int_result(self):
         from airs.swift_error_flow import recover_swift_error_flow
