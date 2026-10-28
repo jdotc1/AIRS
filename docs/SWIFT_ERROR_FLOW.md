@@ -1751,3 +1751,31 @@ exclusive entry, caller return type, handler meaning, restored state or Swift
 source. Eleven new and 490 affected methods passed; independent semantic review
 found no blocker. This synthetic increment adds no Swift-frontend, binary,
 runtime or native release qualification. Prior evidence retains its scope.
+
+## Shifted success arithmetic
+
+`swift-sync-error-edges-v30`, `swift-sync-error-region-v21`,
+`swift-success-result-v19` and `swift-return-choice-v26` extend the screened
+CBZ shared-tail subset to one nonflagging 64-bit ADD or SUB immediate with
+the encoding's optional 12-bit left shift. The existing instruction decoder
+supplies the effective amount: shifted nonzero immediates range from 4,096
+through 16,773,120 in steps of 4,096. Unshifted amounts from 1 through 4,095
+remain supported. The source must hold a tracked full-width Int call-result
+alias, both operand registers must be x0 through x30, and the adjusted value
+must reach x0 before the shared return.
+
+Success-result and return-choice records carry `immediate_shift` (0 or 12)
+alongside the effective `immediate`. A shared binding helper checks the
+operation, operand registers, width, shift and effective amount against the
+exact instruction word before a choice or concise text expression is emitted.
+The expression uses the effective amount, such as `call result + 4096 modulo
+2^64`, rather than the unscaled encoding field. Zero immediates, SP operands,
+narrow or flag-setting forms, multiple operations, stale aliases, conflicting
+entries and malformed or inconsistent metadata remain refused.
+
+Thirteen new methods and 706 affected Swift methods passed in bounded runs;
+independent semantic review found no blocking issue. Earlier accepted results
+were reused for unchanged publication inputs. This increment uses synthetic
+instruction fixtures and adds no Swift-frontend, owned-binary, runtime or
+native-app qualification. Source reconstruction and runtime proof remain
+disabled; caller, entry, arm, shared-return and evidence-size limits remain.

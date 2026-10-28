@@ -20,18 +20,18 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v29'
+MODEL = 'swift-sync-error-edges-v30'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v20'
+REGION_MODEL = 'swift-sync-error-region-v21'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v7'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v6'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v18'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v19'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v16'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v18'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v25'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v26'
 SHARED_WORDS = 8
 
 
@@ -275,9 +275,9 @@ def _shared_epilogue(data: bytes, function, success: int, join: int, *, allow_re
         for pc in range(success, join, 4):
             instruction, row = _bounded_instruction(data, function, pc)
             is_arithmetic = (allow_result_arithmetic and instruction.kind in ('add', 'sub')
-                      and instruction.word & 0xffc00000 == (0x91000000 if instruction.kind == 'add' else 0xd1000000)
+                      and instruction.word & 0xff800000 == (0x91000000 if instruction.kind == 'add' else 0xd1000000)
                       and instruction.rd != 31 and instruction.rn != 31
-                      and 1 <= instruction.immediate <= 4095)
+                      and (instruction.word >> 10) & 0xfff != 0)
             if is_arithmetic:
                 if has_arithmetic:
                     return None
@@ -734,6 +734,7 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
     adjustment_operation = None
     adjustment_register = None
     adjustment_source_register = None
+    adjustment_shift = None
 
     def transfer(instruction):
         nonlocal copied
@@ -816,6 +817,7 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
                 adjustment_operation = instruction.kind
                 adjustment_register = instruction.rd
                 adjustment_source_register = instruction.rn
+                adjustment_shift = 12 if instruction.word & (1 << 22) else 0
                 aliases = {instruction.rd}
                 continue
             if instruction.kind == 'nop':
@@ -862,7 +864,8 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
                 'reason': (f'recorded_success_path_{adjustment_operation}s_immediate' if adjustment is not None else
                            'recorded_success_path_restores_x0_copy' if copied else 'recorded_success_path_preserves_x0'),
                 **({'operation': f'{adjustment_operation}_immediate_modulo', 'immediate': adjustment, 'bit_width': 64,
-                    'adjustment_register': adjustment_register, 'adjustment_source_register': adjustment_source_register}
+                    'adjustment_register': adjustment_register, 'adjustment_source_register': adjustment_source_register,
+                    'immediate_shift': adjustment_shift}
                    if adjustment is not None else {}),
                 'result_registers_before_tail': [f'x{register}' for register in sorted(aliases)],
                 'return_tail_layout': 'shared_epilogue' if shared else 'success_entry',
@@ -1050,6 +1053,27 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False, sc
         return {**result, 'reason': 'bounded_constant_evidence_unavailable', 'instructions': evidence}
 
 
+def _adjusted_result_word(outcome: dict) -> int | None:
+    """Bind an effective immediate and exact operands to one admitted encoding."""
+    if not isinstance(outcome, dict):
+        return None
+    operation, immediate, shift, width = (outcome.get(key) for key in
+                                         ('operation', 'immediate', 'immediate_shift', 'bit_width'))
+    source, destination = (outcome.get(key) for key in
+                           ('adjustment_source_register', 'adjustment_register'))
+    if (operation not in ('add_immediate_modulo', 'sub_immediate_modulo')
+            or type(width) is not int or width != 64
+            or type(shift) is not int or shift not in (0, 12)
+            or type(immediate) is not int or not 1 <= immediate <= (4095 << shift)
+            or immediate % (1 << shift) != 0
+            or type(source) is not int or not 0 <= source <= 30
+            or type(destination) is not int or not 0 <= destination <= 30):
+        return None
+    return ((0x91000000 if operation == 'add_immediate_modulo' else 0xd1000000)
+            | ((1 if shift == 12 else 0) << 22) | ((immediate >> shift) << 10)
+            | (source << 5) | destination)
+
+
 def _return_choice(call: dict) -> dict:
     """Join in-process producer facts only; this does not admit saved reports."""
     result = {'status': 'unresolved', 'source_reconstruction_allowed': False,
@@ -1110,14 +1134,8 @@ def _return_choice(call: dict) -> dict:
             return {'kind': 'constant_bits', 'bit_width': 64, 'constant_bits': bits}
         if returned_known and success['status'] == 'adjusted_register_candidate':
             operation = success.get('operation')
-            if (operation not in ('add_immediate_modulo', 'sub_immediate_modulo')
-                    or type(success.get('immediate')) is not int or not 1 <= success['immediate'] <= 4095
-                    or type(success.get('bit_width')) is not int or success['bit_width'] != 64
-                    or type(success.get('adjustment_register')) is not int
-                    or not 0 <= success['adjustment_register'] <= 30
-                    or type(success.get('adjustment_source_register')) is not int
-                    or not 0 <= success['adjustment_source_register'] <= 30
-                    or success.get('return_tail_layout') != 'shared_epilogue'):
+            expected = _adjusted_result_word(success)
+            if expected is None or success.get('return_tail_layout') != 'shared_epilogue':
                 raise ValueError('Adjusted result')
             instruction_rows = success['instructions']
             interval = region['success_interval']
@@ -1131,15 +1149,11 @@ def _return_choice(call: dict) -> dict:
                     or any((row.get('pc'), row.get('word')) != (record.get('pc'), record.get('word'))
                            for row, record in zip(selected, captured))):
                 raise ValueError('Adjusted arm binding')
-            register = success['adjustment_register']
-            source_register = success['adjustment_source_register']
-            expected = ((0x91000000 if operation == 'add_immediate_modulo' else 0xd1000000)
-                        | (success['immediate'] << 10) | (source_register << 5) | register)
             if sum(row.get('word') == f'0x{expected:08x}' for row in selected) != 1:
                 raise ValueError('Adjusted instruction binding')
             success_description = {'kind': 'call_result_add_immediate' if operation == 'add_immediate_modulo' else 'call_result_sub_immediate',
                                    'register': 'x0', 'immediate': success['immediate'], 'bit_width': 64,
-                                   'operation': operation}
+                                   'operation': operation, 'immediate_shift': success['immediate_shift']}
         else:
             success_description = literal(success) if constant_known else {
                 'kind': 'call_result', 'register': 'x0', 'candidate_status': success['status']}

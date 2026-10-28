@@ -27,7 +27,7 @@ class SuccessSubBoundaryTests(unittest.TestCase):
             self.assertEqual(success['bit_width'], 64)
 
     def test_shift_flags_width_operands_and_zero_remain_refused(self):
-        for word in (0xd1000000, 0xd1400400, 0x51001400, 0xf1001400,
+        for word in (0xd1000000, 0x51001400, 0xf1001400,
                      0xd1001401, 0xd1001420, 0xd10017ff):
             call = report((*WORDS[:5], word, *WORDS[6:]))['calls'][0]
             if word not in (0xd1001401, 0xd1001420):

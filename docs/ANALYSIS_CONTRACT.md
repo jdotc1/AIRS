@@ -1527,3 +1527,15 @@ before return. Both operand registers, immediate, caller words, direct entries,
 arm and shared return are bound to the evidence. Register 31, narrow, shifted
 or flag-setting forms and multiple operations remain outside scope. These are
 machine-level selected-path facts, not runtime or source proof.
+
+## Shifted success arithmetic
+
+The screened CBZ shared-tail arithmetic subset also accepts the encoding's
+12-bit immediate shift for one nonflagging 64-bit ADD or SUB. Effective shifted
+amounts are 4,096 through 16,773,120 in steps of 4,096; unshifted nonzero 12-bit
+amounts remain supported. Explicit shift metadata and the effective value must
+bind to the same exact opcode and registers before a structural choice or text
+expression is emitted. Live-alias, x0 restoration, direct-entry and shared-tail
+requirements remain unchanged. This does not widen the supported layouts or
+admit SP, narrow, flag-setting, zero-immediate or repeated operations, and it
+does not establish runtime behavior or reconstruct Swift source.
