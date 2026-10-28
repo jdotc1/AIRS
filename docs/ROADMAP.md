@@ -803,3 +803,11 @@ Qualified bounded ADD choices now have a readable machine-operation summary in
 structural text output, guarded by producer identity and proof checks. Eight
 focused and 14 affected text/CLI methods passed. Analysis semantics and runtime
 qualification remain unchanged. See SWIFT_ERROR_FLOW.md.
+
+## Bounded success-path SUB
+
+Screened CBZ shared success arms now admit a single nonflagging 64-bit X0
+subtract-immediate operation, described as structural modulo-64 evidence. New
+and affected checks passed with independent review and evidence-binding and
+output-bound corrections. This synthetic increment does not qualify Swift
+frontend emission or runtime behavior. See SWIFT_ERROR_FLOW.md.

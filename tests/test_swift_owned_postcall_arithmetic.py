@@ -32,7 +32,7 @@ class OwnedPostCallArithmeticTests(unittest.TestCase):
         self.assertEqual(call['return_choice']['error']['constant_bits'], '0xfffffffffffffff9')
 
     def test_unsupported_arithmetic_does_not_become_noop(self):
-        for word in (0x91000401, 0xd1000400):
+        for word in (0x91000401, 0xd1000401):
             call = report((*WORDS[:5], word, *WORDS[6:]))['calls'][0]
             self.assertNotEqual(call['presentation']['status'], 'eligible_structural_only')
             self.assertEqual(call['return_choice']['status'], 'unresolved')

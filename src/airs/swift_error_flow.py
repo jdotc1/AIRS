@@ -20,18 +20,18 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v25'
+MODEL = 'swift-sync-error-edges-v26'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v16'
+REGION_MODEL = 'swift-sync-error-region-v17'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v7'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v6'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v14'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v15'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v16'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v18'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v21'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v22'
 SHARED_WORDS = 8
 
 
@@ -266,24 +266,25 @@ def _shared_return_tail(data: bytes, function, join: int) -> dict | None:
     return None
 
 
-def _shared_epilogue(data: bytes, function, success: int, join: int, *, allow_result_add: bool = False) -> dict | None:
+def _shared_epilogue(data: bytes, function, success: int, join: int, *, allow_result_arithmetic: bool = False) -> dict | None:
     """Bounded straight-line success arm and shared restore/return shape."""
     if not success < join < function.end or (success | join) % 4 or join - success > SHARED_WORDS * 4:
         return None
-    words = []; has_add = False
+    words = []; has_arithmetic = False
     try:
         for pc in range(success, join, 4):
             instruction, row = _bounded_instruction(data, function, pc)
-            is_add = (allow_result_add and instruction.kind == 'add'
-                      and instruction.word & 0xffc003ff == 0x91000000 and 1 <= instruction.immediate <= 4095)
-            if is_add:
-                if has_add:
+            is_arithmetic = (allow_result_arithmetic and instruction.kind in ('add', 'sub')
+                      and instruction.word & 0xffc003ff == (0x91000000 if instruction.kind == 'add' else 0xd1000000)
+                      and 1 <= instruction.immediate <= 4095)
+            if is_arithmetic:
+                if has_arithmetic:
                     return None
-                has_add = True
+                has_arithmetic = True
             elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk', 'wmov'):
                 return None
             words.append({**row, 'kind': instruction.kind})
-        if has_add and any(row['kind'] not in ('nop', 'add') for row in words):
+        if has_arithmetic and any(row['kind'] not in ('nop', 'add', 'sub') for row in words):
             return None
     except (ModelError, ValueError):
         return None
@@ -433,7 +434,7 @@ def _error_region(data: bytes, function, edge: dict) -> dict:
                 return {**result, 'reason': 'error_region_control_flow_unmodeled'}
             if target != boundary:
                 shared = _shared_epilogue(data, function, boundary, target,
-                    allow_result_add=edge.get('test_kind') != 'cmp_zero_bcond' and edge.get('window', [{}])[-1].get('kind') == 'xcbz')
+                    allow_result_arithmetic=edge.get('test_kind') != 'cmp_zero_bcond' and edge.get('window', [{}])[-1].get('kind') == 'xcbz')
                 if shared is None:
                     return {**result, 'reason': 'error_region_control_flow_unmodeled'}
                 join = target
@@ -729,6 +730,7 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
     aliases = {0}
     copied = False
     adjustment = None
+    adjustment_operation = None
 
     def transfer(instruction):
         nonlocal copied
@@ -780,12 +782,12 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
         if (not shared and int(region['join_pc'], 16) != start) or not (1 if shared else 0) <= (end - start) // 4 <= SHARED_WORDS:
             raise ValueError('Success bound')
         join = int(region['join_pc'], 16)
-        has_add = shared and any(row.get('kind') == 'add' for row in interval['instructions'])
-        if has_add:
+        has_arithmetic = shared and any(row.get('kind') in ('add', 'sub') for row in interval['instructions'])
+        if has_arithmetic:
             if compare or call['window'][-1].get('kind') != 'xcbz' or scan is None:
                 return {**result, 'reason': 'success_add_layout_not_qualified', 'instructions': evidence}
             fresh_scan = _caller_direct_edges(data, function)
-            decoded = _shared_epilogue(data, function, start, join, allow_result_add=True)
+            decoded = _shared_epilogue(data, function, start, join, allow_result_arithmetic=True)
             if (fresh_scan != scan or _region_incoming(fresh_scan, region, call) != region['incoming_validation']
                     or decoded is None or decoded['success_interval'] != interval
                     or decoded['shared_epilogue'] != region['shared_epilogue']):
@@ -804,10 +806,11 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
         for pc in range(start, end, 4):
             instruction, row = _bounded_instruction(data, function, pc)
             evidence.append({**row, 'phase': 'success'})
-            if has_add and instruction.kind == 'add':
+            if has_arithmetic and instruction.kind in ('add', 'sub'):
                 if 0 not in aliases or adjustment is not None:
                     return {**result, 'reason': 'success_result_not_preserved', 'instructions': evidence}
                 adjustment = instruction.immediate
+                adjustment_operation = instruction.kind
                 aliases = {0}
                 continue
             if instruction.kind == 'nop':
@@ -851,9 +854,9 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
 
         return {**result, 'status': ('adjusted_register_candidate' if adjustment is not None else
                                       'copied_register_candidate' if copied else 'preserved_register_candidate'),
-                'reason': ('recorded_success_path_adds_immediate' if adjustment is not None else
+                'reason': (f'recorded_success_path_{adjustment_operation}s_immediate' if adjustment is not None else
                            'recorded_success_path_restores_x0_copy' if copied else 'recorded_success_path_preserves_x0'),
-                **({'operation': 'add_immediate_modulo', 'immediate': adjustment, 'bit_width': 64}
+                **({'operation': f'{adjustment_operation}_immediate_modulo', 'immediate': adjustment, 'bit_width': 64}
                    if adjustment is not None else {}),
                 'result_registers_before_tail': [f'x{register}' for register in sorted(aliases)],
                 'return_tail_layout': 'shared_epilogue' if shared else 'success_entry',
@@ -1100,13 +1103,30 @@ def _return_choice(call: dict) -> dict:
                 raise ValueError('Literal bits')
             return {'kind': 'constant_bits', 'bit_width': 64, 'constant_bits': bits}
         if returned_known and success['status'] == 'adjusted_register_candidate':
-            if (success.get('operation') != 'add_immediate_modulo' or type(success.get('immediate')) is not int
-                    or not 1 <= success['immediate'] <= 4095 or type(success.get('bit_width')) is not int
-                    or success['bit_width'] != 64 or success.get('return_tail_layout') != 'shared_epilogue'):
+            operation = success.get('operation')
+            if (operation not in ('add_immediate_modulo', 'sub_immediate_modulo')
+                    or type(success.get('immediate')) is not int or not 1 <= success['immediate'] <= 4095
+                    or type(success.get('bit_width')) is not int or success['bit_width'] != 64
+                    or success.get('return_tail_layout') != 'shared_epilogue'):
                 raise ValueError('Adjusted result')
-            success_description = {'kind': 'call_result_add_immediate', 'register': 'x0',
-                                   'immediate': success['immediate'], 'bit_width': 64,
-                                   'operation': 'add_immediate_modulo'}
+            instruction_rows = success['instructions']
+            interval = region['success_interval']
+            captured = interval['instructions']
+            if (not isinstance(instruction_rows, list) or len(instruction_rows) > 3 * SHARED_WORDS
+                    or not isinstance(captured, list) or not 1 <= len(captured) <= SHARED_WORDS
+                    or any(not isinstance(row, dict) for row in instruction_rows + captured)):
+                raise ValueError('Adjusted arm row types')
+            selected = [row for row in instruction_rows if row.get('phase') == 'success']
+            if (plan.get('success_interval') != interval or len(selected) != len(captured)
+                    or any((row.get('pc'), row.get('word')) != (record.get('pc'), record.get('word'))
+                           for row, record in zip(selected, captured))):
+                raise ValueError('Adjusted arm binding')
+            expected = (0x91000000 if operation == 'add_immediate_modulo' else 0xd1000000) | (success['immediate'] << 10)
+            if sum(row.get('word') == f'0x{expected:08x}' for row in selected) != 1:
+                raise ValueError('Adjusted instruction binding')
+            success_description = {'kind': 'call_result_add_immediate' if operation == 'add_immediate_modulo' else 'call_result_sub_immediate',
+                                   'register': 'x0', 'immediate': success['immediate'], 'bit_width': 64,
+                                   'operation': operation}
         else:
             success_description = literal(success) if constant_known else {
                 'kind': 'call_result', 'register': 'x0', 'candidate_status': success['status']}
