@@ -1686,3 +1686,24 @@ ordering adjustment. Its new oversized-tail test and 28 focused text/CLI
 methods passed afterward. Independent review found no remaining blocker after
 instruction binding, malformed-row and bounded-output corrections. Prior
 accepted results retain their original scope.
+
+## Full-width copies around success arithmetic
+
+`swift-sync-error-edges-v27`, `swift-sync-error-region-v18`,
+`swift-success-result-v16` and `swift-return-choice-v23` extend the screened
+CBZ shared-tail arithmetic arm to include full-width MOV register copies around
+one qualified ADD or SUB. The arm remains bounded to eight words and may contain
+only NOPs, full-width MOVs and exactly one qualified arithmetic instruction.
+Before the arithmetic, aliases represent the original Int call result; at the
+operation the tracked aliases are reset to the adjusted x0 value. Subsequent
+copies track only that adjusted value. A stale pre-adjustment copy cannot be
+restored as the adjusted result, and x0 must hold the tracked value at the tail.
+
+Narrow copies, literal writes, repeated or mixed arithmetic and unsupported
+layouts remain outside this subset. Caller bytes, direct-entry evidence, arm
+and shared-tail records remain bound. The choice is modulo-64 machine evidence,
+not proof of runtime values, call return, exclusive entry, caller return type,
+handler meaning, restored state or reconstructed Swift source. Eleven new and
+467 affected methods passed, and independent semantic review found no blocker.
+This synthetic increment adds no compiler, binary, runtime or native release
+qualification; prior results retain their original scope.

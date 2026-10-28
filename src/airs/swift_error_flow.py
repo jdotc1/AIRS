@@ -20,18 +20,18 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v26'
+MODEL = 'swift-sync-error-edges-v27'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v17'
+REGION_MODEL = 'swift-sync-error-region-v18'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v7'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v6'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v15'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v16'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v16'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v18'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v22'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v23'
 SHARED_WORDS = 8
 
 
@@ -284,7 +284,7 @@ def _shared_epilogue(data: bytes, function, success: int, join: int, *, allow_re
             elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk', 'wmovz', 'wmovn', 'wmovk', 'wmov'):
                 return None
             words.append({**row, 'kind': instruction.kind})
-        if has_arithmetic and any(row['kind'] not in ('nop', 'add', 'sub') for row in words):
+        if has_arithmetic and any(row['kind'] not in ('nop', 'mov', 'add', 'sub') for row in words):
             return None
     except (ModelError, ValueError):
         return None

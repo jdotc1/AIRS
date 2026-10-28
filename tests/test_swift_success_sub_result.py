@@ -34,7 +34,7 @@ class SuccessSubBoundaryTests(unittest.TestCase):
             self.assertEqual(call['return_choice']['status'], 'unresolved')
 
     def test_multiple_or_mixed_operations_are_refused(self):
-        for second in (0xd1000400, 0x91000400, 0xaa0003e0):
+        for second in (0xd1000400, 0x91000400, 0xd2800013):
             words = (*WORDS[:4], 0x14000003, SUB_WORDS[5], second, *WORDS[6:])
             self.assertEqual(report(words)['calls'][0]['return_choice']['status'], 'unresolved')
 
