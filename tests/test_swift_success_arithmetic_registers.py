@@ -33,8 +33,8 @@ class ArithmeticRegisterBoundaryTests(unittest.TestCase):
                     (0xaa0003f3, 0xaa0003f4, 0x91001673, 0xaa1403e0)):
             self.assertEqual(report(with_arm(arm))['calls'][0]['return_choice']['status'], 'unresolved')
 
-    def test_distinct_registers_sp_narrow_shift_and_flags_refuse(self):
-        for word in (0x91001674, 0x91001653, 0x910017ff, 0x11001673, 0x91401673, 0xb1001673, 0x91000273):
+    def test_unrestored_registers_sp_narrow_and_flags_refuse(self):
+        for word in (0x91001674, 0x91001653, 0x910017ff, 0x11001673, 0xb1001673, 0x91000273):
             self.assertEqual(report(with_arm((0xaa0003f3, word, 0xaa1303e0)))['calls'][0]['return_choice']['status'], 'unresolved')
 
     def test_valid_immediate_boundaries(self):

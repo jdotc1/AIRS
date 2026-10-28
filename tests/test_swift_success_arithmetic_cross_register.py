@@ -32,8 +32,8 @@ class CrossRegisterBoundaryTests(unittest.TestCase):
                     (0xaa0003f3, 0x91001674, 0xaa0003e0)):
             self.assertEqual(report(with_arm(arm))['calls'][0]['return_choice']['status'], 'unresolved')
 
-    def test_narrow_flag_shift_and_sp_operands_are_excluded(self):
-        for word in (0x11001660, 0xb1001660, 0x91401660, 0x910017e0, 0x9100167f):
+    def test_narrow_flag_and_sp_operands_are_excluded(self):
+        for word in (0x11001660, 0xb1001660, 0x910017e0, 0x9100167f):
             call = report(with_arm((0xaa0003f3, word)))['calls'][0]
             self.assertNotEqual(call['presentation']['status'], 'eligible_structural_only')
 

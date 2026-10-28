@@ -741,6 +741,15 @@ caller-byte binding and full bounded-region consistency checks. Eleven new and
 correction. B.NE outcomes and runtime qualification remain open. See
 SWIFT_ERROR_FLOW.md.
 
+## Shifted success arithmetic
+
+Screened shared success arms can now recover a single ADD or SUB with a 12-bit
+immediate shift, using the effective scaled amount and retaining exact operand
+and instruction bindings. Thirteen new and 706 affected Swift methods passed,
+with no blocking independent-review finding. This is synthetic structural
+evidence; frontend, binary and runtime qualification remain separate. See
+SWIFT_ERROR_FLOW.md.
+
 ## CMP/B.NE error literals
 
 Screened forward-error arms can now retain structural literal candidates after
