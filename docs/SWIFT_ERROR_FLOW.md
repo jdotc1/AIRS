@@ -1833,3 +1833,33 @@ only the independently bound success operation. Prior compiler, binary and
 native-app results are reused within their original scope. This change adds
 no new compiler-emission or runtime qualification, and all source-reconstruction
 and runtime-proof limits remain in place.
+
+## CBNZ forward success arithmetic
+
+`swift-sync-error-edges-v33`, `swift-sync-error-region-v24`,
+`swift-structural-presentation-v9`, `swift-success-result-v22` and
+`swift-return-choice-v29` extend the bounded forward layout to a full-width
+CBNZ error-result test. Success falls through, applies one nonflagging X ADD
+or SUB immediate, then branches over the error handler to the shared return.
+The existing shifted-immediate predicate and full-width result-alias tracking
+are reused. The eight-word success-arm limit includes its terminal skip branch;
+the adjusted value must reach x0 before the shared tail.
+
+The CBNZ arithmetic path re-decodes the actual BL and binds its recorded word
+and callee target. It reconstructs the post-call error-alias window, screens
+caller-local direct entries into that window, and re-derives the full forward
+region and incoming evidence. The exact branch polarity, successor geometry,
+success instructions, skip branch, error instructions, shared return and
+presentation plan must agree. The alias-window screen makes no flag-state
+claim. Unknown or partial scans, stale calls or instructions, bypassed copies,
+unrestored results, narrow operations, SP operands, flags, repeated arithmetic
+and mixed literal arms remain unresolved.
+
+Fifteen new methods and 749 affected Swift methods passed in bounded runs.
+Independent review identified a missing actual-call binding, which received a
+failing-then-passing regression; final review found no remaining blocker.
+Checks cover synthetic instructions, CLI output and rendering. Accepted
+compiler, binary and native-app evidence is reused only in its original scope;
+no new compiler-emission or runtime qualification is claimed. Source
+reconstruction and runtime, exclusive-path, caller-type, call-return and
+handler-semantics proof remain disabled.

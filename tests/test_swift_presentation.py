@@ -149,7 +149,7 @@ class SwiftPresentationBoundaryTests(unittest.TestCase):
                 status = main(['swift-error-flow', str(source), '--include-error-regions', '--validate-region-entries', '--include-structured-presentation'])
             self.assertEqual(status, 0)
             report = json.loads(output.getvalue())
-            self.assertEqual(report['structured_presentation_model_version'], 'swift-structural-presentation-v8')
+            self.assertEqual(report['structured_presentation_model_version'], 'swift-structural-presentation-v9')
             self.assertEqual(report['calls'][0]['presentation']['status'], 'eligible_structural_only')
             with contextlib.redirect_stderr(errors):
                 self.assertEqual(main(['swift-error-flow', str(source), '--include-structured-presentation']), 2)
