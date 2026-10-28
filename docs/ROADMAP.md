@@ -827,3 +827,11 @@ and restore it to x0 before returning. Twelve new and 478 affected methods
 passed with independent semantic review. The increment is synthetic structural
 evidence; frontend and runtime qualification remain open. See
 SWIFT_ERROR_FLOW.md.
+
+## Cross-register success arithmetic
+
+Screened success arms can now adjust a tracked full-width result alias into a
+different register and restore the adjusted value to x0. Eleven new and 490
+affected methods passed with independent semantic review. This is synthetic
+structural evidence; compiler and runtime qualification remain open. See
+SWIFT_ERROR_FLOW.md.

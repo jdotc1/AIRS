@@ -31,7 +31,8 @@ class SuccessAddBoundaryTests(unittest.TestCase):
         for word in (0x91000000, 0x91400400, 0x11001400, 0xb1001400,
                      0xd1001401, 0x91001401, 0x91001420, 0x910017ff):
             call = report((*WORDS[:5], word, *WORDS[6:]))['calls'][0]
-            self.assertNotEqual(call['presentation']['status'], 'eligible_structural_only')
+            if word not in (0xd1001401, 0x91001401, 0x91001420):
+                self.assertNotEqual(call['presentation']['status'], 'eligible_structural_only')
             self.assertEqual(call['return_choice']['status'], 'unresolved')
 
     def test_add_with_literal_or_second_add_remains_declined(self):

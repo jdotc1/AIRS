@@ -103,8 +103,8 @@ class SharedEpilogueBoundaryTests(unittest.TestCase):
 
     def test_new_component_versions_leave_edge_identity_and_default_unchanged(self):
         value = report()
-        self.assertEqual(value['model_version'], 'swift-sync-error-edges-v28')
-        self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v19')
+        self.assertEqual(value['model_version'], 'swift-sync-error-edges-v29')
+        self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v20')
         self.assertEqual(value['region_incoming_model_version'], 'swift-region-direct-entries-v7')
         self.assertEqual(value['structured_presentation_model_version'], 'swift-structural-presentation-v6')
         default = recover_swift_error_flow(image(WORDS))

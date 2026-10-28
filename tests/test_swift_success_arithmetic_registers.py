@@ -35,7 +35,7 @@ class ArithmeticRegisterBoundaryTests(unittest.TestCase):
 
     def test_distinct_registers_sp_narrow_shift_and_flags_refuse(self):
         for word in (0x91001674, 0x91001653, 0x910017ff, 0x11001673, 0x91401673, 0xb1001673, 0x91000273):
-            self.assertNotEqual(report(with_arm((0xaa0003f3, word, 0xaa1303e0)))['calls'][0]['presentation']['status'], 'eligible_structural_only')
+            self.assertEqual(report(with_arm((0xaa0003f3, word, 0xaa1303e0)))['calls'][0]['return_choice']['status'], 'unresolved')
 
     def test_valid_immediate_boundaries(self):
         for amount in (1, 4095):

@@ -106,7 +106,7 @@ class SplitFrameCLIControls(unittest.TestCase):
                     value=json.loads(output.getvalue());tail=value['calls'][0]['error_region']['shared_epilogue']
                     self.assertEqual(tail['instructions'][2]['sp_writeback_bytes'],16)
                     self.assertFalse(tail['restore_state_proven'])
-                    self.assertEqual(value['error_region_model_version'],'swift-sync-error-region-v19')
+                    self.assertEqual(value['error_region_model_version'],'swift-sync-error-region-v20')
                 else:
                     for word in TAIL:self.assertIn(f'0x{word:08x}',output.getvalue())
                     self.assertIn('Source reconstruction: disabled',output.getvalue())
