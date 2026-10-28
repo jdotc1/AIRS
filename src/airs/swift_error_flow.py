@@ -20,18 +20,18 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v32'
+MODEL = 'swift-sync-error-edges-v33'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v23'
+REGION_MODEL = 'swift-sync-error-region-v24'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v7'
 INCOMING_EVIDENCE_LIMIT = 16
-PRESENTATION_MODEL = 'swift-structural-presentation-v8'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v21'
+PRESENTATION_MODEL = 'swift-structural-presentation-v9'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v22'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v16'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v18'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v28'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v29'
 SHARED_WORDS = 8
 
 
@@ -310,7 +310,9 @@ def _forward_error_region(data: bytes, function, edge: dict) -> dict:
     if start - success > SHARED_WORDS * 4:
         return {**result, 'reason': 'success_region_budget'}
     words = []; calls = 0; has_arithmetic = False
-    allow_result_arithmetic = edge.get('test_kind') == 'cmp_zero_bcond' and edge.get('test_condition') == 'ne'
+    allow_result_arithmetic = ((edge.get('test_kind') == 'cmp_zero_bcond' and edge.get('test_condition') == 'ne')
+                              or (edge.get('test_kind') != 'cmp_zero_bcond'
+                                  and (edge.get('window') or [{}])[-1].get('kind') == 'xcbnz'))
     success_evidence = {'start_pc': hex(success), 'end_pc_exclusive': hex(start),
                         'instructions': words, 'instructions_complete': False}
     result['success_interval'] = success_evidence
@@ -799,22 +801,34 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
         if (not shared and int(region['join_pc'], 16) != start) or not (1 if shared else 0) <= (end - start) // 4 <= SHARED_WORDS:
             raise ValueError('Success bound')
         join = int(region['join_pc'], 16)
+        forward = region.get('layout') == 'success_fallthrough_error_forward'
         has_arithmetic = shared and any(row.get('kind') in ('add', 'sub') for row in interval['instructions'])
         if has_arithmetic:
             if (scan is None or (compare and call.get('test_condition') not in ('eq', 'ne'))
-                    or (not compare and call['window'][-1].get('kind') != 'xcbz')):
+                    or (not compare and call['window'][-1].get('kind') not in ('xcbz', 'xcbnz'))):
                 return {**result, 'reason': 'success_add_layout_not_qualified', 'instructions': evidence}
             fresh_scan = _caller_direct_edges(data, function)
-            decoded = (_forward_error_region(data, function, call) if cmp_ne else
+            decoded = (_forward_error_region(data, function, call) if forward else
                        _shared_epilogue(data, function, start, join, allow_result_arithmetic=True))
             if (fresh_scan != scan or _region_incoming(fresh_scan, region, call) != region['incoming_validation']
                     or decoded is None or decoded.get('success_interval') != interval
                     or decoded.get('shared_epilogue') != region['shared_epilogue']):
                 return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
-            if compare and (_flag_entries(fresh_scan, call) != call.get('flag_entry_validation')
-                    or _error_region(data, function, call) != {key: value for key, value in region.items() if key != 'incoming_validation'}
-                    or _presentation_eligibility(call, data, function) != call['presentation']):
+            if compare and _flag_entries(fresh_scan, call) != call.get('flag_entry_validation'):
                 return {**result, 'reason': 'compare_success_arithmetic_evidence_inconsistent', 'instructions': evidence}
+            if (compare or forward) and (_error_region(data, function, call) != {key: value for key, value in region.items() if key != 'incoming_validation'}
+                    or _presentation_eligibility(call, data, function) != call['presentation']):
+                return {**result, 'reason': 'success_arithmetic_evidence_inconsistent', 'instructions': evidence}
+            if forward and not compare:
+                # Reuse alias-window entry screening without claiming flag state.
+                call_instruction, actual_call = _bounded_instruction(data, function, first - 4)
+                recovered = _edges(data, function, first - 4 - function.start)
+                if (call_instruction.kind != 'bl' or actual_call['word'] != call['call_word']
+                        or first - 4 + call_instruction.immediate != int(call['callee_pc'], 16)
+                        or recovered.get('status') != 'recovered_candidate'
+                        or any(call.get(key) != value for key, value in recovered.items())
+                        or _flag_entries(fresh_scan, call)['status'] != 'no_unexpected_direct_entries'):
+                    return {**result, 'reason': 'success_arithmetic_postcall_evidence_inconsistent', 'instructions': evidence}
             recorded = call['window']
             if len(recorded) != (test - first) // 4 + 1:
                 return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
@@ -824,10 +838,10 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
                     return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
             test_ins, _ = _bounded_instruction(data, function, test)
             if ((test_ins.kind != 'bcond' or test_ins.addressing != ('1' if cmp_ne else '0')) if compare else
-                    (test_ins.kind != 'xcbz' or call['tested_register'] != f'x{test_ins.rn}')):
+                    (test_ins.kind != ('xcbnz' if forward else 'xcbz') or call['tested_register'] != f'x{test_ins.rn}')):
                 return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
             error_pc = int(call['error_pc'], 16)
-            if ((test + test_ins.immediate != error_pc or start != test + 4) if cmp_ne else
+            if ((test + test_ins.immediate != error_pc or start != test + 4) if forward else
                     (test + test_ins.immediate != start or error_pc != test + 4)):
                 return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
         for pc in range(start, end, 4):

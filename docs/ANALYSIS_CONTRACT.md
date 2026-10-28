@@ -1539,3 +1539,22 @@ expression is emitted. Live-alias, x0 restoration, direct-entry and shared-tail
 requirements remain unchanged. This does not widen the supported layouts or
 admit SP, narrow, flag-setting, zero-immediate or repeated operations, and it
 does not establish runtime behavior or reconstruct Swift source.
+
+## Comparison and forward-branch success arithmetic
+
+The bounded success-arithmetic subset includes screened CMP-zero/B.EQ
+error-fallthrough and CMP-zero/B.NE success-fallthrough layouts, and a
+full-width CBNZ success-fallthrough layout. Each permits one nonflagging X
+ADD or SUB immediate with the existing shift and register-copy rules, and
+requires the adjusted result to reach x0 before a shared return. In forward
+layouts, a terminal direct branch must skip the bounded error handler and
+counts toward the eight-word success-arm limit.
+
+Comparison forms retain complete flag-window and incoming-edge validation.
+CBNZ arithmetic additionally binds the actual BL word and callee target,
+reconstructs the post-call error-alias window and screens direct entries into
+that window without claiming NZCV state. Caller bytes, region bounds,
+instructions, incoming evidence and presentation must remain consistent.
+Partial, unknown, stale or conflicting evidence cannot produce an adjusted
+result. These are selected-path modulo-64 observations, not runtime behavior,
+exclusive reachability, reconstructed source or proof of caller return type.

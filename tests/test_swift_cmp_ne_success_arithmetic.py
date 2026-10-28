@@ -106,7 +106,7 @@ class NeArithmeticBoundaryTests(unittest.TestCase):
         for word in (0xd2800000, 0x2a0003e0, 0x94000010, 0x14000001):
             self.assertEqual(report(with_ne_arm((0x91001400, word)))['calls'][0]['return_choice']['status'], 'unresolved')
 
-    def test_cbnz_forward_arithmetic_remains_outside_scope(self):
+    def test_cbnz_with_wrong_forward_error_boundary_refuses(self):
         words = with_ne_arm((0x91001400,))
         self.assertEqual(report((0xb5000095, *words[2:]))['calls'][0]['return_choice']['status'], 'unresolved')
 

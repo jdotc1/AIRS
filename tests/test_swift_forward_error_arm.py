@@ -138,8 +138,8 @@ class ForwardErrorCLIControls(unittest.TestCase):
                 status = main(['swift-error-flow', str(source), '--include-error-regions',
                     '--validate-region-entries', '--include-structured-presentation', '--format', 'text'])
             self.assertEqual(status, 0)
-            for value in ('swift-sync-error-region-v23', 'swift-region-direct-entries-v7',
-                          'swift-structural-presentation-v8', '0xb5000075', '0x14000004',
+            for value in ('swift-sync-error-region-v24', 'swift-region-direct-entries-v7',
+                          'swift-structural-presentation-v9', '0xb5000075', '0x14000004',
                           'Success-arm interval evidence', 'Shared tail interval evidence', 'Source reconstruction: disabled'):
                 self.assertIn(value, output.getvalue())
 
