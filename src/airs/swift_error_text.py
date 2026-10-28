@@ -134,6 +134,8 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
                     and type(result.get('bit_width')) is int and result['bit_width'] == 64
                     and type(success.get('immediate')) is int and 1 <= success['immediate'] <= 4095
                     and type(result.get('immediate')) is int and result['immediate'] == success['immediate']
+                    and type(result.get('adjustment_register')) is int
+                    and 0 <= result['adjustment_register'] <= 30
                     and isinstance(call.get('call_pc'), str)
                     and choice.get('call_pc') == result.get('call_pc') == call['call_pc']
                     and isinstance(choice.get('return_pc'), str)
@@ -149,7 +151,7 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
                     and all(isinstance(row, dict) for row in arm_rows + result_rows)
                     and [(row.get('pc'), row.get('word')) for row in result_rows if row.get('phase') == 'success']
                         == [(row.get('pc'), row.get('word')) for row in arm_rows]
-                    and sum(row.get('word') == f"0x{((0x91000000 if success['operation'] == 'add_immediate_modulo' else 0xd1000000) | (success['immediate'] << 10)):08x}"
+                    and sum(row.get('word') == f"0x{((0x91000000 if success['operation'] == 'add_immediate_modulo' else 0xd1000000) | (success['immediate'] << 10) | (result['adjustment_register'] << 5) | result['adjustment_register']):08x}"
                             for row in arm_rows) == 1
                     and isinstance(tail_rows[-1], dict) and tail_rows[-1].get('pc') == choice['return_pc']
                     and isinstance(call.get('success_pc'), str)

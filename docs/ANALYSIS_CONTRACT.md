@@ -1505,3 +1505,14 @@ adjusted value. An old original copy cannot become the adjusted return. Narrow
 copies, literal writes, repeated operations and unsupported layouts remain
 refused. Exact caller, entry, arm and shared-return bindings and structural-only
 proof limits remain in force.
+
+## Success arithmetic on tracked register copies
+
+For screened CBZ error-fallthrough shared tails, one nonflagging unshifted
+64-bit ADD or SUB immediate may operate in place on a live full-width Int
+call-result alias in x0 through x30. The original aliases are invalidated at
+the operation, and an adjusted alias must be restored to x0 before the shared
+return. Register 31, different source and destination registers, narrow or
+flag-setting operations and multiple adjustments remain outside scope. Exact
+caller, entry, arm, opcode/register and shared-tail bindings and structural-only
+proof limits remain required.
