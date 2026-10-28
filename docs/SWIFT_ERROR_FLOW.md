@@ -1730,3 +1730,24 @@ restored state or Swift source. Twelve new and 478 affected methods passed;
 independent semantic review found no blocker. This synthetic increment adds no
 Swift-frontend, binary, runtime or native release qualification. Prior evidence
 retains its existing scope.
+
+## Cross-register success arithmetic
+
+`swift-sync-error-edges-v29`, `swift-sync-error-region-v20`,
+`swift-success-result-v18` and `swift-return-choice-v25` extend the screened
+CBZ shared-tail arithmetic subset to an unshifted nonflagging 64-bit ADD or SUB
+immediate with distinct source and destination registers. Both registers must be
+x0 through x30, the source must hold a live full-width Int call-result alias,
+and an adjusted destination alias must reach x0 before the shared return. At
+the operation, the original alias set is discarded: the unchanged source cannot
+be reported as the adjusted value. Register 31, narrow, shifted, flag-setting,
+repeated or mixed arithmetic and unsupported layouts remain excluded.
+
+Both encoded source and destination registers and the immediate are bound to
+the recorded instruction in the structural choice and text summary. Caller
+bytes, direct-entry evidence, bounded arm and shared-tail records remain bound.
+This is modulo-64 machine evidence, not proof of runtime values, call return,
+exclusive entry, caller return type, handler meaning, restored state or Swift
+source. Eleven new and 490 affected methods passed; independent semantic review
+found no blocker. This synthetic increment adds no Swift-frontend, binary,
+runtime or native release qualification. Prior evidence retains its scope.

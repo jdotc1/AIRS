@@ -30,7 +30,8 @@ class SuccessSubBoundaryTests(unittest.TestCase):
         for word in (0xd1000000, 0xd1400400, 0x51001400, 0xf1001400,
                      0xd1001401, 0xd1001420, 0xd10017ff):
             call = report((*WORDS[:5], word, *WORDS[6:]))['calls'][0]
-            self.assertNotEqual(call['presentation']['status'], 'eligible_structural_only')
+            if word not in (0xd1001401, 0xd1001420):
+                self.assertNotEqual(call['presentation']['status'], 'eligible_structural_only')
             self.assertEqual(call['return_choice']['status'], 'unresolved')
 
     def test_multiple_or_mixed_operations_are_refused(self):

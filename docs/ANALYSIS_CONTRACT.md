@@ -1516,3 +1516,14 @@ return. Register 31, different source and destination registers, narrow or
 flag-setting operations and multiple adjustments remain outside scope. Exact
 caller, entry, arm, opcode/register and shared-tail bindings and structural-only
 proof limits remain required.
+
+## Cross-register success arithmetic
+
+For screened CBZ error-fallthrough shared tails, a single unshifted nonflagging
+64-bit ADD or SUB immediate may read a live full-width Int call-result alias
+and write a different register in x0 through x30. Original aliases are
+invalidated at the operation, and an adjusted destination alias must reach x0
+before return. Both operand registers, immediate, caller words, direct entries,
+arm and shared return are bound to the evidence. Register 31, narrow, shifted
+or flag-setting forms and multiple operations remain outside scope. These are
+machine-level selected-path facts, not runtime or source proof.
