@@ -45,11 +45,11 @@ class SuccessSubBoundaryTests(unittest.TestCase):
         for prefix in ((0xaa0003f3, 0xaa1f03e0), (0x2a0003f3, 0xaa1f03e0, 0xaa1303e0)):
             self.assertEqual(report((*prefix, *SUB_WORDS))['calls'][0]['return_choice']['status'], 'unresolved')
 
-    def test_cbnz_cmp_and_void_remain_unqualified(self):
+    def test_cbnz_void_refuse_and_screened_cmp_eq_supports_sub(self):
         from airs.swift_error_flow import recover_swift_error_flow
         from test_swift_error_flow import image
         self.assertNotEqual(report((SUB_WORDS[0] | 0x01000000, *SUB_WORDS[1:]))['calls'][0]['presentation']['status'], 'eligible_structural_only')
-        self.assertNotEqual(report((0xf10002bf, 0x540000a0, *SUB_WORDS[1:]))['calls'][0]['presentation']['status'], 'eligible_structural_only')
+        self.assertEqual(report((0xf10002bf, 0x540000a0, *SUB_WORDS[1:]))['calls'][0]['return_choice']['success']['kind'], 'call_result_sub_immediate')
         void = recover_swift_error_flow(image(SUB_WORDS, symbol='_$s4Demo4readyyKF'),
             include_error_regions=True, validate_region_entries=True, include_structured_presentation=True)
         self.assertEqual(void['calls'][0]['return_choice']['status'], 'unresolved')

@@ -123,11 +123,11 @@ class SuccessAddBoundaryTests(unittest.TestCase):
         self.assertEqual(value['calls'][0]['success_result']['status'], 'declined')
         self.assertEqual(value['calls'][0]['return_choice']['status'], 'unresolved')
 
-    def test_cbnz_and_cmp_layouts_remain_outside_add_subset(self):
+    def test_cbnz_refuses_and_screened_cmp_eq_supports_add(self):
         from test_swift_owned_postcall_arithmetic import WORDS
         self.assertNotEqual(report((WORDS[0] | 0x01000000, *WORDS[1:]))['calls'][0]['presentation']['status'], 'eligible_structural_only')
         words = (0xf10002bf, 0x540000a0, *WORDS[1:])
-        self.assertNotEqual(report(words)['calls'][0]['presentation']['status'], 'eligible_structural_only')
+        self.assertEqual(report(words)['calls'][0]['return_choice']['success']['kind'], 'call_result_add_immediate')
 
     def test_success_arm_limit_eight_and_nine(self):
         from test_swift_owned_postcall_arithmetic import WORDS

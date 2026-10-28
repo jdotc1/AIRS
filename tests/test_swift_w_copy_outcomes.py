@@ -99,7 +99,7 @@ class WCopyCLIControls(unittest.TestCase):
                     self.assertEqual(call['callee']['result'],'Swift.Void')
                     self.assertEqual(call['success_constant']['constant_bits'],'0x00000000ffffffff')
                     self.assertEqual(call['success_result']['status'],'declined')
-                    self.assertEqual(value['error_region_model_version'],'swift-sync-error-region-v21')
+                    self.assertEqual(value['error_region_model_version'],'swift-sync-error-region-v22')
                 else:
                     self.assertIn('wmov',output.getvalue())
                     self.assertIn('0x2a1303e0',output.getvalue())

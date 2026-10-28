@@ -20,18 +20,18 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v30'
+MODEL = 'swift-sync-error-edges-v31'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
-REGION_MODEL = 'swift-sync-error-region-v21'
+REGION_MODEL = 'swift-sync-error-region-v22'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v7'
 INCOMING_EVIDENCE_LIMIT = 16
-PRESENTATION_MODEL = 'swift-structural-presentation-v6'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v19'
+PRESENTATION_MODEL = 'swift-structural-presentation-v7'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v20'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v16'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v18'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v26'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v27'
 SHARED_WORDS = 8
 
 
@@ -435,7 +435,8 @@ def _error_region(data: bytes, function, edge: dict) -> dict:
                 return {**result, 'reason': 'error_region_control_flow_unmodeled'}
             if target != boundary:
                 shared = _shared_epilogue(data, function, boundary, target,
-                    allow_result_arithmetic=edge.get('test_kind') != 'cmp_zero_bcond' and edge.get('window', [{}])[-1].get('kind') == 'xcbz')
+                    allow_result_arithmetic=(edge.get('test_kind') == 'cmp_zero_bcond' and edge.get('test_condition') == 'eq')
+                        or (edge.get('test_kind') != 'cmp_zero_bcond' and edge.get('window', [{}])[-1].get('kind') == 'xcbz'))
                 if shared is None:
                     return {**result, 'reason': 'error_region_control_flow_unmodeled'}
                 join = target
@@ -686,7 +687,7 @@ def _presentation_eligibility(call: dict, data: bytes | None = None, function=No
                 else:
                     packed = b''.join(struct.pack('<I', int(item['word'], 16))
                                       for item in (*success_words, *tail_words))
-                    if _shared_epilogue(packed, synthetic, success, join) != {
+                    if _shared_epilogue(packed, synthetic, success, join, allow_result_arithmetic=cmp_eq_fallthrough) != {
                             'success_interval': region['success_interval'], 'shared_epilogue': region['shared_epilogue']}:
                         raise ValueError('Inconsistent encoded shared intervals')
     except (KeyError, TypeError, ValueError, ModelError):
@@ -788,7 +789,8 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
         join = int(region['join_pc'], 16)
         has_arithmetic = shared and any(row.get('kind') in ('add', 'sub') for row in interval['instructions'])
         if has_arithmetic:
-            if compare or call['window'][-1].get('kind') != 'xcbz' or scan is None:
+            if (scan is None or (compare and call.get('test_condition') != 'eq')
+                    or (not compare and call['window'][-1].get('kind') != 'xcbz')):
                 return {**result, 'reason': 'success_add_layout_not_qualified', 'instructions': evidence}
             fresh_scan = _caller_direct_edges(data, function)
             decoded = _shared_epilogue(data, function, start, join, allow_result_arithmetic=True)
@@ -796,6 +798,10 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
                     or decoded is None or decoded['success_interval'] != interval
                     or decoded['shared_epilogue'] != region['shared_epilogue']):
                 return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
+            if compare and (_flag_entries(fresh_scan, call) != call.get('flag_entry_validation')
+                    or _error_region(data, function, call) != {key: value for key, value in region.items() if key != 'incoming_validation'}
+                    or _presentation_eligibility(call, data, function) != call['presentation']):
+                return {**result, 'reason': 'compare_success_arithmetic_evidence_inconsistent', 'instructions': evidence}
             recorded = call['window']
             if len(recorded) != (test - first) // 4 + 1:
                 return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
@@ -804,8 +810,10 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
                 if item != {**raw, 'kind': ins.kind}:
                     return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
             test_ins, _ = _bounded_instruction(data, function, test)
-            if (test_ins.kind != 'xcbz' or call['tested_register'] != f'x{test_ins.rn}'
-                    or test + test_ins.immediate != start or int(call['error_pc'], 16) != test + 4):
+            if ((test_ins.kind != 'bcond' or test_ins.addressing != '0') if compare else
+                    (test_ins.kind != 'xcbz' or call['tested_register'] != f'x{test_ins.rn}')):
+                return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
+            if test + test_ins.immediate != start or int(call['error_pc'], 16) != test + 4:
                 return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
         for pc in range(start, end, 4):
             instruction, row = _bounded_instruction(data, function, pc)
