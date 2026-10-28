@@ -1558,3 +1558,18 @@ instructions, incoming evidence and presentation must remain consistent.
 Partial, unknown, stale or conflicting evidence cannot produce an adjusted
 result. These are selected-path modulo-64 observations, not runtime behavior,
 exclusive reachability, reconstructed source or proof of caller return type.
+
+## Common arithmetic call and evidence binding
+
+All four supported arithmetic layouts (CBZ, CBNZ, CMP-zero/B.EQ and
+CMP-zero/B.NE) bind the actual BL word and its encoded target to the recorded
+call, reconstruct the exact post-call error-alias window and screen direct
+entries into that window. The full error region and presentation must also
+match current caller bytes. These checks extend the original CBNZ protection
+to the earlier arithmetic forms; they add no instruction or layout family.
+
+Replacing or redirecting the recorded call, bypassing a required copy, or
+combining a stale handler with current arithmetic cannot yield an adjusted
+result. This is consistency validation of in-process producer evidence, not
+saved-report admission, callee authentication or runtime proof. Existing
+arithmetic bounds, unknown handling and non-arithmetic recovery remain intact.
