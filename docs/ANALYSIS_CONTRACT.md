@@ -1472,3 +1472,14 @@ words matched the relocated regression fixture and five report words matched
 retained disassembly; four new regression methods passed. The image was not
 executed. This is a conservative refusal, not CMP/B.NE frontend qualification or
 runtime, ABI/CFI, arithmetic-recovery or native release proof.
+
+## Bounded shared success ADD evidence
+
+For screened CBZ error-fallthrough shared tails, AIRS can represent one
+unshifted nonflagging 64-bit `ADD X0, X0, #imm` (1–4095) on the success path
+as a modulo-64 operation on a preserved Int call result. The bounded success arm
+otherwise contains only NOPs. Actual caller words, entry evidence, success arm
+and shared tail are bound before a candidate is reported. Unsupported operands,
+widths, shifted or flag-setting forms, multiple adds and unpreserved results
+remain refused. This is machine-level selected-path evidence, not runtime or
+source proof.

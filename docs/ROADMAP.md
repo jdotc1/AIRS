@@ -787,3 +787,12 @@ shared region and choice. Four new regression methods passed against the
 captured window; supporting bounded success-path arithmetic is a distinct next
 semantic change. CMP/B.NE frontend emission and runtime qualification remain
 open. See SWIFT_ERROR_FLOW.md.
+
+## Bounded success-path ADD
+
+The captured Swift-frontend window now has a relocated regression for one
+screened 64-bit X0 add-immediate operation on the call result. AIRS reports a
+modulo-64 structural choice rather than claiming a runtime or Swift-source
+result. Fourteen new and 425 affected methods passed; independent review found
+no blocker. The sealed source image was not reanalyzed. Wider arithmetic and
+runtime qualification remain open. See SWIFT_ERROR_FLOW.md.
