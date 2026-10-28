@@ -105,7 +105,46 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
         if 'return_choice' in call:
             if report.get('return_choice_model_version') != RETURN_CHOICE_MODEL:
                 raise InputError('swift_text_models', 'Return-choice evidence requires its current model')
-            line('  Return choice (structural outcomes; source disabled)', call['return_choice'])
+            choice = call['return_choice']
+            line('  Return choice (structural outcomes; source disabled)', choice)
+            success = choice.get('success') if isinstance(choice, dict) else None
+            result = call.get('success_result')
+            plan = presentation.get('display_plan')
+            tail = plan.get('shared_epilogue') if isinstance(plan, dict) else None
+            tail_rows = tail.get('instructions') if isinstance(tail, dict) else None
+            expected_condition = {'test_pc': call.get('test_pc'), 'register': call.get('tested_register'), 'error_when': 'nonzero'}
+            if call.get('test_kind') == 'cmp_zero_bcond':
+                expected_condition.update({key: call.get(key) for key in ('comparison_pc', 'test_kind', 'test_condition')})
+            proof_flags = ('runtime_value_proven', 'source_reconstruction_allowed', 'exclusive_path_proven',
+                           'caller_return_type_proven')
+            if (presentation['status'] == 'eligible_structural_only'
+                    and isinstance(result, dict) and isinstance(success, dict) and isinstance(plan, dict)
+                    and choice.get('status') == 'structural_choice_candidate'
+                    and result.get('status') == 'adjusted_register_candidate'
+                    and success.get('kind') == 'call_result_add_immediate'
+                    and success.get('register') == result.get('register') == 'x0'
+                    and success.get('operation') == result.get('operation') == 'add_immediate_modulo'
+                    and type(success.get('bit_width')) is int and success['bit_width'] == 64
+                    and type(result.get('bit_width')) is int and result['bit_width'] == 64
+                    and type(success.get('immediate')) is int and 1 <= success['immediate'] <= 4095
+                    and type(result.get('immediate')) is int and result['immediate'] == success['immediate']
+                    and isinstance(call.get('call_pc'), str)
+                    and choice.get('call_pc') == result.get('call_pc') == call['call_pc']
+                    and isinstance(choice.get('return_pc'), str)
+                    and choice['return_pc'] == result.get('return_pc')
+                    and isinstance(tail, dict) and tail.get('restore_state_proven') is False
+                    and result.get('return_tail_layout') == 'shared_epilogue'
+                    and isinstance(tail_rows, list) and bool(tail_rows)
+                    and isinstance(tail_rows[-1], dict) and tail_rows[-1].get('pc') == choice['return_pc']
+                    and isinstance(call.get('success_pc'), str)
+                    and result.get('success_pc') == plan.get('success_entry_pc') == call['success_pc']
+                    and isinstance(call.get('test_pc'), str) and isinstance(call.get('tested_register'), str)
+                    and isinstance(choice.get('condition'), dict)
+                    and choice['condition'] == plan.get('condition') == expected_condition
+                    and all(choice.get(key) is False and result.get(key) is False for key in proof_flags)
+                    and choice.get('call_return_proven') is False and choice.get('handler_semantics_proven') is False):
+                line('  Success operation (structural; runtime unproven)',
+                     f"call result + {success['immediate']} modulo 2^64")
         line('  Recorded return edges', {key: call[key] for key in ('comparison_pc', 'test_pc', 'test_kind', 'test_condition', 'tested_register', 'success_pc', 'error_pc') if key in call})
         rows('  Post-call instruction evidence', call.get('window', []), MAX_WINDOW_ROWS)
         if 'flag_entry_validation' in call:

@@ -796,3 +796,10 @@ modulo-64 structural choice rather than claiming a runtime or Swift-source
 result. Fourteen new and 425 affected methods passed; independent review found
 no blocker. The sealed source image was not reanalyzed. Wider arithmetic and
 runtime qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+## ADD result text summary
+
+Qualified bounded ADD choices now have a readable machine-operation summary in
+structural text output, guarded by producer identity and proof checks. Eight
+focused and 14 affected text/CLI methods passed. Analysis semantics and runtime
+qualification remain unchanged. See SWIFT_ERROR_FLOW.md.
