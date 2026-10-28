@@ -25,7 +25,7 @@ class SwiftVoidThrowsBoundaryTests(unittest.TestCase):
         declaration = throwing_declaration('_$s4Demo5parseyS2iKF')
         self.assertEqual(declaration['parameters'], ['Swift.Int'])
         self.assertEqual(declaration['result'], 'Swift.Int')
-        self.assertEqual(MODEL, 'swift-sync-error-edges-v26')
+        self.assertEqual(MODEL, 'swift-sync-error-edges-v27')
 
     def test_async_typed_thunk_generic_nonthrowing_and_extra_args_refuse(self):
         prefix = '_$s12AIRSValidate8validate'
@@ -51,7 +51,7 @@ class SwiftVoidThrowsBoundaryTests(unittest.TestCase):
         self.assertEqual(call['callee']['result'], 'Swift.Void')
         self.assertEqual(call['presentation']['status'], 'eligible_structural_only')
         self.assertIn('Swift.Void', render_swift_error_text(report))
-        self.assertIn('swift-sync-error-edges-v26', render_swift_error_text(report))
+        self.assertIn('swift-sync-error-edges-v27', render_swift_error_text(report))
 
     def test_new_signature_alias_ambiguity_remains_declined(self):
         report = recover_swift_error_flow(image(symbol=SYMBOL, aliases=(('_$s4Demo5otheryySiKF', 32),)))

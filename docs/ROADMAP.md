@@ -811,3 +811,11 @@ subtract-immediate operation, described as structural modulo-64 evidence. New
 and affected checks passed with independent review and evidence-binding and
 output-bound corrections. This synthetic increment does not qualify Swift
 frontend emission or runtime behavior. See SWIFT_ERROR_FLOW.md.
+
+## Copies around bounded success arithmetic
+
+Screened shared success arms can now retain full-width copies before and after
+one admitted ADD or SUB while distinguishing original and adjusted values.
+Eleven new and 467 affected methods passed with independent semantic review.
+The increment is synthetic structural evidence; frontend and runtime
+qualification remain open. See SWIFT_ERROR_FLOW.md.

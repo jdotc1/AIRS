@@ -1494,3 +1494,14 @@ must agree. Operation and immediate are bound to recorded words; malformed,
 conflicting or oversized records are refused. Unsupported operands, widths,
 shifted or flag-setting forms and multiple operations remain outside scope.
 This is machine-level selected-path evidence, not runtime or source proof.
+
+## Full-width copies around success arithmetic
+
+For screened CBZ error-fallthrough shared tails, the bounded success arm may
+contain full-width MOV copies around one admitted 64-bit X0 ADD or SUB. Live
+aliases before the operation represent the original Int call result; at the
+operation they are reset to adjusted x0, and later copies represent that
+adjusted value. An old original copy cannot become the adjusted return. Narrow
+copies, literal writes, repeated operations and unsupported layouts remain
+refused. Exact caller, entry, arm and shared-return bindings and structural-only
+proof limits remain in force.

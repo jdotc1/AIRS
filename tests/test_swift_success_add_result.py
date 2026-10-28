@@ -34,10 +34,10 @@ class SuccessAddBoundaryTests(unittest.TestCase):
             self.assertNotEqual(call['presentation']['status'], 'eligible_structural_only')
             self.assertEqual(call['return_choice']['status'], 'unresolved')
 
-    def test_add_with_copy_or_second_add_remains_declined(self):
+    def test_add_with_literal_or_second_add_remains_declined(self):
         from test_swift_owned_postcall_arithmetic import WORDS
         # Extend error branch's shared join across an extra success word.
-        for second in (0xaa0003e0, 0x91000400):
+        for second in (0xd2800013, 0x91000400):
             words = (*WORDS[:4], 0x14000003, WORDS[5], second, *WORDS[6:])
             self.assertEqual(report(words)['calls'][0]['return_choice']['status'], 'unresolved')
 
