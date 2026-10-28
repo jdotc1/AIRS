@@ -61,10 +61,10 @@ class PostIndexedBoundaryTests(unittest.TestCase):
     def test_region_identity_changes_without_other_component_or_proof_changes(self):
         from airs.swift_error_text import render_swift_error_text
         value = report(WORDS[:6] + (pop_word(), 0xd65f03c0))
-        self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v21')
-        self.assertEqual(value['model_version'], 'swift-sync-error-edges-v30')
+        self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v22')
+        self.assertEqual(value['model_version'], 'swift-sync-error-edges-v31')
         self.assertEqual(value['region_incoming_model_version'], 'swift-region-direct-entries-v7')
-        self.assertEqual(value['structured_presentation_model_version'], 'swift-structural-presentation-v6')
+        self.assertEqual(value['structured_presentation_model_version'], 'swift-structural-presentation-v7')
         text = render_swift_error_text(value)
         self.assertIn('0xa8c17bfd', text)
         self.assertIn('Source reconstruction: disabled', text)
@@ -88,7 +88,7 @@ class PostIndexedCLIControls(unittest.TestCase):
                     '--validate-region-entries', '--include-structured-presentation', '--format', 'text'])
             self.assertEqual(status, 0)
             self.assertIn('0xa8c17bfd', output.getvalue())
-            self.assertIn('swift-sync-error-region-v21', output.getvalue())
+            self.assertIn('swift-sync-error-region-v22', output.getvalue())
             self.assertIn('Source reconstruction: disabled', output.getvalue())
 
 

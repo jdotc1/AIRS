@@ -1779,3 +1779,29 @@ were reused for unchanged publication inputs. This increment uses synthetic
 instruction fixtures and adds no Swift-frontend, owned-binary, runtime or
 native-app qualification. Source reconstruction and runtime proof remain
 disabled; caller, entry, arm, shared-return and evidence-size limits remain.
+
+## CMP/B.EQ success arithmetic
+
+`swift-sync-error-edges-v31`, `swift-sync-error-region-v22`,
+`swift-structural-presentation-v7`, `swift-success-result-v20` and
+`swift-return-choice-v27` extend the bounded arithmetic subset to a screened
+CMP-zero/B.EQ error-fallthrough layout. The success arm may contain one
+nonflagging 64-bit ADD or SUB immediate, including the optional 12-bit shift,
+with full-width register copies and NOPs. Its adjusted call-result value must
+reach x0 before the shared return. The existing eight-word success-arm and
+shared-tail bounds remain unchanged.
+
+Recovery re-derives flag-window and region incoming-edge checks from caller
+bytes, checks the exact CMP/B.EQ and post-call window, and reconstructs the
+error region, success interval, shared tail and presentation plan. Missing,
+partial, unknown or stale evidence cannot qualify an arithmetic result.
+Arithmetic on an untracked register, old unadjusted aliases, narrow writes,
+SP operands, flags, repeated operations and mixed literal arms remain refused.
+CMP/B.NE arithmetic is outside this increment.
+
+Fourteen new methods and 719 affected Swift methods passed in bounded runs;
+independent semantic review found no blocking issue. These are synthetic
+instruction, CLI and rendering checks. No new compiler-emission, owned-binary,
+native-app or runtime qualification is claimed. The result remains selected-path
+modulo-64 structural evidence; source reconstruction, runtime value, caller
+return type, call return, handler semantics and exclusive-path proof remain false.
