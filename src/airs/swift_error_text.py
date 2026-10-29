@@ -178,6 +178,12 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
             rows('    Unexpected flag-window entry', entry['unexpected_entries'], MAX_ENTRY_ROWS)
             rows('    Unclassified flag-scan word', entry['unclassified_words'], MAX_ENTRY_ROWS)
         line('  Presentation', {key: presentation[key] for key in ('status', 'reason')})
+        entry = presentation.get('postcall_entry_validation')
+        if isinstance(entry, dict):
+            line('  Post-call entry validation', {key: value for key, value in entry.items()
+                                                if key not in ('unexpected_entries', 'unclassified_words')})
+            rows('    Unexpected post-call entry', entry['unexpected_entries'], MAX_ENTRY_ROWS)
+            rows('    Unclassified post-call scan word', entry['unclassified_words'], MAX_ENTRY_ROWS)
         if presentation['status'] == 'eligible_structural_only':
             plan = presentation['display_plan']
             line('  Label', plan['label'])

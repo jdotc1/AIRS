@@ -149,7 +149,7 @@ class SwiftPresentationBoundaryTests(unittest.TestCase):
                 status = main(['swift-error-flow', str(source), '--include-error-regions', '--validate-region-entries', '--include-structured-presentation'])
             self.assertEqual(status, 0)
             report = json.loads(output.getvalue())
-            self.assertEqual(report['structured_presentation_model_version'], 'swift-structural-presentation-v9')
+            self.assertEqual(report['structured_presentation_model_version'], 'swift-structural-presentation-v10')
             self.assertEqual(report['calls'][0]['presentation']['status'], 'eligible_structural_only')
             with contextlib.redirect_stderr(errors):
                 self.assertEqual(main(['swift-error-flow', str(source), '--include-structured-presentation']), 2)
@@ -179,7 +179,10 @@ class SwiftPresentationReviewTests(unittest.TestCase):
 
     def test_opaque_call_targets_retain_explicit_warning_and_raw_evidence(self):
         from airs.swift_error_flow import _presentation_eligibility
-        call = self.call(); result = _presentation_eligibility(call)
+        value = image((0xb4000095, 0xaa1503e0, 0x94000005, 0x92800000))
+        function = value.functions[0]
+        call = self.call()
+        result = _presentation_eligibility(call, value.bytes_at(function.start, function.size), function)
         self.assertEqual(result['status'], 'eligible_structural_only')
         self.assertTrue(any('opaque' in text for text in result['limitations']))
         instruction = result['display_plan']['error_interval']['instructions'][1]
