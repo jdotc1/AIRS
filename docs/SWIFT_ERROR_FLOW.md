@@ -1885,3 +1885,27 @@ instructions, widening bounds or changing the structural-only proof limits.
 It does not validate saved reports or authenticate a callee declaration.
 Earlier compiler, binary, native-app and release evidence is reused within its
 original scope; no new runtime or compiler-emission qualification is claimed.
+
+## Preserved and copied call-result binding
+
+`swift-sync-error-edges-v35`, `swift-success-result-v24` and
+`swift-return-choice-v31` extend current-call and alias-window validation to
+preserved and copied scalar results. All four shared branch layouts and the
+existing CBZ/EQ success-entry tails require a current BL with the recorded
+target, a matching post-call alias window and consistent caller scan, handler
+and presentation evidence. A direct entry into the copy/test window withholds
+the result candidate and a dependent return choice.
+
+An end-to-end regression first demonstrated a CBZ path retaining a copied
+result despite an observed branch bypassing its saved value. The corrected
+producer declines that case. Ten new methods passed in composed runs, covering
+valid preserved/copied results, live error aliases, changed calls and targets,
+missing metadata, stale regions and display plans, mismatched scans, bypassed
+copies and CLI withholding. One affected run passed 312 methods, including
+arithmetic, literal and existing return-tail compatibility. Independent semantic
+review found no blocking issue.
+
+The change adds no instruction or layout family and does not change literal
+recovery. These remain bounded structural candidates, not authenticated callees,
+saved-report validation, reconstructed source or runtime behavior. Prior compiler,
+owned-binary, native-app and release evidence retains its original scope.

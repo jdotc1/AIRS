@@ -20,7 +20,7 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v34'
+MODEL = 'swift-sync-error-edges-v35'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v24'
@@ -28,10 +28,10 @@ REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v7'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v9'
-SUCCESS_RESULT_MODEL = 'swift-success-result-v23'
+SUCCESS_RESULT_MODEL = 'swift-success-result-v24'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v16'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v18'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v30'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v31'
 SHARED_WORDS = 8
 
 
@@ -814,21 +814,28 @@ def _success_result(data: bytes, function, call: dict, scan: dict | None) -> dic
                     or decoded is None or decoded.get('success_interval') != interval
                     or decoded.get('shared_epilogue') != region['shared_epilogue']):
                 return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}
-            if compare and _flag_entries(fresh_scan, call) != call.get('flag_entry_validation'):
-                return {**result, 'reason': 'compare_success_arithmetic_evidence_inconsistent', 'instructions': evidence}
-            if (_error_region(data, function, call) != {key: value for key, value in region.items() if key != 'incoming_validation'}
-                    or _presentation_eligibility(call, data, function) != call['presentation']):
-                return {**result, 'reason': 'success_arithmetic_evidence_inconsistent', 'instructions': evidence}
-            # Every arithmetic layout binds the original call and alias window.
-            # Reuse direct-entry screening without claiming flag state.
-            call_instruction, actual_call = _bounded_instruction(data, function, first - 4)
-            recovered = _edges(data, function, first - 4 - function.start)
-            if (call_instruction.kind != 'bl' or actual_call['word'] != call['call_word']
-                    or first - 4 + call_instruction.immediate != int(call['callee_pc'], 16)
-                    or recovered.get('status') != 'recovered_candidate'
-                    or any(call.get(key) != value for key, value in recovered.items())
-                    or _flag_entries(fresh_scan, call)['status'] != 'no_unexpected_direct_entries'):
-                return {**result, 'reason': 'success_arithmetic_postcall_evidence_inconsistent', 'instructions': evidence}
+        else:
+            fresh_scan = _caller_direct_edges(data, function)
+            if (scan is None or fresh_scan != scan
+                    or _region_incoming(fresh_scan, region, call) != region['incoming_validation']):
+                return {**result, 'reason': 'success_result_evidence_inconsistent', 'instructions': evidence}
+        binding = 'arithmetic' if has_arithmetic else 'result'
+        if compare and _flag_entries(fresh_scan, call) != call.get('flag_entry_validation'):
+            return {**result, 'reason': f'compare_success_{binding}_evidence_inconsistent', 'instructions': evidence}
+        if (_error_region(data, function, call) != {key: value for key, value in region.items() if key != 'incoming_validation'}
+                or _presentation_eligibility(call, data, function) != call['presentation']):
+            return {**result, 'reason': f'success_{binding}_evidence_inconsistent', 'instructions': evidence}
+        # Preserved, copied and adjusted results all bind the call and alias window.
+        # Reuse direct-entry screening without claiming flag state.
+        call_instruction, actual_call = _bounded_instruction(data, function, first - 4)
+        recovered = _edges(data, function, first - 4 - function.start)
+        if (call_instruction.kind != 'bl' or actual_call['word'] != call['call_word']
+                or first - 4 + call_instruction.immediate != int(call['callee_pc'], 16)
+                or recovered.get('status') != 'recovered_candidate'
+                or any(call.get(key) != value for key, value in recovered.items())
+                or _flag_entries(fresh_scan, call)['status'] != 'no_unexpected_direct_entries'):
+            return {**result, 'reason': f'success_{binding}_postcall_evidence_inconsistent', 'instructions': evidence}
+        if has_arithmetic:
             recorded = call['window']
             if len(recorded) != (test - first) // 4 + 1:
                 return {**result, 'reason': 'success_add_evidence_inconsistent', 'instructions': evidence}

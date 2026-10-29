@@ -1573,3 +1573,17 @@ combining a stale handler with current arithmetic cannot yield an adjusted
 result. This is consistency validation of in-process producer evidence, not
 saved-report admission, callee authentication or runtime proof. Existing
 arithmetic bounds, unknown handling and non-arithmetic recovery remain intact.
+
+## Preserved and copied call-result binding
+
+Preserved and copied scalar call results now use the same current-call and
+alias-window binding as adjusted results. This covers CBZ, CBNZ, CMP-zero/B.EQ
+and CMP-zero/B.NE shared tails, plus the existing CBZ/EQ success-entry tails.
+Current caller bytes, recorded scan, error region and presentation must agree;
+the original BL and encoded target must match the call evidence. An observed
+direct entry into the post-call window withholds the call-result candidate and
+any return choice that depends on it, including when it bypasses a saved copy.
+
+This tightens in-process call-result consistency only. Literal recovery, the
+instruction subset and existing bounds are unchanged. No saved-report admission,
+callee authentication, exclusive reachability or runtime proof is added.
