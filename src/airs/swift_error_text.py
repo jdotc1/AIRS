@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from .report_summary_text import _BoundedText
 from .swift_error_flow import MODEL, REGION_MODEL, INCOMING_MODEL, PRESENTATION_MODEL, SUCCESS_RESULT_MODEL, SUCCESS_CONSTANT_MODEL, ERROR_CONSTANT_MODEL, RETURN_CHOICE_MODEL, FLAG_ENTRY_MODEL
-from .swift_error_flow import _adjusted_result_word
+from .swift_error_flow import _adjusted_result_word, _return_choice
 from .types import InputError
 
 MAXIMUM_TEXT_BYTES = 1024 * 1024
@@ -13,6 +13,33 @@ MAX_WINDOW_ROWS = 8
 MAX_ENTRY_ROWS = 16
 MAX_ISSUE_ROWS = 16
 MAX_LIMITATION_ROWS = 16
+
+
+def _literal_outcome_summary(call: dict) -> str | None:
+    """Summarize consistent in-process outcome records, not admit saved reports."""
+    choice = call.get('return_choice')
+    presentation = call.get('presentation')
+    if (not isinstance(choice, dict) or not isinstance(presentation, dict)
+            or presentation.get('status') != 'eligible_structural_only'
+            or choice.get('status') != 'structural_choice_candidate'
+            or type(choice.get('same_constant_bits')) is not bool
+            or any(choice.get(key) is not False for key in ('source_reconstruction_allowed',
+                'runtime_value_proven', 'exclusive_path_proven', 'caller_return_type_proven',
+                'call_return_proven', 'handler_semantics_proven'))):
+        return None
+    for path in ('success', 'error'):
+        outcome = choice.get(path)
+        if (not isinstance(outcome, dict) or outcome.get('kind') != 'constant_bits'
+                or type(outcome.get('bit_width')) is not int or outcome['bit_width'] != 64):
+            return None
+    try:
+        rebuilt = _return_choice(call)
+    except (AttributeError, IndexError, KeyError, TypeError, ValueError):
+        return None
+    if rebuilt != choice:
+        return None
+    return (f"success x0 bits {rebuilt['success']['constant_bits']}; "
+            f"error x0 bits {rebuilt['error']['constant_bits']}")
 
 
 def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_BYTES) -> str:
@@ -108,6 +135,9 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
                 raise InputError('swift_text_models', 'Return-choice evidence requires its current model')
             choice = call['return_choice']
             line('  Return choice (structural outcomes; source disabled)', choice)
+            literal_summary = _literal_outcome_summary(call)
+            if literal_summary is not None:
+                line('  Recorded literal outcomes (structural; runtime unproven)', literal_summary)
             success = choice.get('success') if isinstance(choice, dict) else None
             result = call.get('success_result')
             adjustment_word = _adjusted_result_word(result)
