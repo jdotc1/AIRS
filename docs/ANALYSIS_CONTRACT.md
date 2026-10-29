@@ -1587,3 +1587,17 @@ any return choice that depends on it, including when it bypasses a saved copy.
 This tightens in-process call-result consistency only. Literal recovery, the
 instruction subset and existing bounds are unchanged. No saved-report admission,
 callee authentication, exclusive reachability or runtime proof is added.
+
+## Literal-outcome call and path binding
+
+Success and error literal candidates now require a matching current BL word
+and target, post-call error-alias window, caller scan, error region, incoming
+validation and presentation. An observed direct entry into the post-call window
+withholds the literal outcome and any return choice that needs it. Literal bits
+do not depend on the call result, but the selected success/error path still
+depends on valid call and error-test evidence.
+
+This applies to existing CBZ/CBNZ and CMP-zero EQ/NE shared layouts and supported
+success-entry outcomes. X/W move-wide literals, copies, MOVK assembly, opaque-call
+clearing and interval/tail bounds retain their meaning. No instruction or layout
+family, saved-report admission, callee authentication or runtime claim is added.
