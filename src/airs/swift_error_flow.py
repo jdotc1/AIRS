@@ -31,7 +31,7 @@ PRESENTATION_MODEL = 'swift-structural-presentation-v10'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v24'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v17'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v19'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v33'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v34'
 SHARED_WORDS = 8
 
 
@@ -1201,58 +1201,70 @@ def _return_choice(call: dict) -> dict:
                          or (call.get('test_kind') == 'cmp_zero_bcond' and constant_known and not returned_known
                              and constant.get('return_tail_layout') == 'success_entry'))):
             raise ValueError('Success-entry outcome source')
-        if 'shared_epilogue' in region:
+        def captured_return_tail(outcome):
+            evidence = outcome.get('instructions')
+            if (not isinstance(evidence, list) or len(evidence) > 3 * SHARED_WORDS
+                    or any(not isinstance(row, dict) for row in evidence)):
+                raise ValueError('Outcome instruction records')
+            first = len(evidence)
+            while first and evidence[first - 1].get('phase') == 'return_tail':
+                first -= 1
+            if (not 1 <= len(evidence) - first <= SHARED_WORDS
+                    or any(row.get('phase') == 'return_tail' for row in evidence[:first])):
+                raise ValueError('Outcome tail suffix')
+            return [{key: value for key, value in row.items() if key != 'phase'} for row in evidence[first:]]
+
+        captured_tails = [captured_return_tail(outcome) for outcome in (success, error)]
+        shared = 'shared_epilogue' in region
+        join_text = region['join_pc']
+        if not isinstance(join_text, str):
+            raise ValueError('Outcome join type')
+        join = int(join_text, 16)
+        if shared:
             tail = region['shared_epilogue']
-            rows = tail.get('instructions') if isinstance(tail, dict) else None
-            if (not isinstance(rows, list) or not 1 <= len(rows) <= SHARED_WORDS
-                    or any(not isinstance(row, dict) for row in rows)
-                    or tail.get('restore_state_proven') is not False
-                    or (returned_known and success.get('return_tail_layout') != 'shared_epilogue')
-                    or success.get('return_tail_layout', 'shared_epilogue') != 'shared_epilogue'):
-                raise ValueError('Shared outcome tail shape')
-            join_text = region['join_pc']
-            if not isinstance(join_text, str):
-                raise ValueError('Shared outcome join type')
-            join = int(join_text, 16)
-            end = join + 4 * len(rows)
-            if (not 0 <= join < end <= 1 << 64 or join % 4 or join_text != hex(join)
-                    or tail.get('start_pc') != join_text or tail.get('end_pc_exclusive') != hex(end)):
-                raise ValueError('Shared outcome tail interval')
-            for index, row in enumerate(rows):
-                if (row.get('pc') != hex(join + 4 * index) or not isinstance(row.get('word'), str)
-                        or re.fullmatch(r'0x[0-9a-f]{8}', row['word']) is None):
-                    raise ValueError('Shared outcome tail word')
-            packed = b''.join(struct.pack('<I', int(row['word'], 16)) for row in rows)
-            rebuilt_tail = _shared_return_tail(packed, SimpleNamespace(start=join, end=end), join)
-            if rebuilt_tail is None or rebuilt_tail != tail:
-                raise ValueError('Shared outcome tail encoding')
+        else:
+            if join_text != call['success_pc'] or 'shared_epilogue' in plan:
+                raise ValueError('Success-entry outcome join')
+            # Direct tails have no region descriptor; use bounded captured rows.
+            tail = {'start_pc': join_text, 'end_pc_exclusive': hex(join + 4 * len(captured_tails[0])),
+                    'instructions': captured_tails[0], 'restore_state_proven': False}
+        layout = 'shared_epilogue' if shared else 'success_entry'
+        rows = tail.get('instructions') if isinstance(tail, dict) else None
+        if (not isinstance(rows, list) or not 1 <= len(rows) <= SHARED_WORDS
+                or any(not isinstance(row, dict) for row in rows)
+                or tail.get('restore_state_proven') is not False
+                or (returned_known and success.get('return_tail_layout') != layout)
+                or success.get('return_tail_layout', layout) != layout):
+            raise ValueError('Outcome tail shape')
+        end = join + 4 * len(rows)
+        if (not 0 <= join < end <= 1 << 64 or join % 4 or join_text != hex(join)
+                or tail.get('start_pc') != join_text or tail.get('end_pc_exclusive') != hex(end)):
+            raise ValueError('Outcome tail interval')
+        for index, row in enumerate(rows):
+            if (row.get('pc') != hex(join + 4 * index) or not isinstance(row.get('word'), str)
+                    or re.fullmatch(r'0x[0-9a-f]{8}', row['word']) is None):
+                raise ValueError('Outcome tail word')
+        packed = b''.join(struct.pack('<I', int(row['word'], 16)) for row in rows)
+        rebuilt_tail = _shared_return_tail(packed, SimpleNamespace(start=join, end=end), join)
+        if rebuilt_tail is None or rebuilt_tail != tail:
+            raise ValueError('Outcome tail encoding')
 
-            def same_tail_rows(captured):
-                expected = rebuilt_tail['instructions']
-                return (isinstance(captured, list) and len(captured) == len(expected)
-                        and all(isinstance(row, dict) and row == actual
-                                and all(type(row.get(key)) is type(value) for key, value in actual.items())
-                                for row, actual in zip(captured, expected)))
+        def same_tail_rows(captured):
+            expected = rebuilt_tail['instructions']
+            return (isinstance(captured, list) and len(captured) == len(expected)
+                    and all(isinstance(row, dict) and row == actual
+                            and all(type(row.get(key)) is type(value) for key, value in actual.items())
+                            for row, actual in zip(captured, expected)))
 
+        if not same_tail_rows(rows) or not all(same_tail_rows(captured) for captured in captured_tails):
+            raise ValueError('Outcome captured tail')
+        if shared:
             presented = plan.get('shared_epilogue')
             if (not isinstance(presented, dict) or presented != tail
                     or presented.get('restore_state_proven') is not False
-                    or not same_tail_rows(rows) or not same_tail_rows(presented.get('instructions'))):
+                    or not same_tail_rows(presented.get('instructions'))):
                 raise ValueError('Shared outcome presentation tail')
-            for outcome in (success, error):
-                evidence = outcome.get('instructions')
-                if (not isinstance(evidence, list) or len(evidence) > 3 * SHARED_WORDS
-                        or any(not isinstance(row, dict) for row in evidence)):
-                    raise ValueError('Shared outcome instruction records')
-                captured = evidence[-len(rows):]
-                if (any(row.get('phase') != 'return_tail' for row in captured)
-                        or any(row.get('phase') == 'return_tail' for row in evidence[:-len(rows)])
-                        or not same_tail_rows([{key: value for key, value in row.items() if key != 'phase'}
-                                              for row in captured])):
-                    raise ValueError('Shared outcome captured tail')
-            return_pc = rows[-1]['pc']
-        else:
-            return_pc = success['return_pc']
+        return_pc = rebuilt_tail['instructions'][-1]['pc']
         for path, outcome in (('success', success), ('error', error)):
             if (outcome['register'] != 'x0' or outcome['call_pc'] != call['call_pc']
                     or outcome[path + '_pc'] != call[path + '_pc']

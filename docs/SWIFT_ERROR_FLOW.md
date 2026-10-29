@@ -2062,3 +2062,32 @@ Instruction recovery, direct success-entry behavior and other model identities
 are unchanged. These are in-process record checks, without saved-report admission,
 callee authentication, source reconstruction or runtime proof. Prior compiler,
 owned-binary, native-app and release evidence is reused within its original scope.
+
+## Direct success-entry choice-tail consistency
+
+`swift-return-choice-v34` also reconciles the captured return tails for existing
+direct success-entry choices. A stale error-tail word no longer preserves a
+choice merely because both recorded return addresses agree. The selected success
+tail must begin at the current success entry and region join, and a direct plan
+cannot contain a foreign shared-tail descriptor.
+
+The common tail checks bound each outcome to 24 rows, require a final contiguous
+tail of one to eight rows, and reconstruct it using the existing recorded-word
+decoder. Both outcomes must match its full ordered rows and field types; their
+return PCs must match its terminal RET. Shared presentation/region agreement and
+exact-false restore scope retain their previous meaning. Raw evidence remains
+visible when a choice or dependent concise summary is withheld.
+
+Thirteen new methods passed in composed runs: a stale error-tail regression
+failed before the repair and passed afterward, and twelve additional boundary
+methods passed. Coverage includes CBZ/EQ preserved/copied results, EQ X/W/MOVK
+and copied literal prefixes with Int or Void callees, existing restore forms,
+eight-word/24-row limits, malformed/order/type/identity refusals, renderer and CLI
+output, and shared-layout controls. All 379 affected return-choice and rendering
+methods passed. Independent semantic review found no blocker.
+
+Only the return-choice model advances. Existing instruction recovery, supported
+layouts and restore families, and other models remain unchanged. These are
+in-process record checks without image rereads, saved-report admission, callee
+authentication, source reconstruction or runtime proof. Prior compiler,
+owned-binary, native-app and release evidence retains its original scope.

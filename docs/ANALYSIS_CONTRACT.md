@@ -1637,3 +1637,24 @@ choices, instruction recovery, supported tail families and all other model
 identities remain unchanged. Raw evidence remains available; saved-report
 admission, caller return types, callee authentication, exclusive reachability,
 source reconstruction and runtime behavior remain outside this claim.
+
+## Direct success-entry return-choice tail binding
+
+`swift-return-choice-v34` applies bounded recorded-tail consistency to the
+existing direct success-entry choices. The success entry must equal the region
+join, and a direct presentation cannot carry a shared-epilogue descriptor. The
+selected success outcome supplies a nonempty final contiguous tail of at most
+eight rows; both outcomes must retain that exact sequence within their existing
+24-row instruction limits, with no earlier return-tail rows.
+
+Direct and shared choices use the same canonical interval, encoded-tail and
+full metadata-type comparison. The return PC comes from the rebuilt final RET,
+then binds both outcomes. This preserves CBZ/EQ preserved/copied call results
+and EQ caller-assigned literals, including admitted Void callees. Literal seeds
+remain post-call prefix evidence before the test, not a new success arm.
+
+Only return-choice consistency changes. Shared-tail meaning, other model
+identities, instruction recovery and supported restore families remain intact.
+The reconstruction uses recorded words without rereading or executing the input
+image. Saved-report admission, callee authentication, exclusive reachability,
+restored state, source reconstruction and runtime proof remain outside scope.
