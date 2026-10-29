@@ -2091,3 +2091,38 @@ layouts and restore families, and other models remain unchanged. These are
 in-process record checks without image rereads, saved-report admission, callee
 authentication, source reconstruction or runtime proof. Prior compiler,
 owned-binary, native-app and release evidence retains its original scope.
+
+## Return-choice error-arm consistency
+
+`swift-return-choice-v35` also binds the recorded error arm across the region,
+presentation interval and selected error outcome. A stale pre-tail instruction
+no longer preserves a choice merely because the return tail still agrees. The
+region must contain one to sixteen canonical contiguous instruction records
+covering its exact interval, starting at the call's error entry. The presentation
+must retain the same start, end and ordered rows. The error outcome must retain
+the complete arm, in order with error phase markers, immediately before the
+already-validated final return tail.
+
+The existing instruction decoder checks recorded kinds, opaque BL targets and
+terminal B targets. Branch exits must reach the recorded join; direct and forward
+fallthrough arms must end at that join. Region and outcome rows retain their
+distinct producer formats. Only BL outcome rows carry constant-clearing markers,
+and both opaque-call counts must be exact integers matching the decoded calls.
+Malformed, missing, stale or extra records leave the choice unresolved; dependent
+concise summaries are withheld while raw records remain visible.
+
+Thirteen new methods passed in composed runs: the stale-error-word regression
+failed before the repair and passed afterward, and twelve boundary methods passed
+on their first run. Coverage includes all existing branch layouts and success
+outcome kinds, X/W/MOVK/copy literals, zero/one/multiple opaque calls, direct EQ
+literal prefixes with Void callees, the sixteen-plus-eight row bound, interval,
+order, phase, encoding, annotation and type refusals, and renderer withholding.
+All 392 affected return-choice and rendering methods passed. Independent semantic
+and test-source review found no blocker.
+
+Only the return-choice model advances. Instruction recovery and supported layouts
+are unchanged. This is bounded in-process record consistency: constant bits are
+not independently recomputed, and coordinated alterations can preserve agreement.
+No image reread, saved-report admission, callee authentication, source
+reconstruction, restored-state or runtime proof is added. Prior compiler,
+owned-binary, native-app and release evidence retains its original scope.
