@@ -20,7 +20,7 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v35'
+MODEL = 'swift-sync-error-edges-v36'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v24'
@@ -29,9 +29,9 @@ INCOMING_MODEL = 'swift-region-direct-entries-v7'
 INCOMING_EVIDENCE_LIMIT = 16
 PRESENTATION_MODEL = 'swift-structural-presentation-v9'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v24'
-SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v16'
-ERROR_CONSTANT_MODEL = 'swift-error-constant-v18'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v31'
+SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v17'
+ERROR_CONSTANT_MODEL = 'swift-error-constant-v19'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v32'
 SHARED_WORDS = 8
 
 
@@ -942,7 +942,6 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False, sc
                     instruction, row = _bounded_instruction(data, function, first + 4 * index)
                     if item != {**row, 'kind': instruction.kind}:
                         return {**result, 'reason': 'compare_ne_success_evidence_inconsistent'}
-                scan = fresh_scan
             if (_flag_entries(fresh_scan, call) != call['flag_entry_validation']
                     or _region_incoming(fresh_scan, region, call) != region['incoming_validation']
                     or _presentation_eligibility(call, data, function).get('status') != 'eligible_structural_only'):
@@ -1085,6 +1084,25 @@ def _path_constant(data: bytes, function, call: dict, *, error: bool = False, sc
             evidence.extend({**row, 'phase': 'return_tail'} for row in tail['instructions'])
         if 0 not in constants:
             return {**result, 'reason': f'{path}_x0_constant_not_known', 'instructions': evidence}
+        # Literal values do not depend on the call result; selecting their path
+        # still requires the current call, error alias and caller evidence.
+        current_scan = fresh_scan if cmp_ne else _caller_direct_edges(data, function)
+        if (scan is None or current_scan != scan
+                or _region_incoming(current_scan, region, call) != region['incoming_validation']
+                or _error_region(data, function, call) != {key: value for key, value in region.items() if key != 'incoming_validation'}
+                or _presentation_eligibility(call, data, function) != call['presentation']
+                or (call.get('test_kind') == 'cmp_zero_bcond'
+                    and _flag_entries(current_scan, call) != call.get('flag_entry_validation'))):
+            return {**result, 'reason': f'{path}_constant_evidence_inconsistent', 'instructions': evidence}
+        call_pc = int(call['call_pc'], 16)
+        call_instruction, actual_call = _bounded_instruction(data, function, call_pc)
+        recovered = _edges(data, function, call_pc - function.start)
+        if (call_instruction.kind != 'bl' or actual_call['word'] != call['call_word']
+                or call_pc + call_instruction.immediate != int(call['callee_pc'], 16)
+                or recovered.get('status') != 'recovered_candidate'
+                or any(call.get(key) != value for key, value in recovered.items())
+                or _flag_entries(current_scan, call)['status'] != 'no_unexpected_direct_entries'):
+            return {**result, 'reason': f'{path}_constant_postcall_evidence_inconsistent', 'instructions': evidence}
         return {**result, 'status': 'constant_register_candidate',
                 'reason': f'recorded_{path}_path_assigns_constant',
                 'constant_bits': f'0x{constants[0]:016x}', 'bit_width': 64,
@@ -1287,7 +1305,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
                 row['presentation'] = _presentation_eligibility(row, data, function)
                 row['success_result'] = _success_result(data, function, row, direct_scan)
                 row['success_constant'] = _path_constant(data, function, row, scan=direct_scan)
-                row['error_constant'] = _path_constant(data, function, row, error=True)
+                row['error_constant'] = _path_constant(data, function, row, error=True, scan=direct_scan)
                 row['return_choice'] = _return_choice(row)
     recovered = sum(row['status'] == 'recovered_candidate' for row in calls)
     report = {'schema_version': 1, 'report_kind': 'airs.swift_error_flow', 'model_version': MODEL,

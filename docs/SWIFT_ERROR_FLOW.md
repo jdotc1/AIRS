@@ -1909,3 +1909,28 @@ The change adds no instruction or layout family and does not change literal
 recovery. These remain bounded structural candidates, not authenticated callees,
 saved-report validation, reconstructed source or runtime behavior. Prior compiler,
 owned-binary, native-app and release evidence retains its original scope.
+
+## Literal-outcome call and path binding
+
+`swift-sync-error-edges-v36`, `swift-success-constant-v17`,
+`swift-error-constant-v19` and `swift-return-choice-v32` require current call and
+path evidence before either literal outcome becomes a candidate. The actual BL
+word and encoded target, reconstructed post-call aliases and test, bounded caller
+scan, region, incoming validation and presentation must all match. Direct entries
+into the alias/test window withhold the literal and its dependent return choice.
+Both literal paths receive the caller scan; CMP NE no longer replaces an
+inconsistent supplied scan with a fresh one.
+
+A regression first demonstrated a CBZ branch bypassing the copy that established
+the tested error alias while still retaining literal outcomes. The corrected
+producer declines both literals and the return choice. Eleven new methods passed
+in composed runs. They cover existing shared and success-entry cases, X/W seeds,
+copies and MOVK, changed calls and targets, stale words and metadata, alias bypasses,
+inconsistent scans and CLI withholding. One affected run passed 380 methods;
+independent semantic review found no blocking issue.
+
+Literal transfer, opaque-call clearing and existing bounds remain unchanged.
+No new instructions or layouts are admitted. These remain in-process structural
+candidates, without saved-report admission, authenticated callees, reconstructed
+source or runtime proof. Prior compiler, binary, native-app and release evidence
+is reused within its original scope.
