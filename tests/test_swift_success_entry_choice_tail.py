@@ -221,9 +221,9 @@ class SuccessEntryChoiceTailBoundaryTests(unittest.TestCase):
                     with self.subTest(name=name, format=format):
                         if format == 'json':
                             value = json.loads(output.getvalue())
-                            self.assertEqual(value['return_choice_model_version'], 'swift-return-choice-v35')
+                            self.assertEqual(value['return_choice_model_version'], 'swift-return-choice-v36')
                             self.assertEqual(value['calls'][0]['return_choice']['status'] == 'structural_choice_candidate', expected)
                         else:
-                            self.assertIn('swift-return-choice-v35', output.getvalue())
+                            self.assertIn('swift-return-choice-v36', output.getvalue())
                             self.assertEqual('Recorded call-result/error outcomes' in output.getvalue(), expected)
                             self.assertIn('Source reconstruction: disabled', output.getvalue())
