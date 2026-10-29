@@ -2010,3 +2010,26 @@ instructions/layouts are unchanged. These remain in-process structural displays,
 without saved-report admission, callee authentication, signed-value interpretation,
 source reconstruction or runtime proof. Prior analysis, compiler, binary,
 native-app and release evidence retains its original scope.
+
+## Concise recorded adjusted-result and error outcomes
+
+For an already-supported ADD or SUB result, text output can pair the selected
+success expression with the recorded error literal. The line uses the effective
+immediate, including shifted amounts such as 4096, and retains modulo-2^64
+arithmetic and full-width hexadecimal error bits. It does not interpret a signed
+Swift value or claim a literal-equality relationship.
+
+The paired line requires both the existing operation-summary checks and a
+consistent rebuilt return choice. Inconsistent error evidence withholds the pair
+without removing the independently eligible operation line. A failed operation
+or return-tail check also withholds the pair even when the recorded choice is
+otherwise consistent. Raw records, instruction evidence, other outcome summaries
+and the existing text byte bound remain in place.
+
+Ten new methods and twenty-five affected arithmetic rendering/CLI methods passed.
+Coverage includes all four existing branch layouts, shifted and copied-register
+arithmetic, W/X error patterns, inconsistent fields and proof flags, malformed
+tails, output limits and CLI bypass withholding. Independent source review found
+no blocker. Analysis, models, JSON generation and instruction/layout support are
+unchanged; prior compiler, binary, native-app and release evidence retains its
+scope. No source reconstruction, callee authentication or runtime proof is added.

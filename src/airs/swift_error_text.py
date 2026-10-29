@@ -223,6 +223,12 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
                     and choice.get('call_return_proven') is False and choice.get('handler_semantics_proven') is False):
                 line('  Success operation (structural; runtime unproven)',
                      f"call result {'+' if success['operation'] == 'add_immediate_modulo' else '-'} {success['immediate']} modulo 2^64")
+                if (consistent_choice is not None and consistent_choice.get('same_constant_bits') is None
+                        and consistent_choice['error'].get('kind') == 'constant_bits'):
+                    paired_success, paired_error = consistent_choice['success'], consistent_choice['error']
+                    line('  Recorded adjusted-result/error outcomes (structural; runtime unproven)',
+                         f"success x0 call result {'+' if paired_success['operation'] == 'add_immediate_modulo' else '-'} "
+                         f"{paired_success['immediate']} modulo 2^64; error x0 bits {paired_error['constant_bits']}")
         line('  Recorded return edges', {key: call[key] for key in ('comparison_pc', 'test_pc', 'test_kind', 'test_condition', 'tested_register', 'success_pc', 'error_pc') if key in call})
         rows('  Post-call instruction evidence', call.get('window', []), MAX_WINDOW_ROWS)
         if 'flag_entry_validation' in call:
