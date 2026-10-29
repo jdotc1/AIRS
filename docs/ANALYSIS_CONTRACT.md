@@ -1616,3 +1616,24 @@ are capped at sixteen rows with an exact total and explicit completeness flag.
 Partial instruction bytes cannot enable a plan. Supported instructions, layouts,
 outcome calculations and proof limitations are unchanged; absence of observed
 direct entries does not prove exclusive entry, reachability or runtime behavior.
+
+## Shared return-choice tail binding
+
+`swift-return-choice-v33` requires shared-tail choices to retain one consistent
+bounded return sequence across the region, presentation and both selected
+outcomes. The recorded join, start, contiguous PCs, exclusive end, words, kinds
+and optional scalar writeback metadata must agree. The existing return-tail
+decoder reconstructs at most eight recorded words within synthetic bounds;
+it does not reread the input image or establish runtime restore state.
+
+Each selected outcome must end with the complete ordered return-tail block,
+with no earlier return-tail rows, within the existing 24-row instruction limit.
+Only the phase marker is removed for full-row comparison, and metadata types
+must match. Restore-state proof must remain exactly false. Empty, malformed,
+inconsistent, reordered or unsupported recorded tails leave the choice unresolved.
+
+This tightens the join of in-process producer records. Direct success-entry
+choices, instruction recovery, supported tail families and all other model
+identities remain unchanged. Raw evidence remains available; saved-report
+admission, caller return types, callee authentication, exclusive reachability,
+source reconstruction and runtime behavior remain outside this claim.

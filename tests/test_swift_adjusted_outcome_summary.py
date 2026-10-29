@@ -107,13 +107,13 @@ class AdjustedOutcomeSummaryTests(unittest.TestCase):
                 with self.subTest(flag=flag, replacement=replacement):
                     self.assertNotIn(LABEL, render_swift_error_text(value))
 
-    def test_consistent_choice_does_not_bypass_existing_operation_tail_guards(self):
+    def test_choice_and_operation_both_withhold_conflicting_restore_proof(self):
         original = adjusted_report()
         for replacement in (True, 0):
             value = deepcopy(original); call = value['calls'][0]
             call['presentation']['display_plan']['shared_epilogue']['restore_state_proven'] = replacement
             with self.subTest(restore_state=replacement):
-                self.assertIsNotNone(_consistent_return_choice(call))
+                self.assertIsNone(_consistent_return_choice(call))
                 text = render_swift_error_text(value)
                 self.assertNotIn(OPERATION_LABEL, text)
                 self.assertNotIn(LABEL, text)
