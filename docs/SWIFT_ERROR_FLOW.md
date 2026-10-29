@@ -1986,3 +1986,27 @@ Six new focused methods and forty affected rendering/CLI methods passed.
 Independent review found no blocker. Analysis logic, report models, JSON output,
 instruction/layout support and proof limits are unchanged. Prior analysis,
 compiler, binary, native-app and release evidence is reused within its scope.
+
+## Concise recorded call-result and error outcomes
+
+Text output also pairs a preserved or copied call-result success with its recorded
+error literal. The line keeps the preserved/copied distinction, names x0 and
+renders the error as a full-width hexadecimal bit pattern. W-register zero
+extension remains distinct from an X-register all-ones pattern. This pair does
+not carry a literal-equality claim.
+
+Both concise outcome summaries share the existing return-choice reconstruction
+and require agreement with the recorded choice, eligible presentation, exact
+proof flags and integer widths. Missing, conflicting, malformed or mismatched
+records withhold the optional line while raw outcomes, instructions and
+limitations remain available. Literal pairs and adjusted results retain their
+separate summaries, and all output uses the existing bounded-text writer.
+
+Eight new methods passed in composed runs. One fixture expectation was corrected
+to its recorded error pattern, and only that affected method was repeated.
+Forty-six affected rendering and CLI methods passed; independent source review
+found no blocker. Analysis logic, report models, JSON output and supported
+instructions/layouts are unchanged. These remain in-process structural displays,
+without saved-report admission, callee authentication, signed-value interpretation,
+source reconstruction or runtime proof. Prior analysis, compiler, binary,
+native-app and release evidence retains its original scope.

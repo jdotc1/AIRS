@@ -15,31 +15,54 @@ MAX_ISSUE_ROWS = 16
 MAX_LIMITATION_ROWS = 16
 
 
-def _literal_outcome_summary(call: dict) -> str | None:
-    """Summarize consistent in-process outcome records, not admit saved reports."""
+def _consistent_return_choice(call: dict) -> dict | None:
+    """Rebuild in-process outcome records for display, not admit saved reports."""
     choice = call.get('return_choice')
     presentation = call.get('presentation')
     if (not isinstance(choice, dict) or not isinstance(presentation, dict)
             or presentation.get('status') != 'eligible_structural_only'
             or choice.get('status') != 'structural_choice_candidate'
-            or type(choice.get('same_constant_bits')) is not bool
+            or (choice.get('same_constant_bits') is not None
+                and type(choice.get('same_constant_bits')) is not bool)
             or any(choice.get(key) is not False for key in ('source_reconstruction_allowed',
                 'runtime_value_proven', 'exclusive_path_proven', 'caller_return_type_proven',
                 'call_return_proven', 'handler_semantics_proven'))):
         return None
-    for path in ('success', 'error'):
-        outcome = choice.get(path)
-        if (not isinstance(outcome, dict) or outcome.get('kind') != 'constant_bits'
-                or type(outcome.get('bit_width')) is not int or outcome['bit_width'] != 64):
-            return None
     try:
         rebuilt = _return_choice(call)
     except (AttributeError, IndexError, KeyError, TypeError, ValueError):
         return None
     if rebuilt != choice:
         return None
-    return (f"success x0 bits {rebuilt['success']['constant_bits']}; "
-            f"error x0 bits {rebuilt['error']['constant_bits']}")
+    # Equality alone accepts integer/float widths and Boolean/integer flags.
+    for path in ('success', 'error'):
+        outcome = choice.get(path)
+        if (not isinstance(outcome, dict)
+                or (outcome.get('kind') == 'constant_bits'
+                    and (type(outcome.get('bit_width')) is not int or outcome['bit_width'] != 64))):
+            return None
+    return rebuilt
+
+
+def _literal_outcome_summary(choice: dict | None) -> str | None:
+    if (choice is None or type(choice.get('same_constant_bits')) is not bool
+            or any(choice[path].get('kind') != 'constant_bits' for path in ('success', 'error'))):
+        return None
+    return (f"success x0 bits {choice['success']['constant_bits']}; "
+            f"error x0 bits {choice['error']['constant_bits']}")
+
+
+def _call_result_outcome_summary(choice: dict | None) -> str | None:
+    if choice is None or choice.get('same_constant_bits') is not None:
+        return None
+    success, error = choice['success'], choice['error']
+    if (success.get('kind') != 'call_result' or success.get('register') != 'x0'
+            or success.get('candidate_status') not in ('preserved_register_candidate', 'copied_register_candidate')
+            or error.get('kind') != 'constant_bits'):
+        return None
+    kind = 'preserved' if success['candidate_status'] == 'preserved_register_candidate' else 'copied'
+    return (f"success x0 {kind} call-result candidate; "
+            f"error x0 bits {error['constant_bits']}")
 
 
 def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_BYTES) -> str:
@@ -135,9 +158,13 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
                 raise InputError('swift_text_models', 'Return-choice evidence requires its current model')
             choice = call['return_choice']
             line('  Return choice (structural outcomes; source disabled)', choice)
-            literal_summary = _literal_outcome_summary(call)
+            consistent_choice = _consistent_return_choice(call)
+            literal_summary = _literal_outcome_summary(consistent_choice)
             if literal_summary is not None:
                 line('  Recorded literal outcomes (structural; runtime unproven)', literal_summary)
+            call_result_summary = _call_result_outcome_summary(consistent_choice)
+            if call_result_summary is not None:
+                line('  Recorded call-result/error outcomes (structural; runtime unproven)', call_result_summary)
             success = choice.get('success') if isinstance(choice, dict) else None
             result = call.get('success_result')
             adjustment_word = _adjusted_result_word(result)
