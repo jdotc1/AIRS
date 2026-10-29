@@ -71,7 +71,7 @@ class SuccessReturnTailBoundaryTests(unittest.TestCase):
         from airs.swift_error_text import render_swift_error_text
         value = report(WORDS); text = render_swift_error_text(value)
         self.assertIn('success_entry', text)
-        self.assertIn('swift-success-result-v22', text)
+        self.assertIn('swift-success-result-v23', text)
         self.assertIn('0xd65f03c0', text)
         self.assertFalse(value['calls'][0]['success_result']['source_reconstruction_allowed'])
 
@@ -102,7 +102,7 @@ class SuccessReturnTailEvidenceTests(unittest.TestCase):
                 if format == 'json':
                     value = json.loads(output.getvalue())
                     self.assertEqual(value['calls'][0]['success_result']['return_tail_layout'], 'success_entry')
-                    self.assertEqual(value['success_result_model_version'], 'swift-success-result-v22')
+                    self.assertEqual(value['success_result_model_version'], 'swift-success-result-v23')
                 else:
                     self.assertIn('success_entry', output.getvalue())
                     self.assertIn('Source reconstruction: disabled', output.getvalue())

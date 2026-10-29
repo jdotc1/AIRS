@@ -1863,3 +1863,25 @@ compiler, binary and native-app evidence is reused only in its original scope;
 no new compiler-emission or runtime qualification is claimed. Source
 reconstruction and runtime, exclusive-path, caller-type, call-return and
 handler-semantics proof remain disabled.
+
+## Common arithmetic call and evidence binding
+
+`swift-sync-error-edges-v34`, `swift-success-result-v23` and
+`swift-return-choice-v30` apply the existing CBNZ call and post-call-window
+checks to every supported arithmetic layout. CBZ, CBNZ, CMP-zero/B.EQ and
+CMP-zero/B.NE all require an actual BL matching the recorded call word and
+callee target, a freshly reconstructed error-alias window and no observed
+direct entry into that window. The complete error region and presentation
+must agree with the current caller bytes, including the CBZ error arm.
+
+A new regression first demonstrated a stale CBZ call still supplying an
+arithmetic candidate after its BL was replaced; the common binding now
+declines it. Nine new methods and 764 affected Swift methods passed, including
+valid ADD/SUB, saved aliases, shifted immediates and non-arithmetic compatibility
+controls. Independent semantic review found no blocking issue.
+
+This change tightens in-process evidence consistency without admitting new
+instructions, widening bounds or changing the structural-only proof limits.
+It does not validate saved reports or authenticate a callee declaration.
+Earlier compiler, binary, native-app and release evidence is reused within its
+original scope; no new runtime or compiler-emission qualification is claimed.
