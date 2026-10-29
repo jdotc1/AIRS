@@ -2126,3 +2126,36 @@ not independently recomputed, and coordinated alterations can preserve agreement
 No image reread, saved-report admission, callee authentication, source
 reconstruction, restored-state or runtime proof is added. Prior compiler,
 owned-binary, native-app and release evidence retains its original scope.
+
+## Return-choice shared success-arm consistency
+
+`swift-return-choice-v36` binds the displayed success interval, regional
+instructions and selected success outcome for the existing shared-tail layouts.
+The complete success block must occur immediately before the validated return
+tail. Stale, missing, duplicated, reordered or interleaved records leave the
+choice unresolved and withhold dependent paired summaries while raw records
+remain visible.
+
+The interval contains one to eight canonical contiguous words, starts at the
+recorded success entry, and ends at the join or the forward error entry. Forward
+CBNZ/NE intervals require exact boolean completeness and a final encoded branch
+to the join; a branch-only success arm remains supported. Regional instruction
+kinds and branch annotations are rebuilt from recorded words. Outcome rows retain
+their distinct phase-only format. Existing X/W literal and copy forms and the
+single admitted ADD/SUB operation retain their bounds and operand restrictions.
+The adjusted-operation descriptor is checked against the bound block.
+
+Two regressions reproduced stale-word and reordered-block acceptance before the
+repair and passed afterward. Fourteen new boundary methods cover the four shared
+layouts, literal/preserved/copied/adjusted outcomes, canonical records, forward
+branches and completeness, instruction limits, malformed evidence, renderer
+withholding and direct success-entry controls.
+
+Only the return-choice model advances. Direct success-entry behavior, instruction
+recovery and supported layouts are unchanged. Preceding rows are constrained by
+phase ordering only: post-call counts, words and semantics are not rebound by
+this increment. Literal bits and result aliases are not independently recomputed,
+and coordinated record alterations can preserve agreement. No image reread,
+saved-report admission, callee authentication, source reconstruction, restored-state
+or runtime proof is added. Prior compiler, owned-binary, native-app and release
+evidence retains its original scope.

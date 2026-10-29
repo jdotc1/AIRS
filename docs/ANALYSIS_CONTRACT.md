@@ -1658,3 +1658,25 @@ identities, instruction recovery and supported restore families remain intact.
 The reconstruction uses recorded words without rereading or executing the input
 image. Saved-report admission, callee authentication, exclusive reachability,
 restored state, source reconstruction and runtime proof remain outside scope.
+
+## Shared success-arm return-choice binding
+
+`swift-return-choice-v36` requires each selected shared success outcome to retain
+the complete ordered success block immediately before its validated return tail.
+The presentation and region must agree on an interval of one to eight canonical
+contiguous instruction words beginning at the success entry. Ordinary shared
+arms end at the join; forward arms end at the error entry and finish with an
+encoded branch to the join, with exact boolean completeness.
+
+Recorded instruction kinds, branch metadata and outcome phase rows must agree
+with the existing bounded decoder. Literal/copy forms and the single supported
+arithmetic operation retain their existing restrictions. The adjusted-operation
+descriptor binds to this contiguous block rather than a filtered list. Earlier
+rows cannot hide extra success instructions or interrupt the block. Direct
+success-entry choices retain their separate contract.
+
+This is in-process record consistency. Post-call row contents and counts, literal
+values and preserved/copied/adjusted result aliases are not independently
+rederived. Coordinated alterations may remain consistent. Original image access,
+saved-report admission, callee authenticity, exclusive reachability, source
+reconstruction and runtime behavior are outside this claim.

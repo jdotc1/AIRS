@@ -31,7 +31,7 @@ PRESENTATION_MODEL = 'swift-structural-presentation-v10'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v24'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v17'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v19'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v35'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v36'
 SHARED_WORDS = 8
 
 
@@ -1226,6 +1226,74 @@ def _bind_choice_error_arm(call: dict, tail_count: int, join: int) -> None:
         raise ValueError('Error arm opaque call count')
 
 
+def _bind_choice_success_arm(call: dict, outcome: dict, tail_count: int, join: int) -> list:
+    """Bind the shared success block without rederiving its selected value."""
+    region = call['error_region']
+    interval = region.get('success_interval')
+    presented = call['presentation']['display_plan'].get('success_interval')
+    forward = region.get('layout') == 'success_fallthrough_error_forward'
+    keys = {'start_pc', 'end_pc_exclusive', 'instructions'}
+    if forward:
+        keys.add('instructions_complete')
+    if (not isinstance(interval, dict) or set(interval) != keys
+            or not isinstance(presented, dict) or presented != interval
+            or (forward and (interval.get('instructions_complete') is not True
+                             or presented.get('instructions_complete') is not True))):
+        raise ValueError('Success arm interval records')
+    rows = interval['instructions']
+    if (not isinstance(rows, list) or not 1 <= len(rows) <= SHARED_WORDS
+            or any(not isinstance(row, dict) for row in rows)):
+        raise ValueError('Success arm records')
+    start_text = interval['start_pc']
+    if not isinstance(start_text, str):
+        raise ValueError('Success arm start type')
+    start = int(start_text, 16)
+    end = start + 4 * len(rows)
+    if (not 0 <= start < end <= 1 << 64 or start % 4 or start_text != hex(start)
+            or start_text != call['success_pc'] or interval['end_pc_exclusive'] != hex(end)
+            or (end != int(call['error_pc'], 16) if forward else end != join)):
+        raise ValueError('Success arm interval')
+    prefix = outcome['instructions'][:-tail_count]
+    captured = prefix[-len(rows):]
+    preceding = prefix[:-len(rows)]
+    if (len(captured) != len(rows)
+            or any(row.get('phase') != 'post_call' for row in preceding)
+            or (outcome['status'] == 'constant_register_candidate'
+                and call.get('test_kind') != 'cmp_zero_bcond' and preceding)):
+        raise ValueError('Success arm outcome ordering')
+    arithmetic = 0
+    kinds = []
+    for index, (row, recorded) in enumerate(zip(rows, captured)):
+        pc = start + 4 * index
+        word = row.get('word')
+        if (row.get('pc') != hex(pc) or not isinstance(word, str)
+                or re.fullmatch(r'0x[0-9a-f]{8}', word) is None):
+            raise ValueError('Success arm word')
+        try:
+            instruction = decode_instruction(int(word, 16), pc)
+        except ModelError as error:
+            raise ValueError('Success arm encoding') from error
+        expected = {'pc': hex(pc), 'word': word, 'kind': instruction.kind}
+        kinds.append(instruction.kind)
+        if forward and index == len(rows) - 1:
+            if instruction.kind != 'b' or pc + instruction.immediate != join:
+                raise ValueError('Success arm exit')
+            expected['target_pc'] = hex(join)
+        elif _is_result_arithmetic(instruction):
+            arithmetic += 1
+            if arithmetic > 1 or outcome['status'] != 'adjusted_register_candidate':
+                raise ValueError('Success arm arithmetic source')
+        elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk',
+                                      'wmovz', 'wmovn', 'wmovk', 'wmov'):
+            raise ValueError('Success arm instruction')
+        if row != expected or recorded != {'pc': hex(pc), 'word': word, 'phase': 'success'}:
+            raise ValueError('Success arm captured records')
+    if arithmetic and any(kind not in ('nop', 'mov', 'add', 'sub')
+                          for kind in (kinds[:-1] if forward else kinds)):
+        raise ValueError('Success arm arithmetic mixture')
+    return captured
+
+
 def _return_choice(call: dict) -> dict:
     """Join in-process producer facts only; this does not admit saved reports."""
     result = {'status': 'unresolved', 'source_reconstruction_allowed': False,
@@ -1330,6 +1398,7 @@ def _return_choice(call: dict) -> dict:
                     or not same_tail_rows(presented.get('instructions'))):
                 raise ValueError('Shared outcome presentation tail')
         _bind_choice_error_arm(call, len(captured_tails[1]), join)
+        selected_success = _bind_choice_success_arm(call, success, len(captured_tails[0]), join) if shared else []
         return_pc = rebuilt_tail['instructions'][-1]['pc']
         for path, outcome in (('success', success), ('error', error)):
             if (outcome['register'] != 'x0' or outcome['call_pc'] != call['call_pc']
@@ -1352,19 +1421,7 @@ def _return_choice(call: dict) -> dict:
             expected = _adjusted_result_word(success)
             if expected is None or success.get('return_tail_layout') != 'shared_epilogue':
                 raise ValueError('Adjusted result')
-            instruction_rows = success['instructions']
-            interval = region['success_interval']
-            captured = interval['instructions']
-            if (not isinstance(instruction_rows, list) or len(instruction_rows) > 3 * SHARED_WORDS
-                    or not isinstance(captured, list) or not 1 <= len(captured) <= SHARED_WORDS
-                    or any(not isinstance(row, dict) for row in instruction_rows + captured)):
-                raise ValueError('Adjusted arm row types')
-            selected = [row for row in instruction_rows if row.get('phase') == 'success']
-            if (plan.get('success_interval') != interval or len(selected) != len(captured)
-                    or any((row.get('pc'), row.get('word')) != (record.get('pc'), record.get('word'))
-                           for row, record in zip(selected, captured))):
-                raise ValueError('Adjusted arm binding')
-            if sum(row.get('word') == f'0x{expected:08x}' for row in selected) != 1:
+            if sum(row['word'] == f'0x{expected:08x}' for row in selected_success) != 1:
                 raise ValueError('Adjusted instruction binding')
             success_description = {'kind': 'call_result_add_immediate' if operation == 'add_immediate_modulo' else 'call_result_sub_immediate',
                                    'register': 'x0', 'immediate': success['immediate'], 'bit_width': 64,
