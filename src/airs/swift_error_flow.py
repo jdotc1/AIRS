@@ -31,7 +31,7 @@ PRESENTATION_MODEL = 'swift-structural-presentation-v10'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v24'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v17'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v19'
-RETURN_CHOICE_MODEL = 'swift-return-choice-v34'
+RETURN_CHOICE_MODEL = 'swift-return-choice-v35'
 SHARED_WORDS = 8
 
 
@@ -1161,6 +1161,71 @@ def _adjusted_result_word(outcome: dict) -> int | None:
             | (source << 5) | destination)
 
 
+def _bind_choice_error_arm(call: dict, tail_count: int, join: int) -> None:
+    """Reconcile bounded producer records without recomputing literal bits."""
+    region = call['error_region']
+    outcome = call['error_constant']
+    rows = region.get('instructions')
+    if (not isinstance(rows, list) or not 1 <= len(rows) <= REGION_WORDS
+            or any(not isinstance(row, dict) for row in rows)
+            or region.get('status') != 'structural_region_candidate'
+            or region.get('call_return_proven') is not False
+            or region.get('join_reachability_proven') is not False):
+        raise ValueError('Error arm records')
+    start_text = region['start_pc']
+    if not isinstance(start_text, str):
+        raise ValueError('Error arm start type')
+    start = int(start_text, 16)
+    end = start + 4 * len(rows)
+    if (not 0 <= start < end <= 1 << 64 or start % 4 or start_text != hex(start)
+            or start_text != call['error_pc'] or region['end_pc_exclusive'] != hex(end)):
+        raise ValueError('Error arm interval')
+    projection = {key: region[key] for key in ('start_pc', 'end_pc_exclusive', 'instructions')}
+    if call['presentation']['display_plan'].get('error_interval') != projection:
+        raise ValueError('Error arm presentation')
+    captured = outcome['instructions'][:-tail_count]
+    if len(captured) != len(rows):
+        raise ValueError('Error arm outcome length')
+    calls = 0
+    branches = 0
+    for index, (row, recorded) in enumerate(zip(rows, captured)):
+        pc = start + 4 * index
+        word = row.get('word')
+        if (row.get('pc') != hex(pc) or not isinstance(word, str)
+                or re.fullmatch(r'0x[0-9a-f]{8}', word) is None):
+            raise ValueError('Error arm word')
+        try:
+            instruction = decode_instruction(int(word, 16), pc)
+        except ModelError as error:
+            raise ValueError('Error arm encoding') from error
+        expected = {'pc': hex(pc), 'word': word, 'kind': instruction.kind}
+        expected_outcome = {'pc': hex(pc), 'word': word, 'phase': 'error'}
+        if instruction.kind == 'bl':
+            target = pc + instruction.immediate
+            if not 0 <= target < 1 << 64 or target % 4:
+                raise ValueError('Error arm call target')
+            expected.update(call_target_pc=hex(target), semantics='opaque_call')
+            expected_outcome['constant_state'] = 'cleared_after_opaque_call'
+            calls += 1
+        elif instruction.kind == 'b':
+            if (index != len(rows) - 1 or pc + instruction.immediate != join
+                    or region.get('layout') == 'success_fallthrough_error_forward'
+                    or region['end_pc_exclusive'] != call['success_pc']):
+                raise ValueError('Error arm exit')
+            expected['target_pc'] = hex(join)
+            branches += 1
+        elif instruction.kind not in ('nop', 'mov', 'movz', 'movn', 'xmovk',
+                                      'wmovz', 'wmovn', 'wmovk', 'wmov'):
+            raise ValueError('Error arm instruction')
+        if row != expected or recorded != expected_outcome:
+            raise ValueError('Error arm captured records')
+    if not branches and end != join:
+        raise ValueError('Error arm fallthrough')
+    if any(type(record.get('opaque_call_count')) is not int or record['opaque_call_count'] != calls
+           for record in (region, outcome)):
+        raise ValueError('Error arm opaque call count')
+
+
 def _return_choice(call: dict) -> dict:
     """Join in-process producer facts only; this does not admit saved reports."""
     result = {'status': 'unresolved', 'source_reconstruction_allowed': False,
@@ -1264,6 +1329,7 @@ def _return_choice(call: dict) -> dict:
                     or presented.get('restore_state_proven') is not False
                     or not same_tail_rows(presented.get('instructions'))):
                 raise ValueError('Shared outcome presentation tail')
+        _bind_choice_error_arm(call, len(captured_tails[1]), join)
         return_pc = rebuilt_tail['instructions'][-1]['pc']
         for path, outcome in (('success', success), ('error', error)):
             if (outcome['register'] != 'x0' or outcome['call_pc'] != call['call_pc']
