@@ -62,9 +62,9 @@ class PostIndexedBoundaryTests(unittest.TestCase):
         from airs.swift_error_text import render_swift_error_text
         value = report(WORDS[:6] + (pop_word(), 0xd65f03c0))
         self.assertEqual(value['error_region_model_version'], 'swift-sync-error-region-v24')
-        self.assertEqual(value['model_version'], 'swift-sync-error-edges-v36')
+        self.assertEqual(value['model_version'], 'swift-sync-error-edges-v37')
         self.assertEqual(value['region_incoming_model_version'], 'swift-region-direct-entries-v7')
-        self.assertEqual(value['structured_presentation_model_version'], 'swift-structural-presentation-v9')
+        self.assertEqual(value['structured_presentation_model_version'], 'swift-structural-presentation-v10')
         text = render_swift_error_text(value)
         self.assertIn('0xa8c17bfd', text)
         self.assertIn('Source reconstruction: disabled', text)

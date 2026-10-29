@@ -20,14 +20,14 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 
-MODEL = 'swift-sync-error-edges-v36'
+MODEL = 'swift-sync-error-edges-v37'
 FLAG_ENTRY_MODEL = 'swift-compare-flag-entries-v1'
 WINDOW_WORDS = 8
 REGION_MODEL = 'swift-sync-error-region-v24'
 REGION_WORDS = 16
 INCOMING_MODEL = 'swift-region-direct-entries-v7'
 INCOMING_EVIDENCE_LIMIT = 16
-PRESENTATION_MODEL = 'swift-structural-presentation-v9'
+PRESENTATION_MODEL = 'swift-structural-presentation-v10'
 SUCCESS_RESULT_MODEL = 'swift-success-result-v24'
 SUCCESS_CONSTANT_MODEL = 'swift-success-constant-v17'
 ERROR_CONSTANT_MODEL = 'swift-error-constant-v19'
@@ -704,6 +704,31 @@ def _presentation_eligibility(call: dict, data: bytes | None = None, function=No
                     if _shared_epilogue(packed, synthetic, success, join, allow_result_arithmetic=cmp_eq_fallthrough) != {
                             'success_interval': region['success_interval'], 'shared_epilogue': region['shared_epilogue']}:
                         raise ValueError('Inconsistent encoded shared intervals')
+        if data is None or function is None:
+            return {**result, 'reason': 'presentation_caller_evidence_missing'}
+        if len(data) % 4:
+            return {**result, 'reason': 'presentation_caller_evidence_incomplete'}
+        call_pc = address(call['call_pc'])
+        call_instruction, actual_call = _bounded_instruction(data, function, call_pc)
+        recovered = _edges(data, function, call_pc - function.start)
+        if (call_instruction.kind != 'bl' or actual_call['word'] != call['call_word']
+                or call_pc + call_instruction.immediate != address(call['callee_pc'])
+                or recovered.get('status') != 'recovered_candidate'
+                or any(call.get(key) != value for key, value in recovered.items())):
+            return {**result, 'reason': 'presentation_call_evidence_inconsistent'}
+        current_scan = _caller_direct_edges(data, function)
+        postcall = _flag_entries(current_scan, call)
+        window_evidence = {**postcall, 'scope': 'caller_local_direct_edges_into_postcall_window'}
+        if postcall['status'] == 'unexpected_direct_entries':
+            return {**result, 'status': 'blocked', 'reason': 'unexpected_postcall_entries',
+                    'postcall_entry_validation': window_evidence}
+        if postcall['status'] != 'no_unexpected_direct_entries':
+            return {**result, 'reason': 'postcall_entries_unresolved',
+                    'postcall_entry_validation': window_evidence}
+        if (_region_incoming(current_scan, region, call) != entry
+                or _error_region(data, function, call) != {key: value for key, value in region.items() if key != 'incoming_validation'}
+                or (call.get('test_kind') == 'cmp_zero_bcond' and postcall != call['flag_entry_validation'])):
+            return {**result, 'reason': 'presentation_current_evidence_inconsistent'}
     except (KeyError, TypeError, ValueError, ModelError):
         return {**result, 'reason': 'presentation_evidence_inconsistent'}
     return {**result, 'status': 'eligible_structural_only', 'reason': 'complete_caller_local_direct_validation',

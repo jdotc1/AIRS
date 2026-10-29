@@ -1601,3 +1601,18 @@ This applies to existing CBZ/CBNZ and CMP-zero EQ/NE shared layouts and supporte
 success-entry outcomes. X/W move-wide literals, copies, MOVK assembly, opaque-call
 clearing and interval/tail bounds retain their meaning. No instruction or layout
 family, saved-report admission, callee authentication or runtime claim is added.
+
+## Current-call structural presentation
+
+Structural display plans require current caller bytes and function bounds. The
+actual BL word and target, reconstructed error-alias/test window, current direct
+entries, region and incoming evidence must agree before presentation is eligible.
+CBZ/CBNZ post-call alias windows receive the same direct-entry screening used for
+comparison windows, without claiming flag-state recovery. An observed window
+entry blocks the plan; incomplete or stale evidence leaves it unresolved.
+
+Withheld plans retain raw edge and region evidence. Post-call conflict details
+are capped at sixteen rows with an exact total and explicit completeness flag.
+Partial instruction bytes cannot enable a plan. Supported instructions, layouts,
+outcome calculations and proof limitations are unchanged; absence of observed
+direct entries does not prove exclusive entry, reachability or runtime behavior.

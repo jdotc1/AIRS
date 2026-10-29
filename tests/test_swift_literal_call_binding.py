@@ -191,6 +191,6 @@ class LiteralCallBindingBoundaryTests(unittest.TestCase):
                     self.assertEqual(call['error_constant']['status'], 'declined')
                     self.assertEqual(call['return_choice']['status'], 'unresolved')
                 else:
-                    self.assertIn('constant_postcall_evidence_inconsistent', output.getvalue())
+                    self.assertIn('unexpected_postcall_entries', output.getvalue())
                     self.assertIn('Source reconstruction: disabled', output.getvalue())
                     self.assertNotIn('constant_register_candidate', output.getvalue())

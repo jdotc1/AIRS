@@ -70,7 +70,8 @@ class CbnzArithmeticBoundaryTests(unittest.TestCase):
         for target in (4, 8, 12):
             branch = 0x14000000 | (((target-source)//4) & 0x3ffffff)
             call = report((*words, branch))['calls'][0]
-            self.assertEqual(call['success_result']['reason'], 'success_arithmetic_postcall_evidence_inconsistent')
+            self.assertEqual(call['presentation']['reason'], 'unexpected_postcall_entries')
+            self.assertEqual(call['success_result']['reason'], 'structural_presentation_not_eligible')
             self.assertEqual(call['return_choice']['status'], 'unresolved')
 
     def test_unknown_partial_and_missing_scan_refuse(self):

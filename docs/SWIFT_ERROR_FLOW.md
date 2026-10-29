@@ -1934,3 +1934,34 @@ No new instructions or layouts are admitted. These remain in-process structural
 candidates, without saved-report admission, authenticated callees, reconstructed
 source or runtime proof. Prior compiler, binary, native-app and release evidence
 is reused within its original scope.
+
+## Current-call structural presentation
+
+`swift-sync-error-edges-v37` and `swift-structural-presentation-v10` bind an
+eligible display plan to current caller bytes and function bounds. The actual BL
+word and target, recovered error-alias/test window, current direct-entry scan,
+region and incoming evidence must match. CBZ and CBNZ now screen entries into
+the post-call alias/test window as comparison forms already do. Missing, stale,
+unknown or partial caller evidence cannot produce an eligible plan.
+
+A caller-local branch bypassing an error-alias copy now blocks presentation,
+in addition to withholding dependent outcomes. The raw edge and region remain
+available. Post-call conflict evidence keeps exact totals, at most sixteen
+detail rows and an explicit completeness flag; the text renderer exposes this
+evidence while withholding the structured condition.
+
+Fourteen new methods passed in composed runs, including the failing-then-passing
+alias-bypass regression and a partial-word boundary identified during independent
+review. Coverage includes existing shared and success-entry layouts, copied
+aliases, actual calls and targets, stale regions and ledgers, missing/truncated
+bytes, unknown words, capped conflict details and CLI output. Of 391 affected
+methods, 390 passed initially; one expected the former later arithmetic refusal
+reason and passed after its expectation was updated for the earlier presentation
+gate. Passing methods were not repeated. Final independent review found no
+remaining blocker.
+
+This tightens in-process display eligibility without adding instructions or
+layouts, changing outcome calculations or admitting saved reports. Callee
+authentication, flag state, exclusive entry, source reconstruction and runtime
+behavior remain unproven. Prior compiler, binary, native-app and release evidence
+retains its original scope.

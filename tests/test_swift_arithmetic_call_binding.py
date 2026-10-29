@@ -138,6 +138,6 @@ class ArithmeticCallBindingBoundaryTests(unittest.TestCase):
                     '--validate-region-entries', '--include-structured-presentation', '--format', 'text'])
             self.assertEqual(status, 0)
             text = output.getvalue()
-            self.assertIn('success_arithmetic_postcall_evidence_inconsistent', text)
+            self.assertIn('unexpected_postcall_entries', text)
             self.assertIn('Source reconstruction: disabled', text)
             self.assertNotIn('Success operation (structural; runtime unproven):', text)

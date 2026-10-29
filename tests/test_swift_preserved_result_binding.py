@@ -172,6 +172,6 @@ class PreservedResultBindingBoundaryTests(unittest.TestCase):
                     self.assertEqual(call['success_result']['status'], 'declined')
                     self.assertEqual(call['return_choice']['status'], 'unresolved')
                 else:
-                    self.assertIn('success_result_postcall_evidence_inconsistent', output.getvalue())
+                    self.assertIn('unexpected_postcall_entries', output.getvalue())
                     self.assertIn('Source reconstruction: disabled', output.getvalue())
                     self.assertNotIn('copied_register_candidate', output.getvalue())
