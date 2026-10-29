@@ -1965,3 +1965,24 @@ layouts, changing outcome calculations or admitting saved reports. Callee
 authentication, flag state, exclusive entry, source reconstruction and runtime
 behavior remain unproven. Prior compiler, binary, native-app and release evidence
 retains its original scope.
+
+## Concise recorded literal outcomes
+
+Text output adds a concise line when both selected outcomes are recorded literal
+bit patterns and the presentation is eligible. The renderer rebuilds the existing
+in-process return choice and requires it to match the recorded choice, including
+integer-width, equality and proof-limit checks. It renders the rebuilt success
+and error values as full-width hexadecimal patterns under an explicit structural,
+runtime-unproven label.
+
+Both path labels remain present when their bits match. A W-register all-ones
+literal remains `0x00000000ffffffff`, distinct from X-register
+`0xffffffffffffffff`; the summary does not infer signed Swift values or an
+unconditional return. Mismatched, incomplete, conflicting or withheld outcomes
+omit the concise line while preserving raw outcomes, instructions and limitations.
+The existing text byte limit still applies.
+
+Six new focused methods and forty affected rendering/CLI methods passed.
+Independent review found no blocker. Analysis logic, report models, JSON output,
+instruction/layout support and proof limits are unchanged. Prior analysis,
+compiler, binary, native-app and release evidence is reused within its scope.
