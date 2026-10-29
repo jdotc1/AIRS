@@ -89,7 +89,7 @@ class VoidOutcomeEvidenceTests(unittest.TestCase):
         value = report(WORDS, symbol=NOARG)
         self.assertEqual(value['success_constant_model_version'], 'swift-success-constant-v17')
         self.assertEqual(value['error_constant_model_version'], 'swift-error-constant-v19')
-        self.assertEqual(value['return_choice_model_version'], 'swift-return-choice-v32')
+        self.assertEqual(value['return_choice_model_version'], 'swift-return-choice-v33')
 
     def test_cli_reports_caller_literals_without_void_call_result(self):
         import contextlib, io, json

@@ -2022,8 +2022,7 @@ Swift value or claim a literal-equality relationship.
 The paired line requires both the existing operation-summary checks and a
 consistent rebuilt return choice. Inconsistent error evidence withholds the pair
 without removing the independently eligible operation line. A failed operation
-or return-tail check also withholds the pair even when the recorded choice is
-otherwise consistent. Raw records, instruction evidence, other outcome summaries
+or return-tail check also withholds the pair. Raw records, instruction evidence, other outcome summaries
 and the existing text byte bound remain in place.
 
 Ten new methods and twenty-five affected arithmetic rendering/CLI methods passed.
@@ -2033,3 +2032,33 @@ tails, output limits and CLI bypass withholding. Independent source review found
 no blocker. Analysis, models, JSON generation and instruction/layout support are
 unchanged; prior compiler, binary, native-app and release evidence retains its
 scope. No source reconstruction, callee authentication or runtime proof is added.
+
+## Shared return-choice tail consistency
+
+`swift-return-choice-v33` binds a shared-tail choice to matching presentation,
+region and selected success/error instruction records. The join and interval
+must match a nonempty, contiguous sequence of at most eight words. Reconstructing
+those recorded words with the existing tail decoder checks the terminal RET x30,
+supported restore shape and full metadata, including scalar writeback. It does
+not read the original image again or prove restored state.
+
+Both outcomes must end with that exact tail as a contiguous suffix, with no
+earlier return-tail rows and at most 24 total instruction records. Only the phase
+marker is stripped for comparison; field types and the exact-false restore proof
+are retained. Missing, malformed or inconsistent evidence leaves the choice
+unresolved and withholds dependent concise summaries while raw evidence remains.
+
+Fourteen new methods passed in composed runs. A stale presentation-word regression
+failed before the correction and passed afterward. Independent review found a
+filtered-row ordering gap; a second failing-then-passing regression covers intact
+tails moved before or interleaved with other evidence. Twelve other boundary
+methods cover all four shared layouts, literal/preserved/copied/adjusted outcomes,
+existing tail families, bounds, metadata types, direct success-entry compatibility,
+renderer withholding and CLI model identity. All 365 selected existing
+return-choice and rendering methods passed. Final independent review found no
+remaining blocker.
+
+Instruction recovery, direct success-entry behavior and other model identities
+are unchanged. These are in-process record checks, without saved-report admission,
+callee authentication, source reconstruction or runtime proof. Prior compiler,
+owned-binary, native-app and release evidence is reused within its original scope.
