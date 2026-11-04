@@ -1,0 +1,73 @@
+{
+  "record_type": "post-publication-browser-download-and-app-translocation-acceptance",
+  "version": "0.3.3",
+  "build": 12,
+  "tag": "v0.3.3-build12",
+  "release_source_revision": "9babe4f7bfc6132e6eb97cfec40af500efb7bd1c",
+  "accepted_at": "2026-10-24T18:06:13.859558-04:00",
+  "status": "passed",
+  "supersedes_scope": "Updates the original publication-time qualification statement that build12 public-host browser download and App Translocation were not yet checked. Other evidence and limitations remain in force.",
+  "browser_download": {
+    "browser": "Chrome",
+    "source_url": "https://github.com/jdotc1/AIRS-app/releases/download/v0.3.3-build12/AIRS-0.3.3-build12-macOS-arm64.zip",
+    "bytes": 45864343,
+    "sha256": "74a0b8ab5ba6ece7933c167eb9da4b1e6a717d766166e5725342f6a4a9183d66",
+    "received_transfer_identity": "First received-file digest matched the accepted original archive identity; the original archive was not rehashed",
+    "quarantine": "Chrome quarantine present on downloaded ZIP and preserved after Archive Utility extraction"
+  },
+  "launch": {
+    "target": "Exact downloaded bundle, not the installed app",
+    "mechanism": "Documented NSWorkspace exact-path launch with activation and recents disabled, a new application instance and running-app substitution refused",
+    "app_translocation": true,
+    "independent_receipts_agree": true,
+    "observed_executable_shape": "AppTranslocation/<redacted>/d/AIRS.app/Contents/MacOS/AIRSApp",
+    "profile_isolation": {
+      "fresh_storage_and_preferences": true,
+      "production_controllers": false,
+      "external_open_events": false,
+      "restoration": false,
+      "system_panels": false
+    }
+  },
+  "native_gui": {
+    "view": "Real isolated native report overview",
+    "accepted_fixture": {
+      "functions": 3,
+      "agreements": 2,
+      "inconsistencies": 0,
+      "unresolved": 1,
+      "modeled_pc_observations": 5
+    },
+    "normal_close": "Closing the sole isolated window terminated the isolated process",
+    "bounded_diagnostics": "No AttributeGraph, publishing-during-update or fatal-error messages in the bounded isolated-process query"
+  },
+  "preservation": {
+    "installed_app_settings_stores_unchanged": true,
+    "coverage": [
+      "Installed app bundle",
+      "Production application stores",
+      "Preferences",
+      "Saved application state",
+      "Application recents"
+    ],
+    "method": "Filesystem identity, size, mode and nanosecond modification metadata; no repeated provenance hashes"
+  },
+  "results_reused": [
+    "Accepted build12 source, signing/notarization/stapling, binary publication identity",
+    "Engine, Settings, comparison, and sidebar functional receipts",
+    "Owned v41 report and synthetic comparison fixtures; no analysis rerun",
+    "Existing exact-path NSWorkspace helper with activation and recents disabled, new instance and substitution refused"
+  ],
+  "not_repeated": [
+    "Builds, test suites, signing/dependency checks, original sealed archive hashing",
+    "Comparison-sheet workflow, sidebar nine-destination workflow, engine analysis"
+  ],
+  "remaining_limits": [
+    "This development Mac is not a clean machine",
+    "No minimum-macOS, Intel-app or offline qualification",
+    "Isolated profile is app-owned isolation, not an OS sandbox",
+    "No fresh first-open confirmation dialog observed on this previously used host; successful normal quarantined launch is narrower than a clean-host Gatekeeper check",
+    "No new signing assessment or broad workflow acceptance claimed"
+  ],
+  "record_update": "Documentation and sanitized qualification supplement only; release tag, original source ZIP, original qualification asset, app ZIP and original checksums remain unchanged. No installed-app operations occur during record publication."
+}
