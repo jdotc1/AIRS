@@ -6,7 +6,9 @@ MAX_TEXT_BYTES=1024*1024
 
 
 def render_swift_broad_text(report):
-    if type(report) is not dict or report.get('model_version')!='swift-broad-error-flow-v1':
+    if (type(report) is not dict or not (report.get('model_version')=='swift-broad-error-flow-v1'
+            or (report.get('model_version')=='swift-broad-error-flow-large-v1'
+                and report.get('profile')=='broad-large-v1'))):
         raise InputError('swift_broad_text_model','Unsupported broad report model')
     # JSON quoting escapes terminal control characters; it does not authenticate
     # imported reports or promote recorded validator outcomes to fresh checks.

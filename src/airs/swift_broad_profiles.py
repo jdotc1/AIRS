@@ -9,6 +9,8 @@ from types import MappingProxyType
 from .types import InputError
 
 BROAD_PROFILE = 'broad-v1'
+BROAD_LARGE_PROFILE = 'broad-large-v1'
+BROAD_LARGE_MODEL = 'swift-broad-error-flow-large-v1'
 BROAD_MODEL = 'swift-broad-error-flow-v1'
 BROAD_WITNESS_MODEL = 'swift-outcome-witness-v2'
 BROAD_VALIDATION_MODEL = 'swift-outcome-validation-v2'
@@ -28,6 +30,7 @@ PROFILES = MappingProxyType({
     'methods': SwiftProfile('swift-sync-error-edges-v38', 'swift-return-choice-v46',
                             'swift-outcome-witness-v1', 'swift-outcome-validation-v1'),
     BROAD_PROFILE: SwiftProfile(BROAD_MODEL, None, BROAD_WITNESS_MODEL, BROAD_VALIDATION_MODEL),
+    BROAD_LARGE_PROFILE: SwiftProfile(BROAD_LARGE_MODEL, None, BROAD_WITNESS_MODEL, BROAD_VALIDATION_MODEL),
 })
 
 
@@ -39,6 +42,6 @@ def validate_broad_options(*, include_outcome_witnesses: bool,
     if include_swift_methods or not (include_outcome_witnesses and include_error_regions
                                     and validate_region_entries and include_structured_presentation):
         raise InputError('swift_broad_options',
-                         'broad-v1 requires --include-outcome-witnesses, --include-error-regions, '
+                         'Broad profiles require --include-outcome-witnesses, --include-error-regions, '
                          '--validate-region-entries and --include-structured-presentation; '
                          '--include-swift-methods is a separate historical profile')

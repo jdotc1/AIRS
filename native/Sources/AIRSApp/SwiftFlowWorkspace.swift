@@ -78,8 +78,9 @@ final class SwiftFlowWorkspace {
                 let decoded = try await withTaskCancellationHandler { try await decoding.value } onCancel: { decoding.cancel() }
                 try Task.checkCancellation()
                 guard revision == id, !quitting else { status = "Result superseded; previous report remains historical."; return }
-                let isBroad = decoded.modelVersion == "swift-broad-error-flow-v1"
-                guard (options.profile == .broad) == isBroad, decoded.supportsInterpretation else {
+                let expectedModel = options.profile == .broad ? "swift-broad-error-flow-v1" : options.profile == .broadLarge ? "swift-broad-error-flow-large-v1" : nil
+                let matches = expectedModel.map { decoded.modelVersion == $0 } ?? !["swift-broad-error-flow-v1", "swift-broad-error-flow-large-v1"].contains(decoded.modelVersion)
+                guard matches, decoded.supportsInterpretation else {
                     throw SwiftFlowReportError.invalid("The engine response does not match the requested supported profile.")
                 }
                 report = decoded; refreshCalls(); protectedInputs = [input]; isHistorical = false
@@ -110,7 +111,7 @@ final class SwiftFlowWorkspace {
                 let value = try await withTaskCancellationHandler { try await decoding.value } onCancel: { decoding.cancel() }
                 try Task.checkCancellation()
                 guard revision == id, !quitting else { return }
-                profile = value.modelVersion == "swift-broad-error-flow-v1" ? .broad : .standard
+                profile = value.modelVersion == "swift-broad-error-flow-v1" ? .broad : value.modelVersion == "swift-broad-error-flow-large-v1" ? .broadLarge : .standard
                 report = value; refreshCalls(); protectedInputs = [url]
                 status = "Historical saved report. Recorded validation is not a fresh byte check."
             } catch is CancellationError { status = "Opening cancelled." }

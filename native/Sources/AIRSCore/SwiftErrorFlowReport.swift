@@ -2,9 +2,15 @@ import Foundation
 import CoreFoundation
 
 public enum SwiftFlowProfile: String, CaseIterable, Identifiable, Sendable {
-    case standard, broad
+    case standard, broad, broadLarge
     public var id: Self { self }
-    public var title: String { self == .broad ? "Broad Swift · broad-v1" : "Standard Swift · v37/v38" }
+    public var title: String {
+        switch self {
+        case .standard: return "Standard Swift · v37/v38"
+        case .broad: return "Broad Swift · broad-v1"
+        case .broadLarge: return "Broad Swift · larger function inventory"
+        }
+    }
 }
 
 public struct SwiftFlowOptions: Sendable, Equatable {
@@ -17,7 +23,7 @@ public struct SwiftFlowOptions: Sendable, Equatable {
     public func arguments(input: URL, output: URL) -> [String] {
         var result = ["swift-error-flow", "--format", "json", "--output", output.path,
                       "--include-error-regions", "--validate-region-entries", "--include-structured-presentation"]
-        if profile == .broad { result += ["--swift-profile", "broad-v1", "--include-outcome-witnesses"] }
+        if profile != .standard { result += ["--swift-profile", profile == .broad ? "broad-v1" : "broad-large-v1", "--include-outcome-witnesses"] }
         else {
             if includeMethods { result.append("--include-swift-methods") }
             if includeWitnesses { result.append("--include-outcome-witnesses") }
@@ -73,7 +79,7 @@ public struct SwiftFlowReport: Sendable {
         try SwiftBroadFlowReport.validateJSON(data)
         let raw = try JSONSerialization.jsonObject(with: data)
         if let object = raw as? [String: Any],
-           object["model_version"] as? String == "swift-broad-error-flow-v1" || object["profile"] as? String == "broad-v1" {
+           ["swift-broad-error-flow-v1", "swift-broad-error-flow-large-v1"].contains(object["model_version"] as? String ?? "") || ["broad-v1", "broad-large-v1"].contains(object["profile"] as? String ?? "") {
             return try SwiftBroadFlowReport.decode(object, data: data, jsonPreflighted: true)
         }
         // Bound recursive display/storage before retaining any per-call representation.

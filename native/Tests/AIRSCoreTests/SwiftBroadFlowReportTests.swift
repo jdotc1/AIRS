@@ -3,6 +3,19 @@ import XCTest
 @testable import AIRSCore
 
 final class SwiftBroadFlowReportTests: XCTestCase {
+    func testLargerProfileRoutingAndHistoricalModelBinding() throws {
+        let options = SwiftFlowOptions(profile: .broadLarge)
+        XCTAssertTrue(options.arguments(input: URL(fileURLWithPath: "/owned"), output: URL(fileURLWithPath: "/out")).contains("broad-large-v1"))
+        var value = fixture()
+        value["model_version"] = "swift-broad-error-flow-large-v1"
+        value["profile"] = "broad-large-v1"
+        let data = try JSONSerialization.data(withJSONObject: value, options: [.sortedKeys])
+        let report = try SwiftFlowReport.decode(data)
+        XCTAssertTrue(report.supportsInterpretation)
+        XCTAssertEqual(report.calls.first?.witnessStatus, "eligible_structural_only")
+        value["profile"] = "broad-v1"
+        XCTAssertFalse(try decode(value).supportsInterpretation)
+    }
     func fixture() -> [String: Any] {
         let identity: [String: Any] = ["container_sha256": String(repeating: "a", count: 64), "slice_sha256": String(repeating: "b", count: 64), "architecture": "arm64", "cpu_subtype": 0, "uuid": NSNull(), "preferred_base": "0x1000", "slice_index": 1, "container_slice_count": 2, "slice_offset": "0x1000", "slice_size": "0x10000"]
         var bound = identity

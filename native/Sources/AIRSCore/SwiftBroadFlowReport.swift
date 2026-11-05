@@ -87,7 +87,9 @@ enum SwiftBroadFlowReport {
             }
             if key == "status_counts" && total != rows.count { throw fail("status denominator mismatch") }
         }
-        let supported = model == "swift-broad-error-flow-v1" && object["profile"] as? String == "broad-v1"
+        let profilePairSupported = (model == "swift-broad-error-flow-v1" && object["profile"] as? String == "broad-v1")
+            || (model == "swift-broad-error-flow-large-v1" && object["profile"] as? String == "broad-large-v1")
+        let supported = profilePairSupported
             && object["witness_model_version"] as? String == "swift-outcome-witness-v2"
             && object["validation_model_version"] as? String == "swift-outcome-validation-v2"
             && architecture == "arm64" && [UInt64(0), UInt64(1)].contains(subtype)

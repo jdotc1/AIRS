@@ -34,8 +34,8 @@ struct SwiftFlowView: View {
                 Button("Export JSON…", action: workspace.chooseExport).disabled(workspace.report == nil || workspace.isBusy)
             }
             .toggleStyle(.checkbox)
-            Text(workspace.profile == .broad
-                 ? "Broad-v1: recorded declaration, ABI, callsite, control-flow, value and independent witness checks across qualified callable families. ARM64 only. Unsupported forms and resource limits remain explicit; structural eligibility is not runtime or source proof. Existing limits: 8 MiB image, 16 MiB report."
+            Text(workspace.profile != .standard
+                 ? "Broad: recorded declaration, ABI, callsite, control-flow, value and independent witness checks. ARM64 only. Function limit: \(workspace.profile == .broad ? "8,192" : "9,216"); image 8 MiB, report 16 MiB. Other metadata and work limits may still refuse or truncate analysis. Structural eligibility is not runtime or source proof."
                  : "Methods: qualified synchronous Int → Int struct calls only. Witnesses include required region, entry and presentation evidence. ARM64 only; other forms decline or remain unresolved.")
                 .font(.caption).foregroundStyle(.secondary)
             if let report = workspace.report {

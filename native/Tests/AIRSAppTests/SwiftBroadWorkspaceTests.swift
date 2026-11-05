@@ -3,6 +3,19 @@ import AIRSCore
 @testable import AIRSApp
 
 final class SwiftBroadWorkspaceTests: XCTestCase {
+    @MainActor func testLargeProfileRejectsOtherProfileAndAcceptsItsOwnResult() async throws {
+        let old = try broad()
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: old) as? [String: Any])
+        object["model_version"] = "swift-broad-error-flow-large-v1"; object["profile"] = "broad-large-v1"
+        let large = try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys])
+        let mismatched = SwiftFlowWorkspace(execute: { _, _, _ in old })
+        mismatched.profile = .broadLarge; mismatched.selectInput(URL(fileURLWithPath: "/owned/input")); mismatched.run(configuration: configuration)
+        await mismatched.waitUntilSettled(); XCTAssertNil(mismatched.report); XCTAssertNotNil(mismatched.errorMessage)
+        let accepted = SwiftFlowWorkspace(execute: { _, options, _ in XCTAssertEqual(options.profile, .broadLarge); return large })
+        accepted.profile = .broadLarge; accepted.selectInput(URL(fileURLWithPath: "/owned/input")); accepted.run(configuration: configuration)
+        await accepted.waitUntilSettled(); XCTAssertNil(accepted.errorMessage); XCTAssertFalse(accepted.isHistorical)
+        XCTAssertEqual(accepted.report?.modelVersion, "swift-broad-error-flow-large-v1")
+    }
     private var configuration: EngineConfiguration { .init(pythonExecutable: URL(fileURLWithPath: "/unused/python"), bootstrap: URL(fileURLWithPath: "/unused/bootstrap")) }
     private func broad(_ count: Int = 1, complete: Bool = true) throws -> Data {
         let rows: [[String: Any]] = (0..<count).map { i in
