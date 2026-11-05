@@ -9,9 +9,9 @@ final class SwiftBroadFlowReportTests: XCTestCase {
         bound["caller"] = ["start_pc": "0x1000", "end_pc_exclusive": "0x1020", "boundary_source": "lc_function_starts"]
         bound["callee"] = ["start_pc": "0x1100", "end_pc_exclusive": "0x1108", "boundary_source": "lc_function_starts"]
         bound["call_pc"] = "0x1004"
-        let candidate: [String: Any] = ["model_version": "swift-outcome-witness-v2", "validation_model": "swift-outcome-validation-v2", "profile": "broad-v1", "status": "unresolved", "eligible": false, "identity": bound, "completeness": ["complete": true, "missing": []], "call": ["pc": "0x1004", "callee_pc": "0x1100"], "post_call": ["test_pc": "0x1008", "success_successor_pc": "0x1010", "error_successor_pc": "0x100c"], "regions": ["paths": []], "cfg": ["edges": []], "value_facts": ["seed": ["origin": "raw_post_call_register:x21"]]]
+        let candidate: [String: Any] = ["model_version": "swift-outcome-witness-v2", "validation_model": "swift-outcome-validation-v2", "profile": "broad-v1", "source_models": ["edge": "swift-broad-error-flow-v1", "witness": "swift-outcome-witness-v2", "validation": "swift-outcome-validation-v2", "cfg": "swift-bounded-structural-cfg-v1", "value": "swift-outcome-values-v1"], "status": "unresolved", "eligible": false, "identity": bound, "completeness": ["complete": true, "missing": []], "call": ["pc": "0x1004", "callee_pc": "0x1100", "abi": ["status": "admitted", "profile": "swift6-arm64-sync-untyped-stable-research-v2", "error_register": "x21"], "declaration": ["status": "syntax_admitted"]], "post_call": ["test_pc": "0x1008", "success_successor_pc": "0x1010", "error_successor_pc": "0x100c"], "regions": ["paths": []], "cfg": ["edges": []], "value_facts": ["seed": ["origin": "raw_post_call_register:x21"]]]
         let validation: [String: Any] = ["model_version": "swift-outcome-validation-v2", "status": "eligible_structural_only", "eligible": true, "reason": "independent_bounded_byte_replay", "eligibility_scope": "checked_structural_facts_only", "completeness": ["complete": true, "missing": []], "facts": ["call": "independently checked"], "fact_statuses": ["identity": "checked", "call": "checked", "abi": "checked", "cfg": "checked", "post_call": "checked", "regions": "checked", "values": "checked"], "accounting": ["work": 24, "instructions": 4], "runtime_branch_proven": false, "call_return_proven": false, "error_state_proven": false, "source_reconstruction_allowed": false, "handler_semantics_proven": false, "exclusive_entry_proven": false]
-        return ["model_version": "swift-broad-error-flow-v1", "profile": "broad-v1", "witness_model_version": "swift-outcome-witness-v2", "validation_model_version": "swift-outcome-validation-v2", "identity": identity, "word_scan_complete": true, "call_details_complete": true, "outcome_witnesses_complete": true, "observed_call_instructions": 1, "selected_call_candidates": 1, "omitted_calls": 0, "scanned_words": 24, "analysis_work": 100, "research_only": true, "call_return_proven": false, "runtime_reachability_proven": false, "status_counts": ["eligible_structural_only": 1], "reason_counts": ["independent_bounded_byte_replay": 1], "calls": [["caller_pc": "0x1000", "call_pc": "0x1004", "admission": ["status": "admitted_callsite", "call_pc": 4100, "callee_pc": 4352, "symbol": "$sOwned", "abi": ["status": "admitted"], "declaration": ["status": "syntax_admitted"]], "candidate": candidate, "validation": validation]], "limitations": ["structural_only"]]
+        return ["model_version": "swift-broad-error-flow-v1", "profile": "broad-v1", "witness_model_version": "swift-outcome-witness-v2", "validation_model_version": "swift-outcome-validation-v2", "identity": identity, "word_scan_complete": true, "call_details_complete": true, "outcome_witnesses_complete": true, "observed_call_instructions": 1, "selected_call_candidates": 1, "omitted_calls": 0, "scanned_words": 24, "analysis_work": 100, "research_only": true, "call_return_proven": false, "runtime_reachability_proven": false, "status_counts": ["eligible_structural_only": 1], "reason_counts": ["independent_bounded_byte_replay": 1], "calls": [["caller_pc": "0x1000", "call_pc": "0x1004", "admission": ["status": "admitted_callsite", "call_pc": 4100, "callee_pc": 4352, "symbol": "$sOwned", "abi": ["status": "admitted", "profile": "swift6-arm64-sync-untyped-stable-research-v2", "error_register": "x21"], "declaration": ["status": "syntax_admitted"]], "candidate": candidate, "validation": validation]], "limitations": ["structural_only"]]
     }
     func decode(_ value: [String: Any]) throws -> SwiftFlowReport {
         try SwiftBroadFlowReport.decode(value, data: JSONSerialization.data(withJSONObject: value, options: [.sortedKeys]))
@@ -88,4 +88,38 @@ final class SwiftBroadFlowReportTests: XCTestCase {
         candidate["extra"] = Array(repeating: String(repeating: "x", count: 2048), count: 140); rows[0]["candidate"] = candidate; object["calls"] = rows
         XCTAssertThrowsError(try decode(object))
     }
+    func testDuplicateJSONKeysAndEscapedAliasesRefuse() throws {
+        let object = fixture(), data = try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys])
+        let text = String(decoding: data, as: UTF8.self)
+        for mutation in [text.replacingOccurrences(of: "\"profile\":\"broad-v1\"", with: "\"profile\":\"future\",\"profile\":\"broad-v1\""),
+                         text.replacingOccurrences(of: "\"slice_index\":1", with: "\"slice_index\":0,\"slice_index\":1"),
+                         text.replacingOccurrences(of: "\"model_version\":\"swift-broad-error-flow-v1\"", with: "\"model\\u005fversion\":\"future\",\"model_version\":\"swift-broad-error-flow-v1\"")] {
+            let raw = Data(mutation.utf8)
+            let lastWins = try XCTUnwrap(JSONSerialization.jsonObject(with: raw) as? [String: Any])
+            XCTAssertThrowsError(try SwiftBroadFlowReport.decode(lastWins, data: raw))
+        }
+    }
+    func testUnknownCandidateSourceModelsCannotPromoteEligibility() throws {
+        var object = fixture(), rows = object["calls"] as! [[String: Any]], candidate = rows[0]["candidate"] as! [String: Any]
+        candidate["source_models"] = ["edge": "swift-broad-error-flow-v1", "witness": "swift-outcome-witness-v2", "validation": "swift-outcome-validation-v2", "cfg": "future", "value": "swift-outcome-values-v1"]
+        rows[0]["candidate"] = candidate; object["calls"] = rows
+        XCTAssertNotEqual(try decode(object).calls.first?.witnessStatus, "eligible_structural_only")
+    }
+
+    func testCancelledBroadProjectionRefusesBeforePublication() async throws {
+        let result = await Task.detached { () -> Bool in
+            withUnsafeCurrentTask { $0?.cancel() }
+            do { _ = try self.decode(self.fixture()); return false }
+            catch is CancellationError { return true }
+            catch { return false }
+        }.value
+        XCTAssertTrue(result)
+    }
+
+    func testUnknownOrContradictoryRecordedABICannotPromoteEligibility() throws {
+        var object = fixture(), rows = object["calls"] as! [[String: Any]], candidate = rows[0]["candidate"] as! [String: Any], call = candidate["call"] as! [String: Any], abi = call["abi"] as! [String: Any]
+        abi["profile"] = "future"; call["abi"] = abi; candidate["call"] = call; rows[0]["candidate"] = candidate; object["calls"] = rows
+        XCTAssertNotEqual(try decode(object).calls.first?.witnessStatus, "eligible_structural_only")
+    }
+
 }

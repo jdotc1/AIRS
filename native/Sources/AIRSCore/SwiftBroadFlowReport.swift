@@ -10,9 +10,13 @@ enum SwiftBroadFlowReport {
     static func decode(_ object: [String: Any], data: Data) throws -> SwiftFlowReport {
         func fail(_ message: String) -> SwiftFlowReportError { .invalid("broad-v1: " + message) }
         guard data.count <= maximumBytes else { throw fail("16 MiB report limit exceeded") }
+        try Task.checkCancellation()
+        var wire = BroadJSONKeyPreflight(data: data)
+        try wire.check()
         var nodes = 0
         func inspect(_ value: Any, depth: Int) throws {
             nodes += 1
+            if nodes % 1024 == 0 { try Task.checkCancellation() }
             guard nodes <= 2_000_000, depth <= 32 else { throw fail("nested evidence limit exceeded") }
             if let text = value as? String {
                 guard text.utf8.count <= 65_536 else { throw fail("evidence string limit exceeded") }
@@ -98,6 +102,7 @@ enum SwiftBroadFlowReport {
         }
         var seen = Set<String>(), calls: [SwiftFlowCall] = []
         for row in rows {
+            try Task.checkCancellation()
             guard let callPC = address(row["call_pc"]), let callerPC = address(row["caller_pc"]),
                   let callNumber = hex(callPC), let callerNumber = hex(callerPC), callerNumber <= callNumber,
                   seen.insert(callerPC + ":" + callPC).inserted else { throw fail("invalid or duplicate call identity") }
@@ -138,7 +143,19 @@ enum SwiftBroadFlowReport {
                 && candidate?["model_version"] as? String == "swift-outcome-witness-v2"
                 && candidate?["validation_model"] as? String == "swift-outcome-validation-v2" && candidate?["profile"] as? String == "broad-v1"
             let proofs = ["runtime_branch_proven", "call_return_proven", "error_state_proven", "source_reconstruction_allowed", "handler_semantics_proven", "exclusive_entry_proven"]
-            let consistent = validationModels && fullyBound && candidate?["status"] as? String == "unresolved" && boolean(candidate?["eligible"]) == false
+            let expectedSources = ["edge": "swift-broad-error-flow-v1", "witness": "swift-outcome-witness-v2", "validation": "swift-outcome-validation-v2", "cfg": "swift-bounded-structural-cfg-v1", "value": "swift-outcome-values-v1"]
+            let sourceModelsSupported = candidate?["source_models"] as? [String: String] == expectedSources
+            let candidateCall = candidate?["call"] as? [String: Any]
+            let candidateABI = candidateCall?["abi"] as? [String: Any], admittedABI = admission?["abi"] as? [String: Any]
+            let candidateDeclaration = candidateCall?["declaration"] as? [String: Any], admittedDeclaration = admission?["declaration"] as? [String: Any]
+            let abiProfile = candidateABI?["profile"] as? String ?? ""
+            let abiSupported = ["swift6-arm64-sync-untyped-research-v1", "swift6-arm64-sync-untyped-stable-research-v2"].contains(abiProfile)
+                && candidateABI?["status"] as? String == "admitted" && candidateABI?["error_register"] as? String == "x21"
+            let admissionConsistent = try admission?["status"] as? String == "admitted_callsite" && abiSupported
+                && candidateABI != nil && admittedABI != nil && json(candidateABI ?? [:]) == json(admittedABI ?? [:])
+                && candidateDeclaration?["status"] as? String == "syntax_admitted" && admittedDeclaration != nil
+                && json(candidateDeclaration ?? [:]) == json(admittedDeclaration ?? [:])
+            let consistent = validationModels && sourceModelsSupported && admissionConsistent && fullyBound && candidate?["status"] as? String == "unresolved" && boolean(candidate?["eligible"]) == false
                 && proofs.allSatisfy { boolean(validation?[$0]) == false } && nonclaims(candidate ?? [:]) && nonclaims(validation ?? [:])
                 && validation?["eligibility_scope"] as? String == "checked_structural_facts_only"
             let eligible = consistent && recordedStatus == "eligible_structural_only" && boolean(validation?["eligible"]) == true
@@ -160,7 +177,9 @@ enum SwiftBroadFlowReport {
                 facts.append("Recorded validation only; no source bytes were reread by this view.")
             }
             let postCall = candidate?["post_call"] as? [String: Any]
-            let reason = supported ? (validation?["reason"] as? String ?? admission?["reason"] as? String) : "Unsupported broad model profile; raw evidence only"
+            let reason = !supported ? "Unsupported broad model profile; raw evidence only"
+                : recordedStatus == "eligible_structural_only" && !eligible ? "Recorded eligibility has inconsistent or unsupported evidence; inspect the retained call details."
+                : validation?["reason"] as? String ?? admission?["reason"] as? String
             calls.append(.init(id: callerPC + ":" + callPC, callPC: callPC, callerPC: callerPC,
                 calleeSymbol: admission?["symbol"] as? String ?? "Unattributed target", status: status, reason: reason,
                 testPC: supported ? address(postCall?["test_pc"]) : nil,
@@ -179,5 +198,74 @@ enum SwiftBroadFlowReport {
             modelVersion: model, supportsInterpretation: supported, wordScanComplete: wordComplete,
             callDetailsComplete: detailsComplete, witnessesComplete: witnessesComplete, calls: calls,
             limitations: limitations, summaryText: accounting, omittedCallCount: omitted)
+    }
+}
+
+/// A lexical preflight preserving exact decoded key bytes. Foundation remains the
+/// JSON grammar/value decoder; duplicate object members must never become last-wins
+/// identities, profiles or proof claims. No source document is canonicalized here.
+private struct BroadJSONKeyPreflight {
+    let bytes: [UInt8]
+    var position = 0
+    var values = 0
+    init(data: Data) { bytes = Array(data) }
+    func invalid() -> SwiftFlowReportError { .invalid("broad-v1: malformed or duplicate JSON object key") }
+    mutating func whitespace() { while position < bytes.count && [UInt8(9), 10, 13, 32].contains(bytes[position]) { position += 1 } }
+    mutating func string() throws -> Data {
+        guard position < bytes.count, bytes[position] == 34 else { throw invalid() }
+        let start = position; position += 1
+        while position < bytes.count {
+            if position % 1024 == 0 { try Task.checkCancellation() }
+            let byte = bytes[position]; position += 1
+            if byte == 34 {
+                guard position - start <= 393_218,
+                      let key = try JSONSerialization.jsonObject(with: Data(bytes[start..<position]), options: [.fragmentsAllowed]) as? String else { throw invalid() }
+                return Data(key.utf8)
+            }
+            if byte == 92 { guard position < bytes.count else { throw invalid() }; position += 1 }
+        }
+        throw invalid()
+    }
+    mutating func value(depth: Int) throws {
+        try Task.checkCancellation()
+        values += 1
+        guard depth <= 32, values <= 2_000_000 else { throw invalid() }
+        whitespace(); guard position < bytes.count else { throw invalid() }
+        switch bytes[position] {
+        case 123:
+            position += 1; whitespace()
+            if position < bytes.count && bytes[position] == 125 { position += 1; return }
+            var keys = Set<Data>()
+            while position < bytes.count {
+                whitespace(); let key = try string()
+                guard keys.insert(key).inserted else { throw invalid() }
+                values += 1; guard values <= 2_000_000 else { throw invalid() }
+                whitespace(); guard position < bytes.count && bytes[position] == 58 else { throw invalid() }; position += 1
+                try value(depth: depth + 1); whitespace()
+                guard position < bytes.count else { throw invalid() }
+                let next = bytes[position]; position += 1
+                if next == 125 { return }; guard next == 44 else { throw invalid() }
+            }
+            throw invalid()
+        case 91:
+            position += 1; whitespace()
+            if position < bytes.count && bytes[position] == 93 { position += 1; return }
+            while position < bytes.count {
+                try value(depth: depth + 1); whitespace()
+                guard position < bytes.count else { throw invalid() }
+                let next = bytes[position]; position += 1
+                if next == 93 { return }; guard next == 44 else { throw invalid() }
+            }
+            throw invalid()
+        case 34: _ = try string()
+        default:
+            let start = position
+            while position < bytes.count && ![UInt8(9), 10, 13, 32, 44, 93, 125].contains(bytes[position]) { position += 1 }
+            guard position > start else { throw invalid() }
+        }
+    }
+    mutating func check() throws {
+        try value(depth: 0); whitespace()
+        guard position == bytes.count else { throw invalid() }
     }
 }
