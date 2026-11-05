@@ -1,17 +1,27 @@
 import Foundation
 import CoreFoundation
 
+public enum SwiftFlowProfile: String, CaseIterable, Identifiable, Sendable {
+    case standard, broad
+    public var id: Self { self }
+    public var title: String { self == .broad ? "Broad Swift · broad-v1" : "Standard Swift · v37/v38" }
+}
+
 public struct SwiftFlowOptions: Sendable, Equatable {
     public var includeMethods: Bool
     public var includeWitnesses: Bool
-    public init(includeMethods: Bool = false, includeWitnesses: Bool = false) {
-        self.includeMethods = includeMethods; self.includeWitnesses = includeWitnesses
+    public var profile: SwiftFlowProfile
+    public init(includeMethods: Bool = false, includeWitnesses: Bool = false, profile: SwiftFlowProfile = .standard) {
+        self.includeMethods = includeMethods; self.includeWitnesses = includeWitnesses; self.profile = profile
     }
     public func arguments(input: URL, output: URL) -> [String] {
         var result = ["swift-error-flow", "--format", "json", "--output", output.path,
                       "--include-error-regions", "--validate-region-entries", "--include-structured-presentation"]
-        if includeMethods { result.append("--include-swift-methods") }
-        if includeWitnesses { result.append("--include-outcome-witnesses") }
+        if profile == .broad { result += ["--swift-profile", "broad-v1", "--include-outcome-witnesses"] }
+        else {
+            if includeMethods { result.append("--include-swift-methods") }
+            if includeWitnesses { result.append("--include-outcome-witnesses") }
+        }
         return result + ["--", input.path]
     }
 }
@@ -60,7 +70,12 @@ public struct SwiftFlowReport: Sendable {
     public static func decode(_ data: Data) throws -> Self {
         func fail(_ text: String) -> SwiftFlowReportError { .invalid(text) }
         guard data.count <= maximumBytes else { throw fail("64 MiB input limit exceeded") }
+        try SwiftBroadFlowReport.validateJSON(data)
         let raw = try JSONSerialization.jsonObject(with: data)
+        if let object = raw as? [String: Any],
+           object["model_version"] as? String == "swift-broad-error-flow-v1" || object["profile"] as? String == "broad-v1" {
+            return try SwiftBroadFlowReport.decode(object, data: data, jsonPreflighted: true)
+        }
         // Bound recursive display/storage before retaining any per-call representation.
         var nodes = 0
         func inspect(_ value: Any, _ depth: Int) throws {

@@ -5,9 +5,14 @@ through the existing owned engine subprocess. Method recognition and outcome
 witnesses are separate opt-ins, initially off. Witness analysis explicitly supplies
 the structured presentation, error-region and caller-entry prerequisites.
 
-The qualified method family is ordinary, non-generic, synchronous untyped-throws
-struct instance methods with Int-to-Int signatures, direct calls and exact admitted
-symbols/function entries. Other signatures and dispatch forms remain refused.
+The Standard Swift profile retains the qualified ordinary, non-generic, synchronous
+untyped-throws struct instance methods with Int-to-Int signatures, direct calls and
+exact admitted symbols/function entries. Broad Swift selects the separately qualified
+`broad-v1` profile, including its required witnesses, region/entry and structured
+presentation flags. Its qualified free, struct, enum, direct final-class, static,
+extension and concrete-generic families retain their exact ABI/callsite admission
+boundaries; unsupported forms remain refused or unresolved. Standard opt-ins are
+preserved when changing profiles and are never passed to broad-v1.
 AIRS does not execute selected binaries.
 
 An eligible witness describes independently checked bounded structural facts.
@@ -28,3 +33,29 @@ destination on refusal or failure. Imported reports restore no live read authori
 This native integration changes neither the Python analysis models nor existing
 component-security semantics. Engine/compiler qualification receipts are reused;
 new native build, tests and runtime observations are recorded separately.
+
+
+## Broad native workflow
+
+Select **Broad Swift · broad-v1** in the analysis-profile picker, select an owned
+binary or app, then choose Analyze. Selection alone starts no read. The existing
+single owned subprocess executes the accepted broad coordinator; the native
+adapter never reruns byte validation or upgrades a producer candidate.
+
+Broad reports retain their distinct identity envelope, model registry and
+candidate/independent-validator records. The view shows admitted declaration/ABI
+states, independent fact statuses, refusal reasons, exact slice coordinates,
+work/completeness/omission counts and original per-call evidence. Calls page in
+sets of 200 across all 4,096 retained rows; evidence pages expose every retained
+JSON character in 16,000-character segments. Export retains the original report
+bytes. Pagination is presentation only, not output truncation.
+
+The engine's existing 8 MiB image, 16 MiB report and other work ceilings remain
+unchanged. Native shape admission also bounds depth, nodes, strings, row payloads,
+model combinations, duplicate keys and exact identity links. Saved validator
+outcomes are recorded assertions, never new source-byte checks or runtime proof.
+Malformed bindings refuse; unknown model combinations retain bounded raw evidence
+without semantic interpretation. Resource refusals and incomplete scans remain
+visible. Changing profiles invalidates current-result authority; cancelled or
+superseded jobs cannot publish a current report. Historical imports select the
+report's profile for inspection and do not select or reopen a source image.
