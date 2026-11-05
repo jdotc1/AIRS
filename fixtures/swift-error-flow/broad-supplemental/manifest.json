@@ -1,0 +1,98 @@
+{
+  "schema": "airs.supplemental-owned-challenges-source.v1",
+  "state": "source_intent_only",
+  "source_path": "SupplementalOwnedChallenges.swift",
+  "module": "SupplementalOwnedChallenges",
+  "free_function_declarations": 6,
+  "throwing_helpers": 2,
+  "throwing_callers": 4,
+  "additional_type_declarations": 1,
+  "functions": [
+    {
+      "name": "supplementPrimary",
+      "role": "throwing_helper",
+      "input": "n:Int",
+      "output": "Int",
+      "throws": true
+    },
+    {
+      "name": "supplementRecovery",
+      "role": "throwing_helper",
+      "input": "n:Int",
+      "output": "Int",
+      "throws": true
+    },
+    {
+      "name": "supplementNested",
+      "role": "nested_two_throwing_calls_caller",
+      "input": "n:Int",
+      "output": "Int",
+      "throws": true,
+      "source_calls": [
+        {
+          "callee": "supplementPrimary",
+          "corridor": "outer_try",
+          "success_source_action": "fatalError(\"owned supplemental primary success\")"
+        },
+        {
+          "callee": "supplementRecovery",
+          "corridor": "outer_error_arm_inner_try"
+        }
+      ],
+      "primary_success_source_intent": "fatalError source path, preventing a first-success normal RET from sharing the inner call tail; emitted topology unproven"
+    },
+    {
+      "name": "supplementConvertConstant",
+      "role": "local_conversion_caller",
+      "input": "n:Int",
+      "output": "Int",
+      "throws": true,
+      "catch_literal": 42,
+      "source_calls": [
+        {
+          "callee": "supplementPrimary"
+        }
+      ]
+    },
+    {
+      "name": "supplementConvertRecovery",
+      "role": "local_conversion_caller",
+      "input": "n:Int",
+      "output": "Int",
+      "throws": true,
+      "catch_literal": 42,
+      "source_calls": [
+        {
+          "callee": "supplementRecovery"
+        }
+      ]
+    },
+    {
+      "name": "supplementConvertNegative",
+      "role": "local_conversion_caller",
+      "input": "n:Int",
+      "output": "Int",
+      "throws": true,
+      "catch_literal": -42,
+      "source_calls": [
+        {
+          "callee": "supplementPrimary"
+        }
+      ]
+    }
+  ],
+  "original_observations": "Caller-supplied n:Int; no reconstructed display coordinates or fabricated emitted observations",
+  "required_new_observations": [
+    "independently checked second throwing-call/error-test corridor nested in exclusive outer arm",
+    "independently checked literal scalar conversion on selected error paths with retained outgoing raw-error-origin facts"
+  ],
+  "prohibits": [
+    "No replacement/regeneration of 420 primary cases",
+    "No credit toward 250 primary witnesses or primary family minima",
+    "No inlining, x21 clearing, nested CFG, runtime or handler acceptance from source intent",
+    "No source SHA/image seal/index/compiler execution without new specific authorization"
+  ],
+  "source_sha256": null,
+  "emitted_observations": null,
+  "role": "supplemental_challenge_only"
+}

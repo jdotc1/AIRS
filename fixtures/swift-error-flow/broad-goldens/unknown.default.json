@@ -1,0 +1,99 @@
+{
+  "address_space": "preferred_vm",
+  "call_details_complete": true,
+  "calls": [
+    {
+      "call_image_offset": "0x1000",
+      "call_pc": "0x100001000",
+      "call_word": "0x94000010",
+      "callee": {
+        "convention": "swift_sync_untyped_throws",
+        "error_register": "x21",
+        "image_offset": "0x1040",
+        "module": "Demo",
+        "name": "parse",
+        "parameters": [
+          "Swift.Int"
+        ],
+        "result": "Swift.Int",
+        "source": "exact_external_symbol_grammar",
+        "symbol": "_$s4Demo5parseyS2iKF"
+      },
+      "callee_pc": "0x100001040",
+      "caller_pc": "0x100001000",
+      "error_pc": "0x100001008",
+      "status": "recovered_candidate",
+      "success_pc": "0x100001018",
+      "test_pc": "0x100001004",
+      "tested_register": "x21",
+      "window": [
+        {
+          "kind": "xcbz",
+          "pc": "0x100001004",
+          "word": "0xb40000b5"
+        }
+      ]
+    },
+    {
+      "call_image_offset": "0x100c",
+      "call_pc": "0x10000100c",
+      "call_word": "0x94000010",
+      "callee_pc": "0x10000104c",
+      "caller_pc": "0x100001000",
+      "reason": "callee_not_exact_function_entry",
+      "status": "declined"
+    }
+  ],
+  "functions": [
+    {
+      "function_pc": "0x100001000",
+      "name": "_$s4Demo6handleyS2iF",
+      "scanned_words": 16,
+      "status": "complete"
+    },
+    {
+      "function_pc": "0x100001040",
+      "name": "_$s4Demo5parseyS2iKF",
+      "scanned_words": 1,
+      "status": "complete"
+    }
+  ],
+  "image": {
+    "architecture": "arm64",
+    "container_sha256": "7182521fd2a7d2e9928c1c0c47cef9cb7c7cfbb646008320e6d65fdc5147d40b",
+    "cpu_subtype": 0,
+    "preferred_base": "0x100000000",
+    "slice_offset": 0,
+    "slice_sha256": "7182521fd2a7d2e9928c1c0c47cef9cb7c7cfbb646008320e6d65fdc5147d40b",
+    "slice_size": 4243,
+    "uuid": "00010203-0405-0607-0809-0a0b0c0d0e0f"
+  },
+  "input_issues": [],
+  "limitations": [
+    "Structural instruction-word candidates, not runtime reachability or dominance proof.",
+    "Exact symbol declarations are not authenticated runtime targets or function identity.",
+    "Only ordinary synchronous untyped Swift Int-to-Int, Int-to-Void or parameterless Int/Void free-function declarations are admitted.",
+    "Only bounded 64-bit MOV/NOP, CMP-only W MOV and X/W MOVZ/MOVN/MOVK prefixes, and forward CBZ/CBNZ or adjacent CMP-zero EQ/NE return windows are recovered.",
+    "Embedded-data, relocation and symbol-only function boundaries are excluded by existing admission tags.",
+    "No catch type, handler semantics, source equivalence, unwind verdict or async claim is made."
+  ],
+  "model_version": "swift-sync-error-edges-v37",
+  "reasons": [
+    {
+      "code": "callee_not_exact_function_entry",
+      "count": 1
+    }
+  ],
+  "report_kind": "airs.swift_error_flow",
+  "schema_version": 1,
+  "scope": "structural_call_return_edges",
+  "summary": {
+    "declined_retained_call_count": 1,
+    "observed_direct_call_count": 2,
+    "omitted_call_count": 0,
+    "recovered_candidate_count": 1,
+    "retained_call_count": 2,
+    "scanned_word_count": 17
+  },
+  "word_scan_complete": true
+}

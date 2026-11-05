@@ -189,7 +189,7 @@ final class AIRSFileOpen {
     var blocksActions: Bool { decodeInventoryError != nil || decodeInventoryReview != nil || coverageReview != nil || policyReview != nil || intakeReview != nil || archiveReview != nil || inventoryReview != nil || signatureEvidenceReview != nil || componentReview != nil || assessmentReview != nil || projectReview != nil || componentPairReview != nil || isBusy || isPresentingPanel || isTerminating }
 
     func chooseReport(audit: AuditWorkspace, entitlements: EntitlementsWorkspace, navigation: AIRSNavigation) {
-        guard !blocksActions, !audit.blocksFileOpen, !entitlements.isBusy, !hasModal() else { return }
+        guard !navigation.swiftFlow.isBusy, !blocksActions, !audit.blocksFileOpen, !entitlements.isBusy, !hasModal() else { return }
         isPresentingPanel = true
         let panel = NSOpenPanel()
         panel.title = "Open Report"
@@ -205,7 +205,7 @@ final class AIRSFileOpen {
     @discardableResult
     func open(_ urls: [URL], audit: AuditWorkspace, entitlements: EntitlementsWorkspace,
               navigation: AIRSNavigation) -> Task<Void, Never>? {
-        guard !blocksActions, !audit.blocksFileOpen, !entitlements.isBusy, !hasModal() else {
+        guard !navigation.swiftFlow.isBusy, !blocksActions, !audit.blocksFileOpen, !entitlements.isBusy, !hasModal() else {
             status = "File was not opened. Finish the current action, then open it again."
             return nil
         }

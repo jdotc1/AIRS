@@ -81,6 +81,34 @@ class FunctionRange:
 
 
 @dataclass(frozen=True)
+class _MachOAdmissionSeal:
+    """Internal parser custody, not an attestation against arbitrary Python.
+
+    Retains one immutable selected-byte object, every parser-derived source
+    scalar, and the exact immutable section/function/issue tuples produced by
+    admission. The display path is intentionally not part of source custody. No hash, global cache, secret, or serialized report authority
+    is involved. Python callers able to construct private internals are trusted.
+    """
+    data: bytes = field(repr=False)
+    source_identity: tuple[str, str, int, int, str, int, str | None, int, int, int, int]
+    sections: tuple[Section, ...]
+    functions: tuple[FunctionRange, ...]
+    issues: tuple[Issue, ...]
+
+    def _matches(self, image: MachOImage) -> bool:
+        current = (image.container_sha256, image.slice_sha256, image.slice_offset,
+                   image.slice_size, image.architecture, image.cpu_subtype,
+                   image.uuid, image.preferred_base, image.file_type,
+                   image.slice_index, image.container_slice_count)
+        return (image.data is self.data and image.slice_size == len(self.data)
+                and type(image.sections) is tuple and image.sections is self.sections
+                and type(image.functions) is tuple and image.functions is self.functions
+                and type(image.issues) is tuple and image.issues is self.issues
+                and all(type(actual) is type(expected) and actual == expected
+                        for actual, expected in zip(current, self.source_identity)))
+
+
+@dataclass(frozen=True)
 class MachOImage:
     data: bytes = field(repr=False)
     path: str
@@ -96,6 +124,18 @@ class MachOImage:
     sections: tuple[Section, ...]
     functions: tuple[FunctionRange, ...]
     issues: tuple[Issue, ...] = ()
+    _admission_seal: _MachOAdmissionSeal | None = field(default=None, compare=False, repr=False)
+    slice_index: int | None = None
+    container_slice_count: int | None = None
+
+    def has_valid_admission(self) -> bool:
+        """Whether exact immutable bytes retain their parser admission identity.
+
+        A copied/replaced image retains its old seal, so changed data or source
+        fields fail closed. This internal capability is never report evidence.
+        """
+        return (type(self._admission_seal) is _MachOAdmissionSeal
+                and self._admission_seal._matches(self))
 
     def section(self, segment: str, name: str) -> Section | None:
         return next((s for s in self.sections if s.segment == segment and s.name == name), None)

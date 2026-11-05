@@ -67,6 +67,12 @@ struct AIRSApp: App {
                     NSApplication.shared.setActivationPolicy(.regular)
                     NSApplication.shared.activate(ignoringOtherApps: true)
                     workspace.refreshEngineAvailability()
+                    #if DEBUG
+                    if let path = ProcessInfo.processInfo.environment["AIRS_SWIFT_FLOW_REVIEW_REPORT"] {
+                        navigation.showsSwiftFlow = true
+                        navigation.swiftFlow.importReport(URL(fileURLWithPath: path))
+                    }
+                    #endif
                     fileOpen.configureProjectProtection(audit:workspace,entitlements:entitlements)
                 }
                 .alert("Open Report", isPresented: Binding(
@@ -93,16 +99,16 @@ struct AIRSApp: App {
         .commands {
             CommandGroup(replacing: .newItem) {
                 if settingsReview == nil {
-                Button("Open Binary or App…") { navigation.showsEntitlements = false; workspace.chooseBinary() }
+                Button("Open Binary or App…") { navigation.showsSwiftFlow = false; navigation.showsEntitlements = false; workspace.chooseBinary() }
                     .keyboardShortcut("o")
-                    .disabled(workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
                 Button("Open Report…") {
                     fileOpen.chooseReport(audit: workspace, entitlements: entitlements, navigation: navigation)
                 }
                     .keyboardShortcut("o", modifiers: [.command, .shift])
-                    .disabled(workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
-                Button("Open Audit Report…") { navigation.showsEntitlements = false; workspace.chooseReport() }
-                    .disabled(workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
+                Button("Open Audit Report…") { navigation.showsSwiftFlow = false; navigation.showsEntitlements = false; workspace.chooseReport() }
+                    .disabled(navigation.swiftFlow.isBusy || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
                 Menu("Open Recent Report") {
                     ForEach(workspace.recentReports, id: \.self) { url in
                         Button(url.lastPathComponent) { navigation.performAudit { workspace.importReport(url) } }
@@ -110,34 +116,34 @@ struct AIRSApp: App {
                     Divider()
                     Button("Clear Recent Reports", action: workspace.clearRecentReports)
                 }
-                .disabled(workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions || workspace.recentReports.isEmpty)
+                .disabled(navigation.swiftFlow.isBusy || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions || workspace.recentReports.isEmpty)
                 Button("Report Library") { navigation.performAudit { workspace.openLibrary() } }
                     .keyboardShortcut("l", modifiers: [.command, .shift])
-                    .disabled(workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
                 Button("Keep Current Report") { navigation.performAudit { workspace.keepCurrentReport() } }
-                    .disabled(workspace.report == nil || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.report == nil || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
                 Button("Open Decoder Inventory…") {fileOpen.chooseDecodeInventory(audit:workspace,entitlements:entitlements)}
-                    .disabled(workspace.blocksFileOpen || entitlements.isBusy || fileOpen.blocksActions)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.blocksFileOpen || entitlements.isBusy || fileOpen.blocksActions)
                 Button("Open Coverage Inventory…") {fileOpen.chooseCoverage(audit:workspace,entitlements:entitlements)}
-                    .disabled(fileOpen.blocksActions || workspace.blocksFileOpen || entitlements.isBusy)
+                    .disabled(navigation.swiftFlow.isBusy || fileOpen.blocksActions || workspace.blocksFileOpen || entitlements.isBusy)
                 Button("Review Owned Build Policy…") {fileOpen.choosePolicyReview(audit:workspace,entitlements:entitlements)}
-                    .disabled(fileOpen.blocksActions || workspace.blocksFileOpen || entitlements.isBusy)
+                    .disabled(navigation.swiftFlow.isBusy || fileOpen.blocksActions || workspace.blocksFileOpen || entitlements.isBusy)
                 Button("Inspection Projects…") {fileOpen.openProjects(audit:workspace,entitlements:entitlements)}
-                    .disabled(fileOpen.blocksActions || workspace.blocksFileOpen || entitlements.isBusy)
+                    .disabled(navigation.swiftFlow.isBusy || fileOpen.blocksActions || workspace.blocksFileOpen || entitlements.isBusy)
                 Button("Assess App Signature and Distribution…") {fileOpen.chooseAssessment(audit:workspace,entitlements:entitlements)}
-                    .disabled(fileOpen.blocksActions || workspace.blocksFileOpen || entitlements.isBusy)
+                    .disabled(navigation.swiftFlow.isBusy || fileOpen.blocksActions || workspace.blocksFileOpen || entitlements.isBusy)
                 Button("Compare App Components…") { fileOpen.chooseComponentComparison(audit:workspace,entitlements:entitlements) }
-                    .disabled(workspace.blocksFileOpen || entitlements.isBusy || fileOpen.blocksActions)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.blocksFileOpen || entitlements.isBusy || fileOpen.blocksActions)
                 Button("Inventory App Components…") { fileOpen.chooseInventory(audit: workspace, entitlements: entitlements) }
-                    .disabled(workspace.blocksFileOpen || entitlements.isBusy || fileOpen.blocksActions)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.blocksFileOpen || entitlements.isBusy || fileOpen.blocksActions)
                 Button("Discover App Images…") { navigation.performAudit { workspace.chooseBundleDiscovery() } }
-                    .disabled(workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions || workspace.hasUnsavedBatchHistory)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions || workspace.hasUnsavedBatchHistory)
                 Button("Analyze Selected Images…") { navigation.performAudit { workspace.chooseBatch() } }
-                    .disabled(workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions || workspace.hasUnretainedBatchReports)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions || workspace.hasUnretainedBatchReports)
                 Button("Batch Results") { navigation.performAudit { workspace.showBatchResults() } }
-                    .disabled(workspace.batchSnapshot == nil || entitlements.isBusy || fileOpen.blocksActions)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.batchSnapshot == nil || entitlements.isBusy || fileOpen.blocksActions)
                 Button("Batch History") { navigation.performAudit { workspace.openBatchHistory() } }
-                    .disabled(workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions || workspace.hasUnsavedBatchHistory)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions || workspace.hasUnsavedBatchHistory)
                 }
             }
             CommandMenu("Entitlements") {
@@ -164,8 +170,8 @@ struct AIRSApp: App {
                     .disabled(!navigation.allowsEntitlementNavigation(audit: workspace, fileOpen: fileOpen) || !entitlements.canMoveToChange(.next))
                 Divider()
                 Button("Open Entitlement Report…") {
-                    navigation.showsEntitlements = true; entitlements.chooseSavedReport()
-                }.disabled(entitlements.isBusy || fileOpen.blocksActions)
+                    navigation.showsSwiftFlow = false; navigation.showsEntitlements = true; entitlements.chooseSavedReport()
+                }.disabled(navigation.swiftFlow.isBusy || entitlements.isBusy || fileOpen.blocksActions)
                 Button("Batch Entitlement Comparisons", action: entitlements.openBatch)
                     .disabled(!navigation.allowsEntitlementNavigation(audit: workspace, fileOpen: fileOpen) || entitlements.isBusy)
                 Button("Entitlement Batch History") { entitlements.openBatchHistory() }
@@ -175,36 +181,39 @@ struct AIRSApp: App {
                 Button("Keep Current Entitlement Report") { entitlements.keepCurrentReport() }
                     .disabled(!navigation.allowsEntitlementNavigation(audit: workspace, fileOpen: fileOpen) || entitlements.isBusy || entitlements.model.report == nil)
                 Button("Export Entitlement JSON…", action: entitlements.chooseExport)
-                    .disabled(entitlements.isBusy || fileOpen.blocksActions || entitlements.model.report == nil)
+                    .disabled(navigation.swiftFlow.isBusy || entitlements.isBusy || fileOpen.blocksActions || entitlements.model.report == nil)
                 Button("Export Entitlement Text Summary…", action: entitlements.chooseTextExport)
-                    .disabled(entitlements.isBusy || fileOpen.blocksActions || entitlements.model.report == nil)
+                    .disabled(navigation.swiftFlow.isBusy || entitlements.isBusy || fileOpen.blocksActions || entitlements.model.report == nil)
                 }
             }
             CommandMenu("Analysis") {
                 if settingsReview == nil {
+                Button("Swift Error Flow") {
+                    navigation.select(.swiftFlow, audit: workspace, entitlements: entitlements, fileOpen: fileOpen)
+                }.disabled(!navigation.canSelectDestination(audit: workspace, entitlements: entitlements, fileOpen: fileOpen))
                 Button("Attach dSYM…") { navigation.performAudit { workspace.chooseDSYM() } }
-                    .disabled(workspace.report == nil || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.report == nil || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
                 Button("Export Audit JSON…") { navigation.performAudit { workspace.exportCurrentReport() } }
                     .keyboardShortcut("e", modifiers: [.command, .shift])
-                    .disabled(workspace.report == nil || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.report == nil || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
                 Button("Compare Baseline…") { navigation.performAudit { workspace.chooseBaseline() } }
-                    .disabled(workspace.report == nil || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.report == nil || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
                 Button("Import Consumer Acknowledgment…") { navigation.performAudit { workspace.chooseConsumerAcknowledgment() } }
-                    .disabled(workspace.blocksFileOpen || entitlements.isBusy || fileOpen.blocksActions)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.blocksFileOpen || entitlements.isBusy || fileOpen.blocksActions)
                 Button("Retain Bound Request Archive…") { navigation.performAudit { workspace.chooseBoundRequestArchive() } }
-                    .disabled(workspace.blocksFileOpen || entitlements.isBusy || fileOpen.blocksActions)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.blocksFileOpen || entitlements.isBusy || fileOpen.blocksActions)
                 Button("Review Consumer Acknowledgments") { navigation.performAudit { workspace.reviewConsumerAcknowledgments() } }
-                    .disabled(workspace.blocksFileOpen || entitlements.isBusy || fileOpen.blocksActions)
+                    .disabled(navigation.swiftFlow.isBusy || workspace.blocksFileOpen || entitlements.isBusy || fileOpen.blocksActions)
                 if let finding = workspace.selectedFinding {
                     Button("Export Selected Bound Review…") { navigation.performAudit { workspace.exportBoundRequest(finding) } }
-                        .disabled(workspace.blocksFileOpen || entitlements.isBusy || fileOpen.blocksActions)
+                        .disabled(navigation.swiftFlow.isBusy || workspace.blocksFileOpen || entitlements.isBusy || fileOpen.blocksActions)
                     Button("Export Selected Handoff JSON…") { navigation.performAudit { workspace.exportHandoff(finding) } }
-                        .disabled(workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
+                        .disabled(navigation.swiftFlow.isBusy || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
                 }
                 Divider()
-                Button("Cancel Operation", action: workspace.cancel)
+                Button("Cancel Operation") { if navigation.swiftFlow.isBusy { navigation.swiftFlow.cancel() } else { workspace.cancel() } }
                     .keyboardShortcut(".")
-                    .disabled(!workspace.canCancel)
+                    .disabled(!navigation.swiftFlow.isBusy && !workspace.canCancel)
                 }
             }
         }
@@ -252,7 +261,7 @@ final class AIRSApplicationDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        guard workspace?.requiresQuitSettlement == true || entitlements?.requiresQuitSettlement == true || fileOpen?.blocksActions == true else { return .terminateNow }
+        guard navigation?.swiftFlow.isBusy == true || workspace?.requiresQuitSettlement == true || entitlements?.requiresQuitSettlement == true || fileOpen?.blocksActions == true else { return .terminateNow }
         if !awaitingTermination {
             awaitingTermination = true
             Task {
@@ -266,8 +275,9 @@ final class AIRSApplicationDelegate: NSObject, NSApplicationDelegate {
 
     /// Keep refusal visible even when a pending entitlement report is off-screen.
     func settleBeforeQuit() async -> Bool {
+        _ = await navigation?.swiftFlow.finishBeforeQuit()
         let fileReady = await fileOpen?.finishBeforeQuit() ?? true
-        guard fileReady else { fileOpen?.resumeAfterCancelledQuit(); return false }
+        guard fileReady else { fileOpen?.resumeAfterCancelledQuit(); navigation?.swiftFlow.resumeAfterCancelledQuit(); return false }
         let entitlementReady = await entitlements?.finishBeforeQuit() ?? true
         let shouldQuit: Bool
         if entitlementReady {
@@ -277,7 +287,7 @@ final class AIRSApplicationDelegate: NSObject, NSApplicationDelegate {
             navigation?.showsEntitlements = true
             shouldQuit = false
         }
-        if !shouldQuit { fileOpen?.resumeAfterCancelledQuit() }
+        if !shouldQuit { fileOpen?.resumeAfterCancelledQuit(); navigation?.swiftFlow.resumeAfterCancelledQuit() }
         return shouldQuit
     }
 

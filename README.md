@@ -140,3 +140,7 @@ The separate `swift-error-flow` CLI recovers bounded synchronous Swift success
 and error return-edge candidates from selected ARM64 images. See
 [the admission contract and owned qualification](docs/SWIFT_ERROR_FLOW.md).
 This first slice does not change unwind verdicts or reconstruct full `do/catch`.
+
+The integrated Swift workspace and separate broad-v1 engine profile are described
+in [Integrated Swift build](docs/INTEGRATED_SWIFT_BUILD.md). Component Review and
+Security Changes retain their existing evidence and coverage semantics.

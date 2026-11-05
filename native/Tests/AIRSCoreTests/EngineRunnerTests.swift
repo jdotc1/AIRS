@@ -4,6 +4,29 @@ import XCTest
 
 /// These tests execute only a temporary test-owned Python script, never a target image.
 final class EngineRunnerTests: XCTestCase {
+    func testSwiftCommandAcceptsOnlyItsPartialExitAndPreservesArguments() async throws {
+        let fixture = try TestEngine(script: """
+        import json, pathlib, sys
+        args = sys.argv[1:]
+        pathlib.Path(args[args.index('--output') + 1]).write_text(json.dumps({'args': args}))
+        raise SystemExit(1)
+        """)
+        defer { fixture.remove() }
+        let runner = EngineRunner()
+        let input = fixture.directory.appendingPathComponent("--owned input;quote")
+        let artifact = try await runner.run(.swiftErrorFlow(input: input, options: .init(includeMethods: true, includeWitnesses: true)), configuration: fixture.configuration)
+        let value = try XCTUnwrap(JSONSerialization.jsonObject(with: artifact.data) as? [String: [String]])
+        let args = try XCTUnwrap(value["args"])
+        XCTAssertEqual(args.first, "swift-error-flow")
+        XCTAssertEqual(Array(args.suffix(2)), ["--", input.path])
+        XCTAssertTrue(args.contains("--include-outcome-witnesses"))
+        XCTAssertTrue(artifact.statusText.contains("Partial"))
+        do {
+            _ = try await runner.run(.audit(input: input), configuration: fixture.configuration)
+            XCTFail("Audit must not accept exit1")
+        } catch EngineError.failed(let status, _) { XCTAssertEqual(status, 1) }
+    }
+
     func testSymbolsCommandStagesOriginalReportAndPreservesDebugPathArgument() async throws {
         let fixture = try TestEngine(script: """
         import json, pathlib, sys

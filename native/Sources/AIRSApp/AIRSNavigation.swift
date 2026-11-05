@@ -5,21 +5,28 @@ import Observation
 @MainActor
 final class AIRSNavigation {
     var showsEntitlements = false
+    var showsSwiftFlow = false
+    let swiftFlow: SwiftFlowWorkspace
+    init(swiftFlow: SwiftFlowWorkspace? = nil) { self.swiftFlow = swiftFlow ?? SwiftFlowWorkspace() }
     func allowsEntitlementNavigation(audit: AuditWorkspace, fileOpen: AIRSFileOpen) -> Bool {
-        showsEntitlements && !audit.blocksFileOpen && !fileOpen.blocksActions && fileOpen.errorMessage == nil
+        showsEntitlements && !showsSwiftFlow && !swiftFlow.isBusy && !audit.blocksFileOpen && !fileOpen.blocksActions && fileOpen.errorMessage == nil
     }
     func performAudit(_ action: () -> Void) {
+        guard !swiftFlow.isBusy else { return }
+        showsSwiftFlow = false
         showsEntitlements = false
         action()
     }
 }
 
 enum AIRSDestination: String, Hashable, CaseIterable, Identifiable {
+    case swiftFlow
     case audit, auditBatch, auditHistory, auditLibrary
     case entitlements, entitlementBatch, entitlementHistory, entitlementLibrary, entitlementRecovery
     var id: Self { self }
     var title: String {
         switch self {
+        case .swiftFlow: return "Swift Error Flow"
         case .audit: return "Unwind Analysis"
         case .entitlements: return "Compare Entitlements"
         case .auditBatch: return "Image Batches"
@@ -31,6 +38,7 @@ enum AIRSDestination: String, Hashable, CaseIterable, Identifiable {
     }
     var symbol: String {
         switch self {
+        case .swiftFlow: return "point.3.connected.trianglepath.dotted"
         case .audit: return AppDesign.Symbol.audit
         case .entitlements: return AppDesign.Symbol.entitlements
         case .auditBatch, .entitlementBatch: return AppDesign.Symbol.batch
@@ -43,6 +51,7 @@ enum AIRSDestination: String, Hashable, CaseIterable, Identifiable {
 
 extension AIRSNavigation {
     func destination(audit: AuditWorkspace, entitlements: EntitlementsWorkspace) -> AIRSDestination {
+        if showsSwiftFlow { return .swiftFlow }
         if showsEntitlements {
             if entitlements.showingBatchRecovery { return .entitlementRecovery }
             if entitlements.showingBatchHistory { return .entitlementHistory }
@@ -57,7 +66,7 @@ extension AIRSNavigation {
     }
 
     func canSelectDestination(audit: AuditWorkspace, entitlements: EntitlementsWorkspace, fileOpen: AIRSFileOpen) -> Bool {
-        !audit.blocksWorkspaceNavigation && !entitlements.isBusy && entitlements.errorMessage == nil &&
+        !swiftFlow.isBusy && !audit.blocksWorkspaceNavigation && !entitlements.isBusy && entitlements.errorMessage == nil &&
             !fileOpen.blocksActions && fileOpen.errorMessage == nil
     }
 
@@ -66,7 +75,9 @@ extension AIRSNavigation {
         guard canSelectDestination(audit: audit, entitlements: entitlements, fileOpen: fileOpen) else { return }
         // A failed checkpoint must retain a visible route to its settlement controls.
         guard !audit.hasUnsavedBatchHistory || destination == .auditBatch else { return }
+        showsSwiftFlow = destination == .swiftFlow
         switch destination {
+        case .swiftFlow: showsEntitlements = false
         case .audit:
             showsEntitlements = false
             audit.showingBatch = false; audit.showingBatchHistory = false; audit.showingLibrary = false
