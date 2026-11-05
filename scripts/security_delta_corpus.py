@@ -147,7 +147,7 @@ def validate_expected_fact(fact, source_digests):
         if kind=="boolean" and type(value["value"]) is not bool: refuse("invalid_fact_value")
         if kind=="integer":
             number=text(value["decimal"], 21)
-            if re.fullmatch(r"-?(0|[1-9][0-9]*)",number) is None or not -(1<<63) <= int(number) < 1<<64 or value["representation"] != "unspecified": refuse("invalid_fact_value")
+            if re.fullmatch(r"-?(0|[1-9][0-9]*)",number) is None or not -(1<<63) <= int(number) < 1<<64 or str(int(number)) != number or value["representation"] != "unspecified": refuse("invalid_fact_value")
         if kind in ("real","date") and re.fullmatch(r"[0-9a-f]{16}",text(value["bits"],16)) is None: refuse("invalid_fact_value")
         if kind in ("real","date") and not math.isfinite(struct.unpack(">d",bytes.fromhex(value["bits"]))[0]): refuse("invalid_fact_value")
         if kind=="data":

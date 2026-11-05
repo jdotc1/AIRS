@@ -1,3 +1,4 @@
+from security_delta_fixture_support import owned_temporary_directory
 """Owned archive attacks; the authentic corpus is a separate opt-in input."""
 import hashlib
 import io
@@ -18,7 +19,7 @@ from security_delta_corpus import CorpusRefusal, admit_archive, extract_archive,
 
 class SecurityDeltaCorpusAcquisitionTests(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory(dir=ROOT / "local-evidence/security-delta-track-a")
+        self.temp = owned_temporary_directory()
         self.root = Path(self.temp.name)
         self.count = 0
 

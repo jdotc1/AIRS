@@ -34,7 +34,7 @@ def compare_value(actual, expected):
         lookup={x['key'].encode('utf-8'):x['value'] for x in bb}
         return set(ak)==set(bk) and all(compare_value(x['value'],lookup[x['key'].encode('utf-8')]) for x in aa)
     if a == 'realBits' and b == 'real': return actual['value'] == expected['bits']
-    if a == 'dateBits' and b == 'date': return actual['value'] == expected['bits']
+    if a == 'dateBits' and b == 'date': raise Unresolved('oracle_date_bit_fidelity_unavailable')
     if a == 'data' and b == 'data': return actual['value'] == expected['base64']
     raise Unresolved('unsupported_typed_comparison')
 
@@ -79,6 +79,22 @@ def qualified_signature(slice):
         if any(slot['offset']<o['offset']+o['size'] and o['offset']<slot['offset']+slot['size'] for o in slots[:n]): raise Unresolved('signature_slot_ambiguous')
     return sig
 
+def image_metadata(path, facts):
+    owners=[(source,record) for source,record in facts.get('plists',{}).items() if source.endswith('Info.plist') and record.get('state')=='observed' and plist_component(source,record)==path]
+    if len(owners)>1:raise Unresolved('ambiguous_executable_metadata')
+    return owners[0] if owners else (None,None)
+
+def image_kind(path, facts):
+    source,metadata=image_metadata(path,facts)
+    if source=='Contents/Info.plist':return 'app'
+    if metadata:
+        containers=[root for root in facts.get('bundle_roots',[]) if root and path.startswith(root+'/')]
+        if containers:
+            root=max(containers,key=lambda x:len(x.encode('utf-8')))
+            return {'.app':'app','.xpc':'xpc','.appex':'extension','.framework':'framework'}.get(Path(root).suffix.lower(),'image')
+    return 'helper' if path.startswith(('Contents/Helpers/','Contents/Library/LoginItems/')) else 'image'
+
+
 def source_fact(observation, side, facts):
     category, subject=observation['category'],observation['subject']
     refs=[r for r in observation['evidence'] if r['side']==side and r['category']==category]
@@ -96,7 +112,11 @@ def source_fact(observation, side, facts):
             if subject=='presence': return 'observed',None
             if subject.startswith('key:'):
                 value=source['values'].get(subject[4:]); return ('observed' if value is not None else 'absent'),value
-        if category=='privacyManifest' and facts.get('privacy',{}).get(path,{}).get('state')=='absent': return 'absent',None
+        if category=='privacyManifest':
+            recorded=facts.get('privacy',{}).get(path,{}).get('state')
+            complete=facts.get('scope',{}).get('state')=='complete'
+            obstructed=any(path==x['path'] or path.startswith(x['path']+'/') for x in facts.get('exclusions',[]))
+            if recorded=='absent' or (not source and complete and not obstructed):return 'absent',None
         raise Unresolved('oracle_declaration_unavailable')
     if category=='loadCommands':
         value=loader_values(selected_slice(image,reference))
@@ -133,6 +153,29 @@ def source_fact(observation, side, facts):
         if subject.startswith('key:'):
             value=xml['entitlements'].get(subject[4:]);return ('observed' if value is not None else 'absent'),value
         raise Unresolved('unsupported_entitlement_subject')
+    if category=='componentInventory':
+        if subject=='component':
+            if image and image.get('state')=='observed':return 'observed',None
+            if not image and facts.get('scope',{}).get('state')=='complete' and not facts.get('exclusions'):return 'absent',None
+            raise Unresolved('oracle_component_scope_incomplete')
+        if subject=='kind':
+            if not image or image.get('state')!='observed':raise Unresolved('oracle_image_unavailable')
+            return 'observed',string(image_kind(path,facts))
+        if subject in ('bundleIdentifier','version'):
+            _,metadata=image_metadata(path,facts)
+            if not metadata:raise Unresolved('oracle_bundle_label_unavailable')
+            value=metadata['values'].get('CFBundleIdentifier' if subject=='bundleIdentifier' else 'CFBundleShortVersionString')
+            if not value or value.get('type')!='string' or not value['value']:raise Unresolved('oracle_bundle_label_unavailable')
+            return 'observed',value
+        if subject.startswith('minimumOS:'):
+            architecture=subject.split(':',1)[1]
+            cpu,subtype={'arm64':(0x100000c,0),'x86_64':(0x1000007,3)}.get(architecture,(None,None))
+            if not image or image.get('state')!='observed':raise Unresolved('oracle_image_unavailable')
+            selected=[s for s in image['slices'] if s['identity']['cpu_type']==cpu and s['identity']['cpu_subtype']==subtype]
+            if len(selected)!=1:raise Unresolved('oracle_raw_slice_unresolved')
+            minimums=selected[0].get('additional_minimum_os',[])
+            if len(minimums)!=1 or minimums[0]['platform']!=1:raise Unresolved('oracle_minimum_os_unavailable')
+            return 'observed',string(version(minimums[0]['minimum']))
     if category=='componentInventory' and subject=='architectures':
         if not image or image.get('state')!='observed': raise Unresolved('oracle_image_unavailable')
         return 'observed',array([string(a) for a in sorted(set(s['architecture'] for s in image['slices']))])
@@ -212,7 +255,11 @@ def enumerate_changes(facts):
         elif path.endswith('PrivacyInfo.xcprivacy'):
             info=privacy_info_path(path)
             owner=plist_component(info,previous.get('plists',{}).get(info,{}))
-            if owner:
+            current_owner=plist_component(info,current.get('plists',{}).get(info,{}))
+            if owner and current_owner and owner.encode('utf-8')!=current_owner.encode('utf-8'):
+                if a['values']!=b['values']:rows.append(dict(component_path=owner,category='privacyManifest',subject='source_correspondence',disposition='unresolved',reason='exact_executable_correspondence_unaccepted'))
+                continue
+            if owner and current_owner:
                 for key in sorted(set(a['values'])|set(b['values']),key=lambda k:k.encode('utf-8')):
                     emit(owner,'privacyManifest','key:'+key,a['values'].get(key),b['values'].get(key))
     for path in sorted(set(previous.get('images',{})) & set(current.get('images',{})),key=lambda p:p.encode('utf-8')):
@@ -248,6 +295,8 @@ def enumerate_changes(facts):
 def evaluate_expected_changes(report, expected):
     result=[]
     for row in expected:
+        if row['disposition']=='unresolved':
+            result.append(dict(row,state='unresolved'));continue
         related=[o for o in report['observations'] if o['componentPath'].encode('utf-8')==row['component_path'].encode('utf-8') and o['category']==row['category']]
         exact=next((o for o in related if o['subject'].encode('utf-8')==row['subject'].encode('utf-8')),None)
         if exact:
@@ -258,18 +307,78 @@ def evaluate_expected_changes(report, expected):
     return result
 
 
-def evaluate_case(report, facts):
+def qualify_finding(finding, observations, facts, inventories):
+    contributing=[observations.get(i) for i in finding['observationIDs']]
+    if not contributing or any(o is None for o in contributing):return dict(state='disagreement',reason='dangling_observation_reference')
+    required={json.dumps(r,sort_keys=True) for o in contributing for r in o['evidence']}
+    retained={json.dumps(r,sort_keys=True) for r in finding['evidence']}
+    if not required.issubset(retained) or len(finding['evidence'])>32:return dict(state='disagreement',reason='contributing_evidence_omitted')
+    kind=finding['kind']
+    changed=[o for o in contributing if o['disposition'] in ('observedAddition','observedRemoval','observedChange')]
+    if kind=='componentMultiCategory':
+        paths={o['componentPath'].encode('utf-8') for o in changed}
+        categories={o['category'] for o in changed if o['category']!='componentInventory'}
+        return dict(state='supported' if len(paths)==1 and len(categories)>=2 else 'disagreement',reason='same_component_cross_category_trigger')
+    if kind in ('componentAdded','componentRemoved','xpcAdded'):
+        wanted='observedRemoval' if kind=='componentRemoved' else 'observedAddition'
+        valid=len(contributing)==1 and all(o['category']=='componentInventory' and o['subject']=='component' and o['disposition']==wanted for o in contributing)
+        if valid and kind=='xpcAdded':
+            try:valid=image_kind(contributing[0]['componentPath'],facts['current'])=='xpc'
+            except (Unresolved,KeyError):return dict(state='unresolved',reason='independent_xpc_kind_unavailable')
+        return dict(state='supported' if valid else 'disagreement',reason='component_surface_trigger')
+    if kind in ('declarationChanged','signatureEvidenceChanged'):
+        valid=bool(changed) and len(changed)==len(contributing) and all((o['category']=='signatureEvidence')==(kind=='signatureEvidenceChanged') for o in contributing)
+        return dict(state='supported' if valid else 'disagreement',reason='declaration_change_trigger')
+    if kind in ('coverageIncomplete','evidenceConflict'):return dict(state='unresolved',reason='bounded_or_conflict_conclusion')
+    if kind not in ('relatedComponents','repeatedDeclaration'):return dict(state='unresolved',reason='unsupported_finding_kind')
+    if len({o['componentPath'].encode('utf-8') for o in changed})<2:return dict(state='disagreement',reason='related_components_trigger')
+    def ancestors(path,side):
+        records=inventories[side]['components'];lookup={r['id']:r for r in records}
+        record=next((r for r in records if r['relativePath'].encode('utf-8')==path.encode('utf-8')),None)
+        result=set();visited=set()
+        while record and record.get('parentID'):
+            identity=record['parentID']
+            if identity in visited or identity not in lookup:raise Unresolved('recorded_ancestry_invalid')
+            visited.add(identity);parent=lookup[identity]
+            source,_=image_metadata(parent['relativePath'],facts[side])
+            if not source:raise Unresolved('independent_parent_metadata_unavailable')
+            suffix='Contents/Info.plist' if source.endswith('Contents/Info.plist') else 'Resources/Info.plist'
+            prefix=source[:-len(suffix)]
+            if not record['relativePath'].encode('utf-8').startswith(prefix.encode('utf-8')):raise Unresolved('physical_parent_relationship_disagrees')
+            result.add(parent['relativePath'].encode('utf-8'));record=parent
+        return result
+    try:
+        common=None
+        for observation in changed:
+            sides=[]
+            for side in ('previous','current'):
+                if any(r['relativePath'].encode('utf-8')==observation['componentPath'].encode('utf-8') for r in inventories[side]['components']):sides.append(ancestors(observation['componentPath'],side))
+            shared=set.intersection(*sides) if sides else set()
+            common=shared if common is None else common & shared
+        before_paths={r['relativePath'].encode('utf-8') for r in inventories['previous']['components']}
+        after_paths={r['relativePath'].encode('utf-8') for r in inventories['current']['components']}
+        common=(common or set()) & before_paths & after_paths
+        if not common:return dict(state='disagreement',reason='shared_recorded_ancestor_unproven')
+        if kind=='repeatedDeclaration':
+            transitions={(o['category'],o['subject'].encode('utf-8'),o['disposition'],o['previousState'],o['currentState'],json.dumps(o.get('previousValue'),sort_keys=True),json.dumps(o.get('currentValue'),sort_keys=True)) for o in changed}
+            if len(transitions)!=1:return dict(state='disagreement',reason='repeated_transition_disagrees')
+        return dict(state='supported',reason='recorded_ancestry_and_source_facts')
+    except (Unresolved,KeyError) as error:return dict(state='unresolved',reason=str(error))
+
+
+def evaluate_case(report, facts, inventories=None):
     rows=[adjudicate_observation(o,facts) for o in report['observations']]
     index={r['observation_id']:r for r in rows}
     finding_rows=[]
     for finding in report['findings']:
         contributing=[index.get(i) for i in finding['observationIDs']]
         state='disagreement' if any(r and r['state']=='disagreement' for r in contributing) else 'supported' if contributing and all(r and r['state']=='supported' for r in contributing) else 'unresolved'
-        finding_rows.append({'finding_id':finding['id'],'kind':finding['kind'],'state':state})
+        rule=qualify_finding(finding,{o['id']:o for o in report['observations']},facts,inventories or {}) if state=='supported' else {'state':state,'reason':'constituent_source_state'}
+        finding_rows.append({'finding_id':finding['id'],'kind':finding['kind'],**rule})
     expected=evaluate_expected_changes(report,enumerate_changes(facts))
     return {'expected_changes':expected,'expected_change_counts':dict(collections.Counter(r['state'] for r in expected)),'observations':rows,'findings':finding_rows,'observation_counts':dict(collections.Counter(r['state'] for r in rows)),
             'finding_counts':dict(collections.Counter(r['state'] for r in finding_rows)),
-            'limitations':['Finding support here establishes constituent source facts only; correlation ancestry/wording has separate review.',
+            'limitations':['Finding support includes constituent raw facts, required evidence and independently checked recorded ancestry/rule triggers. Wording is separately source-reviewed; no causal/runtime claim.',
             'Expected-change enumeration covers exact-location paired Info keys, present privacy keys, captured loader groups and raw byte/signature observations; missing sources, component surface and unsupported DER/minimum-OS are outside this denominator.']}
 
 def parse_json(data):
@@ -335,6 +444,18 @@ def chunks(values):
         result.extend(part)
     return parse_json(result)
 
+def verify_reference_binding(reference,path,inventories):
+    side=reference['side']
+    if side not in inventories or reference['inventoryID']!=inventories[side]['id']:raise Unresolved('side_inventory_binding_mismatch')
+    identity=reference.get('componentID')
+    if identity is None:
+        if reference['category']!='componentInventory' or reference.get('evidenceKey')!='scope':raise Unresolved('component_reference_binding_mismatch')
+        return
+    if not isinstance(identity,str) or not identity:raise Unresolved('component_reference_binding_mismatch')
+    component=next((c for c in inventories[side]['components'] if c['id']==identity),None)
+    if not component or component['relativePath'].encode('utf-8')!=path.encode('utf-8'):raise Unresolved('component_reference_binding_mismatch')
+
+
 def verify_retained_binding(report,archive,inventories):
     if report!=chunks(archive['reportChunks']):raise Unresolved('report_archive_mismatch')
     if report['identity']['architecture']!='arm64':raise Unresolved('unsupported_architecture')
@@ -354,12 +475,7 @@ def verify_retained_binding(report,archive,inventories):
     if len(set(observation_ids))!=len(observation_ids):raise Unresolved('duplicate_observation_identity')
     for observation in report['observations']:
         for reference in observation['evidence']:
-            side=reference['side']
-            if side not in inventories or reference['inventoryID']!=inventories[side]['id']:raise Unresolved('side_inventory_binding_mismatch')
-            identity=reference.get('componentID')
-            if identity:
-                component=next((c for c in inventories[side]['components'] if c['id']==identity),None)
-                if not component or component['relativePath'].encode('utf-8')!=observation['componentPath'].encode('utf-8'):raise Unresolved('component_reference_binding_mismatch')
+            verify_reference_binding(reference,observation['componentPath'],inventories)
 
 
 def main():
@@ -383,11 +499,27 @@ def main():
                 expected=args.cache/record['cache_bundle_relative']/record['app_relative_path']
                 if str(expected)!=case_lookup[case][side] or record['asset']['url']!=manifest[side]['release_url']:raise Unresolved('capture_manifest_binding_mismatch')
                 facts[side]=load_json(args.cache/'oracle'/(str(record['asset']['id'])+'.json'))
+                repaired=args.cache/'plist-repairs'/(str(record['asset']['id'])+'.json')
+                if repaired.exists():
+                    observation=load_json(repaired,262144)
+                    if observation['archive_sha256']!=record['sha256'] or observation['source']['path']!='Contents/Info.plist' or facts[side]['plists'].get('Contents/Info.plist',{}).get('state')!='unavailable':raise Unresolved('repaired_source_binding_mismatch')
+                    facts[side]['plists']['Contents/Info.plist']=observation
+                additional=load_json(args.cache/'additional-fields'/(str(record['asset']['id'])+'.json'))
+                if additional['archive_sha256']!=record['sha256']:raise Unresolved('additional_source_binding_mismatch')
+                for path,extra in additional['images'].items():
+                    if extra['state']!='observed':continue
+                    original=facts[side]['images'].get(path)
+                    if not original or original['state']!='observed':raise Unresolved('additional_source_binding_mismatch')
+                    for row in extra['slices']:
+                        targets=[s for s in original['slices'] if s['identity']==row['identity']]
+                        if len(targets)!=1:raise Unresolved('additional_slice_binding_mismatch')
+                        targets[0]['additional_minimum_os']=row['minimum_os']
+                        targets[0]['additional_sections']=row['sections']
             directory=args.cache/'captures-v1'/case
             report=load_json(directory/'report.json');archive=load_json(directory/'historical.json')
             inventories={side:load_json(directory/(side+'-inventory.json')) for side in ('previous','current')}
             verify_retained_binding(report,archive,inventories)
-            result=evaluate_case(report,facts);result['case_id']=case
+            result=evaluate_case(report,facts,inventories);result['case_id']=case
             result['provenance']='Acquisition receipt and capture-driver path binding; independent non-atomic raw facts. Native archive admission receipt reused separately.'
             results.append(result)
         write_document(args.output/relative,results)

@@ -44,3 +44,8 @@ refusal. Imported evidence remains historical and cannot authorize a live read.
 See [security change analysis](COMPONENT_SECURITY_DELTA.md).
 
 `BoundedCodeSignatureParser.swift` adapts the SuperBlob/index/slot and checked-range algorithms from EntitlementLens at `d7c6d58e08aa33ec950cd15bf852f277a44bef3c`, MIT. `third_party/EntitlementLens/` retains the complete license and adaptation map. The upstream URL-opening wrapper, architecture-string dictionary join and XML/DER semantic decoder are excluded.
+
+Real-release structural byte/slice checks and their independent-oracle provenance
+are reported in [Track A qualification](security-delta-real-corpus/RESULTS.md).
+These checks and Apple display-tool output do not evaluate signature trust or
+notarization, and later range observations remain separately timed evidence.

@@ -28,15 +28,134 @@
     "archive_kind": "zip"
   },
   "expected": {
-    "adjudication": "pending",
+    "adjudication": "independently_adjudicated",
     "source_digests": {
       "previous": "08ac0e2e2a91800cf44adfbc9fcc7c3f933d2727d9e3034b5f8d933ef373b38f",
       "current": "cb4a6cedbfba961bb36f414ead7594484d1955b219370d50fd0eaf47a9da65bf"
     },
-    "declaration_facts": [],
-    "expected_refusals": []
+    "declaration_facts": [
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "70d0211e1307413f61a2c1058127e55c9bb714b8e78d53837a88f5d95ff0f4b1",
+        "archive_sha256": "08ac0e2e2a91800cf44adfbc9fcc7c3f933d2727d9e3034b5f8d933ef373b38f",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 3886
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.ameba.SwiftBar"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "70d0211e1307413f61a2c1058127e55c9bb714b8e78d53837a88f5d95ff0f4b1",
+        "archive_sha256": "08ac0e2e2a91800cf44adfbc9fcc7c3f933d2727d9e3034b5f8d933ef373b38f",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 3886
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "2.1.2"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "70d0211e1307413f61a2c1058127e55c9bb714b8e78d53837a88f5d95ff0f4b1",
+        "archive_sha256": "08ac0e2e2a91800cf44adfbc9fcc7c3f933d2727d9e3034b5f8d933ef373b38f",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 3886
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "619"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "ffac7ce7276990234cce571a025bfb4541fe23806a878f43dc1c62e003283deb",
+        "archive_sha256": "cb4a6cedbfba961bb36f414ead7594484d1955b219370d50fd0eaf47a9da65bf",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 4185
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.ameba.SwiftBar"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "ffac7ce7276990234cce571a025bfb4541fe23806a878f43dc1c62e003283deb",
+        "archive_sha256": "cb4a6cedbfba961bb36f414ead7594484d1955b219370d50fd0eaf47a9da65bf",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 4185
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "2.1.2"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "ffac7ce7276990234cce571a025bfb4541fe23806a878f43dc1c62e003283deb",
+        "archive_sha256": "cb4a6cedbfba961bb36f414ead7594484d1955b219370d50fd0eaf47a9da65bf",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 4185
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "623"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      }
+    ],
+    "expected_refusals": [],
+    "adjudicator": "Independent raw-source parser; selected Info facts only. Complete-case acceptance remains partial in CASE_MATRIX and RESULTS."
   },
-  "coverage_tags": [],
+  "coverage_tags": [
+    "entitlements",
+    "frameworks",
+    "loader",
+    "privacy_manifest",
+    "services",
+    "signature",
+    "simple",
+    "universal"
+  ],
   "language_evidence": {
     "source_url": "https://api.github.com/repos/swiftbar/SwiftBar/languages",
     "repository_bytes": {
@@ -44,10 +163,148 @@
       "Just": 8369,
       "Rich Text Format": 456
     },
-    "binary_confirmation": "pending independent oracle"
+    "binary_confirmation": [
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/SwiftBar",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 17680,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 1663088,
+          "slice_index": 0
+        },
+        "range_sha256": "d6a5e3b04c344e3d9b432e06fc26181ba9d48b9f8fd58c3cebd395cce1d4ac3f",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/SwiftBar",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 18792,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 1663088,
+          "slice_index": 0
+        },
+        "range_sha256": "edcde1f0bb4107a73d323c435b70c7af5260ea1ac282d0e6b128827eb2931afb",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/SwiftBar",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 1688848,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 1687552,
+          "size": 1605280,
+          "slice_index": 1
+        },
+        "range_sha256": "7f32ce38fa2c9aef723b16d7d7ebf6f6b85e33507d9ad6354dcfe66ef84b57f3",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/SwiftBar",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 1690040,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 1687552,
+          "size": 1605280,
+          "slice_index": 1
+        },
+        "range_sha256": "be7867d1bc4369ddf15d76133430e2b05ac37db68fcd8a47226803187f239b7c",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/SwiftBar",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 17680,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 3359824,
+          "slice_index": 0
+        },
+        "range_sha256": "61f4f134b0da9dadfd7f4f5d8bdaa85623de0d16abc34d8d2ca63c140a6b6837",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/SwiftBar",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 18792,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 3359824,
+          "slice_index": 0
+        },
+        "range_sha256": "d066828b4d4d9dd45d86c2f9964ff11dc7e76e923198d77586788393e2aa6671",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/SwiftBar",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 3392784,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 3391488,
+          "size": 3297824,
+          "slice_index": 1
+        },
+        "range_sha256": "92289b7f20e47b2177e9c3680038f1a6277eda38916eebf6dd75b2d810470ab6",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/SwiftBar",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 3393976,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 3391488,
+          "size": 3297824,
+          "slice_index": 1
+        },
+        "range_sha256": "0e120c599633ac4218e00274ed7a422b7e079ad03ce3518bbe11456bb9924b4f",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      }
+    ],
+    "interpretation": "Repository language byte counts indicate predominant source language; raw binary metadata corroborates toolchain presence, not a percentage of executed instructions."
   },
   "oracle": {
-    "status": "pending",
+    "status": "selected_source_facts_adjudicated; broader evaluation partial",
     "acquisition": {
       "previous": {
         "source_id": "swiftbar/SwiftBar:593155937",
@@ -58,6 +315,22 @@
         "source_id": "swiftbar/SwiftBar:598618087",
         "retrieved_at": "2026-11-05T04:21:24Z",
         "publisher_release_url": "https://github.com/swiftbar/SwiftBar/releases/tag/v2.1.2-beta-5"
+      }
+    },
+    "version": "security-delta-raw-oracle-v1",
+    "retained_payload_policy": "Public metadata/hashes/locators only; raw bytes and captures remain local-only and require legitimate reacquisition to reproduce.",
+    "case_evaluation": {
+      "observation_counts": {
+        "supported": 114,
+        "unresolved": 16
+      },
+      "finding_counts": {
+        "supported": 6,
+        "unresolved": 16
+      },
+      "expected_change_counts": {
+        "true_positive": 5,
+        "unresolved": 27
       }
     }
   }

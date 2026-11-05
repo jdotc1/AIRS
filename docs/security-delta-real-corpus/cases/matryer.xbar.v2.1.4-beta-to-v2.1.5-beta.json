@@ -28,15 +28,132 @@
     "archive_kind": "zip"
   },
   "expected": {
-    "adjudication": "pending",
+    "adjudication": "independently_adjudicated",
     "source_digests": {
       "previous": "a36913306acdc7ab16a6ba8cf7ce819235225368b2709b380b6df44f8fa89cf7",
       "current": "edc7b04f592b851058083cbac593488ad01929ac27e0fd1ac9f71edd5e01a078"
     },
-    "declaration_facts": [],
-    "expected_refusals": []
+    "declaration_facts": [
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "78d60e79b4a9995a398f091188e336513e46fa0a291ff371a06af089e602ddf8",
+        "archive_sha256": "a36913306acdc7ab16a6ba8cf7ce819235225368b2709b380b6df44f8fa89cf7",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1114
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.xbarapp.app"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "78d60e79b4a9995a398f091188e336513e46fa0a291ff371a06af089e602ddf8",
+        "archive_sha256": "a36913306acdc7ab16a6ba8cf7ce819235225368b2709b380b6df44f8fa89cf7",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1114
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "v2.1.4-beta"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "78d60e79b4a9995a398f091188e336513e46fa0a291ff371a06af089e602ddf8",
+        "archive_sha256": "a36913306acdc7ab16a6ba8cf7ce819235225368b2709b380b6df44f8fa89cf7",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1114
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "v2.1.4-beta"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "031162e2ef67a349325d8f189e0bbe2a3b0d66e7367862cc1fb99f83b3318a77",
+        "archive_sha256": "edc7b04f592b851058083cbac593488ad01929ac27e0fd1ac9f71edd5e01a078",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1114
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.xbarapp.app"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "031162e2ef67a349325d8f189e0bbe2a3b0d66e7367862cc1fb99f83b3318a77",
+        "archive_sha256": "edc7b04f592b851058083cbac593488ad01929ac27e0fd1ac9f71edd5e01a078",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1114
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "v2.1.5-beta"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "031162e2ef67a349325d8f189e0bbe2a3b0d66e7367862cc1fb99f83b3318a77",
+        "archive_sha256": "edc7b04f592b851058083cbac593488ad01929ac27e0fd1ac9f71edd5e01a078",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1114
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "v2.1.5-beta"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      }
+    ],
+    "expected_refusals": [],
+    "adjudicator": "Independent raw-source parser; selected Info facts only. Complete-case acceptance remains partial in CASE_MATRIX and RESULTS."
   },
-  "coverage_tags": [],
+  "coverage_tags": [
+    "entitlements",
+    "loader",
+    "privacy_manifest",
+    "signature",
+    "simple",
+    "universal"
+  ],
   "language_evidence": {
     "source_url": "https://api.github.com/repos/matryer/xbar/languages",
     "repository_bytes": {
@@ -49,10 +166,11 @@
       "CSS": 4308,
       "Makefile": 341
     },
-    "binary_confirmation": "pending independent oracle"
+    "binary_confirmation": [],
+    "interpretation": "Repository language byte counts indicate predominant source language; raw binary metadata corroborates toolchain presence, not a percentage of executed instructions."
   },
   "oracle": {
-    "status": "pending",
+    "status": "selected_source_facts_adjudicated; broader evaluation partial",
     "acquisition": {
       "previous": {
         "source_id": "matryer/xbar:40268647",
@@ -63,6 +181,19 @@
         "source_id": "matryer/xbar:43497999",
         "retrieved_at": "2026-11-05T04:21:33Z",
         "publisher_release_url": "https://github.com/matryer/xbar/releases/tag/v2.1.5-beta"
+      }
+    },
+    "version": "security-delta-raw-oracle-v1",
+    "retained_payload_policy": "Public metadata/hashes/locators only; raw bytes and captures remain local-only and require legitimate reacquisition to reproduce.",
+    "case_evaluation": {
+      "observation_counts": {
+        "supported": 22
+      },
+      "finding_counts": {
+        "supported": 7
+      },
+      "expected_change_counts": {
+        "true_positive": 5
       }
     }
   }

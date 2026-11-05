@@ -28,15 +28,134 @@
     "archive_kind": "zip"
   },
   "expected": {
-    "adjudication": "pending",
+    "adjudication": "independently_adjudicated",
     "source_digests": {
       "previous": "de8a338d74f2037fe4d549c4ae5740684c48bae5710c3c3b493609dbf10f1b8d",
       "current": "fd8db2ec536f3fb02607bbc17be1a86b173a9f72331351eb076a63329cc5d915"
     },
-    "declaration_facts": [],
-    "expected_refusals": []
+    "declaration_facts": [
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "9495266239597f72581f27c1978d813ef80945c6628fe8938e6c6858e7746a58",
+        "archive_sha256": "de8a338d74f2037fe4d549c4ae5740684c48bae5710c3c3b493609dbf10f1b8d",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 2368
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "info.marcel-dierkes.KeepingYouAwake"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "9495266239597f72581f27c1978d813ef80945c6628fe8938e6c6858e7746a58",
+        "archive_sha256": "de8a338d74f2037fe4d549c4ae5740684c48bae5710c3c3b493609dbf10f1b8d",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 2368
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "1.6.7beta1"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "9495266239597f72581f27c1978d813ef80945c6628fe8938e6c6858e7746a58",
+        "archive_sha256": "de8a338d74f2037fe4d549c4ae5740684c48bae5710c3c3b493609dbf10f1b8d",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 2368
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "1060700"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "0d42cf0b9f189518a4590bfd1d42d19ae2836f32df3fbb1632b919a184196569",
+        "archive_sha256": "fd8db2ec536f3fb02607bbc17be1a86b173a9f72331351eb076a63329cc5d915",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 2363
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "info.marcel-dierkes.KeepingYouAwake"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "0d42cf0b9f189518a4590bfd1d42d19ae2836f32df3fbb1632b919a184196569",
+        "archive_sha256": "fd8db2ec536f3fb02607bbc17be1a86b173a9f72331351eb076a63329cc5d915",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 2363
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "1.6.7"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "0d42cf0b9f189518a4590bfd1d42d19ae2836f32df3fbb1632b919a184196569",
+        "archive_sha256": "fd8db2ec536f3fb02607bbc17be1a86b173a9f72331351eb076a63329cc5d915",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 2363
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "1060701"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      }
+    ],
+    "expected_refusals": [],
+    "adjudicator": "Independent raw-source parser; selected Info facts only. Complete-case acceptance remains partial in CASE_MATRIX and RESULTS."
   },
-  "coverage_tags": [],
+  "coverage_tags": [
+    "entitlements",
+    "frameworks",
+    "loader",
+    "privacy_manifest",
+    "services",
+    "signature",
+    "simple",
+    "universal"
+  ],
   "language_evidence": {
     "source_url": "https://api.github.com/repos/newmarcel/KeepingYouAwake/languages",
     "repository_bytes": {
@@ -48,10 +167,80 @@
       "Shell": 1560,
       "C": 722
     },
-    "binary_confirmation": "pending independent oracle"
+    "binary_confirmation": [
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/KeepingYouAwake",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 17912,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 184912,
+          "slice_index": 0
+        },
+        "range_sha256": "83dc1627cd46ffb4f011f7d796172b3bb01cdeb08b514f5d4083f2dd176c4bad",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/KeepingYouAwake",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 214680,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 212992,
+          "size": 213248,
+          "slice_index": 1
+        },
+        "range_sha256": "36ab9981469904af365d03e56006c87ffc2e44cb0f4563008e780b4ba388f61f",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/KeepingYouAwake",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 17912,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 184912,
+          "slice_index": 0
+        },
+        "range_sha256": "83dc1627cd46ffb4f011f7d796172b3bb01cdeb08b514f5d4083f2dd176c4bad",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/KeepingYouAwake",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 214680,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 212992,
+          "size": 213248,
+          "slice_index": 1
+        },
+        "range_sha256": "36ab9981469904af365d03e56006c87ffc2e44cb0f4563008e780b4ba388f61f",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      }
+    ],
+    "interpretation": "Repository language byte counts indicate predominant source language; raw binary metadata corroborates toolchain presence, not a percentage of executed instructions."
   },
   "oracle": {
-    "status": "pending",
+    "status": "selected_source_facts_adjudicated; broader evaluation partial",
     "acquisition": {
       "previous": {
         "source_id": "newmarcel/KeepingYouAwake:272449805",
@@ -62,6 +251,22 @@
         "source_id": "newmarcel/KeepingYouAwake:274182109",
         "retrieved_at": "2026-11-05T04:21:37Z",
         "publisher_release_url": "https://github.com/newmarcel/KeepingYouAwake/releases/tag/1.6.7"
+      }
+    },
+    "version": "security-delta-raw-oracle-v1",
+    "retained_payload_policy": "Public metadata/hashes/locators only; raw bytes and captures remain local-only and require legitimate reacquisition to reproduce.",
+    "case_evaluation": {
+      "observation_counts": {
+        "supported": 111,
+        "unresolved": 16
+      },
+      "finding_counts": {
+        "supported": 10,
+        "unresolved": 16
+      },
+      "expected_change_counts": {
+        "true_positive": 7,
+        "unresolved": 18
       }
     }
   }

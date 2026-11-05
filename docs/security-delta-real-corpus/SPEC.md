@@ -90,3 +90,39 @@ missing input, license, platform facility or permission is blocked/skipped with
 a concrete reason, never a pass. Report requested versus achieved strata and
 language provenance rather than attributing implementation language by name.
 AIRS acceptance does not establish MacScope integration acceptance.
+
+## Qualified corpus and conservative oracle boundaries
+
+The acquired set contains 47 original releases and 35 successive pairs from 12
+applications/10 publisher accounts. Every pair has a different recorded primary
+container digest, establishing that none is merely a duplicate re-zip. Prereleases
+retain their actual publisher tags. OverSight is the publisher's installer app,
+inspected as data; it was not run or installed.
+
+Predominant language is supported by publisher repository language byte counts and
+corroborating raw section metadata. Swift metadata is not a measurement of the
+percentage of runtime instructions, nor does Objective-C metadata exclude Swift.
+At least Maccy/Ice and KeyCastr/KeepingYouAwake satisfy the requested two language
+cohorts with those explicit evidentiary limits. Exact section-header offsets, raw
+slice identities and range digests are retained in manifests/local evidence.
+
+Version-1 qualification comparisons are arm64-only; unsupported x86_64 selection
+refuses before acquisition. Universal inputs retain both raw slice identities.
+Existing production APIs retain their supported architecture contract.
+
+The raw oracle uses property-list integer values with representation unspecified;
+it cannot prove Foundation API signedness. Python datetime conversion also cannot
+prove original binary-plist submicrosecond date bits. The independent checker
+therefore declines exact DateBits comparison; production strict DateBits encoding
+is unchanged. No certain date-bit claim occurs in the accepted real corpus.
+
+Source coverage includes all 300 image/candidate records across the 47 raw bundle
+walks: 278 observed images and 22 unavailable candidates, subsequently unexamined
+by the recorded-range reader. Excluded links/special files remain separate records.
+A complete oracle enumeration is not a claim of complete AIRS conventional scope
+or runtime coverage. AIRS's legacy any-exclusion absence refusal remains unchanged.
+
+Six distinct cases exercise actual entitlement changes or first explicit unavailable
+helper outcomes. Four helper eligibility refusals are separate fresh captures, with
+new inventory UUIDs and no fabricated pairwise empty values. Their prior unexamined
+records are preserved. Attempted strata and positive outcomes are reported separately.

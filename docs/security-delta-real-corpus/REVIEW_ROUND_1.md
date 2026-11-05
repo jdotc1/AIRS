@@ -38,3 +38,25 @@ Local receipt names: A3-review-signature-red/green, A7-owned-mutations-red/green
 A1-fact-positive-red/green, A1-fact-types-red/green, A3-failed-work-green,
 A5-owned-tamper(-green), A5-authentic-tamper. No native UI acceptance follows from
 this source review.
+
+## Final unavailable-source correction
+
+A new owned fixture demonstrated that a fresh naked helper with unavailable Info
+was mislabeled `source_stale`. The capture operation now returns
+`source_unavailable` when there are no usable captured Info bytes. Usable prior
+bytes still receive pre/post comparison and a mismatch remains `source_stale`.
+The independent reviewer accepted this narrow distinction; historical archives
+and model/schema meanings are preserved. A reader trap proves the unavailable
+path exits before entitlement reading. The new case and affected existing
+changed-Info regression passed. Four previously unexamined authentic helper
+sources received first explicit capture outcomes, all unavailable, in 1.424 s;
+these are separate captures with new inventory identities, not modifications of
+the 35 original reports or additional release pairs.
+
+The optional reproduction orchestrator received source review. A valid but
+unsupported x86_64 selection initially refused after acquisition; preflight now
+refuses before network/output creation. A new owned RED/GREEN fixture asserts
+both boundaries. The orchestrator's owned end-to-end fixture exercises actual
+bounded extraction/raw capture with a mocked public network source. Authentic
+redownload through this new wrapper was not run; the original 47 acquisition
+receipts are reused.

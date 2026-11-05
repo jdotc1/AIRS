@@ -1,0 +1,751 @@
+{
+  "schema_version": 1,
+  "basis": "Composed actual runner receipts; unchanged accepted checks were not replayed as a single final suite.",
+  "baseline": "0b192429cbfb5583557c4c5f04017b1946141e4a",
+  "methods": [
+    {
+      "method": "AIRSAppTests.ComponentReviewWorkspaceTests.testExplicitStrictCaptureRejectsChangedInfo",
+      "status": "passed",
+      "receipt": "A6-helper-reason-green.log",
+      "test_seconds": 0.372
+    },
+    {
+      "method": "AIRSAppTests.SecurityDeltaRealWorkflowTests.testAuthorizedAuthenticCaptureAndPureReplay",
+      "status": "passed",
+      "receipt": "A4-authentic-capture.log",
+      "test_seconds": 19.966
+    },
+    {
+      "method": "AIRSAppTests.SecurityDeltaRealWorkflowTests.testChangedInfoWithEqualImageDigestSurvivesOriginalBundleDisappearance",
+      "status": "passed",
+      "receipt": "A5-original-disappearance.log",
+      "test_seconds": 0.037
+    },
+    {
+      "method": "AIRSAppTests.SecurityDeltaRealWorkflowTests.testDriverRequiresDistinctSidesAndBoundedCases",
+      "status": "passed",
+      "receipt": "A4-native-green.log",
+      "test_seconds": 0.001
+    },
+    {
+      "method": "AIRSAppTests.SecurityDeltaRealWorkflowTests.testFirstAuthenticHelperEntitlementCaptures",
+      "status": "passed",
+      "receipt": "A6-first-helper-captures.log",
+      "test_seconds": 1.424
+    },
+    {
+      "method": "AIRSAppTests.SecurityDeltaRealWorkflowTests.testFreshInvocationHistoricalReplay",
+      "status": "passed",
+      "receipt": "A5-historical-replay.log",
+      "test_seconds": 4.814
+    },
+    {
+      "method": "AIRSAppTests.SecurityDeltaRealWorkflowTests.testHarnessNeverReplacesEvidenceAndBoundsReads",
+      "status": "passed",
+      "receipt": "A8-harness-io.log",
+      "test_seconds": 0.006
+    },
+    {
+      "method": "AIRSAppTests.SecurityDeltaRealWorkflowTests.testUnavailableHelperInfoDoesNotInventStaleness",
+      "status": "passed",
+      "receipt": "A6-first-helper-captures.log",
+      "test_seconds": 0.021
+    },
+    {
+      "method": "AIRSEntitlementsTests.SecurityDeltaRealArchiveAcceptanceTests.testOptInAuthenticArchiveTamperingRefuses",
+      "status": "passed",
+      "receipt": "A5-authentic-tamper.log",
+      "test_seconds": 1.551
+    },
+    {
+      "method": "AIRSEntitlementsTests.SecurityDeltaRealArchiveAcceptanceTests.testSeventeenOwnedArchiveMutationsRefuse",
+      "status": "passed",
+      "receipt": "A5-owned-tamper-green.log",
+      "test_seconds": 0.062
+    },
+    {
+      "method": "AIRSEntitlementsTests.SecurityDeltaRealResourceTests.testOwnedMaximumInventoryAndLoweredOutputCapsWithProcessMetrics",
+      "status": "passed",
+      "receipt": "A7-native-resource.log",
+      "test_seconds": 0.033
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_boolean_is_not_integer",
+      "status": "passed",
+      "receipt": "A4-evaluator-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_datetime_normalization_cannot_prove_original_date_bits",
+      "status": "passed",
+      "receipt": "A4-date-fidelity-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_dependency_count_observation_uses_raw_group_membership",
+      "status": "passed",
+      "receipt": "A4-dependency-evaluator-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_finding_kind_cannot_promote_unchanged_source",
+      "status": "passed",
+      "receipt": "A8-rule-trigger-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_independent_change_enumeration_detects_missing_result",
+      "status": "passed",
+      "receipt": "A4-expected-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_inventory_facts_use_exact_executable_and_raw_minimum",
+      "status": "passed",
+      "receipt": "A4-inventory-facts-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_missing_source_stays_unresolved",
+      "status": "passed",
+      "receipt": "A4-evaluator-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_multicategory_rule_requires_same_component_and_complete_evidence",
+      "status": "passed",
+      "receipt": "A4-correlation-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_null_component_reference_is_reserved_for_inventory_scope",
+      "status": "passed",
+      "receipt": "A8-null-reference-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_numeric_value_survives_historical_fidelity",
+      "status": "passed",
+      "receipt": "A4-evaluator-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_order_is_not_discarded",
+      "status": "passed",
+      "receipt": "A4-evaluator-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_privacy_changed_executable_correspondence_is_unresolved",
+      "status": "passed",
+      "receipt": "A8-privacy-correspondence-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_privacy_owner_mapping_root_nested_and_framework",
+      "status": "passed",
+      "receipt": "A8-privacy-owner-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_qualification_input_caps_duplicates_and_symlinks",
+      "status": "passed",
+      "receipt": "A8-evaluator-inputs.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_relabelled_component_cannot_borrow_source",
+      "status": "passed",
+      "receipt": "A8-component-binding-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_source_key_change_and_wrong_value",
+      "status": "passed",
+      "receipt": "A4-evaluator-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_case_evaluator.SecurityDeltaCaseEvaluatorTests.test_unknown_typed_value_does_not_pass",
+      "status": "passed",
+      "receipt": "A4-evaluator-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_acquisition.SecurityDeltaCorpusAcquisitionTests.test_archive_symlink_source_refuses",
+      "status": "passed",
+      "receipt": "A2-acquisition-unicode-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_acquisition.SecurityDeltaCorpusAcquisitionTests.test_cancel_before_open_and_lower_budget",
+      "status": "passed",
+      "receipt": "A2-acquisition-unicode-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_acquisition.SecurityDeltaCorpusAcquisitionTests.test_download_capture_hashes_once_and_never_overwrites",
+      "status": "passed",
+      "receipt": "A2-download-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_acquisition.SecurityDeltaCorpusAcquisitionTests.test_download_mismatch_size_and_cancellation_are_not_final_files",
+      "status": "passed",
+      "receipt": "A2-download-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_acquisition.SecurityDeltaCorpusAcquisitionTests.test_escape_absolute_and_external_symlink_refuse",
+      "status": "passed",
+      "receipt": "A2-acquisition-unicode-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_acquisition.SecurityDeltaCorpusAcquisitionTests.test_invalid_download_budget_does_not_start_network_process",
+      "status": "passed",
+      "receipt": "A2-budget-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_acquisition.SecurityDeltaCorpusAcquisitionTests.test_link_ancestor_cannot_receive_regular_file",
+      "status": "passed",
+      "receipt": "A2-acquisition-unicode-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_acquisition.SecurityDeltaCorpusAcquisitionTests.test_nested_archive_stays_opaque_and_is_accounted",
+      "status": "passed",
+      "receipt": "A2-acquisition-unicode-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_acquisition.SecurityDeltaCorpusAcquisitionTests.test_owned_archive_extracts_without_execution",
+      "status": "passed",
+      "receipt": "A2-acquisition-unicode-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_acquisition.SecurityDeltaCorpusAcquisitionTests.test_safe_internal_link_is_preserved_not_followed",
+      "status": "passed",
+      "receipt": "A2-acquisition-unicode-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_acquisition.SecurityDeltaCorpusAcquisitionTests.test_same_name_modified_bytes_refuse_digest",
+      "status": "passed",
+      "receipt": "A2-acquisition-unicode-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_acquisition.SecurityDeltaCorpusAcquisitionTests.test_stale_admission_cannot_extract",
+      "status": "passed",
+      "receipt": "A2-acquisition-unicode-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_acquisition.SecurityDeltaCorpusAcquisitionTests.test_unicode_directory_alias_cannot_silently_merge",
+      "status": "passed",
+      "receipt": "A2-acquisition-unicode-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_manifest.SecurityDeltaCorpusManifestTests.test_duplicate_case_id_refuses_before_lookup",
+      "status": "passed",
+      "receipt": "A1-schema-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_manifest.SecurityDeltaCorpusManifestTests.test_invalid_raw_utf8_has_precise_code",
+      "status": "passed",
+      "receipt": "A1-schema-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_manifest.SecurityDeltaCorpusManifestTests.test_malformed_fact_tags_bits_and_data_are_classified",
+      "status": "passed",
+      "receipt": "A1-fact-types-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_manifest.SecurityDeltaCorpusManifestTests.test_manifest_resource_bounds",
+      "status": "passed",
+      "receipt": "A1-schema-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_manifest.SecurityDeltaCorpusManifestTests.test_manifest_symlink_and_ancestor_escape_refuse",
+      "status": "passed",
+      "receipt": "A1-schema-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_manifest.SecurityDeltaCorpusManifestTests.test_missing_digest_and_license_refuse",
+      "status": "passed",
+      "receipt": "A1-schema-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_manifest.SecurityDeltaCorpusManifestTests.test_noncanonical_integer_fact_declines",
+      "status": "passed",
+      "receipt": "A1-integer-canonical-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_manifest.SecurityDeltaCorpusManifestTests.test_owned_protocol_roundtrip_is_immutable",
+      "status": "passed",
+      "receipt": "A1-schema-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_manifest.SecurityDeltaCorpusManifestTests.test_path_escapes_and_invalid_utf8_refuse",
+      "status": "passed",
+      "receipt": "A1-schema-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_manifest.SecurityDeltaCorpusManifestTests.test_same_bytes_rezip_and_reversed_date_do_not_count_as_pair",
+      "status": "passed",
+      "receipt": "A1-schema-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_manifest.SecurityDeltaCorpusManifestTests.test_structured_adjudicated_fact_and_empty_typed_string",
+      "status": "passed",
+      "receipt": "A1-fact-positive-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_manifest.SecurityDeltaCorpusManifestTests.test_swapped_sides_and_digests_refuse",
+      "status": "passed",
+      "receipt": "A1-schema-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_manifest.SecurityDeltaCorpusManifestTests.test_unknown_version_unknown_fields_and_duplicate_json_keys_refuse",
+      "status": "passed",
+      "receipt": "A1-schema-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_corpus_manifest.SecurityDeltaCorpusManifestTests.test_untrusted_url_shapes_refuse",
+      "status": "passed",
+      "receipt": "A1-schema-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_fixture_support.SecurityDeltaFixtureSupportTests.test_missing_fixture_root_is_created_and_owned_temporary_data_is_removed",
+      "status": "passed",
+      "receipt": "A9-fixture-root-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_apple_tool_agreement_and_disagreement_are_retained",
+      "status": "passed",
+      "receipt": "A3-tools-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_boolean_integer_and_nested_order_are_distinct",
+      "status": "passed",
+      "receipt": "A3-bounded-oracle-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_bundle_missing_cancelled_and_truncated_are_explicit",
+      "status": "passed",
+      "receipt": "A3-bounded-oracle-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_bundle_scope_privacy_presence_and_exclusions",
+      "status": "passed",
+      "receipt": "A3-bounded-oracle-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_document_publish_is_atomic_and_never_overwrites",
+      "status": "passed",
+      "receipt": "A3-atomic-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_duplicate_loader_commands_and_order_are_retained",
+      "status": "passed",
+      "receipt": "A3-bounded-oracle-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_duplicate_signature_command_cannot_hide_invalid_region",
+      "status": "passed",
+      "receipt": "A3-review-signature-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_empty_privacy_is_present_and_malformed_is_unavailable",
+      "status": "passed",
+      "receipt": "A3-bounded-oracle-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_equal_architecture_label_does_not_erase_subtype_bits",
+      "status": "passed",
+      "receipt": "A3-bounded-oracle-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_failed_stale_read_consumes_work_budget",
+      "status": "passed",
+      "receipt": "A3-failed-work-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_fat_slice_offsets_sizes_and_uuid_are_independent",
+      "status": "passed",
+      "receipt": "A3-bounded-oracle-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_invalid_utf8_filesystem_name_refuses_without_fatal_error",
+      "status": "skipped",
+      "receipt": "A3-bounded-oracle-green.log",
+      "detail": "skipped 'APFS refuses constructing the owned invalid-UTF8 filename (EILSEQ)'"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_minimum_os_and_toolchain_sections_are_raw_qualified",
+      "status": "passed",
+      "receipt": "A3-shared-raw-fields-corrected.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_missing_signature_and_malformed_slot_are_distinct",
+      "status": "passed",
+      "receipt": "A3-review-signature-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_oracle_output_ceiling_is_observable",
+      "status": "passed",
+      "receipt": "A3-bounded-oracle-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_probe_bytes_are_in_work_accounting",
+      "status": "passed",
+      "receipt": "A3-work-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_raw_plist_does_not_invent_api_numeric_signedness",
+      "status": "passed",
+      "receipt": "A3-bounded-oracle-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_recorded_range_capture_does_not_repeat_container_hash",
+      "status": "passed",
+      "receipt": "A3-range-identity-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_signature_slot_identity_magic_and_overlap_are_not_guessed",
+      "status": "passed",
+      "receipt": "A3-review-signature-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_transient_permission_failure_is_unavailable_not_absent",
+      "status": "passed",
+      "receipt": "A7-transient-permission.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_truncated_header_and_command_refuse",
+      "status": "passed",
+      "receipt": "A3-bounded-oracle-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_unrepresentable_directory_name_is_classified",
+      "status": "passed",
+      "receipt": "A3-bounded-oracle-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_independent_oracle.SecurityDeltaIndependentOracleTests.test_xml_plist_without_declaration_remains_valid",
+      "status": "passed",
+      "receipt": "A3-xml-declaration-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_001_schema_future",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_002_case_escape",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_003_arch_unknown",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_004_purpose_unknown",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_005_digest_missing",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_006_digest_uppercase",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_007_license_missing",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_008_http",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_009_credentials",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_010_tracker",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_011_path_escape",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_012_absolute_path",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_013_unknown_field",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_014_reversed_date",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_015_same_version",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_016_same_archive",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_017_swapped_digest",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_018_unknown_adjudication",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_019_bare_fact",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_020_missing_adjudicator",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_021_missing_locator",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_022_unknown_refusal",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_023_nul_path",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_024_unsupported_archive",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_025_empty",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_026_short",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_027_unknown_magic",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_028_excess_commands",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_029_command_bytes",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_030_zero_command",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_031_bad_name_offset",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_032_duplicate_uuid",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_033_invalid_xml",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_034_duplicate_xml",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_035_invalid_utf8_xml",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_036_array_root",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_037_nonfinite",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_038_depth",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_039_binary_key_offset",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_owned_mutations.SecurityDeltaOwnedMutationTests.test_040_directory_population_is_not_materialized",
+      "status": "passed",
+      "receipt": "A7-owned-mutations-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_prepare.SecurityDeltaPrepareTests.test_asset_id_cannot_substitute_another_publisher",
+      "status": "passed",
+      "receipt": "A9-prepare-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_prepare.SecurityDeltaPrepareTests.test_distinct_sources_are_deduplicated_without_network",
+      "status": "passed",
+      "receipt": "A9-prepare-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_prepare.SecurityDeltaPrepareTests.test_missing_acquisition_metadata_is_an_explicit_refusal",
+      "status": "passed",
+      "receipt": "A9-prepare-green.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_prepare.SecurityDeltaPrepareTests.test_owned_end_to_end_preparation_and_existing_output_refusal",
+      "status": "passed",
+      "receipt": "A9-prepare-owned-e2e.log",
+      "detail": "ok"
+    },
+    {
+      "method": "test_security_delta_prepare.SecurityDeltaPrepareTests.test_unsupported_architecture_refuses_before_network_or_output",
+      "status": "passed",
+      "receipt": "A9-prepare-architecture-green.log",
+      "detail": "ok"
+    }
+  ]
+}

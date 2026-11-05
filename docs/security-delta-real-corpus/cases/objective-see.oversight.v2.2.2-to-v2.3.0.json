@@ -28,15 +28,132 @@
     "archive_kind": "zip"
   },
   "expected": {
-    "adjudication": "pending",
+    "adjudication": "independently_adjudicated",
     "source_digests": {
       "previous": "2e0eba973c0f76e4468a7d7f949d34628b06d735bcf64c170d20e79f29d70915",
       "current": "a78a997427ba29a01285cb0bdd84a88c600c6cb3855017f9f31a47ad350dd94c"
     },
-    "declaration_facts": [],
-    "expected_refusals": []
+    "declaration_facts": [
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "9958d37babd2ca0f01f001880ddb521eaeef9c81a10eff3a396a4386dc4aea33",
+        "archive_sha256": "2e0eba973c0f76e4468a7d7f949d34628b06d735bcf64c170d20e79f29d70915",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 2101
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.objective-see.oversight.installer"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "9958d37babd2ca0f01f001880ddb521eaeef9c81a10eff3a396a4386dc4aea33",
+        "archive_sha256": "2e0eba973c0f76e4468a7d7f949d34628b06d735bcf64c170d20e79f29d70915",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 2101
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "2.2.2"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "9958d37babd2ca0f01f001880ddb521eaeef9c81a10eff3a396a4386dc4aea33",
+        "archive_sha256": "2e0eba973c0f76e4468a7d7f949d34628b06d735bcf64c170d20e79f29d70915",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 2101
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "2.2.2"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "24ed244709d40bb1b6c5159d6f01ea1bc76bec63115026c70cb14688424cc566",
+        "archive_sha256": "a78a997427ba29a01285cb0bdd84a88c600c6cb3855017f9f31a47ad350dd94c",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 2099
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.objective-see.oversight.installer"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "24ed244709d40bb1b6c5159d6f01ea1bc76bec63115026c70cb14688424cc566",
+        "archive_sha256": "a78a997427ba29a01285cb0bdd84a88c600c6cb3855017f9f31a47ad350dd94c",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 2099
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "2.3.0"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "24ed244709d40bb1b6c5159d6f01ea1bc76bec63115026c70cb14688424cc566",
+        "archive_sha256": "a78a997427ba29a01285cb0bdd84a88c600c6cb3855017f9f31a47ad350dd94c",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 2099
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "2.3.0"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      }
+    ],
+    "expected_refusals": [],
+    "adjudicator": "Independent raw-source parser; selected Info facts only. Complete-case acceptance remains partial in CASE_MATRIX and RESULTS."
   },
-  "coverage_tags": [],
+  "coverage_tags": [
+    "entitlements",
+    "loader",
+    "privacy_manifest",
+    "signature",
+    "simple",
+    "universal"
+  ],
   "language_evidence": {
     "source_url": "https://api.github.com/repos/objective-see/OverSight/languages",
     "repository_bytes": {
@@ -44,10 +161,80 @@
       "C": 5626,
       "Shell": 790
     },
-    "binary_confirmation": "pending independent oracle"
+    "binary_confirmation": [
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/OverSight Installer",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 17752,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 144992,
+          "slice_index": 0
+        },
+        "range_sha256": "9fab36358b2ef0f02b619984ac7d0df75940e10d89d182366829a37497cf7810",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/OverSight Installer",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 165368,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 163840,
+          "size": 144928,
+          "slice_index": 1
+        },
+        "range_sha256": "f6f68ef9af770ed73914724ca218012e2669951fd75cb6576309622f4b536438",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/OverSight Installer",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 17832,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 162064,
+          "slice_index": 0
+        },
+        "range_sha256": "f35157f3af865f7c65984912f0d783ac6ff5ffbedc1b7c3a43a74168b04d653e",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/OverSight Installer",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 181832,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 180224,
+          "size": 145504,
+          "slice_index": 1
+        },
+        "range_sha256": "ded46bdd462b8192767f4e091a878ab76d7a96120fc321fe782755feb36f14a7",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      }
+    ],
+    "interpretation": "Repository language byte counts indicate predominant source language; raw binary metadata corroborates toolchain presence, not a percentage of executed instructions."
   },
   "oracle": {
-    "status": "pending",
+    "status": "selected_source_facts_adjudicated; broader evaluation partial",
     "acquisition": {
       "previous": {
         "source_id": "objective-see/OverSight:136965231",
@@ -58,6 +245,20 @@
         "source_id": "objective-see/OverSight:146160552",
         "retrieved_at": "2026-11-05T04:21:55Z",
         "publisher_release_url": "https://github.com/objective-see/OverSight/releases/tag/v2.3.0"
+      }
+    },
+    "version": "security-delta-raw-oracle-v1",
+    "retained_payload_policy": "Public metadata/hashes/locators only; raw bytes and captures remain local-only and require legitimate reacquisition to reproduce.",
+    "case_evaluation": {
+      "observation_counts": {
+        "supported": 30
+      },
+      "finding_counts": {
+        "supported": 15
+      },
+      "expected_change_counts": {
+        "true_positive": 13,
+        "unresolved": 45
       }
     }
   }

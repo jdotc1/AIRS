@@ -28,15 +28,133 @@
     "archive_kind": "zip"
   },
   "expected": {
-    "adjudication": "pending",
+    "adjudication": "independently_adjudicated",
     "source_digests": {
       "previous": "579a68222ab181bf56c64d1154aa47c9d623a921e5b13da9398b24e209892e23",
       "current": "aa353197537ccfd378dd4a7ff43030561ce7c62267dd0b31b385691b0e7f594c"
     },
-    "declaration_facts": [],
-    "expected_refusals": []
+    "declaration_facts": [
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "d923a4ac546f53aec57e3eea13333330f8675698a77bbf30d7ae4d04f66ba173",
+        "archive_sha256": "579a68222ab181bf56c64d1154aa47c9d623a921e5b13da9398b24e209892e23",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1428
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.lwouis.alt-tab-macos"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "d923a4ac546f53aec57e3eea13333330f8675698a77bbf30d7ae4d04f66ba173",
+        "archive_sha256": "579a68222ab181bf56c64d1154aa47c9d623a921e5b13da9398b24e209892e23",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1428
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "11.10.0"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "d923a4ac546f53aec57e3eea13333330f8675698a77bbf30d7ae4d04f66ba173",
+        "archive_sha256": "579a68222ab181bf56c64d1154aa47c9d623a921e5b13da9398b24e209892e23",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1428
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "11.10.0"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "2d7b4d9f4ef2febf7536c5353c1dac8a87da7dfe71eccc05e3bac84016ddc969",
+        "archive_sha256": "aa353197537ccfd378dd4a7ff43030561ce7c62267dd0b31b385691b0e7f594c",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1428
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.lwouis.alt-tab-macos"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "2d7b4d9f4ef2febf7536c5353c1dac8a87da7dfe71eccc05e3bac84016ddc969",
+        "archive_sha256": "aa353197537ccfd378dd4a7ff43030561ce7c62267dd0b31b385691b0e7f594c",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1428
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "11.10.1"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "2d7b4d9f4ef2febf7536c5353c1dac8a87da7dfe71eccc05e3bac84016ddc969",
+        "archive_sha256": "aa353197537ccfd378dd4a7ff43030561ce7c62267dd0b31b385691b0e7f594c",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1428
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "11.10.1"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      }
+    ],
+    "expected_refusals": [],
+    "adjudicator": "Independent raw-source parser; selected Info facts only. Complete-case acceptance remains partial in CASE_MATRIX and RESULTS."
   },
-  "coverage_tags": [],
+  "coverage_tags": [
+    "entitlements",
+    "frameworks",
+    "loader",
+    "privacy_manifest",
+    "signature",
+    "simple",
+    "universal"
+  ],
   "language_evidence": {
     "source_url": "https://api.github.com/repos/lwouis/alt-tab-macos/languages",
     "repository_bytes": {
@@ -47,10 +165,148 @@
       "TypeScript": 4819,
       "Objective-C": 66
     },
-    "binary_confirmation": "pending independent oracle"
+    "binary_confirmation": [
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/AltTab",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 17840,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 3696272,
+          "slice_index": 0
+        },
+        "range_sha256": "ab324f95a42bd935d249831fe37c8a07e7b8a52a3fc628137268798c594a61b2",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/AltTab",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 18952,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 3696272,
+          "slice_index": 0
+        },
+        "range_sha256": "f7f3c101a45433c86393a63469517c0ce1757b9bb5b33a8f24bce136acf376e3",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/AltTab",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 3720704,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 3719168,
+          "size": 3377648,
+          "slice_index": 1
+        },
+        "range_sha256": "65928ddc506d551a75c30a8184f7d6562df0e466c6b59f9f99f3ea3f8503a6a2",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/AltTab",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 3721816,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 3719168,
+          "size": 3377648,
+          "slice_index": 1
+        },
+        "range_sha256": "5213a353e955064b6d29e177489d1a7aaab78f271fa632129d478119f7882561",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/AltTab",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 17840,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 3700416,
+          "slice_index": 0
+        },
+        "range_sha256": "8ddeb905974b6af2392a43f029199083b99276322d69783daf049651ecf77545",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/AltTab",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 18952,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 3700416,
+          "slice_index": 0
+        },
+        "range_sha256": "09e96f3d3ddac81d3e0c112329a2bd0078b73e1e2565a088a08112ed0950b7a8",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/AltTab",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 3720704,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 3719168,
+          "size": 3394064,
+          "slice_index": 1
+        },
+        "range_sha256": "83ce082baf235c2d3f1212945b51f93cd9ac2cd93917aa3e774c2e08f59fba4f",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/AltTab",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 3721816,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 3719168,
+          "size": 3394064,
+          "slice_index": 1
+        },
+        "range_sha256": "f53935f3aeb20fa3c096c91d9ba5876cdfe394a04bd39eb248a7928829c87803",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      }
+    ],
+    "interpretation": "Repository language byte counts indicate predominant source language; raw binary metadata corroborates toolchain presence, not a percentage of executed instructions."
   },
   "oracle": {
-    "status": "pending",
+    "status": "selected_source_facts_adjudicated; broader evaluation partial",
     "acquisition": {
       "previous": {
         "source_id": "lwouis/alt-tab-macos:667136866",
@@ -61,6 +317,22 @@
         "source_id": "lwouis/alt-tab-macos:670525808",
         "retrieved_at": "2026-11-05T04:21:46Z",
         "publisher_release_url": "https://github.com/lwouis/alt-tab-macos/releases/tag/v11.10.1"
+      }
+    },
+    "version": "security-delta-raw-oracle-v1",
+    "retained_payload_policy": "Public metadata/hashes/locators only; raw bytes and captures remain local-only and require legitimate reacquisition to reproduce.",
+    "case_evaluation": {
+      "observation_counts": {
+        "supported": 79,
+        "unresolved": 12
+      },
+      "finding_counts": {
+        "supported": 7,
+        "unresolved": 12
+      },
+      "expected_change_counts": {
+        "true_positive": 5,
+        "unresolved": 12
       }
     }
   }

@@ -1,3 +1,4 @@
+from security_delta_fixture_support import owned_temporary_directory
 """Owned protocol negatives; no downloaded application is needed."""
 import copy
 import importlib.util
@@ -34,6 +35,14 @@ class SecurityDeltaCorpusManifestTests(unittest.TestCase):
         with self.assertRaises(CorpusRefusal) as result:
             self.decode(value)
         self.assertEqual(result.exception.code, code)
+
+    def test_noncanonical_integer_fact_declines(self):
+        for decimal in ("-0", "+1", "01"):
+            value=owned_manifest()
+            value["expected"]["declaration_facts"]=[dict(side="previous",source_path="Contents/Info.plist",source_sha256="c"*64,archive_sha256="a"*64,
+                locator=dict(kind="plist_key",key="owned"),state="observed",expected_value=dict(type="integer",decimal=decimal,representation="unspecified"),adjudicator="owned independent parser")]
+            with self.subTest(decimal=decimal):
+                with self.assertRaises(CorpusRefusal):self.decode(value)
 
     def test_malformed_fact_tags_bits_and_data_are_classified(self):
         for typed in [{"type":[]},{"type":"real","bits":"7ff0000000000000"},{"type":"date","bits":"7ff8000000000000"},{"type":"data","base64":"not base64"}]:
@@ -119,7 +128,7 @@ class SecurityDeltaCorpusManifestTests(unittest.TestCase):
 
     def test_manifest_symlink_and_ancestor_escape_refuse(self):
         # Temporary owned metadata only; no authentic release is touched.
-        with tempfile.TemporaryDirectory(dir=ROOT / "local-evidence/security-delta-track-a") as folder:
+        with owned_temporary_directory() as folder:
             root = Path(folder)
             actual = root / "actual"; actual.mkdir()
             (actual / "case.json").write_text(json.dumps(owned_manifest()))

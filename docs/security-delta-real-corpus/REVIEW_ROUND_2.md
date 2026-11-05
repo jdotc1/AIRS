@@ -30,3 +30,27 @@ acceptance. Visible historical review has been inspected separately; remaining
 native interactions and environment-specific gates are recorded in RESULTS.md.
 No release, signing, installed-source acceptance, clean-machine, minimum-OS or
 MacScope acceptance is established by this review.
+
+## Closure and later field coverage
+
+Repair closure found three additional counterexamples: a default finding-kind
+branch could promote unchanged source facts; privacy enumeration needed exact
+before/after executable-owner agreement; and null declaration component IDs could
+skip binding checks. Each received a new owned RED/GREEN fixture and correction.
+Unknown/conflict kinds remain unresolved. Shared ancestor bridges now require the
+exact path to exist in both inventories. The second reviewer closed these three
+items on source inspection and found no further blocking issue in those repairs.
+
+The added minimum-OS/section parser and separately approved range observations
+preserve raw CPU/subtype, fat-table location, header and UUID correspondence. They
+retain raw command ranges and first range digests without rehashing old containers.
+They remain later non-atomic evidence. A valid XML plist without an XML declaration
+exposed a format-autodetection limitation; an owned RED/GREEN regression fixed it,
+and four previously unavailable xbar Info observations were first successfully
+retained. Earlier failed records remain historical evidence.
+
+The reviewer also accepted the proportionate layout-only correction: findings and
+observation lists have bounded widths and the inspector retains readable width.
+The real AIRSApp target built, and five historical native cases plus one separately
+authorized live selection/capture/export/reopen workflow were inspected. Those
+execution receipts belong to the implementing run, not the source reviewer.

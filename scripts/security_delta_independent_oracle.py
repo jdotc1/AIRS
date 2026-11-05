@@ -113,7 +113,7 @@ def observe_plist(data):
         reject("plist_byte_limit")
     check_plist_keys(data)
     try:
-        value = plistlib.loads(data)
+        value = plistlib.loads(data, fmt=plistlib.FMT_BINARY if data.startswith(b"bplist00") else plistlib.FMT_XML)
     except (ValueError, TypeError, OverflowError, RecursionError, plistlib.InvalidFileException):
         reject("plist_unavailable")
     nodes = 0
@@ -202,6 +202,36 @@ def signature_facts(data, begin, size):
     return result
 
 
+def observe_build_segment(data, cursor=0, endian="<"):
+    if cursor < 0 or cursor+8 > len(data): reject("additional_field_bounds")
+    command,length=struct.unpack_from(endian+"II",data,cursor)
+    if length < 8 or length > 1048576 or cursor+length > len(data): reject("additional_field_bounds")
+    fact={"minimum_os":[],"sections":[]}
+    if command in (0x32,0x24):
+        if command==0x32:
+            if length<24: reject("build_version_unavailable")
+            platform,minimum,sdk,tools=struct.unpack_from(endian+"4I",data,cursor+8)
+            if tools>4096 or 24+tools*8!=length: reject("build_version_unavailable")
+        else:
+            if length!=16: reject("build_version_unavailable")
+            platform=1; minimum,sdk=struct.unpack_from(endian+"II",data,cursor+8)
+        fact["minimum_os"].append({"command":command,"platform":platform,"minimum":minimum,"sdk":sdk,"offset":cursor})
+    elif command in (0x19,0x1):
+        header,section_size,count_offset=(72,80,64) if command==0x19 else (56,68,48)
+        if length<header: reject("segment_command_unavailable")
+        count=struct.unpack_from(endian+"I",data,cursor+count_offset)[0]
+        if count>4096 or header+count*section_size!=length: reject("segment_command_unavailable")
+        for index in range(count):
+            start=cursor+header+index*section_size
+            try:
+                section=data[start:start+16].split(b"\0",1)[0].decode("utf-8","strict")
+                segment=data[start+16:start+32].split(b"\0",1)[0].decode("utf-8","strict")
+            except UnicodeError: reject("section_name_unavailable")
+            fact["sections"].append({"section":section,"segment":segment,"offset":start,"command_offset":cursor})
+    else: reject("unsupported_additional_command")
+    return fact
+
+
 def observe_macho(data):
     if len(data) > MAX_IMAGE_BYTES:
         reject("image_byte_limit")
@@ -274,27 +304,10 @@ def observe_macho(data):
                     stamp, current, compatibility = struct.unpack_from(endian + "III", data, cursor + 12)
                     record.update(timestamp=stamp, current_version=current, compatibility_version=compatibility)
                 fact["loader"].append(record)
-            elif command in (0x32, 0x24):
-                if command == 0x32:
-                    if length < 24: reject("build_version_unavailable")
-                    platform, minimum, sdk, tools = struct.unpack_from(endian + "4I", data, cursor + 8)
-                    if tools > 4096 or 24 + tools * 8 != length: reject("build_version_unavailable")
-                else:
-                    if length != 16: reject("build_version_unavailable")
-                    platform=1; minimum,sdk=struct.unpack_from(endian+"II",data,cursor+8)
-                fact["minimum_os"].append({"command":command,"platform":platform,"minimum":minimum,"sdk":sdk,"offset":cursor})
-            elif command in (0x19, 0x1):
-                header, section_size, count_offset=(72,80,64) if command==0x19 else (56,68,48)
-                if length < header: reject("segment_command_unavailable")
-                sections=struct.unpack_from(endian+"I",data,cursor+count_offset)[0]
-                if sections > 4096 or header + sections * section_size != length: reject("segment_command_unavailable")
-                for section_index in range(sections):
-                    start=cursor+header+section_index*section_size
-                    try:
-                        section=data[start:start+16].split(b"\0",1)[0].decode("utf-8","strict")
-                        segment=data[start+16:start+32].split(b"\0",1)[0].decode("utf-8","strict")
-                    except UnicodeError: reject("section_name_unavailable")
-                    fact["sections"].append({"section":section,"segment":segment,"offset":start,"command_offset":cursor})
+            elif command in (0x32, 0x24, 0x19, 0x1):
+                additional=observe_build_segment(data,cursor,endian)
+                fact["minimum_os"].extend(additional["minimum_os"])
+                fact["sections"].extend(additional["sections"])
             elif command == 0x1b:
                 if length != 24 or fact["uuid"] is not None:
                     reject("uuid_command_invalid")
@@ -484,6 +497,86 @@ def observe_bundle(root: Path, *, maximum_files=20000, maximum_fact_bytes=16 * 1
             result["privacy"][path] = {"state": "absent", "reason": "complete_no_follow_source_scope"}
         else:
             result["privacy"][path] = {"state": "unexamined", "reason": "oracle_scope_incomplete"}
+    return result
+
+
+def capture_recorded_fields(root, recorded, *, cancelled=lambda:False):
+    """New non-atomic command-range observations; no discovery or container rehash.
+
+    Only previously recorded physical image locations/ranges are eligible. Prior
+    container digests are labels for historical evidence, not freshly verified.
+    """
+    result={"version":"recorded-command-ranges-v1","images":{},"read_bytes":0,
+        "binding":"Separate non-atomic read; raw header/UUID/ranges checked, prior container digest not recomputed."}
+    def read_range(fd,offset,size,container_size):
+        if cancelled():reject("cancelled")
+        if size<0 or size>1048576 or offset<0 or offset+size>container_size or size>64*1048576-result["read_bytes"]:reject("additional_field_bounds")
+        raw=os.pread(fd,size,offset);result["read_bytes"]+=len(raw)
+        if len(raw)!=size:reject("source_stale")
+        return raw
+    images=recorded["images"]
+    if len(images)>128:reject("oracle_entry_limit")
+    for path,image in sorted(images.items(),key=lambda pair:pair[0].encode("utf-8")):
+        if cancelled():reject("cancelled")
+        if image["state"]!="observed":
+            result["images"][path]={"state":"unexamined","reason":"original_image_unavailable"};continue
+        parts=PurePosixPath(path).parts
+        if path.startswith("/") or not parts or any(p in (".","..") for p in parts):reject("unsafe_relative_path")
+        fd=None
+        try:
+            directory=open_directory_no_follow(root.joinpath(*parts[:-1]))
+            try:fd=os.open(parts[-1],os.O_RDONLY|os.O_NOFOLLOW|os.O_NONBLOCK,dir_fd=directory)
+            finally:os.close(directory)
+            before=file_metadata(os.fstat(fd));size=before[2]
+            if not stat.S_ISREG(os.fstat(fd).st_mode) or size!=image["container_size"]:reject("source_stale")
+            prefix=read_range(fd,0,8,size)
+            fat_variants={b"\xca\xfe\xba\xbe":(">",20),b"\xca\xfe\xba\xbf":(">",32),b"\xbe\xba\xfe\xca":("<",20),b"\xbf\xba\xfe\xca":("<",32)}
+            if prefix[:4] in fat_variants:
+                byte_order,record_size=fat_variants[prefix[:4]]
+                count=struct.unpack_from(byte_order+"I",prefix,4)[0]
+                if count!=len(image["slices"]) or count>16:reject("source_stale")
+                directory=read_range(fd,8,count*record_size,size)
+                for previous in image["slices"]:
+                    identity=previous["identity"]; at=identity["slice_index"]*record_size
+                    if record_size==20:cpu,sub,begin,extent,_=struct.unpack_from(byte_order+"5I",directory,at)
+                    else:cpu,sub,begin,extent,_,_=struct.unpack_from(byte_order+"IIQQII",directory,at)
+                    if (cpu,sub,begin,extent)!=(identity["cpu_type"],identity["cpu_subtype"],identity["offset"],identity["size"]):reject("source_stale")
+            elif len(image["slices"])!=1 or image["slices"][0]["identity"]["offset"]!=0:reject("source_stale")
+            slices=[];image_bytes=0
+            for previous in image["slices"]:
+                identity=previous["identity"];offset=identity["offset"]
+                header=read_range(fd,offset,min(32,identity["size"]),size)
+                variants={b"\xcf\xfa\xed\xfe":("<",32),b"\xfe\xed\xfa\xcf":(">",32),b"\xce\xfa\xed\xfe":("<",28),b"\xfe\xed\xfa\xce":(">",28)}
+                if header[:4] not in variants:reject("source_stale")
+                endian,header_size=variants[header[:4]]
+                if len(header)<header_size:reject("source_stale")
+                cpu,sub,filetype,count,command_size=struct.unpack_from(endian+"5I",header,4)
+                if cpu!=identity["cpu_type"] or sub!=identity["cpu_subtype"] or count!=len(previous["commands"]) or command_size!=sum(c["size"] for c in previous["commands"]):reject("source_stale")
+                item={"identity":identity,"header_bytes":base64.b64encode(header).decode("ascii"),"minimum_os":[],"sections":[],"ranges":[]}
+                for command in previous["commands"]:
+                    if command["command"] not in (0x32,0x24,0x19,0x1,0x1b):continue
+                    extent=command["size"]
+                    if extent>1048576-image_bytes:reject("additional_field_bounds")
+                    raw=read_range(fd,command["offset"],extent,size);image_bytes+=len(raw)
+                    actual,length=struct.unpack_from(endian+"II",raw)
+                    if actual!=command["command"] or length!=extent:reject("source_stale")
+                    if actual==0x1b:
+                        if extent!=24 or str(uuid.UUID(bytes=raw[8:24]))!=previous["uuid"]:reject("source_stale")
+                        continue
+                    fact=observe_build_segment(raw,0,endian)
+                    for row in fact["minimum_os"]:row["offset"]+=command["offset"]
+                    for row in fact["sections"]:row["offset"]+=command["offset"];row["command_offset"]+=command["offset"]
+                    item["minimum_os"].extend(fact["minimum_os"]);item["sections"].extend(fact["sections"])
+                    item["ranges"].append({"offset":command["offset"],"size":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),"bytes":base64.b64encode(raw).decode("ascii")})
+                slices.append(item)
+            after=file_metadata(os.fstat(fd))
+            if before!=after:reject("source_stale")
+            result["images"][path]={"state":"observed","slices":slices,"capture_metadata":list(before)}
+        except (OracleRefusal,OSError) as error:
+            if isinstance(error,OracleRefusal) and error.code=="cancelled":raise
+            result["images"][path]={"state":"unavailable","reason":getattr(error,"code","source_unavailable")}
+        finally:
+            if fd is not None:os.close(fd)
     return result
 
 

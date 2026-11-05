@@ -28,15 +28,132 @@
     "archive_kind": "zip"
   },
   "expected": {
-    "adjudication": "pending",
+    "adjudication": "independently_adjudicated",
     "source_digests": {
       "previous": "4a97769ce5d185c45545e1fe8b5652774baf5ec29bf41a865c5b2a7bec961a02",
       "current": "536bda55f06e45bd7edc6cbed29aeb230db0f003675388a78f45d714a9ca8705"
     },
-    "declaration_facts": [],
-    "expected_refusals": []
+    "declaration_facts": [
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "a85d32d909557ce6cae446e38b362781b836523f7ffac53a616861c1522c3c58",
+        "archive_sha256": "4a97769ce5d185c45545e1fe8b5652774baf5ec29bf41a865c5b2a7bec961a02",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1739
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.objective-see.taskexplorer"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "a85d32d909557ce6cae446e38b362781b836523f7ffac53a616861c1522c3c58",
+        "archive_sha256": "4a97769ce5d185c45545e1fe8b5652774baf5ec29bf41a865c5b2a7bec961a02",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1739
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "3.0.0"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "a85d32d909557ce6cae446e38b362781b836523f7ffac53a616861c1522c3c58",
+        "archive_sha256": "4a97769ce5d185c45545e1fe8b5652774baf5ec29bf41a865c5b2a7bec961a02",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1739
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "3.0.0"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "c31d3452976226865c16dea4055bc9cb4e81db295b11a373168c15b8a73ef34f",
+        "archive_sha256": "536bda55f06e45bd7edc6cbed29aeb230db0f003675388a78f45d714a9ca8705",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1838
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.objective-see.taskexplorer"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "c31d3452976226865c16dea4055bc9cb4e81db295b11a373168c15b8a73ef34f",
+        "archive_sha256": "536bda55f06e45bd7edc6cbed29aeb230db0f003675388a78f45d714a9ca8705",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1838
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "3.1.0"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "c31d3452976226865c16dea4055bc9cb4e81db295b11a373168c15b8a73ef34f",
+        "archive_sha256": "536bda55f06e45bd7edc6cbed29aeb230db0f003675388a78f45d714a9ca8705",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1838
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "3.1.0"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      }
+    ],
+    "expected_refusals": [],
+    "adjudicator": "Independent raw-source parser; selected Info facts only. Complete-case acceptance remains partial in CASE_MATRIX and RESULTS."
   },
-  "coverage_tags": [],
+  "coverage_tags": [
+    "entitlements",
+    "loader",
+    "privacy_manifest",
+    "signature",
+    "simple",
+    "universal"
+  ],
   "language_evidence": {
     "source_url": "https://api.github.com/repos/objective-see/TaskExplorer/languages",
     "repository_bytes": {
@@ -45,10 +162,148 @@
       "C": 14466,
       "Shell": 7669
     },
-    "binary_confirmation": "pending independent oracle"
+    "binary_confirmation": [
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/TaskExplorer",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 18080,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 1624688,
+          "slice_index": 0
+        },
+        "range_sha256": "12f07c22d290bcb948d11d51df1902b6d423061d55464d74460132b88ea5ab8b",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/TaskExplorer",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 18872,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 1624688,
+          "slice_index": 0
+        },
+        "range_sha256": "4cd88cc0ea0477ab942a9598b4f1190a84eaddd6536606fd9f557455d2eef82f",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/TaskExplorer",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 1656640,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 1654784,
+          "size": 1557088,
+          "slice_index": 1
+        },
+        "range_sha256": "4c14dc31a0454e7bfae97fb9077bbcc1099b3b0742a284443ee6283ad5b8f7ee",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/TaskExplorer",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 1657432,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 1654784,
+          "size": 1557088,
+          "slice_index": 1
+        },
+        "range_sha256": "eaf01e32b928cab5c6864c562315339c5dcbbc0f28077bd5fe593abdb242ea75",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/TaskExplorer",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 18080,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 1666544,
+          "slice_index": 0
+        },
+        "range_sha256": "885fa231beb40a79c2b3268b6c7f1492efa67c76edaaa25d53c9c7272743e3f3",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/TaskExplorer",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 18872,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 1666544,
+          "slice_index": 0
+        },
+        "range_sha256": "d2af8c078b8306e716cf9ac4262d7c044cc298af100a10449039d723c2a86ffe",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/TaskExplorer",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 1689408,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 1687552,
+          "size": 1590480,
+          "slice_index": 1
+        },
+        "range_sha256": "32fe72180b09af5323a87ee6a187f7e88b8b3efd6ae59c07c3a69cf625be3cca",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/TaskExplorer",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 1690200,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 1687552,
+          "size": 1590480,
+          "slice_index": 1
+        },
+        "range_sha256": "4575dcb037fcde779dc7213a4e703f548a8e2d82c1a2695d0c7fd4a767b03b8a",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      }
+    ],
+    "interpretation": "Repository language byte counts indicate predominant source language; raw binary metadata corroborates toolchain presence, not a percentage of executed instructions."
   },
   "oracle": {
-    "status": "pending",
+    "status": "selected_source_facts_adjudicated; broader evaluation partial",
     "acquisition": {
       "previous": {
         "source_id": "objective-see/TaskExplorer:568501921",
@@ -59,6 +314,20 @@
         "source_id": "objective-see/TaskExplorer:607660804",
         "retrieved_at": "2026-11-05T04:21:57Z",
         "publisher_release_url": "https://github.com/objective-see/TaskExplorer/releases/tag/v3.1.0"
+      }
+    },
+    "version": "security-delta-raw-oracle-v1",
+    "retained_payload_policy": "Public metadata/hashes/locators only; raw bytes and captures remain local-only and require legitimate reacquisition to reproduce.",
+    "case_evaluation": {
+      "observation_counts": {
+        "supported": 27
+      },
+      "finding_counts": {
+        "supported": 7
+      },
+      "expected_change_counts": {
+        "true_positive": 5,
+        "unresolved": 5
       }
     }
   }

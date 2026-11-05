@@ -59,7 +59,8 @@ Component Review also includes an evidence-linked Security Changes mode for a
 selected previous/current app pair. It reports bounded static declaration and
 component changes, related observations, and coverage limitations, with
 explicit per-component evidence capture. See the [security change analysis
-contract](docs/COMPONENT_SECURITY_DELTA.md) and [qualification record](docs/COMPONENT_SECURITY_DELTA_RESULTS.md).
+contract](docs/COMPONENT_SECURITY_DELTA.md), [original qualification record](docs/COMPONENT_SECURITY_DELTA_RESULTS.md),
+and [independent real-release corpus](docs/security-delta-real-corpus/RESULTS.md).
 
 Current source adds descriptor-bound raw XML/DER signature evidence and the
 `arm64-bounded-cfi-control-v41` extension. It preserves v40 structural checks,

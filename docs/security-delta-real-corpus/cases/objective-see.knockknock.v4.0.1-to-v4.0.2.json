@@ -28,15 +28,132 @@
     "archive_kind": "zip"
   },
   "expected": {
-    "adjudication": "pending",
+    "adjudication": "independently_adjudicated",
     "source_digests": {
       "previous": "e3fd23716a9661fac218258ab33854b95fb81ddd4ce96d224667fcb3303fe28b",
       "current": "430da40b259c78ead1f73533b4a29f2b5f2b10d9b6618b574b8ade36eaef0604"
     },
-    "declaration_facts": [],
-    "expected_refusals": []
+    "declaration_facts": [
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "25672b4cc026741a913a27b0a25ff93b43ae00f8e65d743b7fcd2329b187fbaa",
+        "archive_sha256": "e3fd23716a9661fac218258ab33854b95fb81ddd4ce96d224667fcb3303fe28b",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1699
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.objective-see.KnockKnock"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "25672b4cc026741a913a27b0a25ff93b43ae00f8e65d743b7fcd2329b187fbaa",
+        "archive_sha256": "e3fd23716a9661fac218258ab33854b95fb81ddd4ce96d224667fcb3303fe28b",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1699
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "4.0.1"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "25672b4cc026741a913a27b0a25ff93b43ae00f8e65d743b7fcd2329b187fbaa",
+        "archive_sha256": "e3fd23716a9661fac218258ab33854b95fb81ddd4ce96d224667fcb3303fe28b",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1699
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "4.0.1"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "b0122d081a89dc75782e8c5f96cd1064826626711454745b0d44a037d8512ee0",
+        "archive_sha256": "430da40b259c78ead1f73533b4a29f2b5f2b10d9b6618b574b8ade36eaef0604",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1699
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.objective-see.KnockKnock"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "b0122d081a89dc75782e8c5f96cd1064826626711454745b0d44a037d8512ee0",
+        "archive_sha256": "430da40b259c78ead1f73533b4a29f2b5f2b10d9b6618b574b8ade36eaef0604",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1699
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "4.0.2"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "b0122d081a89dc75782e8c5f96cd1064826626711454745b0d44a037d8512ee0",
+        "archive_sha256": "430da40b259c78ead1f73533b4a29f2b5f2b10d9b6618b574b8ade36eaef0604",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1699
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "4.0.2"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      }
+    ],
+    "expected_refusals": [],
+    "adjudicator": "Independent raw-source parser; selected Info facts only. Complete-case acceptance remains partial in CASE_MATRIX and RESULTS."
   },
-  "coverage_tags": [],
+  "coverage_tags": [
+    "entitlements",
+    "loader",
+    "privacy_manifest",
+    "signature",
+    "simple",
+    "universal"
+  ],
   "language_evidence": {
     "source_url": "https://api.github.com/repos/objective-see/KnockKnock/languages",
     "repository_bytes": {
@@ -44,10 +161,80 @@
       "C": 13804,
       "Shell": 5371
     },
-    "binary_confirmation": "pending independent oracle"
+    "binary_confirmation": [
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/KnockKnock",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 17912,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 439008,
+          "slice_index": 0
+        },
+        "range_sha256": "a2dbf25b26ee12de548a2ad6cf17673ab718628832643e73f9a0ac5efc862bee",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/KnockKnock",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 460440,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 458752,
+          "size": 419552,
+          "slice_index": 1
+        },
+        "range_sha256": "c7a5c3b8b7ed96a0cb60ecb42c41925fd069e1f90f2e4c18577ee933336a2b97",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/KnockKnock",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 17912,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 443200,
+          "slice_index": 0
+        },
+        "range_sha256": "4e1a14fb9600a51a4f8d2d989f9ce0d848a22d6dbcd3bf937a83e4ba73ed44c7",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/KnockKnock",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 476824,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 475136,
+          "size": 419616,
+          "slice_index": 1
+        },
+        "range_sha256": "a85ca144d7f97600854067cab0906d1b0ee55f93bf34e3542611977b26a4de2e",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      }
+    ],
+    "interpretation": "Repository language byte counts indicate predominant source language; raw binary metadata corroborates toolchain presence, not a percentage of executed instructions."
   },
   "oracle": {
-    "status": "pending",
+    "status": "selected_source_facts_adjudicated; broader evaluation partial",
     "acquisition": {
       "previous": {
         "source_id": "objective-see/KnockKnock:329064947",
@@ -58,6 +245,19 @@
         "source_id": "objective-see/KnockKnock:329625660",
         "retrieved_at": "2026-11-05T04:21:40Z",
         "publisher_release_url": "https://github.com/objective-see/KnockKnock/releases/tag/v4.0.2"
+      }
+    },
+    "version": "security-delta-raw-oracle-v1",
+    "retained_payload_policy": "Public metadata/hashes/locators only; raw bytes and captures remain local-only and require legitimate reacquisition to reproduce.",
+    "case_evaluation": {
+      "observation_counts": {
+        "supported": 23
+      },
+      "finding_counts": {
+        "supported": 7
+      },
+      "expected_change_counts": {
+        "true_positive": 5
       }
     }
   }

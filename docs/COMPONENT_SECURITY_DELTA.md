@@ -57,3 +57,12 @@ archive and the separately exported security-delta document are distinct;
 the latter contains supplemental evidence. See
 `COMPONENT_SECURITY_DELTA_FORMAT.md` for wire and limit details and
 `COMPONENT_SECURITY_DELTA_RESULTS.md` for qualification status.
+
+## Opt-in real-release qualification
+
+A separate read-only corpus harness exercises authentic releases without adding
+network or filesystem authority to the analyzer. See
+[the corpus protocol](security-delta-real-corpus/SPEC.md),
+[reproduction instructions](security-delta-real-corpus/RUN.md), and
+[qualified results and limitations](security-delta-real-corpus/RESULTS.md).
+Ordinary application behavior and legacy export contracts are preserved.

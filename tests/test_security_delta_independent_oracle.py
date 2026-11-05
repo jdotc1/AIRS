@@ -1,3 +1,4 @@
+from security_delta_fixture_support import owned_temporary_directory
 """Independent owned bytes; no AIRS decoder/analyzer imports."""
 import plistlib
 import struct
@@ -83,7 +84,7 @@ class SecurityDeltaIndependentOracleTests(unittest.TestCase):
                 observe_macho(raw)
 
     def test_bundle_scope_privacy_presence_and_exclusions(self):
-        with tempfile.TemporaryDirectory(dir=ROOT / "local-evidence/security-delta-track-a") as folder:
+        with owned_temporary_directory() as folder:
             root = Path(folder) / "Owned.app"
             (root / "Contents/MacOS").mkdir(parents=True)
             (root / "Contents/Resources").mkdir()
@@ -100,7 +101,7 @@ class SecurityDeltaIndependentOracleTests(unittest.TestCase):
             self.assertEqual(present["plists"]["Contents/Resources/PrivacyInfo.xcprivacy"]["values"], {})
 
     def test_bundle_missing_cancelled_and_truncated_are_explicit(self):
-        with tempfile.TemporaryDirectory(dir=ROOT / "local-evidence/security-delta-track-a") as folder:
+        with owned_temporary_directory() as folder:
             root = Path(folder)
             with self.assertRaises(OracleRefusal) as missing:
                 observe_bundle(root / "missing.app")
@@ -115,7 +116,7 @@ class SecurityDeltaIndependentOracleTests(unittest.TestCase):
             self.assertFalse(partial["scope"]["omitted_count_exact"])
 
     def test_invalid_utf8_filesystem_name_refuses_without_fatal_error(self):
-        with tempfile.TemporaryDirectory(dir=ROOT / "local-evidence/security-delta-track-a") as folder:
+        with owned_temporary_directory() as folder:
             try:
                 descriptor = os.open(os.fsencode(folder) + b"/\xff", os.O_WRONLY | os.O_CREAT, 0o600)
             except OSError as error:
@@ -128,14 +129,14 @@ class SecurityDeltaIndependentOracleTests(unittest.TestCase):
             self.assertEqual(result.exception.code, "invalid_utf8_path")
 
     def test_unrepresentable_directory_name_is_classified(self):
-        with tempfile.TemporaryDirectory(dir=ROOT / "local-evidence/security-delta-track-a") as folder:
+        with owned_temporary_directory() as folder:
             with patch("security_delta_independent_oracle.bounded_directory_names", return_value=["\udcff"]):
                 with self.assertRaises(OracleRefusal) as result:
                     observe_bundle(Path(folder))
                 self.assertEqual(result.exception.code, "invalid_utf8_path")
 
     def test_oracle_output_ceiling_is_observable(self):
-        with tempfile.TemporaryDirectory(dir=ROOT / "local-evidence/security-delta-track-a") as folder:
+        with owned_temporary_directory() as folder:
             root = Path(folder)
             (root / "Info.plist").write_bytes(plistlib.dumps({"key": "value"}))
             result = observe_bundle(root, maximum_fact_bytes=16)
@@ -144,7 +145,7 @@ class SecurityDeltaIndependentOracleTests(unittest.TestCase):
             self.assertEqual(result["scope"]["omitted_count"], 1)
 
     def test_probe_bytes_are_in_work_accounting(self):
-        with tempfile.TemporaryDirectory(dir=ROOT / "local-evidence/security-delta-track-a") as folder:
+        with owned_temporary_directory() as folder:
             root = Path(folder)
             for i in range(4):
                 (root / str(i)).write_bytes(b"opaque")
@@ -173,6 +174,45 @@ class SecurityDeltaIndependentOracleTests(unittest.TestCase):
             data = region(records, blob)
             self.assertEqual(signature_facts(data, 0, len(data))["state"], "unavailable")
 
+    def test_transient_permission_failure_is_unavailable_not_absent(self):
+        with owned_temporary_directory() as folder:
+            root=Path(folder);(root/"Info.plist").write_bytes(plistlib.dumps({"owned":True}))
+            original=os.read;failed=False
+            def read(fd,count):
+                nonlocal failed
+                if not failed:
+                    failed=True;raise PermissionError("owned injected transient read refusal")
+                return original(fd,count)
+            with patch("security_delta_independent_oracle.os.read",side_effect=read):
+                result=observe_bundle(root)
+            self.assertEqual(result["scope"]["state"],"partial")
+            self.assertEqual(result["exclusions"][0]["state"],"unavailable")
+            self.assertEqual(result["privacy"]["Contents/Resources/PrivacyInfo.xcprivacy"]["state"],"unexamined")
+
+    def test_xml_plist_without_declaration_remains_valid(self):
+        raw=b'<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>CFBundleExecutable</key><string>Owned</string></dict></plist>'
+        result=observe_plist(raw)
+        self.assertEqual(result["CFBundleExecutable"],{"type":"string","value":"Owned"})
+
+    def test_recorded_range_capture_does_not_repeat_container_hash(self):
+        from security_delta_independent_oracle import capture_recorded_fields
+        import hashlib
+        with owned_temporary_directory() as folder:
+            root=Path(folder); (root/"Contents/MacOS").mkdir(parents=True)
+            command=struct.pack("<6I",0x32,24,1,0x000e0200,0x001b0000,0)
+            raw=image([command])+b"owned opaque bytes"*100
+            (root/"Contents/MacOS/Main").write_bytes(raw)
+            recorded=observe_macho(raw); recorded["state"]="observed"
+            hashed=[]; original=hashlib.sha256
+            def digest(value):hashed.append(len(value));return original(value)
+            with patch("security_delta_independent_oracle.hashlib.sha256",side_effect=digest):
+                result=capture_recorded_fields(root,{"images":{"Contents/MacOS/Main":recorded}})
+            item=result["images"]["Contents/MacOS/Main"]
+            self.assertEqual(item["state"],"observed")
+            self.assertEqual(item["slices"][0]["minimum_os"][0]["minimum"],918016)
+            self.assertEqual(hashed,[24])
+            self.assertLess(result["read_bytes"],len(raw))
+
     def test_minimum_os_and_toolchain_sections_are_raw_qualified(self):
         build=struct.pack("<6I",0x32,24,1,0x000e0200,0x001b0000,0)
         segment=struct.pack("<II16sQQQQIIII",0x19,152,b"__TEXT",0,0,0,0,7,5,1,0)
@@ -183,7 +223,7 @@ class SecurityDeltaIndependentOracleTests(unittest.TestCase):
 
     def test_failed_stale_read_consumes_work_budget(self):
         from security_delta_corpus import file_metadata
-        with tempfile.TemporaryDirectory(dir=ROOT / "local-evidence/security-delta-track-a") as folder:
+        with owned_temporary_directory() as folder:
             root=Path(folder); raw=plistlib.dumps({"owned":"value"})
             (root/"Info.plist").write_bytes(raw)
             calls=0
@@ -199,7 +239,7 @@ class SecurityDeltaIndependentOracleTests(unittest.TestCase):
 
     def test_document_publish_is_atomic_and_never_overwrites(self):
         from security_delta_independent_oracle import write_document
-        with tempfile.TemporaryDirectory(dir=ROOT / "local-evidence/security-delta-track-a") as folder:
+        with owned_temporary_directory() as folder:
             destination = Path(folder) / "capture.json"
             with self.assertRaises(OracleRefusal):
                 write_document(destination, {"value": "too large"}, maximum_bytes=4)
