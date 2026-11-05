@@ -1,0 +1,1092 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "swift-outcome-witness-v2.schema.json",
+  "title": "Bounded broad Swift outcome candidate v2",
+  "description": "Candidate evidence only. Never eligibility. Exact bytes, declaration, ABI and structural facts require independent validation. Initial hard limits 256 KiB per witness and 16 MiB per aggregate; bounds additionally enforced before encoding.",
+  "type": "object",
+  "properties": {
+    "model_version": {
+      "const": "swift-outcome-witness-v2"
+    },
+    "validation_model": {
+      "const": "swift-outcome-validation-v2"
+    },
+    "profile": {
+      "type": "string",
+      "maxLength": 2048
+    },
+    "source_models": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "maxLength": 2048
+      }
+    },
+    "status": {
+      "const": "unresolved"
+    },
+    "eligible": {
+      "const": false
+    },
+    "reason": {
+      "enum": [
+        "candidate_facts_incomplete",
+        "validation_required"
+      ]
+    },
+    "identity": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "uuid": {"type": ["string", "null"], "maxLength": 36},
+            "preferred_base": {"type": "string", "pattern": "^0x[0-9a-f]+$"},
+            "slice_index": {"type": ["integer", "null"], "minimum": 0, "maximum": 255},
+            "container_slice_count": {"type": ["integer", "null"], "minimum": 1, "maximum": 256},
+            "slice_sha256": {
+              "type": "string",
+              "maxLength": 2048
+            },
+            "container_sha256": {
+              "type": "string",
+              "maxLength": 2048
+            },
+            "slice_offset": {
+              "type": "string",
+              "pattern": "^0x[0-9a-f]+$"
+            },
+            "slice_size": {
+              "type": "string",
+              "pattern": "^0x[0-9a-f]+$"
+            },
+            "architecture": {
+              "type": "string",
+              "maxLength": 2048
+            },
+            "cpu_subtype": {
+              "type": "integer"
+            },
+            "caller": {
+              "type": "object",
+              "properties": {
+                "start_pc": {
+                  "type": "string",
+                  "pattern": "^0x[0-9a-f]+$"
+                },
+                "end_pc_exclusive": {
+                  "type": "string",
+                  "pattern": "^0x[0-9a-f]+$"
+                },
+                "boundary_source": {
+                  "type": "string",
+                  "maxLength": 2048
+                }
+              },
+              "required": [
+                "start_pc",
+                "end_pc_exclusive",
+                "boundary_source"
+              ],
+              "additionalProperties": false
+            },
+            "callee": {
+              "type": "object",
+              "properties": {
+                "start_pc": {
+                  "type": "string",
+                  "pattern": "^0x[0-9a-f]+$"
+                },
+                "end_pc_exclusive": {
+                  "type": "string",
+                  "pattern": "^0x[0-9a-f]+$"
+                },
+                "boundary_source": {
+                  "type": "string",
+                  "maxLength": 2048
+                }
+              },
+              "required": [
+                "start_pc",
+                "end_pc_exclusive",
+                "boundary_source"
+              ],
+              "additionalProperties": false
+            },
+            "call_pc": {
+              "type": "string",
+              "pattern": "^0x[0-9a-f]+$"
+            }
+          },
+          "required": [
+            "uuid",
+            "preferred_base",
+            "slice_index",
+            "container_slice_count",
+            "slice_sha256",
+            "container_sha256",
+            "slice_offset",
+            "slice_size",
+            "architecture",
+            "cpu_subtype",
+            "caller",
+            "callee",
+            "call_pc"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "call": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "pc": {
+              "type": "string",
+              "pattern": "^0x[0-9a-f]+$"
+            },
+            "word": {
+              "type": "string",
+              "pattern": "^0x[0-9a-f]{8}$"
+            },
+            "callee_pc": {
+              "type": "string",
+              "pattern": "^0x[0-9a-f]+$"
+            },
+            "provenance": {
+              "type": "object",
+              "properties": {
+                "call": {
+                  "type": "object",
+                  "properties": {
+                    "pc": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "word": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]{8}$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "slice_file_offset": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "container_file_offset": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "pc",
+                    "word",
+                    "slice_file_offset",
+                    "container_file_offset"
+                  ],
+                  "additionalProperties": false
+                },
+                "callee_entry": {
+                  "type": "object",
+                  "properties": {
+                    "pc": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "word": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]{8}$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "slice_file_offset": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "container_file_offset": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "pc",
+                    "word",
+                    "slice_file_offset",
+                    "container_file_offset"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "call",
+                "callee_entry"
+              ],
+              "additionalProperties": false
+            },
+            "declaration": {
+              "type": "object"
+            },
+            "abi": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "pc",
+            "word",
+            "callee_pc",
+            "provenance",
+            "declaration",
+            "abi"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "cfg": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "model": {
+              "const": "swift-bounded-structural-cfg-v1"
+            },
+            "external_exception_handling_unmodeled": {"const": true},
+            "exception_resume_proven": {"const": false},
+            "exception_transfers": {
+              "type": "array", "maxItems": 4096,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pc": {"type": "string", "pattern": "^0x[0-9a-f]+$"},
+                  "word": {"type": "string", "pattern": "^0x[0-9a-f]{8}$"},
+                  "slice_offset": {"type": "string", "pattern": "^0x[0-9a-f]+$"},
+                  "container_offset": {"type": "string", "pattern": "^0x[0-9a-f]+$"},
+                  "kind": {"const": "brk"}, "exception": {"const": "breakpoint"},
+                  "resume_proven": {"const": false}
+                },
+                "required": ["pc", "word", "slice_offset", "container_offset", "kind", "exception", "resume_proven"],
+                "additionalProperties": false
+              }
+            },
+            "status": {
+              "enum": [
+                "blocked",
+                "declined",
+                "unresolved",
+                "eligible_structural_only"
+              ]
+            },
+            "reason": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 2048
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "function_pc": {
+              "type": "string",
+              "pattern": "^0x[0-9a-f]+$"
+            },
+            "blocks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "start_pc": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-f]+$"
+                  },
+                  "end_pc_exclusive": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-f]+$"
+                  },
+                  "instructions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "pc": {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        "word": {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]{8}$"
+                        },
+                        "slice_offset": {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        "container_offset": {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "maxLength": 2048
+                        },
+                        "unresolved_reason": {
+                          "type": "string",
+                          "maxLength": 2048
+                        }
+                      },
+                      "required": [
+                        "pc",
+                        "word",
+                        "slice_offset",
+                        "container_offset",
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "maxItems": 4096
+                  },
+                  "successors": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "pc": {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        "word": {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]{8}$"
+                        },
+                        "slice_offset": {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        "container_offset": {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        "source_pc": {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        "target_pc": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "pattern": "^0x[0-9a-f]+$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "kind": {
+                          "type": "string",
+                          "maxLength": 2048
+                        }
+                      },
+                      "required": [
+                        "pc",
+                        "word",
+                        "slice_offset",
+                        "container_offset",
+                        "source_pc",
+                        "target_pc",
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "maxItems": 16384
+                  },
+                  "predecessors": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "pc": {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        "word": {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]{8}$"
+                        },
+                        "slice_offset": {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        "container_offset": {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        "source_pc": {
+                          "type": "string",
+                          "pattern": "^0x[0-9a-f]+$"
+                        },
+                        "target_pc": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "pattern": "^0x[0-9a-f]+$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "kind": {
+                          "type": "string",
+                          "maxLength": 2048
+                        }
+                      },
+                      "required": [
+                        "pc",
+                        "word",
+                        "slice_offset",
+                        "container_offset",
+                        "source_pc",
+                        "target_pc",
+                        "kind"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "maxItems": 16384
+                  }
+                },
+                "required": [
+                  "start_pc",
+                  "end_pc_exclusive",
+                  "instructions",
+                  "successors",
+                  "predecessors"
+                ],
+                "additionalProperties": false
+              },
+              "maxItems": 4096
+            },
+            "edges": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pc": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-f]+$"
+                  },
+                  "word": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-f]{8}$"
+                  },
+                  "slice_offset": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-f]+$"
+                  },
+                  "container_offset": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-f]+$"
+                  },
+                  "source_pc": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-f]+$"
+                  },
+                  "target_pc": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^0x[0-9a-f]+$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "kind": {
+                    "type": "string",
+                    "maxLength": 2048
+                  }
+                },
+                "required": [
+                  "pc",
+                  "word",
+                  "slice_offset",
+                  "container_offset",
+                  "source_pc",
+                  "target_pc",
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              "maxItems": 16384
+            },
+            "call_return_candidates": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "maxItems": 16384
+            },
+            "returns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pc": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-f]+$"
+                  },
+                  "word": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-f]{8}$"
+                  },
+                  "slice_offset": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-f]+$"
+                  },
+                  "container_offset": {
+                    "type": "string",
+                    "pattern": "^0x[0-9a-f]+$"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "maxLength": 2048
+                  },
+                  "unresolved_reason": {
+                    "type": "string",
+                    "maxLength": 2048
+                  }
+                },
+                "required": [
+                  "pc",
+                  "word",
+                  "slice_offset",
+                  "container_offset",
+                  "kind"
+                ],
+                "additionalProperties": false
+              },
+              "maxItems": 4096
+            },
+            "runtime_return_proven": {
+              "const": false
+            },
+            "dominance_proven": {
+              "const": false
+            },
+            "exclusive_path_proven": {
+              "const": false
+            },
+            "source_reconstruction_allowed": {
+              "const": false
+            },
+            "completeness": {
+              "type": "object",
+              "properties": {
+                "all_words_classified": {
+                  "type": "boolean"
+                },
+                "complete": {
+                  "type": "boolean"
+                },
+                "reason": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 2048
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "all_words_classified",
+                "complete",
+                "reason"
+              ],
+              "additionalProperties": false
+            },
+            "accounting": {
+              "type": "object",
+              "properties": {
+                "work": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "retained_words": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "blocks": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "edges": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "max_discovery_depth": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "work",
+                "retained_words",
+                "blocks",
+                "edges",
+                "max_discovery_depth"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "model",
+            "status",
+            "reason",
+            "function_pc",
+            "blocks",
+            "edges",
+            "call_return_candidates",
+            "returns",
+            "runtime_return_proven",
+            "dominance_proven",
+            "exclusive_path_proven",
+            "source_reconstruction_allowed",
+            "completeness",
+            "accounting"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "post_call": {
+      "type": "object",
+      "properties": {
+        "test_kind": {"const": "cmp_zero_bcond"},
+        "comparison_pc": {"type": "string", "pattern": "^0x[0-9a-f]+$"},
+        "comparison_word": {"type": "string", "pattern": "^0x[0-9a-f]{8}$"},
+        "test_condition": {"enum": ["eq", "ne"]},
+        "status": {
+          "enum": [
+            "unknown",
+            "candidate"
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 2048
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "test_pc": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^0x[0-9a-f]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "test_word": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^0x[0-9a-f]{8}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "test_register": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 2048
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_successor_pc": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^0x[0-9a-f]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "success_successor_pc": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^0x[0-9a-f]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "trace": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^0x[0-9a-f]+$"
+          },
+          "maxItems": 16
+        }
+      },
+      "required": [
+        "status",
+        "reason",
+        "test_pc",
+        "test_word",
+        "test_register",
+        "error_successor_pc",
+        "success_successor_pc",
+        "trace"
+      ],
+      "additionalProperties": false
+    },
+    "regions": {
+      "type": "object",
+      "properties": {
+        "partition": {
+          "type": "object",
+          "properties": {
+            "success_only_pcs": {"type": "array", "maxItems": 4096, "items": {"type": "string", "pattern": "^0x[0-9a-f]+$"}},
+            "error_only_pcs": {"type": "array", "maxItems": 4096, "items": {"type": "string", "pattern": "^0x[0-9a-f]+$"}},
+            "shared_pcs": {"type": "array", "maxItems": 4096, "items": {"type": "string", "pattern": "^0x[0-9a-f]+$"}},
+            "unreachable_pcs": {"type": "array", "maxItems": 4096, "items": {"type": "string", "pattern": "^0x[0-9a-f]+$"}}
+          },
+          "required": ["success_only_pcs", "error_only_pcs", "shared_pcs", "unreachable_pcs"],
+          "additionalProperties": false
+        },
+        "status": {
+          "enum": [
+            "unknown",
+            "structural_candidates"
+          ]
+        },
+        "success_entry_pc": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^0x[0-9a-f]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error_entry_pc": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^0x[0-9a-f]+$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "success",
+                  "error"
+                ]
+              },
+              "entry_pc": {
+                "type": "string",
+                "pattern": "^0x[0-9a-f]+$"
+              },
+              "reachability": {
+                "const": "unproven"
+              }
+            },
+            "required": [
+              "outcome",
+              "entry_pc",
+              "reachability"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 2
+        },
+        "tails": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pc": {
+                "type": "string",
+                "pattern": "^0x[0-9a-f]+$"
+              },
+              "kind": {
+                "const": "return"
+              },
+              "outcome": {
+                "enum": ["unknown", "success", "error", "shared", "unreachable"]
+              }
+            },
+            "required": [
+              "pc",
+              "kind",
+              "outcome"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 4096
+        }
+      },
+      "required": [
+        "status",
+        "success_entry_pc",
+        "error_entry_pc",
+        "paths",
+        "tails"
+      ],
+      "additionalProperties": false
+    },
+    "value_facts": {
+      "type": "object",
+      "properties": {
+        "seed": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "register": {
+                  "const": "x21"
+                },
+                "kind": {
+                  "const": "register_copy"
+                },
+                "origin": {
+                  "enum": ["abi_post_call_error:x21", "raw_post_call_register:x21"]
+                },
+                "width": {
+                  "const": 64
+                }
+              },
+              "required": [
+                "register",
+                "kind",
+                "origin",
+                "width"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pc": {
+                "type": "string",
+                "pattern": "^0x[0-9a-f]+$"
+              },
+              "origins": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "maxItems": 128
+              }
+            },
+            "required": [
+              "pc",
+              "origins"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 16
+        }
+      },
+      "required": [
+        "seed",
+        "observations"
+      ],
+      "additionalProperties": false
+    },
+    "completeness": {
+      "type": "object",
+      "properties": {
+        "complete": {
+          "type": "boolean"
+        },
+        "missing": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "maxItems": 128
+        }
+      },
+      "required": [
+        "complete",
+        "missing"
+      ],
+      "additionalProperties": false
+    },
+    "accounting": {
+      "type": "object",
+      "properties": {
+        "work": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "instructions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blocks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "edges": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "value_steps": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "encoded_bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "work",
+        "instructions",
+        "blocks",
+        "edges",
+        "value_steps",
+        "encoded_bytes"
+      ],
+      "additionalProperties": false
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 2048
+      },
+      "maxItems": 32
+    }
+  },
+  "required": [
+    "model_version",
+    "validation_model",
+    "profile",
+    "source_models",
+    "status",
+    "eligible",
+    "reason",
+    "identity",
+    "call",
+    "cfg",
+    "post_call",
+    "regions",
+    "value_facts",
+    "completeness",
+    "accounting",
+    "limitations"
+  ],
+  "additionalProperties": false
+}

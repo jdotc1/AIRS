@@ -3,6 +3,7 @@ import Darwin
 
 public enum EngineCommand: Sendable {
     case audit(input: URL)
+    case swiftErrorFlow(input: URL, options: SwiftFlowOptions)
     case diff(baseline: Data, current: Data)
     case handoff(report: Data, findingID: String)
     case symbols(report: Data, dsym: URL)
@@ -47,6 +48,7 @@ public actor EngineRunner {
 /// The lock protects launch/cancel/completion races between Foundation callbacks.
 private final class EngineInvocation: @unchecked Sendable {
     private let process = Process()
+    private let allowsPartialResult: Bool
     private let lock = NSLock()
     private let workDirectory: URL
     private let outputURL: URL
@@ -60,6 +62,7 @@ private final class EngineInvocation: @unchecked Sendable {
     private var cancellationRequested = false
 
     init(command: EngineCommand, configuration: EngineConfiguration) throws {
+        if case .swiftErrorFlow = command { allowsPartialResult = true } else { allowsPartialResult = false }
         let fileManager = FileManager.default
         let directory = fileManager.temporaryDirectory
             .appendingPathComponent("AIRS-\(UUID().uuidString)", isDirectory: true)
@@ -102,6 +105,8 @@ private final class EngineInvocation: @unchecked Sendable {
         do {
             let arguments: [String]
             switch command {
+            case .swiftErrorFlow(let input, let options):
+                arguments = options.arguments(input: input, output: outputURL)
             case .audit(let input):
                 arguments = ["audit", "--format", "json", "--output", outputURL.path,
                              "--", input.path]
@@ -186,7 +191,7 @@ private final class EngineInvocation: @unchecked Sendable {
             finish(.failure(CancellationError()))
             return
         }
-        guard process.terminationReason == .exit, process.terminationStatus == 0 else {
+        guard process.terminationReason == .exit, process.terminationStatus == 0 || (allowsPartialResult && process.terminationStatus == 1) else {
             let diagnostic = Self.readTail(stderrURL)
             finish(.failure(EngineError.failed(status: process.terminationStatus,
                                                diagnostic: diagnostic)))
@@ -198,7 +203,7 @@ private final class EngineInvocation: @unchecked Sendable {
         }
         do {
             let data = try ReportFiles.readBounded(outputURL)
-            finish(.success(EngineArtifact(data: data, statusText: Self.readTail(stdoutURL))))
+            finish(.success(EngineArtifact(data: data, statusText: process.terminationStatus == 1 ? "Partial Swift analysis; inspect completeness and omissions." : Self.readTail(stdoutURL))))
         } catch {
             finish(.failure(error))
         }

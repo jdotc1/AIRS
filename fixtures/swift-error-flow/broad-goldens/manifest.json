@@ -1,0 +1,55 @@
+{
+  "captured_before_broad_engine_changes": true,
+  "edge_model": "swift-sync-error-edges-v37",
+  "choice_model": "swift-return-choice-v45",
+  "entries": [
+    {
+      "path": "edge.default.json",
+      "sha256": "56a7c74229fcbdf826c515bcd978b0616ef843e16020e49261d6eb25e6990628"
+    },
+    {
+      "path": "edge.structured.json",
+      "sha256": "14791338fac5efef49240d4be0d5ba42c5f19d58eb199ce133110db75ffd88ae"
+    },
+    {
+      "path": "edge.structured.txt",
+      "sha256": "5aff018ce13cab7bc6ad03b7a8ba73c6a6c0d8a3c1056f29c1c46b1a3d82833e"
+    },
+    {
+      "path": "edge.macho",
+      "sha256": "71cae548916df2f1a6a430e8e2539850710387eb4a0c91c6a6889ffc3c92e00a"
+    },
+    {
+      "path": "shared.default.json",
+      "sha256": "3b7f0f4d84defba79a2c14cf43aadd9485bc3d6a2c0da0a9d582f31854d12703"
+    },
+    {
+      "path": "shared.structured.json",
+      "sha256": "82c492ce848b2754d17bb1554df4b95fcc8a795d7a2e842e9258489cac06c342"
+    },
+    {
+      "path": "shared.structured.txt",
+      "sha256": "13887c813934df7f6d7dc7347b446844744e916303851d6c13aceb203749e206"
+    },
+    {
+      "path": "shared.macho",
+      "sha256": "e9a01e57c5162a7218d3c30ec49674bfebf3a676d2eccc10ec9f80c1c7cfde93"
+    },
+    {
+      "path": "unknown.default.json",
+      "sha256": "fedd600c4ce7cd100db6edfdd08c64c25ef8e2f983fd8f60ede84f57e6ae16f2"
+    },
+    {
+      "path": "unknown.structured.json",
+      "sha256": "cc7491effc61f6312839063d1743763a75e982abad2b58465d716acc4f8fd2eb"
+    },
+    {
+      "path": "unknown.structured.txt",
+      "sha256": "043d6b4a01c02d83270f09f71a472e85bbfbd6f2876d8aa240364e2e2cb98cc6"
+    },
+    {
+      "path": "unknown.macho",
+      "sha256": "7182521fd2a7d2e9928c1c0c47cef9cb7c7cfbb646008320e6d65fdc5147d40b"
+    }
+  ]
+}

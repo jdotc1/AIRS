@@ -19,7 +19,9 @@ struct AIRSWindowView: View {
                     .navigationSplitViewColumnWidth(min: 200, ideal: 214, max: 250)
             } detail: {
                 VStack(spacing: 0) {
-                    if navigation.showsEntitlements {
+                    if navigation.showsSwiftFlow {
+                        SwiftFlowView(workspace: navigation.swiftFlow, audit: audit)
+                    } else if navigation.showsEntitlements {
                         EntitlementsView(workspace: entitlements,
                             navigationAllowed: navigation.allowsEntitlementNavigation(audit: audit, fileOpen: fileOpen))
                     } else {
@@ -31,7 +33,7 @@ struct AIRSWindowView: View {
                 .disabled(fileOpen.blocksActions)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .navigationTitle(navigation.showsEntitlements ? "Entitlements" : "Unwind Analysis")
+            .navigationTitle(navigation.showsSwiftFlow ? "Swift Error Flow" : (navigation.showsEntitlements ? "Entitlements" : "Unwind Analysis"))
             .toolbar { AIRSWindowToolbar(audit: audit, entitlements: entitlements,
                                          navigation: navigation, fileOpen: fileOpen) }
             LumenStatusBar {
@@ -142,7 +144,7 @@ struct AIRSWindowView: View {
                 Button("OK",role:.cancel) {fileOpen.dismissDecodeInventoryError()}
             } message: {Text(fileOpen.decodeInventoryError ?? "")}
         .dropDestination(for: URL.self) { urls, _ in
-            guard !urls.isEmpty, !fileOpen.blocksActions, !audit.blocksFileOpen, !entitlements.isBusy else { return false }
+            guard !navigation.swiftFlow.isBusy, !urls.isEmpty, !fileOpen.blocksActions, !audit.blocksFileOpen, !entitlements.isBusy else { return false }
             fileOpen.open(urls, audit: audit, entitlements: entitlements, navigation: navigation)
             return true
         }
@@ -157,13 +159,13 @@ struct AIRSWindowView: View {
             + entitlementIDs.sorted{$0.uuidString<$1.uuidString}.map{.init(family:.entitlements,historyID:$0)}
     }
     private var isWorking: Bool {
-        fileOpen.isBusy || (navigation.showsEntitlements ? entitlements.isWorking : audit.isBusy)
+        navigation.swiftFlow.isBusy || fileOpen.isBusy || (navigation.showsEntitlements ? entitlements.isWorking : audit.isBusy)
     }
     private var currentStatus: String {
-        fileOpen.isBusy ? fileOpen.status : (navigation.showsEntitlements ? entitlements.status : audit.status)
+        navigation.showsSwiftFlow ? navigation.swiftFlow.status : fileOpen.isBusy ? fileOpen.status : (navigation.showsEntitlements ? entitlements.status : audit.status)
     }
     private var cancelAction: (() -> Void)? {
-        fileOpen.isBusy ? (fileOpen.canCancel ? fileOpen.cancel : nil) :
+        navigation.swiftFlow.isBusy ? navigation.swiftFlow.cancel : fileOpen.isBusy ? (fileOpen.canCancel ? fileOpen.cancel : nil) :
             (navigation.showsEntitlements ? (entitlements.canCancel ? entitlements.cancel : nil) :
                 (audit.isBusy && audit.canCancel ? audit.cancel : nil))
     }
@@ -180,6 +182,7 @@ private struct AIRSSidebar: View {
         // Use the complete source list, including Lumen's toolbar-safe scroll layout
         // and row input handling, rather than wrapping display rows in custom buttons.
         LumenSourceList(sections: [
+            section("Swift", [.swiftFlow]),
             section("Unwind", [.audit, .auditBatch, .auditHistory, .auditLibrary]),
             section("Entitlements", [.entitlements, .entitlementBatch, .entitlementHistory,
                                       .entitlementLibrary, .entitlementRecovery])
@@ -216,7 +219,10 @@ private struct AIRSWindowToolbar: ToolbarContent {
             HStack(spacing: Lumen.Space.s5) {
                 HStack(spacing: Lumen.Space.s5) {
                     Menu {
-                        if navigation.showsEntitlements {
+                        if navigation.showsSwiftFlow {
+                            Button("Binary or App…", action: navigation.swiftFlow.chooseInput)
+                            Button("Saved Swift Report…", action: navigation.swiftFlow.openSaved)
+                        } else if navigation.showsEntitlements {
                             if navigation.destination(audit: audit, entitlements: entitlements) == .entitlements {
                                 Button("Previous App…") { entitlements.choose(.previous) }
                                 Button("Current App…") { entitlements.choose(.current) }
@@ -236,7 +242,7 @@ private struct AIRSWindowToolbar: ToolbarContent {
                                 .disabled(audit.hasUnretainedBatchReports)
                         }
                     } label: { HStack(spacing: 5) { Image(systemName: "folder"); Text("Open") }.fixedSize() }
-                    .disabled(audit.isBusy || entitlements.isBusy || fileOpen.blocksActions || audit.hasUnsavedBatchHistory)
+                    .disabled(navigation.swiftFlow.isBusy || audit.isBusy || entitlements.isBusy || fileOpen.blocksActions || audit.hasUnsavedBatchHistory)
                     Menu {
                         if navigation.showsEntitlements {
                             Button("Swap Previous and Current", action: entitlements.swap)
@@ -252,13 +258,16 @@ private struct AIRSWindowToolbar: ToolbarContent {
                             Button("Keep Current Report", action: audit.keepCurrentReport).disabled(audit.report == nil)
                         }
                     } label: { HStack(spacing: 5) { Image(systemName: "ellipsis.circle"); Text("Actions") }.fixedSize() }
-                    .disabled(audit.isBusy || entitlements.isBusy || fileOpen.blocksActions ||
+                    .disabled(navigation.swiftFlow.isBusy || audit.isBusy || entitlements.isBusy || fileOpen.blocksActions ||
                               (navigation.showsEntitlements
                                ? navigation.destination(audit: audit, entitlements: entitlements) != .entitlements
                                : navigation.destination(audit: audit, entitlements: entitlements) != .audit))
                 }
                 LumenToolbarDivider()
-                if navigation.showsEntitlements {
+                if navigation.showsSwiftFlow {
+                    Button("Export", systemImage: "square.and.arrow.up", action: navigation.swiftFlow.chooseExport)
+                        .disabled(navigation.swiftFlow.isBusy || navigation.swiftFlow.report == nil || fileOpen.blocksActions)
+                } else if navigation.showsEntitlements {
                     Menu {
                         Button("Complete JSON…", action: entitlements.chooseExport)
                         Button("Text Summary…", action: entitlements.chooseTextExport)

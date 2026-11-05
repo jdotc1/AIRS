@@ -1,0 +1,161 @@
+{
+  "address_space": "preferred_vm",
+  "call_details_complete": true,
+  "calls": [
+    {
+      "call_image_offset": "0x1000",
+      "call_pc": "0x100001000",
+      "call_word": "0x94000008",
+      "callee": {
+        "convention": "swift_sync_untyped_throws",
+        "error_register": "x21",
+        "image_offset": "0x1020",
+        "module": "Demo",
+        "name": "parse",
+        "parameters": [
+          "Swift.Int"
+        ],
+        "result": "Swift.Int",
+        "source": "exact_external_symbol_grammar",
+        "symbol": "_$s4Demo5parseyS2iKF"
+      },
+      "callee_pc": "0x100001020",
+      "caller_pc": "0x100001000",
+      "error_constant": {
+        "call_return_proven": false,
+        "caller_return_type_proven": false,
+        "exclusive_path_proven": false,
+        "handler_semantics_proven": false,
+        "reason": "structural_presentation_not_eligible",
+        "register": "x0",
+        "runtime_value_proven": false,
+        "source_reconstruction_allowed": false,
+        "status": "declined"
+      },
+      "error_pc": "0x100001008",
+      "error_region": {
+        "instructions": [
+          {
+            "kind": "ret",
+            "pc": "0x100001008",
+            "word": "0xd65f03c0"
+          }
+        ],
+        "reason": "error_region_instruction_unmodeled",
+        "status": "declined"
+      },
+      "presentation": {
+        "limitations": [
+          "Structural candidate only; not reconstructed Swift source.",
+          "Calls remain opaque; displayed targets do not identify runtime behavior.",
+          "Caller-local direct-edge checks do not exclude indirect or external entries.",
+          "Reachability, exclusive entry, call return and handler semantics remain unproven."
+        ],
+        "reason": "region_not_recovered",
+        "source_reconstruction_allowed": false,
+        "status": "blocked"
+      },
+      "return_choice": {
+        "call_return_proven": false,
+        "caller_return_type_proven": false,
+        "exclusive_path_proven": false,
+        "handler_semantics_proven": false,
+        "reason": "structural_presentation_not_eligible",
+        "runtime_value_proven": false,
+        "source_reconstruction_allowed": false,
+        "status": "unresolved"
+      },
+      "status": "recovered_candidate",
+      "success_constant": {
+        "caller_return_type_proven": false,
+        "exclusive_path_proven": false,
+        "reason": "structural_presentation_not_eligible",
+        "register": "x0",
+        "runtime_value_proven": false,
+        "source_reconstruction_allowed": false,
+        "status": "declined"
+      },
+      "success_pc": "0x100001010",
+      "success_result": {
+        "caller_return_type_proven": false,
+        "exclusive_path_proven": false,
+        "reason": "structural_presentation_not_eligible",
+        "register": "x0",
+        "runtime_value_proven": false,
+        "source_reconstruction_allowed": false,
+        "status": "declined"
+      },
+      "test_pc": "0x100001004",
+      "tested_register": "x21",
+      "window": [
+        {
+          "kind": "xcbz",
+          "pc": "0x100001004",
+          "word": "0xb4000075"
+        }
+      ]
+    }
+  ],
+  "error_constant_model_version": "swift-error-constant-v19",
+  "error_region_model_version": "swift-sync-error-region-v24",
+  "flag_entry_model_version": "swift-compare-flag-entries-v1",
+  "functions": [
+    {
+      "function_pc": "0x100001000",
+      "name": "_$s4Demo6handleyS2iF",
+      "scanned_words": 8,
+      "status": "complete"
+    },
+    {
+      "function_pc": "0x100001020",
+      "name": "_$s4Demo5parseyS2iKF",
+      "scanned_words": 1,
+      "status": "complete"
+    }
+  ],
+  "image": {
+    "architecture": "arm64",
+    "container_sha256": "71cae548916df2f1a6a430e8e2539850710387eb4a0c91c6a6889ffc3c92e00a",
+    "cpu_subtype": 0,
+    "preferred_base": "0x100000000",
+    "slice_offset": 0,
+    "slice_sha256": "71cae548916df2f1a6a430e8e2539850710387eb4a0c91c6a6889ffc3c92e00a",
+    "slice_size": 4211,
+    "uuid": "00010203-0405-0607-0809-0a0b0c0d0e0f"
+  },
+  "input_issues": [],
+  "limitations": [
+    "Structural instruction-word candidates, not runtime reachability or dominance proof.",
+    "Exact symbol declarations are not authenticated runtime targets or function identity.",
+    "Only ordinary synchronous untyped Swift Int-to-Int, Int-to-Void or parameterless Int/Void free-function declarations are admitted.",
+    "Only bounded 64-bit MOV/NOP, CMP-only W MOV and X/W MOVZ/MOVN/MOVK prefixes, and forward CBZ/CBNZ or adjacent CMP-zero EQ/NE return windows are recovered.",
+    "Embedded-data, relocation and symbol-only function boundaries are excluded by existing admission tags.",
+    "No catch type, handler semantics, source equivalence, unwind verdict or async claim is made.",
+    "Error intervals are structural candidates; opaque calls may not return and joins are not proven reachable.",
+    "Entry validation covers only direct edges in the bounded caller; indirect and external entries, reachability and exclusivity remain unproven."
+  ],
+  "model_version": "swift-sync-error-edges-v37",
+  "reasons": [],
+  "region_incoming_model_version": "swift-region-direct-entries-v7",
+  "report_kind": "airs.swift_error_flow",
+  "return_choice_model_version": "swift-return-choice-v45",
+  "schema_version": 1,
+  "scope": "structural_call_return_edges",
+  "structured_presentation_model_version": "swift-structural-presentation-v10",
+  "success_constant_model_version": "swift-success-constant-v17",
+  "success_result_model_version": "swift-success-result-v24",
+  "summary": {
+    "declined_error_region_count": 1,
+    "declined_retained_call_count": 0,
+    "observed_direct_call_count": 1,
+    "omitted_call_count": 0,
+    "presentation_blocked_count": 1,
+    "presentation_eligible_structural_only_count": 0,
+    "presentation_unresolved_count": 0,
+    "recovered_candidate_count": 1,
+    "recovered_error_region_count": 0,
+    "retained_call_count": 1,
+    "scanned_word_count": 9
+  },
+  "word_scan_complete": true
+}

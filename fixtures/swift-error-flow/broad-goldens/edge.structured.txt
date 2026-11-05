@@ -1,0 +1,51 @@
+AIRS Swift error-path structural review
+Source reconstruction: disabled
+Structural candidates only; reachability, exclusive entry, call return and handler meaning remain unproven.
+Caller-local direct-edge checks do not exclude indirect or external entries. Calls remain opaque.
+Address space: "preferred_vm"
+Image identity (producer facts; not reverified): {"architecture": "arm64", "container_sha256": "71cae548916df2f1a6a430e8e2539850710387eb4a0c91c6a6889ffc3c92e00a", "cpu_subtype": 0, "preferred_base": "0x100000000", "slice_offset": 0, "slice_sha256": "71cae548916df2f1a6a430e8e2539850710387eb4a0c91c6a6889ffc3c92e00a", "slice_size": 4211, "uuid": "00010203-0405-0607-0809-0a0b0c0d0e0f"}
+Models: {"error_region_model_version": "swift-sync-error-region-v24", "model_version": "swift-sync-error-edges-v37", "region_incoming_model_version": "swift-region-direct-entries-v7", "structured_presentation_model_version": "swift-structural-presentation-v10"}
+Success-result model: "swift-success-result-v24"
+Success-constant model: "swift-success-constant-v17"
+Error-constant model: "swift-error-constant-v19"
+Return-choice model: "swift-return-choice-v45"
+Full producer summary (not filtered by displayed rows): {"declined_error_region_count": 1, "declined_retained_call_count": 0, "observed_direct_call_count": 1, "omitted_call_count": 0, "presentation_blocked_count": 1, "presentation_eligible_structural_only_count": 0, "presentation_unresolved_count": 0, "recovered_candidate_count": 1, "recovered_error_region_count": 0, "retained_call_count": 1, "scanned_word_count": 9}
+Word scan complete: true
+Call details complete: true
+Edge decline reason totals detail rows omitted by renderer: 0
+Input issue detail rows omitted by renderer: 0
+Retained call rows available: 1
+Call candidate
+  Call evidence: {"call_image_offset": "0x1000", "call_pc": "0x100001000", "call_word": "0x94000008", "callee_pc": "0x100001020", "caller_pc": "0x100001000", "status": "recovered_candidate"}
+  Callee declaration (not runtime identity): {"convention": "swift_sync_untyped_throws", "error_register": "x21", "image_offset": "0x1020", "module": "Demo", "name": "parse", "parameters": ["Swift.Int"], "result": "Swift.Int", "source": "exact_external_symbol_grammar", "symbol": "_$s4Demo5parseyS2iKF"}
+  Success result (selected-path register evidence only): {"caller_return_type_proven": false, "exclusive_path_proven": false, "reason": "structural_presentation_not_eligible", "register": "x0", "runtime_value_proven": false, "source_reconstruction_allowed": false, "status": "declined"}
+    Result-path instruction: unavailable (missing field)
+  Success constant (selected-path bits only): {"caller_return_type_proven": false, "exclusive_path_proven": false, "reason": "structural_presentation_not_eligible", "register": "x0", "runtime_value_proven": false, "source_reconstruction_allowed": false, "status": "declined"}
+    Constant-path instruction: unavailable (missing field)
+  Error constant (selected-path bits; call return unproven): {"call_return_proven": false, "caller_return_type_proven": false, "exclusive_path_proven": false, "handler_semantics_proven": false, "reason": "structural_presentation_not_eligible", "register": "x0", "runtime_value_proven": false, "source_reconstruction_allowed": false, "status": "declined"}
+    Error-constant instruction: unavailable (missing field)
+  Return choice (structural outcomes; source disabled): {"call_return_proven": false, "caller_return_type_proven": false, "exclusive_path_proven": false, "handler_semantics_proven": false, "reason": "structural_presentation_not_eligible", "runtime_value_proven": false, "source_reconstruction_allowed": false, "status": "unresolved"}
+  Recorded return edges: {"error_pc": "0x100001008", "success_pc": "0x100001010", "test_pc": "0x100001004", "tested_register": "x21"}
+  Post-call instruction evidence: {"kind": "xcbz", "pc": "0x100001004", "word": "0xb4000075"}
+  Post-call instruction evidence detail rows omitted by renderer: 0
+  Presentation: {"reason": "region_not_recovered", "status": "blocked"}
+  Structured plan: withheld
+  Region evidence: {"reason": "error_region_instruction_unmodeled", "status": "declined"}
+    Region instruction evidence: {"kind": "ret", "pc": "0x100001008", "word": "0xd65f03c0"}
+    Region instruction evidence detail rows omitted by renderer: 0
+  Candidate limitation: "Structural candidate only; not reconstructed Swift source."
+  Candidate limitation: "Calls remain opaque; displayed targets do not identify runtime behavior."
+  Candidate limitation: "Caller-local direct-edge checks do not exclude indirect or external entries."
+  Candidate limitation: "Reachability, exclusive entry, call return and handler semantics remain unproven."
+  Candidate limitation detail rows omitted by renderer: 0
+Retained call rows omitted by renderer: 0
+Renderer omissions are additional to producer omitted calls, unscanned words and truncated evidence details.
+Report limitation: "Structural instruction-word candidates, not runtime reachability or dominance proof."
+Report limitation: "Exact symbol declarations are not authenticated runtime targets or function identity."
+Report limitation: "Only ordinary synchronous untyped Swift Int-to-Int, Int-to-Void or parameterless Int/Void free-function declarations are admitted."
+Report limitation: "Only bounded 64-bit MOV/NOP, CMP-only W MOV and X/W MOVZ/MOVN/MOVK prefixes, and forward CBZ/CBNZ or adjacent CMP-zero EQ/NE return windows are recovered."
+Report limitation: "Embedded-data, relocation and symbol-only function boundaries are excluded by existing admission tags."
+Report limitation: "No catch type, handler semantics, source equivalence, unwind verdict or async claim is made."
+Report limitation: "Error intervals are structural candidates; opaque calls may not return and joins are not proven reachable."
+Report limitation: "Entry validation covers only direct edges in the bounded caller; indirect and external entries, reachability and exclusivity remain unproven."
+Report limitation detail rows omitted by renderer: 0

@@ -1,0 +1,105 @@
+AIRS Swift error-path structural review
+Source reconstruction: disabled
+Structural candidates only; reachability, exclusive entry, call return and handler meaning remain unproven.
+Caller-local direct-edge checks do not exclude indirect or external entries. Calls remain opaque.
+Address space: "preferred_vm"
+Image identity (producer facts; not reverified): {"architecture": "arm64", "container_sha256": "e9a01e57c5162a7218d3c30ec49674bfebf3a676d2eccc10ec9f80c1c7cfde93", "cpu_subtype": 0, "preferred_base": "0x100000000", "slice_offset": 0, "slice_sha256": "e9a01e57c5162a7218d3c30ec49674bfebf3a676d2eccc10ec9f80c1c7cfde93", "slice_size": 4243, "uuid": "00010203-0405-0607-0809-0a0b0c0d0e0f"}
+Models: {"error_region_model_version": "swift-sync-error-region-v24", "model_version": "swift-sync-error-edges-v37", "region_incoming_model_version": "swift-region-direct-entries-v7", "structured_presentation_model_version": "swift-structural-presentation-v10"}
+Success-result model: "swift-success-result-v24"
+Success-constant model: "swift-success-constant-v17"
+Error-constant model: "swift-error-constant-v19"
+Return-choice model: "swift-return-choice-v45"
+Full producer summary (not filtered by displayed rows): {"declined_error_region_count": 0, "declined_retained_call_count": 1, "observed_direct_call_count": 2, "omitted_call_count": 0, "presentation_blocked_count": 1, "presentation_eligible_structural_only_count": 1, "presentation_unresolved_count": 0, "recovered_candidate_count": 1, "recovered_error_region_count": 1, "retained_call_count": 2, "scanned_word_count": 17}
+Word scan complete: true
+Call details complete: true
+Edge decline reason totals: {"code": "callee_not_exact_function_entry", "count": 1}
+Edge decline reason totals detail rows omitted by renderer: 0
+Input issue detail rows omitted by renderer: 0
+Retained call rows available: 2
+Call candidate
+  Call evidence: {"call_image_offset": "0x1000", "call_pc": "0x100001000", "call_word": "0x94000010", "callee_pc": "0x100001040", "caller_pc": "0x100001000", "status": "recovered_candidate"}
+  Callee declaration (not runtime identity): {"convention": "swift_sync_untyped_throws", "error_register": "x21", "image_offset": "0x1040", "module": "Demo", "name": "parse", "parameters": ["Swift.Int"], "result": "Swift.Int", "source": "exact_external_symbol_grammar", "symbol": "_$s4Demo5parseyS2iKF"}
+  Success result (selected-path register evidence only): {"caller_return_type_proven": false, "exclusive_path_proven": false, "reason": "success_result_not_preserved", "register": "x0", "runtime_value_proven": false, "source_reconstruction_allowed": false, "status": "declined"}
+    Result-path instruction: {"pc": "0x100001004", "phase": "post_call", "word": "0xb40000b5"}
+    Result-path instruction: {"pc": "0x100001018", "phase": "success", "word": "0xd2800000"}
+    Result-path instruction detail rows omitted by renderer: 0
+  Success constant (selected-path bits only): {"bit_width": 64, "call_pc": "0x100001000", "caller_return_type_proven": false, "constant_bits": "0x0000000000000000", "depends_on_call_result": false, "exclusive_path_proven": false, "reason": "recorded_success_path_assigns_constant", "register": "x0", "return_pc": "0x100001028", "runtime_value_proven": false, "source_reconstruction_allowed": false, "status": "constant_register_candidate", "success_pc": "0x100001018"}
+    Constant-path instruction: {"pc": "0x100001018", "phase": "success", "word": "0xd2800000"}
+    Constant-path instruction: {"kind": "ldp", "pc": "0x10000101c", "phase": "return_tail", "word": "0xa9427bfd"}
+    Constant-path instruction: {"kind": "ldp", "pc": "0x100001020", "phase": "return_tail", "word": "0xa94157f6"}
+    Constant-path instruction: {"kind": "add", "pc": "0x100001024", "phase": "return_tail", "word": "0x9100c3ff"}
+    Constant-path instruction: {"kind": "ret", "pc": "0x100001028", "phase": "return_tail", "word": "0xd65f03c0"}
+    Constant-path instruction detail rows omitted by renderer: 0
+  Error constant (selected-path bits; call return unproven): {"bit_width": 64, "call_pc": "0x100001000", "call_return_proven": false, "caller_return_type_proven": false, "constant_bits": "0xffffffffffffffff", "depends_on_call_result": false, "error_pc": "0x100001008", "exclusive_path_proven": false, "handler_semantics_proven": false, "opaque_call_count": 1, "reason": "recorded_error_path_assigns_constant", "register": "x0", "return_pc": "0x100001028", "runtime_value_proven": false, "source_reconstruction_allowed": false, "status": "constant_register_candidate"}
+    Error-constant instruction: {"pc": "0x100001008", "phase": "error", "word": "0xaa1503e0"}
+    Error-constant instruction: {"constant_state": "cleared_after_opaque_call", "pc": "0x10000100c", "phase": "error", "word": "0x94000010"}
+    Error-constant instruction: {"pc": "0x100001010", "phase": "error", "word": "0x92800000"}
+    Error-constant instruction: {"pc": "0x100001014", "phase": "error", "word": "0x14000002"}
+    Error-constant instruction: {"kind": "ldp", "pc": "0x10000101c", "phase": "return_tail", "word": "0xa9427bfd"}
+    Error-constant instruction: {"kind": "ldp", "pc": "0x100001020", "phase": "return_tail", "word": "0xa94157f6"}
+    Error-constant instruction: {"kind": "add", "pc": "0x100001024", "phase": "return_tail", "word": "0x9100c3ff"}
+    Error-constant instruction: {"kind": "ret", "pc": "0x100001028", "phase": "return_tail", "word": "0xd65f03c0"}
+    Error-constant instruction detail rows omitted by renderer: 0
+  Return choice (structural outcomes; source disabled): {"call_pc": "0x100001000", "call_return_proven": false, "caller_return_type_proven": false, "condition": {"error_when": "nonzero", "register": "x21", "test_pc": "0x100001004"}, "error": {"bit_width": 64, "constant_bits": "0xffffffffffffffff", "kind": "constant_bits"}, "exclusive_path_proven": false, "handler_semantics_proven": false, "reason": "bound_selected_path_outcomes", "return_pc": "0x100001028", "runtime_value_proven": false, "same_constant_bits": false, "source_reconstruction_allowed": false, "status": "structural_choice_candidate", "success": {"bit_width": 64, "constant_bits": "0x0000000000000000", "kind": "constant_bits"}}
+  Recorded literal outcomes (structural; runtime unproven): "success x0 bits 0x0000000000000000; error x0 bits 0xffffffffffffffff"
+  Recorded return edges: {"error_pc": "0x100001008", "success_pc": "0x100001018", "test_pc": "0x100001004", "tested_register": "x21"}
+  Post-call instruction evidence: {"kind": "xcbz", "pc": "0x100001004", "word": "0xb40000b5"}
+  Post-call instruction evidence detail rows omitted by renderer: 0
+  Presentation: {"reason": "complete_caller_local_direct_validation", "status": "eligible_structural_only"}
+  Label: "Structural error-path candidate"
+  Condition (structural): {"error_when": "nonzero", "register": "x21", "test_pc": "0x100001004"}
+  Error interval: {"end_pc_exclusive": "0x100001018", "start_pc": "0x100001008"}
+    Instruction: {"kind": "mov", "pc": "0x100001008", "word": "0xaa1503e0"}
+    Instruction: {"call_target_pc": "0x10000104c", "kind": "bl", "pc": "0x10000100c", "semantics": "opaque_call", "word": "0x94000010"}
+    Instruction: {"kind": "movn", "pc": "0x100001010", "word": "0x92800000"}
+    Instruction: {"kind": "b", "pc": "0x100001014", "target_pc": "0x10000101c", "word": "0x14000002"}
+    Instruction detail rows omitted by renderer: 0
+  Success entry: "0x100001018"
+  Shared restore/return candidate (state unproven): {"end_pc_exclusive": "0x10000102c", "restore_state_proven": false, "start_pc": "0x10000101c"}
+  Success-arm interval evidence: {"end_pc_exclusive": "0x10000101c", "start_pc": "0x100001018"}
+    Success-arm instruction: {"kind": "movz", "pc": "0x100001018", "word": "0xd2800000"}
+    Success-arm instruction detail rows omitted by renderer: 0
+  Shared tail interval evidence: {"end_pc_exclusive": "0x10000102c", "restore_state_proven": false, "start_pc": "0x10000101c"}
+    Shared tail instruction: {"kind": "ldp", "pc": "0x10000101c", "word": "0xa9427bfd"}
+    Shared tail instruction: {"kind": "ldp", "pc": "0x100001020", "word": "0xa94157f6"}
+    Shared tail instruction: {"kind": "add", "pc": "0x100001024", "word": "0x9100c3ff"}
+    Shared tail instruction: {"kind": "ret", "pc": "0x100001028", "word": "0xd65f03c0"}
+    Shared tail instruction detail rows omitted by renderer: 0
+  Incoming validation: {"caller_scan_complete": true, "entry_details_complete": true, "exclusive_entry_proven": false, "scanned_word_count": 16, "scope": "caller_local_direct_edges", "status": "no_unexpected_direct_entries", "unclassified_details_complete": true, "unclassified_word_count": 0, "unexpected_entry_count": 0}
+    Unexpected direct entry detail rows omitted by renderer: 0
+    Unclassified word detail rows omitted by renderer: 0
+  Candidate limitation: "Structural candidate only; not reconstructed Swift source."
+  Candidate limitation: "Calls remain opaque; displayed targets do not identify runtime behavior."
+  Candidate limitation: "Caller-local direct-edge checks do not exclude indirect or external entries."
+  Candidate limitation: "Reachability, exclusive entry, call return and handler semantics remain unproven."
+  Candidate limitation detail rows omitted by renderer: 0
+Call candidate
+  Call evidence: {"call_image_offset": "0x100c", "call_pc": "0x10000100c", "call_word": "0x94000010", "callee_pc": "0x10000104c", "caller_pc": "0x100001000", "status": "declined"}
+  Edge decline reason: "callee_not_exact_function_entry"
+  Success result (selected-path register evidence only): {"caller_return_type_proven": false, "exclusive_path_proven": false, "reason": "callee_result_not_scalar_int", "register": "x0", "runtime_value_proven": false, "source_reconstruction_allowed": false, "status": "declined"}
+    Result-path instruction: unavailable (missing field)
+  Success constant (selected-path bits only): {"caller_return_type_proven": false, "exclusive_path_proven": false, "reason": "callee_result_outside_admitted_subset", "register": "x0", "runtime_value_proven": false, "source_reconstruction_allowed": false, "status": "declined"}
+    Constant-path instruction: unavailable (missing field)
+  Error constant (selected-path bits; call return unproven): {"call_return_proven": false, "caller_return_type_proven": false, "exclusive_path_proven": false, "handler_semantics_proven": false, "reason": "callee_result_outside_admitted_subset", "register": "x0", "runtime_value_proven": false, "source_reconstruction_allowed": false, "status": "declined"}
+    Error-constant instruction: unavailable (missing field)
+  Return choice (structural outcomes; source disabled): {"call_return_proven": false, "caller_return_type_proven": false, "exclusive_path_proven": false, "handler_semantics_proven": false, "reason": "structural_presentation_not_eligible", "runtime_value_proven": false, "source_reconstruction_allowed": false, "status": "unresolved"}
+  Recorded return edges: {}
+  Post-call instruction evidence detail rows omitted by renderer: 0
+  Presentation: {"reason": "edge_not_recovered", "status": "blocked"}
+  Structured plan: withheld
+  Candidate limitation: "Structural candidate only; not reconstructed Swift source."
+  Candidate limitation: "Calls remain opaque; displayed targets do not identify runtime behavior."
+  Candidate limitation: "Caller-local direct-edge checks do not exclude indirect or external entries."
+  Candidate limitation: "Reachability, exclusive entry, call return and handler semantics remain unproven."
+  Candidate limitation detail rows omitted by renderer: 0
+Retained call rows omitted by renderer: 0
+Renderer omissions are additional to producer omitted calls, unscanned words and truncated evidence details.
+Report limitation: "Structural instruction-word candidates, not runtime reachability or dominance proof."
+Report limitation: "Exact symbol declarations are not authenticated runtime targets or function identity."
+Report limitation: "Only ordinary synchronous untyped Swift Int-to-Int, Int-to-Void or parameterless Int/Void free-function declarations are admitted."
+Report limitation: "Only bounded 64-bit MOV/NOP, CMP-only W MOV and X/W MOVZ/MOVN/MOVK prefixes, and forward CBZ/CBNZ or adjacent CMP-zero EQ/NE return windows are recovered."
+Report limitation: "Embedded-data, relocation and symbol-only function boundaries are excluded by existing admission tags."
+Report limitation: "No catch type, handler semantics, source equivalence, unwind verdict or async claim is made."
+Report limitation: "Error intervals are structural candidates; opaque calls may not return and joins are not proven reachable."
+Report limitation: "Entry validation covers only direct edges in the bounded caller; indirect and external entries, reachability and exclusivity remain unproven."
+Report limitation detail rows omitted by renderer: 0

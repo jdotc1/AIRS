@@ -16,7 +16,7 @@ import struct
 import uuid as uuid_module
 from bisect import bisect_right
 
-from .types import FunctionRange, InputError, Issue, Limits, MachOImage, Section
+from .types import FunctionRange, InputError, Issue, Limits, MachOImage, Section, _MachOAdmissionSeal
 
 _U64_LIMIT = 1 << 64
 _CPU_ARM64 = 0x0100000C
@@ -58,12 +58,12 @@ def _check_nonoverlap(ranges: list[tuple[int, int, int]], code: str, label: str)
         previous_end = end
 
 
-def _slice(data: bytes, requested_arch: str) -> tuple[bytes, int, tuple[int, int] | None]:
+def _slice(data: bytes, requested_arch: str) -> tuple[bytes, int, tuple[int, int] | None, int, int]:
     magic = data[:4]
     layouts = {b"\xca\xfe\xba\xbe": (">", False), b"\xbe\xba\xfe\xca": ("<", False),
                b"\xca\xfe\xba\xbf": (">", True), b"\xbf\xba\xfe\xca": ("<", True)}
     if magic not in layouts:
-        return data, 0, None
+        return data, 0, None, 0, 1
     endian, fat64 = layouts[magic]
     _extent(0, 8, len(data), "truncated_fat_header", "FAT header")
     count = struct.unpack_from(endian + "I", data, 4)[0]
@@ -102,8 +102,8 @@ def _slice(data: bytes, requested_arch: str) -> tuple[bytes, int, tuple[int, int
     _check_nonoverlap(ranges, "overlapping_fat_slices", "FAT slice")
     if not candidates:
         raise InputError("architecture_unavailable", f"No supported {requested_arch} slice is available")
-    _, offset, size, identity = min(candidates)
-    return data[offset:offset + size], offset, identity
+    preference, offset, size, identity = min(candidates)
+    return data[offset:offset + size], offset, identity, preference[2], count
 
 
 def _function_starts(data: bytes, offset: int, size: int, base: int,
@@ -200,7 +200,7 @@ def _symbol_names(data: bytes, command: tuple[int, int, int, int] | None,
 
 
 def parse_macho(data: bytes, path: str = "<memory>", limits: Limits = Limits(),
-                requested_arch: str = "auto") -> MachOImage:
+                requested_arch: str = "auto", *, _owned_digest_receipt=None) -> MachOImage:
     """Parse a bounded supported slice and independent function boundaries."""
     if requested_arch not in ("auto", "arm64", "arm64e"):
         raise InputError("invalid_architecture_request", "Architecture must be auto, arm64, or arm64e")
@@ -213,7 +213,7 @@ def parse_macho(data: bytes, path: str = "<memory>", limits: Limits = Limits(),
     if len(data) > limits.max_file_bytes:
         raise InputError("file_size_limit", "The input exceeds the configured file-size limit")
     _extent(0, 4, len(data), "truncated_magic", "Mach-O magic")
-    selected, slice_offset, advertised = _slice(data, requested_arch)
+    selected, slice_offset, advertised, slice_index, slice_count = _slice(data, requested_arch)
     if selected[:4] != b"\xcf\xfa\xed\xfe":
         if selected[:4] in (b"\xfe\xed\xfa\xcf", b"\xfe\xed\xfa\xce", b"\xce\xfa\xed\xfe"):
             raise InputError("unsupported_macho_format", "Only little-endian 64-bit Mach-O images are supported", 0)
@@ -463,8 +463,22 @@ def parse_macho(data: bytes, path: str = "<memory>", limits: Limits = Limits(),
         functions.append(FunctionRange(address, end, names.get(address, f"sub_{address:x}"), boundary_source))
     if not functions:
         issues.append(Issue("no_function_boundaries", "No independent function boundaries are available; compact ranges do not establish them"))
-    container_digest = hashlib.sha256(data).hexdigest()
-    return MachOImage(selected, path, container_digest,
-                      container_digest if slice_offset == 0 and len(selected) == len(data) else hashlib.sha256(selected).hexdigest(),
+    if _owned_digest_receipt is None:
+        container_digest = hashlib.sha256(data).hexdigest()
+    else:
+        from .swift_owned_image import _OwnedDigestReceipt
+        if type(_owned_digest_receipt) is not _OwnedDigestReceipt:
+            raise ValueError("Invalid internal owned digest receipt")
+        if slice_offset != 0 or len(selected) != len(data) or architecture != "arm64":
+            raise ValueError("Owned digest reuse supports thin ARM64 only")
+        container_digest = _owned_digest_receipt._digest_for(data)
+    selected_digest = (container_digest if slice_offset == 0 and len(selected) == len(data)
+                       else hashlib.sha256(selected).hexdigest())
+    image_functions, image_issues = tuple(functions), tuple(issues)
+    seal = _MachOAdmissionSeal(selected, (container_digest, selected_digest, slice_offset,
+                                        len(selected), architecture, subtype, image_uuid,
+                                        preferred_base, filetype, slice_index, slice_count), all_sections,
+                               image_functions, image_issues)
+    return MachOImage(selected, path, container_digest, selected_digest,
                       slice_offset, len(selected), architecture, subtype, image_uuid, preferred_base,
-                      filetype, all_sections, tuple(functions), tuple(issues))
+                      filetype, all_sections, image_functions, image_issues, seal, slice_index, slice_count)
