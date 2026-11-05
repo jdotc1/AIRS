@@ -44,3 +44,17 @@ separate new-artifact receipts. The new small owned probe source in
 it supplies no additional credit to the accepted broad corpus. It is compiled
 and inspected as data, never loaded or executed. Existing clean-machine,
 minimum-OS, Intel and MacScope qualification limits remain unchanged.
+
+## First native route correction
+
+The first installed broad-v1 live route reached the accepted coordinator but the
+CLI's file-output confirmation indexed legacy `report_kind` after writing the
+broad report. The resulting `KeyError` prevented native publication. A narrow fix
+uses the existing report kind when present and the broad model label otherwise;
+it changes only stdout confirmation metadata, not serialized evidence or analysis.
+One new mocked `--output` regression passed in 0.002 s and confirms unchanged
+written evidence. Initial test invocations lacked PYTHONPATH and are retained as
+harness failures, not semantic RED evidence; the actual native failure establishes
+the defect. Independent source review approved this one-line correction. Native
+binaries and accepted engine/corpus qualification are reused; only the changed
+app resource/provenance seal receives new signing and notarization.

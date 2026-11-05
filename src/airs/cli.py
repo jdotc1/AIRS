@@ -182,7 +182,7 @@ def main(argv: list[str] | None = None) -> int:
             sys.stdout.write(output)
         else:
             atomic_write(args.output, output, protected=protected)
-            print(json.dumps({"written": str(args.output), "report_kind": report["report_kind"]}, ensure_ascii=True))
+            print(json.dumps({"written": str(args.output), "report_kind": report.get("report_kind", report.get("model_version"))}, ensure_ascii=True))
         return exit_code
     except InputError as exc:
         error = {"code": exc.code, "message": str(exc)}
