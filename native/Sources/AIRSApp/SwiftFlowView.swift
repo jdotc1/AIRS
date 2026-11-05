@@ -15,8 +15,17 @@ struct SwiftFlowView: View {
                 Text(workspace.input?.lastPathComponent ?? "No analysis input selected").lineLimit(1)
             }.disabled(workspace.isBusy)
             HStack {
-                Toggle("Include qualified struct methods", isOn: $workspace.includeMethods).disabled(workspace.isBusy)
-                Toggle("Include outcome witnesses", isOn: $workspace.includeWitnesses).disabled(workspace.isBusy)
+                Picker("Analysis profile", selection: $workspace.profile) {
+                    ForEach(SwiftFlowProfile.allCases) { profile in Text(profile.title).tag(profile) }
+                }.frame(maxWidth: 340).disabled(workspace.isBusy)
+                if workspace.profile == .standard {
+                    Toggle("Include qualified struct methods", isOn: $workspace.includeMethods).disabled(workspace.isBusy)
+                    Toggle("Include outcome witnesses", isOn: $workspace.includeWitnesses).disabled(workspace.isBusy)
+                } else {
+                    Text("Outcome witnesses and required region/entry checks included").font(.caption)
+                }
+            }
+            HStack {
                 Button("Analyze") {
                     do { workspace.run(configuration: try EngineConfiguration.resolve(pythonSetting: audit.pythonPath, useExternalPython: audit.usesExternalPython)) }
                     catch { workspace.errorMessage = error.localizedDescription }
@@ -25,7 +34,9 @@ struct SwiftFlowView: View {
                 Button("Export JSON…", action: workspace.chooseExport).disabled(workspace.report == nil || workspace.isBusy)
             }
             .toggleStyle(.checkbox)
-            Text("Methods: qualified synchronous Int → Int struct calls only. Witnesses include required region, entry and presentation evidence. ARM64 only; other forms decline or remain unresolved.")
+            Text(workspace.profile == .broad
+                 ? "Broad-v1: recorded declaration, ABI, callsite, control-flow, value and independent witness checks across qualified callable families. ARM64 only. Unsupported forms and resource limits remain explicit; structural eligibility is not runtime or source proof. Existing limits: 8 MiB image, 16 MiB report."
+                 : "Methods: qualified synchronous Int → Int struct calls only. Witnesses include required region, entry and presentation evidence. ARM64 only; other forms decline or remain unresolved.")
                 .font(.caption).foregroundStyle(.secondary)
             if let report = workspace.report {
                 Text(workspace.isHistorical ? "Historical evidence · recorded validation only" : "Current analysis · bounded recorded evidence")
@@ -34,14 +45,20 @@ struct SwiftFlowView: View {
                 Text("Model: \(report.modelVersion)").font(.caption)
                 Text(report.summaryText).font(.caption)
                 if !report.supportsInterpretation { Text("Unknown model profile. Raw evidence is available; interpretations are unavailable.").foregroundStyle(.orange) }
+                HStack {
+                    Button("Previous calls") { workspace.moveCallPage(-1) }.disabled(workspace.callPage == 0 || workspace.isBusy)
+                    Text("Calls page \(workspace.callPage + 1) of \(workspace.callPageCount)")
+                    Button("Next calls") { workspace.moveCallPage(1) }.disabled(workspace.callPage + 1 >= workspace.callPageCount || workspace.isBusy)
+                    Text("Up to 200 retained calls per page; export includes the complete recorded report.").font(.caption)
+                }
                 HSplitView {
-                    List(report.calls, selection: $workspace.selection) { call in
+                    List(workspace.displayedCalls, selection: $workspace.selection) { call in
                         VStack(alignment: .leading, spacing: 3) {
                             Text(call.calleeSymbol).lineLimit(1)
                             Text("\(call.callPC) · \(call.status)").font(.caption).foregroundStyle(.secondary)
                             if let status = call.witnessStatus { Text("Witness: \(status)").font(.caption) }
                         }.tag(call.id)
-                    }.frame(minWidth: 230, idealWidth: 300)
+                    }.frame(minWidth: 230, idealWidth: 300, maxWidth: 440)
                     ScrollView {
                         VStack(alignment: .leading, spacing: 10) {
                             if let call = workspace.selectedCall {
@@ -57,12 +74,17 @@ struct SwiftFlowView: View {
                                 if !call.witnessFacts.isEmpty { Text("Recorded validation facts").font(.headline); Text(call.witnessFacts.joined(separator: "\n")).font(.caption) }
                                 if !call.witnessEdges.isEmpty { Text("Recorded structural edges").font(.headline); Text(call.witnessEdges.joined(separator: "\n")).font(.caption.monospaced()) }
                                 Text("Recorded instruction, identity and witness details").font(.headline)
-                                Text(String(call.detailJSON.prefix(16000))).font(.system(.caption, design: .monospaced)).textSelection(.enabled)
-                                if call.detailJSON.count > 16000 { Text("Display capped at 16,000 characters. Export retains the original report.").font(.caption) }
+                                HStack {
+                                    Button("Previous detail") { workspace.moveDetailPage(-1) }.disabled(workspace.detailPage == 0)
+                                    Text("Evidence page \(workspace.detailPage + 1) of \(workspace.detailPageCount)")
+                                    Button("Next detail") { workspace.moveDetailPage(1) }.disabled(workspace.detailPage + 1 >= workspace.detailPageCount)
+                                }
+                                Text(workspace.detailText).font(.system(.caption, design: .monospaced)).textSelection(.enabled)
+                                Text("Every retained declaration, ABI, graph, instruction, value, validator outcome and refusal is available through these evidence pages. Export preserves original JSON bytes.").font(.caption)
                             } else { Text("Select a recorded call to inspect its evidence.") }
                             Divider()
                             Text("Report limitations").font(.headline)
-                            Text(report.limitations.prefix(32).joined(separator: "\n")).font(.caption)
+                            Text(report.limitations.joined(separator: "\n")).font(.caption)
                         }.frame(maxWidth: .infinity, alignment: .leading).padding(12)
                     }.frame(minWidth: 300)
                 }

@@ -13,17 +13,17 @@ production analysis and native source remain identical to the accepted handoff.
 
 ## Interface boundaries
 
-The native Swift Error Flow workspace exposes the existing v37/v38 narrow profiles,
-qualified struct-method and outcome-witness opt-ins, historical JSON inspection,
-and protected original-byte export. Both options initially remain off.
+The native Swift Error Flow workspace offers Standard Swift (historical v37/v38
+with v1 witnesses) and Broad Swift (`broad-v1` with v2 producer/validator records).
+Broad selection automatically supplies the required witness, region, entry and
+structured presentation flags and excludes the narrow method flag. The accepted
+Python coordinator and independent byte validator are unchanged.
 
-Broad-v1 is the separate packaged engine/CLI profile selected by
-`swift-error-flow --swift-profile broad-v1`, together with
-`--include-outcome-witnesses --include-error-regions --validate-region-entries
---include-structured-presentation`. It cannot be combined with
-`--include-swift-methods`. This integration does not create an unreviewed broad-v1
-GUI adapter. Unknown native model profiles retain raw evidence and decline semantic
-interpretation. See the broad scope and native workspace documents.
+Both profiles support explicit analysis, bounded evidence inspection, historical
+JSON reopening, original-byte export and owned-job cancellation. Broad calls and
+full raw evidence are paged without silently discarding retained details. Unknown
+models retain raw evidence and decline semantic interpretation. See
+`NATIVE_SWIFT_ERROR_FLOW.md` for limits and authority boundaries.
 
 ## Reused qualification
 
