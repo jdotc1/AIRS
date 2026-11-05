@@ -21,6 +21,8 @@ qualification summary describing reused evidence and the limited installed-app c
 Historical build 13 browser-download and local App Translocation acceptance remain
 recorded in [prior release qualification](docs/CURRENT_SOURCE_RELEASE_GATES.md).
 **Independent clean-machine and minimum-macOS acceptance remain pending.**
+Window-capture geometry diagnostics on the tested macOS build are documented as
+a [macOS limitation](docs/MACOS_LIMITATIONS.md).
 The [build 12 records](docs/RELEASE_0_3_3_BUILD12.md) and
 [sidebar acceptance](docs/SIDEBAR_NAVIGATION.md) retain their historical scope.
 

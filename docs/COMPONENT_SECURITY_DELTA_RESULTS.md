@@ -9,8 +9,10 @@ signature capture, evidence inspection, export and historical reopening.
 
 These results do not establish signature trust, runtime behavior of inspected
 components, real-application acceptance, notarization, or MacScope integration.
-The native debug run logged AppKit invalid-view-geometry diagnostics whose cause
-was not established. An end-to-end oversized export and actual blocking inside
+The native debug run logged AppKit invalid-view-geometry diagnostics. A later
+investigation reproduced them in a standalone AppKit window and traced them to
+the system window-sharing indicator on macOS 27.3; see
+[the documented macOS limitation](MACOS_LIMITATIONS.md). An end-to-end oversized export and actual blocking inside
 Security.framework were not exercised; bounded preflight and task-settlement
 paths were tested with synthetic inputs.
 
