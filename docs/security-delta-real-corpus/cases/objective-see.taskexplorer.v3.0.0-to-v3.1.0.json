@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "case_id": "objective-see.taskexplorer.v3.0.0-to-v3.1.0",
+  "publisher": "objective-see",
+  "application": "taskexplorer",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "v3.0.0",
+    "release_url": "https://github.com/objective-see/TaskExplorer/releases/download/v3.0.0/TaskExplorer_3.0.0.zip",
+    "sha256": "4a97769ce5d185c45545e1fe8b5652774baf5ec29bf41a865c5b2a7bec961a02",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/objective-see/TaskExplorer/blob/main/LICENSE",
+    "app_relative_path": "TaskExplorer.app",
+    "published_at": "2026-09-16T18:03:33Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "v3.1.0",
+    "release_url": "https://github.com/objective-see/TaskExplorer/releases/download/v3.1.0/TaskExplorer_3.1.0.zip",
+    "sha256": "536bda55f06e45bd7edc6cbed29aeb230db0f003675388a78f45d714a9ca8705",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/objective-see/TaskExplorer/blob/main/LICENSE",
+    "app_relative_path": "TaskExplorer.app",
+    "published_at": "2026-10-03T11:01:36Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "pending",
+    "source_digests": {
+      "previous": "4a97769ce5d185c45545e1fe8b5652774baf5ec29bf41a865c5b2a7bec961a02",
+      "current": "536bda55f06e45bd7edc6cbed29aeb230db0f003675388a78f45d714a9ca8705"
+    },
+    "declaration_facts": [],
+    "expected_refusals": []
+  },
+  "coverage_tags": [],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/objective-see/TaskExplorer/languages",
+    "repository_bytes": {
+      "Objective-C": 445553,
+      "Swift": 298891,
+      "C": 14466,
+      "Shell": 7669
+    },
+    "binary_confirmation": "pending independent oracle"
+  },
+  "oracle": {
+    "status": "pending",
+    "acquisition": {
+      "previous": {
+        "source_id": "objective-see/TaskExplorer:568501921",
+        "retrieved_at": "2026-11-05T04:21:57Z",
+        "publisher_release_url": "https://github.com/objective-see/TaskExplorer/releases/tag/v3.0.0"
+      },
+      "current": {
+        "source_id": "objective-see/TaskExplorer:607660804",
+        "retrieved_at": "2026-11-05T04:21:57Z",
+        "publisher_release_url": "https://github.com/objective-see/TaskExplorer/releases/tag/v3.1.0"
+      }
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "case_id": "newmarcel.keepingyouawake.1.6.6-to-1.6.7beta1",
+  "publisher": "newmarcel",
+  "application": "keepingyouawake",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "1.6.6",
+    "release_url": "https://github.com/newmarcel/KeepingYouAwake/releases/download/1.6.6/KeepingYouAwake-1.6.6.zip",
+    "sha256": "e5feb78e52080ce46daccc80d5a65c7d7acd58b106b1212e23524c75f3d8943a",
+    "license_note": "MIT; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/newmarcel/KeepingYouAwake/blob/main/LICENSE",
+    "app_relative_path": "KeepingYouAwake.app",
+    "published_at": "2024-10-26T09:14:57Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "1.6.7beta1",
+    "release_url": "https://github.com/newmarcel/KeepingYouAwake/releases/download/1.6.7beta1/KeepingYouAwake-1.6.7beta1.zip",
+    "sha256": "de8a338d74f2037fe4d549c4ae5740684c48bae5710c3c3b493609dbf10f1b8d",
+    "license_note": "MIT; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/newmarcel/KeepingYouAwake/blob/main/LICENSE",
+    "app_relative_path": "KeepingYouAwake.app",
+    "published_at": "2025-07-13T09:28:58Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "pending",
+    "source_digests": {
+      "previous": "e5feb78e52080ce46daccc80d5a65c7d7acd58b106b1212e23524c75f3d8943a",
+      "current": "de8a338d74f2037fe4d549c4ae5740684c48bae5710c3c3b493609dbf10f1b8d"
+    },
+    "declaration_facts": [],
+    "expected_refusals": []
+  },
+  "coverage_tags": [],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/newmarcel/KeepingYouAwake/languages",
+    "repository_bytes": {
+      "Objective-C": 193205,
+      "Rich Text Format": 5841,
+      "Swift": 4490,
+      "Objective-C++": 3972,
+      "Makefile": 2137,
+      "Shell": 1560,
+      "C": 722
+    },
+    "binary_confirmation": "pending independent oracle"
+  },
+  "oracle": {
+    "status": "pending",
+    "acquisition": {
+      "previous": {
+        "source_id": "newmarcel/KeepingYouAwake:201905922",
+        "retrieved_at": "2026-11-05T04:21:38Z",
+        "publisher_release_url": "https://github.com/newmarcel/KeepingYouAwake/releases/tag/1.6.6"
+      },
+      "current": {
+        "source_id": "newmarcel/KeepingYouAwake:272449805",
+        "retrieved_at": "2026-11-05T04:21:38Z",
+        "publisher_release_url": "https://github.com/newmarcel/KeepingYouAwake/releases/tag/1.6.7beta1"
+      }
+    }
+  }
+}

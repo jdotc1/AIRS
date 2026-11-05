@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "case_id": "objective-see.knockknock.v4.0.2-to-v4.0.3",
+  "publisher": "objective-see",
+  "application": "knockknock",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "v4.0.2",
+    "release_url": "https://github.com/objective-see/KnockKnock/releases/download/v4.0.2/KnockKnock_4.0.2.zip",
+    "sha256": "430da40b259c78ead1f73533b4a29f2b5f2b10d9b6618b574b8ade36eaef0604",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/objective-see/KnockKnock/blob/main/LICENSE",
+    "app_relative_path": "KnockKnock.app",
+    "published_at": "2025-12-17T02:27:31Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "v4.0.3",
+    "release_url": "https://github.com/objective-see/KnockKnock/releases/download/v4.0.3/KnockKnock_4.0.3.zip",
+    "sha256": "1e1371ff6eb62e0866266a0744e90aa3bdc6b22cca0599afbd330ddf52663c69",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/objective-see/KnockKnock/blob/main/LICENSE",
+    "app_relative_path": "KnockKnock.app",
+    "published_at": "2025-12-18T05:44:28Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "pending",
+    "source_digests": {
+      "previous": "430da40b259c78ead1f73533b4a29f2b5f2b10d9b6618b574b8ade36eaef0604",
+      "current": "1e1371ff6eb62e0866266a0744e90aa3bdc6b22cca0599afbd330ddf52663c69"
+    },
+    "declaration_facts": [],
+    "expected_refusals": []
+  },
+  "coverage_tags": [],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/objective-see/KnockKnock/languages",
+    "repository_bytes": {
+      "Objective-C": 501381,
+      "C": 13804,
+      "Shell": 5371
+    },
+    "binary_confirmation": "pending independent oracle"
+  },
+  "oracle": {
+    "status": "pending",
+    "acquisition": {
+      "previous": {
+        "source_id": "objective-see/KnockKnock:329625660",
+        "retrieved_at": "2026-11-05T04:21:40Z",
+        "publisher_release_url": "https://github.com/objective-see/KnockKnock/releases/tag/v4.0.2"
+      },
+      "current": {
+        "source_id": "objective-see/KnockKnock:330102546",
+        "retrieved_at": "2026-11-05T04:21:39Z",
+        "publisher_release_url": "https://github.com/objective-see/KnockKnock/releases/tag/v4.0.3"
+      }
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "case_id": "swiftbar.swiftbar.v2.1.2-beta-4-to-v2.1.2-beta-5",
+  "publisher": "swiftbar",
+  "application": "swiftbar",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "v2.1.2-beta-4",
+    "release_url": "https://github.com/swiftbar/SwiftBar/releases/download/v2.1.2-beta-4/SwiftBar.v2.1.2.b619.zip",
+    "sha256": "08ac0e2e2a91800cf44adfbc9fcc7c3f933d2727d9e3034b5f8d933ef373b38f",
+    "license_note": "MIT; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/swiftbar/SwiftBar/blob/main/LICENSE",
+    "app_relative_path": "SwiftBar.app",
+    "published_at": "2026-09-27T15:05:54Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "v2.1.2-beta-5",
+    "release_url": "https://github.com/swiftbar/SwiftBar/releases/download/v2.1.2-beta-5/SwiftBar.v2.1.2.b623.zip",
+    "sha256": "cb4a6cedbfba961bb36f414ead7594484d1955b219370d50fd0eaf47a9da65bf",
+    "license_note": "MIT; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/swiftbar/SwiftBar/blob/main/LICENSE",
+    "app_relative_path": "SwiftBar.app",
+    "published_at": "2026-09-29T16:03:20Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "pending",
+    "source_digests": {
+      "previous": "08ac0e2e2a91800cf44adfbc9fcc7c3f933d2727d9e3034b5f8d933ef373b38f",
+      "current": "cb4a6cedbfba961bb36f414ead7594484d1955b219370d50fd0eaf47a9da65bf"
+    },
+    "declaration_facts": [],
+    "expected_refusals": []
+  },
+  "coverage_tags": [],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/swiftbar/SwiftBar/languages",
+    "repository_bytes": {
+      "Swift": 751506,
+      "Just": 8369,
+      "Rich Text Format": 456
+    },
+    "binary_confirmation": "pending independent oracle"
+  },
+  "oracle": {
+    "status": "pending",
+    "acquisition": {
+      "previous": {
+        "source_id": "swiftbar/SwiftBar:593155937",
+        "retrieved_at": "2026-11-05T04:21:26Z",
+        "publisher_release_url": "https://github.com/swiftbar/SwiftBar/releases/tag/v2.1.2-beta-4"
+      },
+      "current": {
+        "source_id": "swiftbar/SwiftBar:598618087",
+        "retrieved_at": "2026-11-05T04:21:24Z",
+        "publisher_release_url": "https://github.com/swiftbar/SwiftBar/releases/tag/v2.1.2-beta-5"
+      }
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "case_id": "jordanbaird.ice.0.11.11-to-0.11.12",
+  "publisher": "jordanbaird",
+  "application": "ice",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "0.11.11",
+    "release_url": "https://github.com/jordanbaird/Ice/releases/download/0.11.11/Ice.zip",
+    "sha256": "21ea5ffa614def29bb699bb7c6725526840d0d999216fb75e504c6757b6f49cb",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/jordanbaird/Ice/blob/main/LICENSE",
+    "app_relative_path": "Ice.app",
+    "published_at": "2024-10-19T18:28:27Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "0.11.12",
+    "release_url": "https://github.com/jordanbaird/Ice/releases/download/0.11.12/Ice.zip",
+    "sha256": "d770e81597566dd2d2363feb350f808c7a92e363df95c51e48140eb30e452cc9",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/jordanbaird/Ice/blob/main/LICENSE",
+    "app_relative_path": "Ice.app",
+    "published_at": "2024-10-29T19:29:03Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "pending",
+    "source_digests": {
+      "previous": "21ea5ffa614def29bb699bb7c6725526840d0d999216fb75e504c6757b6f49cb",
+      "current": "d770e81597566dd2d2363feb350f808c7a92e363df95c51e48140eb30e452cc9"
+    },
+    "declaration_facts": [],
+    "expected_refusals": []
+  },
+  "coverage_tags": [],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/jordanbaird/Ice/languages",
+    "repository_bytes": {
+      "Swift": 602477
+    },
+    "binary_confirmation": "pending independent oracle"
+  },
+  "oracle": {
+    "status": "pending",
+    "acquisition": {
+      "previous": {
+        "source_id": "jordanbaird/Ice:200255553",
+        "retrieved_at": "2026-11-05T04:21:23Z",
+        "publisher_release_url": "https://github.com/jordanbaird/Ice/releases/tag/0.11.11"
+      },
+      "current": {
+        "source_id": "jordanbaird/Ice:202659926",
+        "retrieved_at": "2026-11-05T04:21:23Z",
+        "publisher_release_url": "https://github.com/jordanbaird/Ice/releases/tag/0.11.12"
+      }
+    }
+  }
+}

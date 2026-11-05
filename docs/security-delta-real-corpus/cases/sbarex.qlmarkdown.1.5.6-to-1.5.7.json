@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "case_id": "sbarex.qlmarkdown.1.5.6-to-1.5.7",
+  "publisher": "sbarex",
+  "application": "qlmarkdown",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "1.5.6",
+    "release_url": "https://github.com/sbarex/QLMarkdown/releases/download/1.5.6/QLMarkdown.zip",
+    "sha256": "d92ea9db7c2357f60f7b53270be5016eb5626097d6718fcc02c1629cde54d5c0",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/sbarex/QLMarkdown/blob/main/LICENSE.txt",
+    "app_relative_path": "QLMarkdown.app",
+    "published_at": "2026-09-30T14:34:05Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "1.5.7",
+    "release_url": "https://github.com/sbarex/QLMarkdown/releases/download/1.5.7/QLMarkdown.zip",
+    "sha256": "96cc95553ee63557f7ec58f41a568ff1fe5bca95b6bcd3883709fa8337c685d4",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/sbarex/QLMarkdown/blob/main/LICENSE.txt",
+    "app_relative_path": "QLMarkdown.app",
+    "published_at": "2026-10-02T10:18:37Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "pending",
+    "source_digests": {
+      "previous": "d92ea9db7c2357f60f7b53270be5016eb5626097d6718fcc02c1629cde54d5c0",
+      "current": "96cc95553ee63557f7ec58f41a568ff1fe5bca95b6bcd3883709fa8337c685d4"
+    },
+    "declaration_facts": [],
+    "expected_refusals": []
+  },
+  "coverage_tags": [],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/sbarex/QLMarkdown/languages",
+    "repository_bytes": {
+      "C++": 50985799,
+      "C": 1423382,
+      "HTML": 416257,
+      "Swift": 261889,
+      "Lua": 173180,
+      "Makefile": 40995,
+      "CSS": 28635,
+      "Roff": 6171,
+      "Objective-C": 602
+    },
+    "binary_confirmation": "pending independent oracle"
+  },
+  "oracle": {
+    "status": "pending",
+    "acquisition": {
+      "previous": {
+        "source_id": "sbarex/QLMarkdown:601121839",
+        "retrieved_at": "2026-11-05T04:21:42Z",
+        "publisher_release_url": "https://github.com/sbarex/QLMarkdown/releases/tag/1.5.6"
+      },
+      "current": {
+        "source_id": "sbarex/QLMarkdown:605315574",
+        "retrieved_at": "2026-11-05T04:21:41Z",
+        "publisher_release_url": "https://github.com/sbarex/QLMarkdown/releases/tag/1.5.7"
+      }
+    }
+  }
+}

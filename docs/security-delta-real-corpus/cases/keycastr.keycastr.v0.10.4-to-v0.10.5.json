@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "case_id": "keycastr.keycastr.v0.10.4-to-v0.10.5",
+  "publisher": "keycastr",
+  "application": "keycastr",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "v0.10.4",
+    "release_url": "https://github.com/keycastr/keycastr/releases/download/v0.10.4/KeyCastr.app.zip",
+    "sha256": "9724866bf7c044e32caa88bffc97df512a21d31ee88c3885c21a1a925f201318",
+    "license_note": "BSD-3-Clause; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/keycastr/keycastr/blob/main/LICENSE.md",
+    "app_relative_path": "KeyCastr.app",
+    "published_at": "2025-08-24T00:28:10Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "v0.10.5",
+    "release_url": "https://github.com/keycastr/keycastr/releases/download/v0.10.5/KeyCastr.app.zip",
+    "sha256": "c97c63eadbf4304c04802c0c8375c99b58084584be314e964c8366eca318b752",
+    "license_note": "BSD-3-Clause; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/keycastr/keycastr/blob/main/LICENSE.md",
+    "app_relative_path": "KeyCastr.app",
+    "published_at": "2025-11-24T03:50:37Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "pending",
+    "source_digests": {
+      "previous": "9724866bf7c044e32caa88bffc97df512a21d31ee88c3885c21a1a925f201318",
+      "current": "c97c63eadbf4304c04802c0c8375c99b58084584be314e964c8366eca318b752"
+    },
+    "declaration_facts": [],
+    "expected_refusals": []
+  },
+  "coverage_tags": [],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/keycastr/keycastr/languages",
+    "repository_bytes": {
+      "Objective-C": 194490
+    },
+    "binary_confirmation": "pending independent oracle"
+  },
+  "oracle": {
+    "status": "pending",
+    "acquisition": {
+      "previous": {
+        "source_id": "keycastr/keycastr:285581690",
+        "retrieved_at": "2026-11-05T04:21:30Z",
+        "publisher_release_url": "https://github.com/keycastr/keycastr/releases/tag/v0.10.4"
+      },
+      "current": {
+        "source_id": "keycastr/keycastr:320103082",
+        "retrieved_at": "2026-11-05T04:21:29Z",
+        "publisher_release_url": "https://github.com/keycastr/keycastr/releases/tag/v0.10.5"
+      }
+    }
+  }
+}

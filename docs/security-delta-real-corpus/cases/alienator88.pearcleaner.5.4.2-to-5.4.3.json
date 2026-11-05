@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "case_id": "alienator88.pearcleaner.5.4.2-to-5.4.3",
+  "publisher": "alienator88",
+  "application": "pearcleaner",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "5.4.2",
+    "release_url": "https://github.com/alienator88/Pearcleaner/releases/download/5.4.2/Pearcleaner.zip",
+    "sha256": "f37b2a7690e216ac018d1549589533d95a7bcd561abc9718704fc1992f3f8f28",
+    "license_note": "Apache-2.0 with Commons Clause; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/alienator88/Pearcleaner/blob/main/LICENSE.md",
+    "app_relative_path": "Pearcleaner.app",
+    "published_at": "2025-11-21T23:33:18Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "5.4.3",
+    "release_url": "https://github.com/alienator88/Pearcleaner/releases/download/5.4.3/Pearcleaner.zip",
+    "sha256": "16d0463dbe7082b3c4f85138f776c14e4ea292e25b86b76ffe09af4306fb30b2",
+    "license_note": "Apache-2.0 with Commons Clause; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/alienator88/Pearcleaner/blob/main/LICENSE.md",
+    "app_relative_path": "Pearcleaner.app",
+    "published_at": "2025-11-26T23:18:50Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "pending",
+    "source_digests": {
+      "previous": "f37b2a7690e216ac018d1549589533d95a7bcd561abc9718704fc1992f3f8f28",
+      "current": "16d0463dbe7082b3c4f85138f776c14e4ea292e25b86b76ffe09af4306fb30b2"
+    },
+    "declaration_facts": [],
+    "expected_refusals": []
+  },
+  "coverage_tags": [],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/alienator88/Pearcleaner/languages",
+    "repository_bytes": {
+      "Swift": 1908954,
+      "Objective-C": 47576,
+      "C": 163,
+      "Shell": 128
+    },
+    "binary_confirmation": "pending independent oracle"
+  },
+  "oracle": {
+    "status": "pending",
+    "acquisition": {
+      "previous": {
+        "source_id": "alienator88/Pearcleaner:319420340",
+        "retrieved_at": "2026-11-05T04:21:49Z",
+        "publisher_release_url": "https://github.com/alienator88/Pearcleaner/releases/tag/5.4.2"
+      },
+      "current": {
+        "source_id": "alienator88/Pearcleaner:321260813",
+        "retrieved_at": "2026-11-05T04:21:49Z",
+        "publisher_release_url": "https://github.com/alienator88/Pearcleaner/releases/tag/5.4.3"
+      }
+    }
+  }
+}

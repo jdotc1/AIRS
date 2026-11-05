@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "case_id": "objective-see.oversight.v2.2.1-to-v2.2.2",
+  "publisher": "objective-see",
+  "application": "oversight",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "v2.2.1",
+    "release_url": "https://github.com/objective-see/OverSight/releases/download/v2.2.1/OverSight_2.2.1.zip",
+    "sha256": "030790bb9378383f35c5f6aabee6580e1d6357f0adb620a221168bc042a0b691",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/objective-see/OverSight/blob/main/LICENSE.md",
+    "app_relative_path": "OverSight Installer.app",
+    "published_at": "2023-11-09T02:22:39Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "v2.2.2",
+    "release_url": "https://github.com/objective-see/OverSight/releases/download/v2.2.2/OverSight_2.2.2.zip",
+    "sha256": "2e0eba973c0f76e4468a7d7f949d34628b06d735bcf64c170d20e79f29d70915",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/objective-see/OverSight/blob/main/LICENSE.md",
+    "app_relative_path": "OverSight Installer.app",
+    "published_at": "2023-11-22T21:38:20Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "pending",
+    "source_digests": {
+      "previous": "030790bb9378383f35c5f6aabee6580e1d6357f0adb620a221168bc042a0b691",
+      "current": "2e0eba973c0f76e4468a7d7f949d34628b06d735bcf64c170d20e79f29d70915"
+    },
+    "declaration_facts": [],
+    "expected_refusals": []
+  },
+  "coverage_tags": [],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/objective-see/OverSight/languages",
+    "repository_bytes": {
+      "Objective-C": 260171,
+      "C": 5626,
+      "Shell": 790
+    },
+    "binary_confirmation": "pending independent oracle"
+  },
+  "oracle": {
+    "status": "pending",
+    "acquisition": {
+      "previous": {
+        "source_id": "objective-see/OverSight:134653742",
+        "retrieved_at": "2026-11-05T04:21:56Z",
+        "publisher_release_url": "https://github.com/objective-see/OverSight/releases/tag/v2.2.1"
+      },
+      "current": {
+        "source_id": "objective-see/OverSight:136965231",
+        "retrieved_at": "2026-11-05T04:21:55Z",
+        "publisher_release_url": "https://github.com/objective-see/OverSight/releases/tag/v2.2.2"
+      }
+    }
+  }
+}

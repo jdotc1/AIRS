@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "case_id": "matryer.xbar.v2.1.4-beta-to-v2.1.5-beta",
+  "publisher": "matryer",
+  "application": "xbar",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "v2.1.4-beta",
+    "release_url": "https://github.com/matryer/xbar/releases/download/v2.1.4-beta/xbar.v2.1.4-beta.zip",
+    "sha256": "a36913306acdc7ab16a6ba8cf7ce819235225368b2709b380b6df44f8fa89cf7",
+    "license_note": "MIT; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/matryer/xbar/blob/main/LICENSE.txt",
+    "app_relative_path": "xbar.app",
+    "published_at": "2021-07-14T07:47:53Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "v2.1.5-beta",
+    "release_url": "https://github.com/matryer/xbar/releases/download/v2.1.5-beta/xbar.v2.1.5-beta.zip",
+    "sha256": "edc7b04f592b851058083cbac593488ad01929ac27e0fd1ac9f71edd5e01a078",
+    "license_note": "MIT; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/matryer/xbar/blob/main/LICENSE.txt",
+    "app_relative_path": "xbar.app",
+    "published_at": "2021-08-28T11:45:31Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "pending",
+    "source_digests": {
+      "previous": "a36913306acdc7ab16a6ba8cf7ce819235225368b2709b380b6df44f8fa89cf7",
+      "current": "edc7b04f592b851058083cbac593488ad01929ac27e0fd1ac9f71edd5e01a078"
+    },
+    "declaration_facts": [],
+    "expected_refusals": []
+  },
+  "coverage_tags": [],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/matryer/xbar/languages",
+    "repository_bytes": {
+      "Go": 270924,
+      "Objective-C": 85752,
+      "HTML": 42827,
+      "Svelte": 42693,
+      "JavaScript": 9605,
+      "Shell": 5385,
+      "CSS": 4308,
+      "Makefile": 341
+    },
+    "binary_confirmation": "pending independent oracle"
+  },
+  "oracle": {
+    "status": "pending",
+    "acquisition": {
+      "previous": {
+        "source_id": "matryer/xbar:40268647",
+        "retrieved_at": "2026-11-05T04:21:34Z",
+        "publisher_release_url": "https://github.com/matryer/xbar/releases/tag/v2.1.4-beta"
+      },
+      "current": {
+        "source_id": "matryer/xbar:43497999",
+        "retrieved_at": "2026-11-05T04:21:33Z",
+        "publisher_release_url": "https://github.com/matryer/xbar/releases/tag/v2.1.5-beta"
+      }
+    }
+  }
+}

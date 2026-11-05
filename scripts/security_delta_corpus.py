@@ -2,6 +2,7 @@
 """Opt-in corpus qualification protocol. Never launches inspected applications."""
 from __future__ import annotations
 import argparse
+import hashlib
 from dataclasses import dataclass
 from datetime import datetime
 import json
@@ -9,10 +10,20 @@ import os
 from pathlib import Path, PurePosixPath
 import re
 import stat
+import struct
+import zipfile
+import posixpath
+import uuid
+import selectors
+import subprocess
+import time
 from urllib.parse import urlsplit
 
 MAX_MANIFEST_BYTES = 262_144
 MAX_CASES = 256
+MAX_ARCHIVE_BYTES = 128 * 1_048_576
+MAX_EXPANDED_BYTES = 1_073_741_824
+MAX_ARCHIVE_ENTRIES = 20_000
 COVERAGE_TAGS = frozenset(("simple", "frameworks", "services", "universal", "entitlements",
                            "privacy_manifest", "loader", "signature"))
 
@@ -244,6 +255,311 @@ def load_manifests(directory: Path):
         return validate_corpus(result)
     finally:
         os.close(descriptor)
+
+
+def file_metadata(info):
+    return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns, info.st_mode)
+
+
+def open_regular_no_follow(path: Path):
+    parent = open_directory_no_follow(path.absolute().parent)
+    try:
+        descriptor = os.open(path.name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=parent)
+    finally:
+        os.close(parent)
+    if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+        os.close(descriptor)
+        refuse("archive_special_file")
+    return descriptor
+
+
+@dataclass(frozen=True)
+class AdmittedArchive:
+    path: Path
+    sha256: str
+    metadata: tuple[int, ...]
+
+
+def capture_chunks(chunks, destination: Path, expected_size: int, expected_sha256: str | None,
+                   *, cancelled=lambda: False):
+    """First acquisition hashes streamed bytes once; publication follows only complete admission."""
+    if type(expected_size) is not int or not 0 < expected_size <= MAX_ARCHIVE_BYTES:
+        refuse("archive_byte_limit")
+    if expected_sha256 is not None:
+        digest(expected_sha256)
+    if cancelled():
+        refuse("cancelled")
+    parent = open_directory_no_follow(destination.absolute().parent)
+    temporary = ".partial-" + str(uuid.uuid4())
+    try:
+        try:
+            os.stat(destination.name, dir_fd=parent, follow_symlinks=False)
+        except FileNotFoundError:
+            pass
+        else:
+            refuse("archive_destination_exists")
+        descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600, dir_fd=parent)
+        value = hashlib.sha256()
+        count = 0
+        try:
+            with os.fdopen(descriptor, "wb") as output:
+                for chunk in chunks:
+                    if cancelled():
+                        refuse("cancelled")
+                    count += len(chunk)
+                    if count > expected_size or count > MAX_ARCHIVE_BYTES:
+                        refuse("archive_size_mismatch")
+                    output.write(chunk)
+                    value.update(chunk)
+                if count != expected_size:
+                    refuse("archive_size_mismatch")
+                actual = value.hexdigest()
+                if expected_sha256 is not None and actual != expected_sha256:
+                    refuse("archive_digest_mismatch")
+                output.flush()
+                os.fsync(output.fileno())
+            # Hard-link publication refuses any racing destination, without replacement.
+            os.link(temporary, destination.name, src_dir_fd=parent, dst_dir_fd=parent, follow_symlinks=False)
+            os.unlink(temporary, dir_fd=parent)
+            metadata = file_metadata(os.stat(destination.name, dir_fd=parent, follow_symlinks=False))
+            return AdmittedArchive(destination.absolute(), actual, metadata)
+        except BaseException:
+            # Only the owned unpublished temporary is removed; existing destinations survive.
+            try:
+                os.unlink(temporary, dir_fd=parent)
+            except FileNotFoundError:
+                pass
+            raise
+    finally:
+        os.close(parent)
+
+
+def fetch_github_asset(repository: str, asset_id: int, size: int, destination: Path,
+                       expected_sha256: str | None, *, cancelled=lambda: False):
+    """One bounded authenticated official-asset download; credentials never enter records."""
+    if re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository) is None or type(asset_id) is not int or asset_id <= 0:
+        refuse("unsupported_source_url")
+    if type(size) is not int or not 0 < size <= MAX_ARCHIVE_BYTES:
+        refuse("archive_byte_limit")
+    if expected_sha256 is not None:
+        digest(expected_sha256)
+    if cancelled():
+        refuse("cancelled")
+    process = subprocess.Popen(["gh", "api", f"repos/{repository}/releases/assets/{asset_id}",
+                                "-H", "Accept: application/octet-stream"],
+                               stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    selector = selectors.DefaultSelector()
+    selector.register(process.stdout, selectors.EVENT_READ)
+    deadline = time.monotonic() + 180
+    def chunks():
+        while True:
+            if cancelled():
+                refuse("cancelled")
+            if time.monotonic() > deadline:
+                refuse("acquisition_timeout")
+            if not selector.select(0.25):
+                continue
+            value = os.read(process.stdout.fileno(), 65536)
+            if not value:
+                break
+            yield value
+        if process.wait(timeout=5) != 0:
+            refuse("source_unavailable")
+    try:
+        return capture_chunks(chunks(), destination, size, expected_sha256, cancelled=cancelled)
+    finally:
+        selector.close()
+        process.stdout.close()
+        if process.poll() is None:
+            process.kill()
+        process.wait(timeout=5)
+
+
+def admit_archive(path: Path, expected_sha256: str, cancelled=lambda: False):
+    digest(expected_sha256)
+    if cancelled():
+        refuse("cancelled")
+    descriptor = open_regular_no_follow(path)
+    try:
+        before = file_metadata(os.fstat(descriptor))
+        if before[2] > MAX_ARCHIVE_BYTES:
+            refuse("archive_byte_limit")
+        value = hashlib.sha256()
+        count = 0
+        while True:
+            if cancelled():
+                refuse("cancelled")
+            chunk = os.read(descriptor, 65536)
+            if not chunk:
+                break
+            count += len(chunk)
+            if count > MAX_ARCHIVE_BYTES:
+                refuse("archive_byte_limit")
+            value.update(chunk)
+        if before != file_metadata(os.fstat(descriptor)) or count != before[2]:
+            refuse("archive_source_stale")
+        if value.hexdigest() != expected_sha256:
+            refuse("archive_digest_mismatch")
+        return AdmittedArchive(path.absolute(), expected_sha256, before)
+    finally:
+        os.close(descriptor)
+
+
+def zip_directory_budget(stream):
+    stream.seek(0, 2)
+    size = stream.tell()
+    stream.seek(max(0, size - 65557))
+    tail = stream.read(65557)
+    index = tail.rfind(b"PK\x05\x06")
+    if index < 0 or index + 22 > len(tail):
+        refuse("archive_invalid_zip")
+    disk, directory_disk, disk_count, count, directory_size, directory_offset, comment = struct.unpack_from("<4H2IH", tail, index + 4)
+    if disk or directory_disk or disk_count != count or count == 65535:
+        refuse("archive_unsupported_zip")
+    if count > MAX_ARCHIVE_ENTRIES or directory_size > 16 * 1_048_576:
+        refuse("archive_entry_limit")
+    eocd = max(0, size - 65557) + index
+    if eocd + 22 + comment != size or directory_offset + directory_size != eocd:
+        refuse("archive_invalid_zip")
+    stream.seek(0)
+
+
+def extraction_directory(parent, relative, identities):
+    descriptor = os.dup(parent)
+    prefix = []
+    try:
+        for part in relative:
+            prefix.append(part)
+            try:
+                os.mkdir(part, mode=0o755, dir_fd=descriptor)
+            except FileExistsError:
+                pass
+            next_fd = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=descriptor)
+            info = os.fstat(next_fd)
+            identity = (info.st_dev, info.st_ino)
+            exact = "/".join(prefix).encode("utf-8")
+            if identity in identities and identities[identity] != exact:
+                os.close(next_fd)
+                refuse("archive_path_collision")
+            identities[identity] = exact
+            os.close(descriptor)
+            descriptor = next_fd
+        result, descriptor = descriptor, None
+        return result
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+
+
+def extract_archive(admitted: AdmittedArchive, destination: Path, *, maximum_bytes=MAX_EXPANDED_BYTES,
+                    cancelled=lambda: False):
+    """Extract once into a new private directory; never execute or follow archive links."""
+    if cancelled():
+        refuse("cancelled")
+    if type(maximum_bytes) is not int or not 0 < maximum_bytes <= MAX_EXPANDED_BYTES:
+        refuse("invalid_archive_limit")
+    descriptor = open_regular_no_follow(admitted.path)
+    if file_metadata(os.fstat(descriptor)) != admitted.metadata:
+        os.close(descriptor)
+        refuse("archive_source_stale")
+    with os.fdopen(descriptor, "rb") as stream:
+        zip_directory_budget(stream)
+        try:
+            archive = zipfile.ZipFile(stream)
+        except (zipfile.BadZipFile, UnicodeError):
+            refuse("archive_invalid_zip")
+        with archive:
+            nodes = {}
+            total = 0
+            for entry in archive.infolist():
+                name = entry.filename[:-1] if entry.is_dir() else entry.filename
+                relative_path(name)
+                if name in nodes:
+                    refuse("archive_duplicate_path")
+                kind = stat.S_IFMT(entry.external_attr >> 16)
+                if kind not in (0, stat.S_IFREG, stat.S_IFDIR, stat.S_IFLNK) or entry.flag_bits & 1:
+                    refuse("archive_unsupported_entry")
+                total += entry.file_size
+                if entry.file_size > 256 * 1_048_576 or total > maximum_bytes:
+                    refuse("archive_expanded_limit")
+                if len(nodes) >= MAX_ARCHIVE_ENTRIES:
+                    refuse("archive_entry_limit")
+                node_kind = "directory" if entry.is_dir() else "link" if kind == stat.S_IFLNK else "file"
+                target = None
+                if node_kind == "link":
+                    if entry.file_size > 4096:
+                        refuse("archive_link_limit")
+                    try:
+                        target = archive.read(entry).decode("utf-8", "strict")
+                    except (UnicodeError, zipfile.BadZipFile):
+                        refuse("archive_invalid_link")
+                    if not target or target.startswith("/") or "\\" in target or "\x00" in target:
+                        refuse("archive_symlink_escape")
+                    resolved = posixpath.normpath(posixpath.join(posixpath.dirname(name), target))
+                    if resolved == ".." or resolved.startswith("../"):
+                        refuse("archive_symlink_escape")
+                nodes[name] = (entry, node_kind, target)
+            for name in nodes:
+                parent = PurePosixPath(name).parent
+                while str(parent) != ".":
+                    if str(parent) in nodes and nodes[str(parent)][1] != "directory":
+                        refuse("archive_link_ancestor")
+                    parent = parent.parent
+            if cancelled():
+                refuse("cancelled")
+            parent = open_directory_no_follow(destination.absolute().parent)
+            try:
+                os.mkdir(destination.name, mode=0o700, dir_fd=parent)
+                root = os.open(destination.name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=parent)
+            finally:
+                os.close(parent)
+            files = links = opaque = 0
+            directory_identities = {}
+            try:
+                for name, (entry, kind, target) in sorted(nodes.items(), key=lambda item: item[0].encode("utf-8")):
+                    if cancelled():
+                        refuse("cancelled")
+                    parts = PurePosixPath(name).parts
+                    directory = extraction_directory(root, parts if kind == "directory" else parts[:-1], directory_identities)
+                    try:
+                        if kind == "directory":
+                            continue
+                        if kind == "link":
+                            os.symlink(target, parts[-1], dir_fd=directory)
+                            links += 1
+                            continue
+                        try:
+                            out = os.open(parts[-1], os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
+                                          (entry.external_attr >> 16) & 0o777 or 0o644, dir_fd=directory)
+                        except FileExistsError:
+                            refuse("archive_path_collision")
+                        with os.fdopen(out, "wb") as output, archive.open(entry) as source:
+                            count = 0
+                            while True:
+                                if cancelled():
+                                    refuse("cancelled")
+                                chunk = source.read(65536)
+                                if not chunk:
+                                    break
+                                count += len(chunk)
+                                if count > entry.file_size:
+                                    refuse("archive_size_mismatch")
+                                output.write(chunk)
+                            if count != entry.file_size:
+                                refuse("archive_size_mismatch")
+                        files += 1
+                        if name.lower().endswith((".zip", ".tar", ".gz", ".xz", ".dmg", ".pkg")):
+                            opaque += 1
+                    finally:
+                        os.close(directory)
+            except zipfile.BadZipFile:
+                refuse("archive_crc_mismatch")
+            finally:
+                os.close(root)
+            if file_metadata(os.fstat(stream.fileno())) != admitted.metadata:
+                refuse("archive_source_stale")
+            return {"files": files, "symlinks": links, "expanded_bytes": total,
+                    "opaque_archives": opaque, "detail_list_complete": True}
 
 
 def main():

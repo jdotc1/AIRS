@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "case_id": "p0deje.maccy.2.7.1-to-2.8.0",
+  "publisher": "p0deje",
+  "application": "maccy",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "2.7.1",
+    "release_url": "https://github.com/p0deje/Maccy/releases/download/2.7.1/Maccy.app.zip",
+    "sha256": "f388aee34de09a0c7531631303785d9938bef9a92130e21ce1049c8f56aad077",
+    "license_note": "MIT; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/p0deje/Maccy/blob/master/LICENSE",
+    "app_relative_path": "Maccy.app",
+    "published_at": "2026-08-10T14:35:26Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "2.8.0",
+    "release_url": "https://github.com/p0deje/Maccy/releases/download/2.8.0/Maccy.app.zip",
+    "sha256": "e684e1ce0c60d7cffd3a2b182dc37bd7e88c29967a64a431a2c71be65b1d27e0",
+    "license_note": "MIT; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/p0deje/Maccy/blob/master/LICENSE",
+    "app_relative_path": "Maccy.app",
+    "published_at": "2026-10-26T15:19:27Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "pending",
+    "source_digests": {
+      "previous": "f388aee34de09a0c7531631303785d9938bef9a92130e21ce1049c8f56aad077",
+      "current": "e684e1ce0c60d7cffd3a2b182dc37bd7e88c29967a64a431a2c71be65b1d27e0"
+    },
+    "declaration_facts": [],
+    "expected_refusals": []
+  },
+  "coverage_tags": [],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/p0deje/Maccy/languages",
+    "repository_bytes": {
+      "Swift": 365784
+    },
+    "binary_confirmation": "pending independent oracle"
+  },
+  "oracle": {
+    "status": "pending",
+    "acquisition": {
+      "previous": {
+        "source_id": "p0deje/Maccy:508858210",
+        "retrieved_at": "2026-11-05T04:21:20Z",
+        "publisher_release_url": "https://github.com/p0deje/Maccy/releases/tag/2.7.1"
+      },
+      "current": {
+        "source_id": "p0deje/Maccy:678552154",
+        "retrieved_at": "2026-11-05T04:21:19Z",
+        "publisher_release_url": "https://github.com/p0deje/Maccy/releases/tag/2.8.0"
+      }
+    }
+  }
+}

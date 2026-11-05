@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "case_id": "lwouis.alt-tab-macos.v11.10.0-to-v11.10.1",
+  "publisher": "lwouis",
+  "application": "alt-tab-macos",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "v11.10.0",
+    "release_url": "https://github.com/lwouis/alt-tab-macos/releases/download/v11.10.0/AltTab-11.10.0.zip",
+    "sha256": "579a68222ab181bf56c64d1154aa47c9d623a921e5b13da9398b24e209892e23",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/lwouis/alt-tab-macos/blob/master/LICENCE.md",
+    "app_relative_path": "AltTab.app",
+    "published_at": "2026-10-22T21:26:43Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "v11.10.1",
+    "release_url": "https://github.com/lwouis/alt-tab-macos/releases/download/v11.10.1/AltTab-11.10.1.zip",
+    "sha256": "aa353197537ccfd378dd4a7ff43030561ce7c62267dd0b31b385691b0e7f594c",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/lwouis/alt-tab-macos/blob/master/LICENCE.md",
+    "app_relative_path": "AltTab.app",
+    "published_at": "2026-10-23T21:57:28Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "pending",
+    "source_digests": {
+      "previous": "579a68222ab181bf56c64d1154aa47c9d623a921e5b13da9398b24e209892e23",
+      "current": "aa353197537ccfd378dd4a7ff43030561ce7c62267dd0b31b385691b0e7f594c"
+    },
+    "declaration_facts": [],
+    "expected_refusals": []
+  },
+  "coverage_tags": [],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/lwouis/alt-tab-macos/languages",
+    "repository_bytes": {
+      "Swift": 3702166,
+      "Python": 53771,
+      "Shell": 29435,
+      "JavaScript": 5431,
+      "TypeScript": 4819,
+      "Objective-C": 66
+    },
+    "binary_confirmation": "pending independent oracle"
+  },
+  "oracle": {
+    "status": "pending",
+    "acquisition": {
+      "previous": {
+        "source_id": "lwouis/alt-tab-macos:667136866",
+        "retrieved_at": "2026-11-05T04:21:47Z",
+        "publisher_release_url": "https://github.com/lwouis/alt-tab-macos/releases/tag/v11.10.0"
+      },
+      "current": {
+        "source_id": "lwouis/alt-tab-macos:670525808",
+        "retrieved_at": "2026-11-05T04:21:46Z",
+        "publisher_release_url": "https://github.com/lwouis/alt-tab-macos/releases/tag/v11.10.1"
+      }
+    }
+  }
+}
