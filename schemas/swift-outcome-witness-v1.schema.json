@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AIRS structural outcome witness v1",
+  "description": "Wire shape only. Source truth requires validate_outcome_witness with an admitted image.",
+  "type": "object",
+  "required": ["schema_version", "model_version", "validation_model_version", "status", "source_reconstruction_allowed", "call_return_proven", "runtime_branch_proven", "handler_semantics_proven"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "model_version": {"const": "swift-outcome-witness-v1"},
+    "validation_model_version": {"const": "swift-outcome-validation-v1"},
+    "status": {"enum": ["eligible_structural_only", "unresolved", "blocked", "declined"]},
+    "source_reconstruction_allowed": {"const": false},
+    "call_return_proven": {"const": false},
+    "runtime_branch_proven": {"const": false},
+    "handler_semantics_proven": {"const": false},
+    "image": {"type": "object"},
+    "caller": {"type": "object"},
+    "evidence": {"type": "object"},
+    "graph": {"type": "object"},
+    "validation": {"type": "object"},
+    "details_complete": {"type": "boolean"}
+  },
+  "additionalProperties": true
+}

@@ -104,3 +104,10 @@ deterministic ordering and output, resource caps, cancellation, historical
 reopening and stale-result rejection. Then perform a host-specific UI and
 lifecycle qualification using explicitly authorized owned bundles. A passing
 AIRS fixture or native AIRS session is not a substitute for those checks.
+
+
+## Separate Swift outcome-witness contract
+
+Advanced Swift error-flow adaptation is specified in
+`docs/PORTING_SWIFT_OUTCOMES_TO_MACSCOPE.md`. It has separate model, byte-admission
+and qualification requirements; the component-security contract above is preserved.

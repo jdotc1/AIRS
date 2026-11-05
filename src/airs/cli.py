@@ -89,6 +89,8 @@ def _parser() -> argparse.ArgumentParser:
     swift_flow.add_argument("--include-structured-presentation", action="store_true", help="Emit eligibility and structural display plans; requires regions and entry validation")
     swift_flow.add_argument("--validate-region-entries", action="store_true", help="Check caller-local direct entries; requires --include-error-regions")
     swift_flow.add_argument("--include-error-regions", action="store_true", help="Describe bounded structural error intervals; calls remain opaque")
+    swift_flow.add_argument("--include-swift-methods", action="store_true", help="Admit qualified concrete struct methods under the v38 profile")
+    swift_flow.add_argument("--include-outcome-witnesses", action="store_true", help="Build byte-validated structural witnesses; requires regions, entry validation and structured presentation")
     return parser
 
 
@@ -105,12 +107,14 @@ def main(argv: list[str] | None = None) -> int:
             protected = (source, args.input)
             exit_code = 1 if args.fail_on_inconsistency and report["summary"]["inconsistency_count"] else 0
         elif args.command == "swift-error-flow":
+            if args.include_outcome_witnesses and not (args.include_error_regions and args.validate_region_entries and args.include_structured_presentation):
+                raise InputError("swift_witness_options", "Outcome witnesses require --include-error-regions, --validate-region-entries and --include-structured-presentation")
             if args.format == "text" and not args.include_structured_presentation:
                 raise InputError("swift_text_options", "Swift text requires --include-structured-presentation and its region/entry prerequisites")
             source = resolve_input(args.input)
-            report = recover_swift_error_flow_path(source, requested_arch=args.arch, include_error_regions=args.include_error_regions, validate_region_entries=args.validate_region_entries, include_structured_presentation=args.include_structured_presentation)
+            report = recover_swift_error_flow_path(source, requested_arch=args.arch, include_error_regions=args.include_error_regions, validate_region_entries=args.validate_region_entries, include_structured_presentation=args.include_structured_presentation, include_swift_methods=args.include_swift_methods, include_outcome_witnesses=args.include_outcome_witnesses)
             output, protected = (render_swift_error_text(report) if args.format == "text" else dumps(report)), (source, args.input)
-            exit_code = 0 if report["word_scan_complete"] and report["call_details_complete"] else 1
+            exit_code = 0 if report["word_scan_complete"] and report["call_details_complete"] and report.get("outcome_witnesses_complete", True) else 1
         elif args.command == "decode-blockers":
             source = resolve_input(args.input)
             report = decode_inventory_path(source, requested_arch=args.arch)

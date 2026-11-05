@@ -22,7 +22,7 @@ MAX_ISSUE_ROWS = 16
 MAX_LIMITATION_ROWS = 16
 
 
-def _consistent_return_choice(call: dict) -> dict | None:
+def _consistent_return_choice(call: dict, *, allow_methods: bool = False) -> dict | None:
     """Rebuild in-process outcome records for display, not admit saved reports."""
     choice = call.get('return_choice')
     presentation = call.get('presentation')
@@ -36,7 +36,7 @@ def _consistent_return_choice(call: dict) -> dict | None:
                 'call_return_proven', 'handler_semantics_proven'))):
         return None
     try:
-        rebuilt = _return_choice(call)
+        rebuilt = _return_choice(call, allow_methods=True) if allow_methods else _return_choice(call)
     except (AttributeError, IndexError, KeyError, TypeError, ValueError):
         return None
     if rebuilt != choice:
@@ -202,7 +202,13 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
         raise InputError('invalid_report_size_limit', 'Swift text byte limit must be a nonnegative integer')
     if not isinstance(report, dict):
         raise InputError('swift_text_models', 'Swift text requires an in-process report object')
-    if (report.get('report_kind') != 'airs.swift_error_flow' or report.get('model_version') != MODEL
+    allow_methods = report.get('model_version') == 'swift-sync-error-edges-v38'
+    expected_choice = 'swift-return-choice-v46' if allow_methods else RETURN_CHOICE_MODEL
+    if allow_methods and report.get('declaration_model_version') != 'swift-throwing-declarations-v1':
+        raise InputError('swift_text_models', 'Method profile requires its exact declaration model')
+    if not allow_methods and 'declaration_model_version' in report:
+        raise InputError('swift_text_models', 'Declaration model requires method profile')
+    if (report.get('report_kind') != 'airs.swift_error_flow' or report.get('model_version') not in (MODEL, 'swift-sync-error-edges-v38')
             or report.get('error_region_model_version') != REGION_MODEL
             or report.get('region_incoming_model_version') != INCOMING_MODEL
             or report.get('structured_presentation_model_version') != PRESENTATION_MODEL):
@@ -213,8 +219,10 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
         raise InputError('swift_text_models', 'Unsupported success-constant evidence model')
     if report.get('error_constant_model_version') not in (None, ERROR_CONSTANT_MODEL):
         raise InputError('swift_text_models', 'Unsupported error-constant evidence model')
-    if report.get('return_choice_model_version') not in (None, RETURN_CHOICE_MODEL):
+    if report.get('return_choice_model_version') not in (None, expected_choice):
         raise InputError('swift_text_models', 'Unsupported return-choice evidence model')
+    if 'outcome_witness_model_version' in report and (report.get('outcome_witness_model_version') != 'swift-outcome-witness-v1' or report.get('outcome_validation_model_version') != 'swift-outcome-validation-v1'):
+        raise InputError('swift_text_models', 'Unsupported outcome witness model combination')
     lines = _BoundedText(min(maximum_bytes, MAXIMUM_TEXT_BYTES))
 
     def line(label, value):
@@ -343,6 +351,10 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
                                  and plan_tail == region_for_plan.get('shared_epilogue')
                                  and success_interval == region_for_plan.get('success_interval'))))
         lines.append('Call candidate')
+        if 'outcome_witness' in call:
+            if report.get('outcome_witness_model_version') != 'swift-outcome-witness-v1':
+                raise InputError('swift_text_models', 'Witness evidence requires its model marker')
+            line('  Outcome witness (recorded validation; current bytes not reread by renderer)', call['outcome_witness'])
         line('  Call evidence', {key: call[key] for key in ('call_pc', 'call_image_offset', 'call_word', 'caller_pc', 'callee_pc', 'status') if key in call})
         if 'callee' in call:
             line('  Callee declaration (not runtime identity)', call['callee'])
@@ -364,11 +376,11 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
             constant = call['error_constant']
             evidence('  Error constant (selected-path bits; call return unproven)', '    Error-constant instruction', constant, 24)
         if 'return_choice' in call:
-            if report.get('return_choice_model_version') != RETURN_CHOICE_MODEL:
+            if report.get('return_choice_model_version') != expected_choice:
                 raise InputError('swift_text_models', 'Return-choice evidence requires its current model')
             choice = call['return_choice']
             line('  Return choice (structural outcomes; source disabled)', choice)
-            consistent_choice = _consistent_return_choice(call) if plan_renderable else None
+            consistent_choice = _consistent_return_choice(call, allow_methods=allow_methods) if plan_renderable else None
             literal_summary = _literal_outcome_summary(consistent_choice)
             if literal_summary is not None:
                 line('  Recorded literal outcomes (structural; runtime unproven)', literal_summary)
@@ -396,7 +408,7 @@ def render_swift_error_text(report: dict, *, maximum_bytes: int = MAXIMUM_TEXT_B
             proof_flags = ('runtime_value_proven', 'source_reconstruction_allowed', 'exclusive_path_proven',
                            'caller_return_type_proven')
             if (plan_renderable and recorded_call_bound
-                    and _consistent_callee_declaration(call.get('callee')) and call['callee']['result'] == 'Swift.Int'
+                    and (_consistent_callee_declaration(call.get('callee'), allow_methods=True) if allow_methods else _consistent_callee_declaration(call.get('callee'))) and call['callee']['result'] == 'Swift.Int'
                     and isinstance(result, dict) and isinstance(success, dict) and isinstance(plan, dict)
                     and choice.get('status') == 'structural_choice_candidate'
                     and result.get('status') == 'adjusted_register_candidate'

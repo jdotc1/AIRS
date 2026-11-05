@@ -56,39 +56,10 @@ def decode_instruction(word: int, address: int = 0):
     return decode_cfg_instruction(word, address)
 
 
-def throwing_declaration(symbol: str) -> dict | None:
-    """Exact ASCII free-function subset: Int -> Int/Void or () -> Int/Void, untyped throws.
-
-    Swift Mangling.rst's identifiers, standard Int substitution and throws suffix;
-    qualified methods, specializations, typed/async/generic/thunk forms refuse.
-    """
-    name = symbol[1:] if symbol.startswith('_$s') else symbol
-    if not name.startswith('$s') or len(name) > 512:
-        return None
-    cursor = 2
-    identifiers = []
-    for _ in range(2):
-        match = re.match(r'[1-9][0-9]{0,2}', name[cursor:])
-        if match is None:
-            return None
-        size = int(match.group()); cursor += len(match.group())
-        if size > 128:
-            return None
-        value = name[cursor:cursor + size]; cursor += size
-        if len(value) != size or re.fullmatch(r'[A-Za-z_][A-Za-z_0-9]*', value) is None:
-            return None
-        identifiers.append(value)
-    signature = {'yS2iKF': (('Swift.Int',), 'Swift.Int'),
-                 'yySiKF': (('Swift.Int',), 'Swift.Void'),
-                 'yyKF': ((), 'Swift.Void'),
-                 'SiyKF': ((), 'Swift.Int')}.get(name[cursor:])
-    if signature is None:
-        return None
-    parameters, result = signature
-    return {'module': identifiers[0], 'name': identifiers[1],
-            'parameters': list(parameters), 'result': result,
-            'convention': 'swift_sync_untyped_throws', 'error_register': 'x21',
-            'source': 'exact_external_symbol_grammar'}
+def throwing_declaration(symbol: str, *, allow_methods: bool = False) -> dict | None:
+    from .swift_throwing_declarations import parse_throwing_declaration
+    declaration = parse_throwing_declaration(symbol, allow_methods=allow_methods)
+    return declaration.record() if declaration else None
 
 
 def _symbol_groups(image: MachOImage) -> dict:
@@ -1488,18 +1459,18 @@ def _bind_choice_entry_ledgers(call: dict) -> None:
             raise ValueError('Flag entry ledger inconsistent')
 
 
-def _consistent_callee_declaration(callee) -> bool:
+def _consistent_callee_declaration(callee, *, allow_methods: bool = False) -> bool:
     """Reconcile retained declaration fields without authenticating the target."""
     if not isinstance(callee, dict) or not isinstance(callee.get('symbol'), str):
         return False
-    declaration = throwing_declaration(callee['symbol'])
+    declaration = throwing_declaration(callee['symbol'], allow_methods=allow_methods)
     if declaration is None:
         return False
     return all(type(callee.get(key)) is type(value) and callee[key] == value
                for key, value in declaration.items())
 
 
-def _return_choice(call: dict) -> dict:
+def _return_choice(call: dict, *, allow_methods: bool = False) -> dict:
     """Join in-process producer facts only; this does not admit saved reports."""
     result = {'status': 'unresolved', 'source_reconstruction_allowed': False,
               'runtime_value_proven': False, 'exclusive_path_proven': False,
@@ -1524,7 +1495,7 @@ def _return_choice(call: dict) -> dict:
     if not error_known or constant_known == returned_known:
         return {**result, 'reason': 'outcome_evidence_missing_or_conflicting'}
     success = constant if constant_known else returned
-    if not _consistent_callee_declaration(call.get('callee')):
+    if not _consistent_callee_declaration(call.get('callee'), allow_methods=allow_methods):
         return {**result, 'reason': 'outcome_evidence_inconsistent'}
     if returned_known and (not isinstance(call.get('callee'), dict)
                            or call['callee'].get('result') != 'Swift.Int'):
@@ -1663,7 +1634,9 @@ def _return_choice(call: dict) -> dict:
         return {**result, 'reason': 'outcome_evidence_inconsistent'}
 
 
-def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS, *, include_error_regions: bool = False, validate_region_entries: bool = False, include_structured_presentation: bool = False) -> dict:
+def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS, *, include_error_regions: bool = False, validate_region_entries: bool = False, include_structured_presentation: bool = False, include_swift_methods: bool = False, include_outcome_witnesses: bool = False) -> dict:
+    if include_outcome_witnesses and not (include_error_regions and validate_region_entries and include_structured_presentation):
+        raise InputError('swift_witness_option', 'Outcome witnesses require structured presentation, error regions and entry validation')
     if include_structured_presentation and not (include_error_regions and validate_region_entries):
         raise InputError('swift_presentation_option', 'Structured presentation requires error regions and entry validation')
     if validate_region_entries and not include_error_regions:
@@ -1717,7 +1690,16 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
                 row['reason'] = 'callee_symbol_absent_or_ambiguous'
             else:
                 symbol, public = groups[target]
-                declaration = throwing_declaration(symbol) if symbol and public else None
+                declaration = throwing_declaration(symbol, allow_methods=include_swift_methods) if symbol and public else None
+                if declaration is not None and declaration.get('callable_kind') == 'struct_instance_method':
+                    from .swift_nominal_context import admit_struct_context
+                    from .swift_throwing_declarations import parse_throwing_declaration
+                    context = admit_struct_context(image, parse_throwing_declaration(symbol, allow_methods=True))
+                    if (context['status'] != 'admitted_struct_context'
+                            or declaration['parameters'] != ['Swift.Int'] or declaration['result'] != 'Swift.Int'):
+                        declaration = None
+                    else:
+                        row['method_context'] = context
                 if declaration is None:
                     row['reason'] = 'callee_declaration_outside_subset'
                 else:
@@ -1740,7 +1722,7 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
                 row['success_result'] = _success_result(data, function, row, direct_scan)
                 row['success_constant'] = _path_constant(data, function, row, scan=direct_scan)
                 row['error_constant'] = _path_constant(data, function, row, error=True, scan=direct_scan)
-                row['return_choice'] = _return_choice(row)
+                row['return_choice'] = _return_choice(row, allow_methods=include_swift_methods)
     recovered = sum(row['status'] == 'recovered_candidate' for row in calls)
     report = {'schema_version': 1, 'report_kind': 'airs.swift_error_flow', 'model_version': MODEL,
             'scope': 'structural_call_return_edges', 'address_space': 'preferred_vm',
@@ -1761,6 +1743,10 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
                             'Only bounded 64-bit MOV/NOP, CMP-only W MOV and X/W MOVZ/MOVN/MOVK prefixes, and forward CBZ/CBNZ or adjacent CMP-zero EQ/NE return windows are recovered.',
                             'Embedded-data, relocation and symbol-only function boundaries are excluded by existing admission tags.',
                             'No catch type, handler semantics, source equivalence, unwind verdict or async claim is made.']}
+    if include_swift_methods:
+        from .swift_throwing_declarations import METHOD_MODEL, METHOD_RETURN_CHOICE_MODEL, DECLARATION_MODEL
+        report['model_version'] = METHOD_MODEL
+        report['declaration_model_version'] = DECLARATION_MODEL
     if include_error_regions:
         regions = [row['error_region'] for row in calls if 'error_region' in row]
         report['error_region_model_version'] = REGION_MODEL
@@ -1776,15 +1762,52 @@ def recover_swift_error_flow(image: MachOImage, limits: Limits = DEFAULT_LIMITS,
         report['success_result_model_version'] = SUCCESS_RESULT_MODEL
         report['success_constant_model_version'] = SUCCESS_CONSTANT_MODEL
         report['error_constant_model_version'] = ERROR_CONSTANT_MODEL
-        report['return_choice_model_version'] = RETURN_CHOICE_MODEL
+        report['return_choice_model_version'] = METHOD_RETURN_CHOICE_MODEL if include_swift_methods else RETURN_CHOICE_MODEL
         for status in ('eligible_structural_only', 'blocked', 'unresolved'):
             report['summary']['presentation_' + status + '_count'] = sum(row['presentation']['status'] == status for row in calls)
     if any(row.get('test_kind') == 'cmp_zero_bcond' for row in calls):
         report['limitations'].append('Adjacent CMP/B.cond evidence is selected-word only; optional flag-entry inspection covers caller-local direct edges, not NZCV state or exclusive entry. Screened EQ shared tails may pair a preserved call result or success literal with error literal bits; screened NE forward presentation, preserved Int call results and error literals are structural only; Screened NE success literals and choices are structural only.')
+    if include_outcome_witnesses:
+        from .swift_outcome_witness import build_outcome_witness
+        from .swift_outcome_witness_validation import validate_outcome_witness
+        from .swift_outcome_witness_models import WITNESS_MODEL, VALIDATION_MODEL, DEFAULT_WITNESS_LIMITS
+        report['outcome_witness_model_version'] = WITNESS_MODEL
+        report['outcome_validation_model_version'] = VALIDATION_MODEL
+        complete = report['call_details_complete'] and report['word_scan_complete']
+        used_bytes = 0
+        remaining_work = 262144
+        for row in calls:
+            function = functions[int(row['caller_pc'], 16)]
+            witness = build_outcome_witness(image, function, row,
+                model_profile='methods' if include_swift_methods else 'legacy')
+            from dataclasses import replace
+            if remaining_work <= 0:
+                validation = {'status': 'unresolved', 'reason': 'aggregate_work_limit', 'details_complete': False, 'work_steps': 0}
+            else:
+                validation = validate_outcome_witness(image, function, witness, limits=replace(DEFAULT_WITNESS_LIMITS, max_total_work=remaining_work))
+                remaining_work = max(0, remaining_work - validation['work_steps'])
+            witness['validation'] = validation
+            witness['status'] = validation['status']
+            witness['reason'] = validation.get('reason', '')
+            import json
+            size = len(json.dumps(witness, ensure_ascii=True))
+            if used_bytes + size > 8 * 1024 * 1024:
+                complete = False
+                row['outcome_witness'] = {'status': 'unresolved', 'reason': 'aggregate_output_limit', 'details_complete': False}
+                continue
+            used_bytes += size
+            row['outcome_witness'] = witness
+            if witness.get('details_complete') is False or validation.get('details_complete') is False:
+                complete = False
+        report['outcome_witnesses_complete'] = bool(complete)
+        report['outcome_witness_work_steps'] = 262144 - remaining_work
+        report['summary']['outcome_witness_count'] = len(calls)
+        for status in ('eligible_structural_only', 'blocked', 'declined', 'unresolved'):
+            report['summary']['witness_' + status + '_count'] = sum(r['outcome_witness']['status'] == status for r in calls)
     return report
 
 
-def recover_swift_error_flow_path(path: Path | str, *, requested_arch: str = 'auto', limits: Limits = DEFAULT_LIMITS, include_error_regions: bool = False, validate_region_entries: bool = False, include_structured_presentation: bool = False) -> dict:
+def recover_swift_error_flow_path(path: Path | str, *, requested_arch: str = 'auto', limits: Limits = DEFAULT_LIMITS, include_error_regions: bool = False, validate_region_entries: bool = False, include_structured_presentation: bool = False, include_swift_methods: bool = False, include_outcome_witnesses: bool = False) -> dict:
     source = resolve_input(path)
     try:
         with source.open('rb') as handle:
@@ -1793,4 +1816,4 @@ def recover_swift_error_flow_path(path: Path | str, *, requested_arch: str = 'au
         raise InputError('unreadable_input', f'Cannot read Swift-flow input: {error}') from error
     if len(data) > limits.max_file_bytes:
         raise InputError('file_size_limit', 'Input exceeds the bounded Swift flow file limit')
-    return recover_swift_error_flow(parse_macho(data, str(source), limits, requested_arch), limits, include_error_regions=include_error_regions, validate_region_entries=validate_region_entries, include_structured_presentation=include_structured_presentation)
+    return recover_swift_error_flow(parse_macho(data, str(source), limits, requested_arch), limits, include_error_regions=include_error_regions, validate_region_entries=validate_region_entries, include_structured_presentation=include_structured_presentation, include_swift_methods=include_swift_methods, include_outcome_witnesses=include_outcome_witnesses)
