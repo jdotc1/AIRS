@@ -59,3 +59,17 @@ empty/malformed privacy data, duplicate loader sequence, raw subtype bits, fat
 slice/UUID provenance, malformed signature versus absence, and truncated input.
 Command: `python3 -B -m unittest discover -s tests -p test_security_delta_independent_oracle.py -v`.
 No real application binary has been decoded by this oracle yet.
+
+A3 continued: bounded independent bundle traversal, explicit privacy presence,
+Unicode failure classification, byte-work accounting and retained-output refusal
+were added. The affected oracle run passed 12 methods and skipped one physical
+invalid-UTF8 filename fixture because APFS refused constructing it (EILSEQ);
+an injected invalid-name case passed separately. New Apple-tool agreement and
+mismatch preservation passed (1 method); atomic no-overwrite evidence publication
+passed after a missing-helper RED (1 method). These tests do not use AIRS parsing.
+Evidence logs: A3-bounded-oracle-green, A3-work-green, A3-tools-green,
+A3-atomic-red/green in the private task evidence directory.
+
+Jeff approved one bounded 47-release/35-pair qualification pass plus 100 pure
+retained-input replays. Raw oracle capture started; capture results will be
+reported separately from adjudication. No third-party application is executed.
