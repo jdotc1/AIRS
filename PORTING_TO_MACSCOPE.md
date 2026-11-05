@@ -111,3 +111,10 @@ AIRS fixture or native AIRS session is not a substitute for those checks.
 Advanced Swift error-flow adaptation is specified in
 `docs/PORTING_SWIFT_OUTCOMES_TO_MACSCOPE.md`. It has separate model, byte-admission
 and qualification requirements; the component-security contract above is preserved.
+
+## Real-release qualification replay
+
+The independent corpus protocol, source manifests, owned mutations and host replay
+gates are documented in
+[the real-release portability acceptance contract](docs/security-delta-real-corpus/PORTING_ACCEPTANCE.md).
+AIRS acceptance does not establish MacScope integration acceptance.

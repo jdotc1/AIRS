@@ -19,3 +19,12 @@ paths were tested with synthetic inputs.
 Independent technical review findings and corrections are documented in
 `COMPONENT_SECURITY_DELTA_REVIEW_ROUND_1.md` and
 `COMPONENT_SECURITY_DELTA_REVIEW_ROUND_2.md`.
+
+## Later independent real-release qualification
+
+Track A subsequently added an opt-in authentic-release corpus and independent raw
+oracle, retaining this original synthetic qualification record. Its source, native,
+archive, review, resource and not-run evidence is reported separately in
+[the real-release qualification results](security-delta-real-corpus/RESULTS.md).
+These later results do not establish MacScope integration or a new application
+release, signing/notarization, clean-machine or minimum-OS acceptance.

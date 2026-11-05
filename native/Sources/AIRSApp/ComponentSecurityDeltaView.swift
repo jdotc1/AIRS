@@ -42,21 +42,22 @@ struct ComponentSecurityDeltaView: View {
                                 Text(DisplayText.escaped(observation.subject)).font(.headline)
                                 Text(DisplayText.escaped(observation.componentPath) + " · " + observation.disposition.rawValue).foregroundStyle(.secondary)
                             }.tag(observation.id)
-                        }.frame(minWidth: 280)
+                        }.frame(minWidth: 280, idealWidth: 340, maxWidth: 440)
                     } else if !showingObservations, let pages = filtered?.findings, pages.indices.contains(page) {
                         List(pages[page], selection: $selection) { finding in
                             VStack(alignment: .leading) {
                                 Text(finding.title).font(.headline)
                                 Text(finding.disposition.rawValue).foregroundStyle(.secondary)
                             }.tag(finding.id)
-                        }.frame(minWidth: 280)
+                        }.frame(minWidth: 280, idealWidth: 340, maxWidth: 440)
                     }
                     if showingObservations, let selection, let observation = session.securityDeltaObservations[selection] {
                         ScrollView { SecurityDeltaObservationDetail(observation: observation, session: session).id(observation.id).padding() }
+                            .frame(minWidth: 360)
                     } else if let selection, let finding = session.securityDeltaFindings[selection] {
-                        SecurityDeltaFindingDetail(finding: finding, session: session).id(finding.id)
+                        SecurityDeltaFindingDetail(finding: finding, session: session).id(finding.id).frame(minWidth: 360)
                     } else {
-                        Text("Select a finding to inspect its recorded evidence.").frame(maxWidth: .infinity, maxHeight: .infinity)
+                        Text("Select a finding to inspect its recorded evidence.").frame(minWidth: 360, maxWidth: .infinity, maxHeight: .infinity)
                     }
                 }
                 SecurityDeltaCoverageView(coverage: report.coverage)

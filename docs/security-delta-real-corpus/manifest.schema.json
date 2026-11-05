@@ -1,0 +1,391 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AIRS real-release component delta case v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "case_id",
+    "publisher",
+    "application",
+    "selection",
+    "previous",
+    "current",
+    "expected",
+    "coverage_tags"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "case_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,191}$"
+    },
+    "publisher": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,191}$"
+    },
+    "application": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,191}$"
+    },
+    "selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "architecture",
+        "purpose"
+      ],
+      "properties": {
+        "architecture": {
+          "enum": [
+            "arm64",
+            "x86_64"
+          ]
+        },
+        "purpose": {
+          "const": "authentic_release_pair"
+        }
+      }
+    },
+    "previous": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "release_url",
+        "sha256",
+        "license_note",
+        "license_url",
+        "app_relative_path",
+        "published_at",
+        "archive_kind"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "release_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://",
+          "maxLength": 4096
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "license_note": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "license_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://",
+          "maxLength": 4096
+        },
+        "app_relative_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "published_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        "archive_kind": {
+          "const": "zip"
+        }
+      }
+    },
+    "current": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "release_url",
+        "sha256",
+        "license_note",
+        "license_url",
+        "app_relative_path",
+        "published_at",
+        "archive_kind"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "release_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://",
+          "maxLength": 4096
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "license_note": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "license_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://",
+          "maxLength": 4096
+        },
+        "app_relative_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "published_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        "archive_kind": {
+          "const": "zip"
+        }
+      }
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "adjudication",
+        "source_digests",
+        "declaration_facts",
+        "expected_refusals"
+      ],
+      "properties": {
+        "adjudication": {
+          "enum": [
+            "pending",
+            "independently_adjudicated"
+          ]
+        },
+        "adjudicator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "source_digests": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "previous",
+            "current"
+          ],
+          "properties": {
+            "previous": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "current": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "declaration_facts": {
+          "type": "array",
+          "maxItems": 1024,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "side",
+              "source_path",
+              "source_sha256",
+              "archive_sha256",
+              "locator",
+              "state",
+              "expected_value",
+              "adjudicator"
+            ],
+            "properties": {
+              "side": {
+                "enum": [
+                  "previous",
+                  "current"
+                ]
+              },
+              "source_path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "source_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "archive_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "locator": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind"
+                ],
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "plist_key",
+                      "macho_command",
+                      "signature_slot",
+                      "source_presence"
+                    ]
+                  },
+                  "key": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 536870912
+                  },
+                  "length": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 536870912
+                  },
+                  "slice": {
+                    "type": "object"
+                  }
+                }
+              },
+              "state": {
+                "enum": [
+                  "observed",
+                  "absent",
+                  "unavailable",
+                  "unexamined",
+                  "excluded",
+                  "ambiguous",
+                  "stale",
+                  "truncated"
+                ]
+              },
+              "expected_value": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "adjudicator": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              }
+            }
+          }
+        },
+        "expected_refusals": {
+          "type": "array",
+          "maxItems": 1024,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "side",
+              "source_path",
+              "archive_sha256",
+              "code",
+              "adjudicator"
+            ],
+            "properties": {
+              "side": {
+                "enum": [
+                  "previous",
+                  "current"
+                ]
+              },
+              "source_path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "archive_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "code": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "adjudicator": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "adjudication": {
+                "const": "independently_adjudicated"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "adjudicator"
+            ],
+            "properties": {
+              "declaration_facts": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "coverage_tags": {
+      "type": "array",
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "simple",
+          "frameworks",
+          "services",
+          "universal",
+          "entitlements",
+          "privacy_manifest",
+          "loader",
+          "signature"
+        ]
+      }
+    },
+    "language_evidence": {
+      "type": "object"
+    },
+    "oracle": {
+      "type": "object"
+    },
+    "retrieved_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

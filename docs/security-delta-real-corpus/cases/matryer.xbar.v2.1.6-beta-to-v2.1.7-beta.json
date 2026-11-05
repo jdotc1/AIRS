@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "case_id": "matryer.xbar.v2.1.6-beta-to-v2.1.7-beta",
+  "publisher": "matryer",
+  "application": "xbar",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "v2.1.6-beta",
+    "release_url": "https://github.com/matryer/xbar/releases/download/v2.1.6-beta/xbar.v2.1.6-beta.zip",
+    "sha256": "4be5c25e58c725863768bfbc10e5e75b91b87941bccd8159c1c1c659f74eed35",
+    "license_note": "MIT; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/matryer/xbar/blob/main/LICENSE.txt",
+    "app_relative_path": "xbar.app",
+    "published_at": "2021-08-28T19:40:24Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "v2.1.7-beta",
+    "release_url": "https://github.com/matryer/xbar/releases/download/v2.1.7-beta/xbar.v2.1.7-beta.zip",
+    "sha256": "60e595a2bc15d831a1b118e1940c4f2e91ac4fd0d22039282dc0b6d369e41bbe",
+    "license_note": "MIT; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/matryer/xbar/blob/main/LICENSE.txt",
+    "app_relative_path": "xbar.app",
+    "published_at": "2021-10-29T10:42:32Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "independently_adjudicated",
+    "source_digests": {
+      "previous": "4be5c25e58c725863768bfbc10e5e75b91b87941bccd8159c1c1c659f74eed35",
+      "current": "60e595a2bc15d831a1b118e1940c4f2e91ac4fd0d22039282dc0b6d369e41bbe"
+    },
+    "declaration_facts": [
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "114c447e487b2b95eb34ef192487cf81e33170f21a793bdb577d4f0bebce4f10",
+        "archive_sha256": "4be5c25e58c725863768bfbc10e5e75b91b87941bccd8159c1c1c659f74eed35",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1114
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.xbarapp.app"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "114c447e487b2b95eb34ef192487cf81e33170f21a793bdb577d4f0bebce4f10",
+        "archive_sha256": "4be5c25e58c725863768bfbc10e5e75b91b87941bccd8159c1c1c659f74eed35",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1114
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "v2.1.6-beta"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "114c447e487b2b95eb34ef192487cf81e33170f21a793bdb577d4f0bebce4f10",
+        "archive_sha256": "4be5c25e58c725863768bfbc10e5e75b91b87941bccd8159c1c1c659f74eed35",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1114
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "v2.1.6-beta"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "15ea9868a894c04ff4418dbd78037d51948852e5de42e119f838f5a93b3ca8a6",
+        "archive_sha256": "60e595a2bc15d831a1b118e1940c4f2e91ac4fd0d22039282dc0b6d369e41bbe",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1114
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.xbarapp.app"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "15ea9868a894c04ff4418dbd78037d51948852e5de42e119f838f5a93b3ca8a6",
+        "archive_sha256": "60e595a2bc15d831a1b118e1940c4f2e91ac4fd0d22039282dc0b6d369e41bbe",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1114
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "v2.1.7-beta"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "15ea9868a894c04ff4418dbd78037d51948852e5de42e119f838f5a93b3ca8a6",
+        "archive_sha256": "60e595a2bc15d831a1b118e1940c4f2e91ac4fd0d22039282dc0b6d369e41bbe",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1114
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "v2.1.7-beta"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      }
+    ],
+    "expected_refusals": [],
+    "adjudicator": "Independent raw-source parser; selected Info facts only. Complete-case acceptance remains partial in CASE_MATRIX and RESULTS."
+  },
+  "coverage_tags": [
+    "entitlements",
+    "loader",
+    "privacy_manifest",
+    "signature",
+    "simple",
+    "universal"
+  ],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/matryer/xbar/languages",
+    "repository_bytes": {
+      "Go": 270924,
+      "Objective-C": 85752,
+      "HTML": 42827,
+      "Svelte": 42693,
+      "JavaScript": 9605,
+      "Shell": 5385,
+      "CSS": 4308,
+      "Makefile": 341
+    },
+    "binary_confirmation": [],
+    "interpretation": "Repository language byte counts indicate predominant source language; raw binary metadata corroborates toolchain presence, not a percentage of executed instructions."
+  },
+  "oracle": {
+    "status": "selected_source_facts_adjudicated; broader evaluation partial",
+    "acquisition": {
+      "previous": {
+        "source_id": "matryer/xbar:43517069",
+        "retrieved_at": "2026-11-05T04:21:33Z",
+        "publisher_release_url": "https://github.com/matryer/xbar/releases/tag/v2.1.6-beta"
+      },
+      "current": {
+        "source_id": "matryer/xbar:48150651",
+        "retrieved_at": "2026-11-05T04:21:30Z",
+        "publisher_release_url": "https://github.com/matryer/xbar/releases/tag/v2.1.7-beta"
+      }
+    },
+    "version": "security-delta-raw-oracle-v1",
+    "retained_payload_policy": "Public metadata/hashes/locators only; raw bytes and captures remain local-only and require legitimate reacquisition to reproduce.",
+    "case_evaluation": {
+      "observation_counts": {
+        "supported": 26
+      },
+      "finding_counts": {
+        "supported": 12
+      },
+      "expected_change_counts": {
+        "true_positive": 10
+      }
+    }
+  }
+}

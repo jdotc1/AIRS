@@ -1816,3 +1816,9 @@ unexamined states, and correlates observations without establishing causation.
 It does not establish effective entitlement authorization, dynamic library
 loading, privacy compliance, signature trust, notarization, maliciousness or a
 numeric security score. See [component security change analysis](COMPONENT_SECURITY_DELTA.md).
+
+The opt-in [real-release qualification harness](security-delta-real-corpus/SPEC.md)
+checks this boundary independently. Its acquisition and raw oracle are test
+tooling and do not confer live filesystem authority on imported reports or the
+pure analyzer. Missing usable Info evidence is unavailable; staleness requires
+a mismatch against previously usable captured bytes.

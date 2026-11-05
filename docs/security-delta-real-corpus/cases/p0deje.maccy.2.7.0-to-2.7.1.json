@@ -1,0 +1,335 @@
+{
+  "schema_version": 1,
+  "case_id": "p0deje.maccy.2.7.0-to-2.7.1",
+  "publisher": "p0deje",
+  "application": "maccy",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "2.7.0",
+    "release_url": "https://github.com/p0deje/Maccy/releases/download/2.7.0/Maccy.app.zip",
+    "sha256": "9e2ff4393059a71dcdcd27c5d111de31673080ae2c18fec44ba65c1ab264383c",
+    "license_note": "MIT; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/p0deje/Maccy/blob/master/LICENSE",
+    "app_relative_path": "Maccy.app",
+    "published_at": "2026-07-28T19:31:52Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "2.7.1",
+    "release_url": "https://github.com/p0deje/Maccy/releases/download/2.7.1/Maccy.app.zip",
+    "sha256": "f388aee34de09a0c7531631303785d9938bef9a92130e21ce1049c8f56aad077",
+    "license_note": "MIT; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/p0deje/Maccy/blob/master/LICENSE",
+    "app_relative_path": "Maccy.app",
+    "published_at": "2026-08-10T14:35:26Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "independently_adjudicated",
+    "source_digests": {
+      "previous": "9e2ff4393059a71dcdcd27c5d111de31673080ae2c18fec44ba65c1ab264383c",
+      "current": "f388aee34de09a0c7531631303785d9938bef9a92130e21ce1049c8f56aad077"
+    },
+    "declaration_facts": [
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "c1e291a638297cdedf19a2b663297888677b8a35e07135b94d0d7abafa15839d",
+        "archive_sha256": "9e2ff4393059a71dcdcd27c5d111de31673080ae2c18fec44ba65c1ab264383c",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1856
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "org.p0deje.Maccy"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "c1e291a638297cdedf19a2b663297888677b8a35e07135b94d0d7abafa15839d",
+        "archive_sha256": "9e2ff4393059a71dcdcd27c5d111de31673080ae2c18fec44ba65c1ab264383c",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1856
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "2.7.0"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "c1e291a638297cdedf19a2b663297888677b8a35e07135b94d0d7abafa15839d",
+        "archive_sha256": "9e2ff4393059a71dcdcd27c5d111de31673080ae2c18fec44ba65c1ab264383c",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1856
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "61"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "de70dcb731b3f15b053c8078d417e3c61eac4e3a49da009feb3d6a8e9376809e",
+        "archive_sha256": "f388aee34de09a0c7531631303785d9938bef9a92130e21ce1049c8f56aad077",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1854
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "org.p0deje.Maccy"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "de70dcb731b3f15b053c8078d417e3c61eac4e3a49da009feb3d6a8e9376809e",
+        "archive_sha256": "f388aee34de09a0c7531631303785d9938bef9a92130e21ce1049c8f56aad077",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1854
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "2.7.1"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "de70dcb731b3f15b053c8078d417e3c61eac4e3a49da009feb3d6a8e9376809e",
+        "archive_sha256": "f388aee34de09a0c7531631303785d9938bef9a92130e21ce1049c8f56aad077",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1854
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "62"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      }
+    ],
+    "expected_refusals": [],
+    "adjudicator": "Independent raw-source parser; selected Info facts only. Complete-case acceptance remains partial in CASE_MATRIX and RESULTS."
+  },
+  "coverage_tags": [
+    "entitlements",
+    "frameworks",
+    "loader",
+    "privacy_manifest",
+    "services",
+    "signature",
+    "simple",
+    "universal"
+  ],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/p0deje/Maccy/languages",
+    "repository_bytes": {
+      "Swift": 365784
+    },
+    "binary_confirmation": [
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/Maccy",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 17440,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 1903904,
+          "slice_index": 0
+        },
+        "range_sha256": "47efc123af8af770cf24cbc20937d63ba651afc3393f7b7f683a5afa03dfea0b",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/Maccy",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 18792,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 1903904,
+          "slice_index": 0
+        },
+        "range_sha256": "0e8447cd88fa448421b131d06d9f5a14c3ffea38076ea26008efcda0e4bcab38",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/Maccy",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 1934448,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 1933312,
+          "size": 1860368,
+          "slice_index": 1
+        },
+        "range_sha256": "c7474c33b0a8ff52cf516356983e6549c69c1ab7214691129f8345717a0c62ce",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/Maccy",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 1935800,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 1933312,
+          "size": 1860368,
+          "slice_index": 1
+        },
+        "range_sha256": "6d1b1ef41b0c2dc5bcfa7df896a1ab0e9f405b05544969a7311221874fa1f5c8",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/Maccy",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 17440,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 1908512,
+          "slice_index": 0
+        },
+        "range_sha256": "886041feb4a6cf9b4d9638f8368e0972fd6b3382449c2d9ca64fc31552122550",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/Maccy",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 18792,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 1908512,
+          "slice_index": 0
+        },
+        "range_sha256": "2db24cb29a7e8fb40cfc2ca5738c1ff97e4cd62ecaf3ea561cdbd6b7aaadbbde",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/Maccy",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 1934448,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 1933312,
+          "size": 1860848,
+          "slice_index": 1
+        },
+        "range_sha256": "b166ef955b7363cb5fd5edbcf050b4df5f7df4738ddb72ef10c487774370dc60",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/Maccy",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 1935800,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 1933312,
+          "size": 1860848,
+          "slice_index": 1
+        },
+        "range_sha256": "7488aff9709cb6f55b624595c1ea492d2280fae9b55d6efc0e8a20004a53446a",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      }
+    ],
+    "interpretation": "Repository language byte counts indicate predominant source language; raw binary metadata corroborates toolchain presence, not a percentage of executed instructions."
+  },
+  "oracle": {
+    "status": "selected_source_facts_adjudicated; broader evaluation partial",
+    "acquisition": {
+      "previous": {
+        "source_id": "p0deje/Maccy:493105989",
+        "retrieved_at": "2026-11-05T04:21:21Z",
+        "publisher_release_url": "https://github.com/p0deje/Maccy/releases/tag/2.7.0"
+      },
+      "current": {
+        "source_id": "p0deje/Maccy:508858210",
+        "retrieved_at": "2026-11-05T04:21:20Z",
+        "publisher_release_url": "https://github.com/p0deje/Maccy/releases/tag/2.7.1"
+      }
+    },
+    "version": "security-delta-raw-oracle-v1",
+    "retained_payload_policy": "Public metadata/hashes/locators only; raw bytes and captures remain local-only and require legitimate reacquisition to reproduce.",
+    "case_evaluation": {
+      "observation_counts": {
+        "supported": 96,
+        "unresolved": 14
+      },
+      "finding_counts": {
+        "supported": 7,
+        "unresolved": 14
+      },
+      "expected_change_counts": {
+        "true_positive": 5,
+        "unresolved": 15
+      }
+    }
+  }
+}

@@ -1,0 +1,267 @@
+{
+  "schema_version": 1,
+  "case_id": "keycastr.keycastr.v0.10.5-to-v0.11.0",
+  "publisher": "keycastr",
+  "application": "keycastr",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "v0.10.5",
+    "release_url": "https://github.com/keycastr/keycastr/releases/download/v0.10.5/KeyCastr.app.zip",
+    "sha256": "c97c63eadbf4304c04802c0c8375c99b58084584be314e964c8366eca318b752",
+    "license_note": "BSD-3-Clause; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/keycastr/keycastr/blob/main/LICENSE.md",
+    "app_relative_path": "KeyCastr.app",
+    "published_at": "2025-11-24T03:50:37Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "v0.11.0",
+    "release_url": "https://github.com/keycastr/keycastr/releases/download/v0.11.0/KeyCastr.app.zip",
+    "sha256": "00cc656a786012bcbdb5b203b1a56604727ad2ced5e4f5c1d189296f62881033",
+    "license_note": "BSD-3-Clause; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/keycastr/keycastr/blob/main/LICENSE.md",
+    "app_relative_path": "KeyCastr.app",
+    "published_at": "2026-08-27T01:48:23Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "independently_adjudicated",
+    "source_digests": {
+      "previous": "c97c63eadbf4304c04802c0c8375c99b58084584be314e964c8366eca318b752",
+      "current": "00cc656a786012bcbdb5b203b1a56604727ad2ced5e4f5c1d189296f62881033"
+    },
+    "declaration_facts": [
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "7f98e4fcd23c120ddab2f910eda6cd83263d4ac8a1286d6037c81eaaea1098bb",
+        "archive_sha256": "c97c63eadbf4304c04802c0c8375c99b58084584be314e964c8366eca318b752",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1869
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "io.github.keycastr"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "7f98e4fcd23c120ddab2f910eda6cd83263d4ac8a1286d6037c81eaaea1098bb",
+        "archive_sha256": "c97c63eadbf4304c04802c0c8375c99b58084584be314e964c8366eca318b752",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1869
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "0.10.5"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "7f98e4fcd23c120ddab2f910eda6cd83263d4ac8a1286d6037c81eaaea1098bb",
+        "archive_sha256": "c97c63eadbf4304c04802c0c8375c99b58084584be314e964c8366eca318b752",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1869
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "0.10.5"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "efcc3fe35f1603aabd9a34d46ae3963647d9d3e4f4c958b4de64e31b64cdd611",
+        "archive_sha256": "00cc656a786012bcbdb5b203b1a56604727ad2ced5e4f5c1d189296f62881033",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1869
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "io.github.keycastr"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "efcc3fe35f1603aabd9a34d46ae3963647d9d3e4f4c958b4de64e31b64cdd611",
+        "archive_sha256": "00cc656a786012bcbdb5b203b1a56604727ad2ced5e4f5c1d189296f62881033",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1869
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "0.11.0"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "efcc3fe35f1603aabd9a34d46ae3963647d9d3e4f4c958b4de64e31b64cdd611",
+        "archive_sha256": "00cc656a786012bcbdb5b203b1a56604727ad2ced5e4f5c1d189296f62881033",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1869
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "0.11.0"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      }
+    ],
+    "expected_refusals": [],
+    "adjudicator": "Independent raw-source parser; selected Info facts only. Complete-case acceptance remains partial in CASE_MATRIX and RESULTS."
+  },
+  "coverage_tags": [
+    "entitlements",
+    "frameworks",
+    "loader",
+    "privacy_manifest",
+    "services",
+    "signature",
+    "simple",
+    "universal"
+  ],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/keycastr/keycastr/languages",
+    "repository_bytes": {
+      "Objective-C": 194490
+    },
+    "binary_confirmation": [
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/KeyCastr",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 17592,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 65936,
+          "slice_index": 0
+        },
+        "range_sha256": "e61cede80b4f2949124a9c2a7e59574521268358a783cd171758276441f3ba25",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/KeyCastr",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 99592,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 98304,
+          "size": 90416,
+          "slice_index": 1
+        },
+        "range_sha256": "fb84909e321350a4c7645d6a369bf216219f768256794dfb134de58a660273f8",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/KeyCastr",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 17592,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 65952,
+          "slice_index": 0
+        },
+        "range_sha256": "aaf5fe12838c148f931077fa196bb65aa0a7bbbdb9c14b66accd26bc7c4317b2",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/KeyCastr",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 99592,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 98304,
+          "size": 106432,
+          "slice_index": 1
+        },
+        "range_sha256": "247fdccdac14c372b36249ec2231674863cfd294bf763a2eef50c73fb4fe7fcd",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      }
+    ],
+    "interpretation": "Repository language byte counts indicate predominant source language; raw binary metadata corroborates toolchain presence, not a percentage of executed instructions."
+  },
+  "oracle": {
+    "status": "selected_source_facts_adjudicated; broader evaluation partial",
+    "acquisition": {
+      "previous": {
+        "source_id": "keycastr/keycastr:320103082",
+        "retrieved_at": "2026-11-05T04:21:29Z",
+        "publisher_release_url": "https://github.com/keycastr/keycastr/releases/tag/v0.10.5"
+      },
+      "current": {
+        "source_id": "keycastr/keycastr:531628412",
+        "retrieved_at": "2026-11-05T04:21:29Z",
+        "publisher_release_url": "https://github.com/keycastr/keycastr/releases/tag/v0.11.0"
+      }
+    },
+    "version": "security-delta-raw-oracle-v1",
+    "retained_payload_policy": "Public metadata/hashes/locators only; raw bytes and captures remain local-only and require legitimate reacquisition to reproduce.",
+    "case_evaluation": {
+      "observation_counts": {
+        "supported": 189,
+        "unresolved": 34
+      },
+      "finding_counts": {
+        "supported": 91,
+        "unresolved": 34
+      },
+      "expected_change_counts": {
+        "true_positive": 75,
+        "unresolved": 27
+      }
+    }
+  }
+}

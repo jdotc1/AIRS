@@ -1,0 +1,343 @@
+{
+  "schema_version": 1,
+  "case_id": "sbarex.qlmarkdown.1.5.6-to-1.5.7",
+  "publisher": "sbarex",
+  "application": "qlmarkdown",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "1.5.6",
+    "release_url": "https://github.com/sbarex/QLMarkdown/releases/download/1.5.6/QLMarkdown.zip",
+    "sha256": "d92ea9db7c2357f60f7b53270be5016eb5626097d6718fcc02c1629cde54d5c0",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/sbarex/QLMarkdown/blob/main/LICENSE.txt",
+    "app_relative_path": "QLMarkdown.app",
+    "published_at": "2026-09-30T14:34:05Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "1.5.7",
+    "release_url": "https://github.com/sbarex/QLMarkdown/releases/download/1.5.7/QLMarkdown.zip",
+    "sha256": "96cc95553ee63557f7ec58f41a568ff1fe5bca95b6bcd3883709fa8337c685d4",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/sbarex/QLMarkdown/blob/main/LICENSE.txt",
+    "app_relative_path": "QLMarkdown.app",
+    "published_at": "2026-10-02T10:18:37Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "independently_adjudicated",
+    "source_digests": {
+      "previous": "d92ea9db7c2357f60f7b53270be5016eb5626097d6718fcc02c1629cde54d5c0",
+      "current": "96cc95553ee63557f7ec58f41a568ff1fe5bca95b6bcd3883709fa8337c685d4"
+    },
+    "declaration_facts": [
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "1eb959e0e96bef78932ed2ea82644f9b48c4d8f899f1e5b8517be250952eff6e",
+        "archive_sha256": "d92ea9db7c2357f60f7b53270be5016eb5626097d6718fcc02c1629cde54d5c0",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 5819
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "org.sbarex.QLMarkdown"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "1eb959e0e96bef78932ed2ea82644f9b48c4d8f899f1e5b8517be250952eff6e",
+        "archive_sha256": "d92ea9db7c2357f60f7b53270be5016eb5626097d6718fcc02c1629cde54d5c0",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 5819
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "1.5.6"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "1eb959e0e96bef78932ed2ea82644f9b48c4d8f899f1e5b8517be250952eff6e",
+        "archive_sha256": "d92ea9db7c2357f60f7b53270be5016eb5626097d6718fcc02c1629cde54d5c0",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 5819
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "58"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "10ae9f94d68546b74293278a8eb9a3a42b029e370d5d015e42aaa46428bf1640",
+        "archive_sha256": "96cc95553ee63557f7ec58f41a568ff1fe5bca95b6bcd3883709fa8337c685d4",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 5819
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "org.sbarex.QLMarkdown"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "10ae9f94d68546b74293278a8eb9a3a42b029e370d5d015e42aaa46428bf1640",
+        "archive_sha256": "96cc95553ee63557f7ec58f41a568ff1fe5bca95b6bcd3883709fa8337c685d4",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 5819
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "1.5.7"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "10ae9f94d68546b74293278a8eb9a3a42b029e370d5d015e42aaa46428bf1640",
+        "archive_sha256": "96cc95553ee63557f7ec58f41a568ff1fe5bca95b6bcd3883709fa8337c685d4",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 5819
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "59"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      }
+    ],
+    "expected_refusals": [],
+    "adjudicator": "Independent raw-source parser; selected Info facts only. Complete-case acceptance remains partial in CASE_MATRIX and RESULTS."
+  },
+  "coverage_tags": [
+    "entitlements",
+    "frameworks",
+    "loader",
+    "privacy_manifest",
+    "services",
+    "signature",
+    "simple",
+    "universal"
+  ],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/sbarex/QLMarkdown/languages",
+    "repository_bytes": {
+      "C++": 50985799,
+      "C": 1423382,
+      "HTML": 416257,
+      "Swift": 261889,
+      "Lua": 173180,
+      "Makefile": 40995,
+      "CSS": 28635,
+      "Roff": 6171,
+      "Objective-C": 602
+    },
+    "binary_confirmation": [
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/QLMarkdown",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 17680,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 6198304,
+          "slice_index": 0
+        },
+        "range_sha256": "169ef4099ecfed745922aaf1c805446a75567e47234f4b1ab2e4aad705631fea",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/QLMarkdown",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 18712,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 6198304,
+          "slice_index": 0
+        },
+        "range_sha256": "88c9a62f121cdfe6369755617bd7ce9278d824b5a7679b42dfbbac81f5c5ab92",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/QLMarkdown",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 6227376,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 6225920,
+          "size": 5656688,
+          "slice_index": 1
+        },
+        "range_sha256": "7363143968cd877a38654e09391153e9eed2199ddb7957adc75b221691b9d015",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/QLMarkdown",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 6228328,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 6225920,
+          "size": 5656688,
+          "slice_index": 1
+        },
+        "range_sha256": "9148ad7be0924241daba2f9eb6b625a987244c8688467353b8af91b2a00c3f63",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/QLMarkdown",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 17680,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 6198304,
+          "slice_index": 0
+        },
+        "range_sha256": "650ce7878cffdca5953a3c77322644759d12c2854ec7d6531d847617330e2b80",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/QLMarkdown",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 18712,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 6198304,
+          "slice_index": 0
+        },
+        "range_sha256": "88c9a62f121cdfe6369755617bd7ce9278d824b5a7679b42dfbbac81f5c5ab92",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/QLMarkdown",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 6227376,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 6225920,
+          "size": 5656688,
+          "slice_index": 1
+        },
+        "range_sha256": "8ed4e8f7e94db5d75859891a69d94c83d622b60ef570e7ef8374e69e7f959e48",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/QLMarkdown",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 6228328,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 6225920,
+          "size": 5656688,
+          "slice_index": 1
+        },
+        "range_sha256": "9148ad7be0924241daba2f9eb6b625a987244c8688467353b8af91b2a00c3f63",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      }
+    ],
+    "interpretation": "Repository language byte counts indicate predominant source language; raw binary metadata corroborates toolchain presence, not a percentage of executed instructions."
+  },
+  "oracle": {
+    "status": "selected_source_facts_adjudicated; broader evaluation partial",
+    "acquisition": {
+      "previous": {
+        "source_id": "sbarex/QLMarkdown:601121839",
+        "retrieved_at": "2026-11-05T04:21:42Z",
+        "publisher_release_url": "https://github.com/sbarex/QLMarkdown/releases/tag/1.5.6"
+      },
+      "current": {
+        "source_id": "sbarex/QLMarkdown:605315574",
+        "retrieved_at": "2026-11-05T04:21:41Z",
+        "publisher_release_url": "https://github.com/sbarex/QLMarkdown/releases/tag/1.5.7"
+      }
+    },
+    "version": "security-delta-raw-oracle-v1",
+    "retained_payload_policy": "Public metadata/hashes/locators only; raw bytes and captures remain local-only and require legitimate reacquisition to reproduce.",
+    "case_evaluation": {
+      "observation_counts": {
+        "supported": 126,
+        "unresolved": 22
+      },
+      "finding_counts": {
+        "supported": 10,
+        "unresolved": 22
+      },
+      "expected_change_counts": {
+        "true_positive": 7,
+        "unresolved": 29
+      }
+    }
+  }
+}

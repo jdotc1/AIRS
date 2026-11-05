@@ -1,0 +1,335 @@
+{
+  "schema_version": 1,
+  "case_id": "jordanbaird.ice.0.11.11-to-0.11.12",
+  "publisher": "jordanbaird",
+  "application": "ice",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "0.11.11",
+    "release_url": "https://github.com/jordanbaird/Ice/releases/download/0.11.11/Ice.zip",
+    "sha256": "21ea5ffa614def29bb699bb7c6725526840d0d999216fb75e504c6757b6f49cb",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/jordanbaird/Ice/blob/main/LICENSE",
+    "app_relative_path": "Ice.app",
+    "published_at": "2024-10-19T18:28:27Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "0.11.12",
+    "release_url": "https://github.com/jordanbaird/Ice/releases/download/0.11.12/Ice.zip",
+    "sha256": "d770e81597566dd2d2363feb350f808c7a92e363df95c51e48140eb30e452cc9",
+    "license_note": "GPL-3.0; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/jordanbaird/Ice/blob/main/LICENSE",
+    "app_relative_path": "Ice.app",
+    "published_at": "2024-10-29T19:29:03Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "independently_adjudicated",
+    "source_digests": {
+      "previous": "21ea5ffa614def29bb699bb7c6725526840d0d999216fb75e504c6757b6f49cb",
+      "current": "d770e81597566dd2d2363feb350f808c7a92e363df95c51e48140eb30e452cc9"
+    },
+    "declaration_facts": [
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "603bc42ceb10a049da79c91d9c8cc51d345ebb70a34cc1b16ef405491c40b79e",
+        "archive_sha256": "21ea5ffa614def29bb699bb7c6725526840d0d999216fb75e504c6757b6f49cb",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1776
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.jordanbaird.Ice"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "603bc42ceb10a049da79c91d9c8cc51d345ebb70a34cc1b16ef405491c40b79e",
+        "archive_sha256": "21ea5ffa614def29bb699bb7c6725526840d0d999216fb75e504c6757b6f49cb",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1776
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "0.11.11"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "603bc42ceb10a049da79c91d9c8cc51d345ebb70a34cc1b16ef405491c40b79e",
+        "archive_sha256": "21ea5ffa614def29bb699bb7c6725526840d0d999216fb75e504c6757b6f49cb",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1776
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "1116"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "376a75523e1c829362071bc155b30c5e851fe982a0e120e816daa7ea30e8c2c5",
+        "archive_sha256": "d770e81597566dd2d2363feb350f808c7a92e363df95c51e48140eb30e452cc9",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 1771
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.jordanbaird.Ice"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "376a75523e1c829362071bc155b30c5e851fe982a0e120e816daa7ea30e8c2c5",
+        "archive_sha256": "d770e81597566dd2d2363feb350f808c7a92e363df95c51e48140eb30e452cc9",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 1771
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "0.11.12"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "376a75523e1c829362071bc155b30c5e851fe982a0e120e816daa7ea30e8c2c5",
+        "archive_sha256": "d770e81597566dd2d2363feb350f808c7a92e363df95c51e48140eb30e452cc9",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 1771
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "1117"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      }
+    ],
+    "expected_refusals": [],
+    "adjudicator": "Independent raw-source parser; selected Info facts only. Complete-case acceptance remains partial in CASE_MATRIX and RESULTS."
+  },
+  "coverage_tags": [
+    "entitlements",
+    "frameworks",
+    "loader",
+    "privacy_manifest",
+    "services",
+    "signature",
+    "simple",
+    "universal"
+  ],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/jordanbaird/Ice/languages",
+    "repository_bytes": {
+      "Swift": 602477
+    },
+    "binary_confirmation": [
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/Ice",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 17520,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 2091040,
+          "slice_index": 0
+        },
+        "range_sha256": "5ac910ed53b325fda7960ec80030dfbdbe95142b4724c7d383eca7a934203a7d",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/Ice",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 18632,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 2091040,
+          "slice_index": 0
+        },
+        "range_sha256": "addbc8788ee757932ffc98428c3c0cb2aee114e025ba99624f9059ea900ad1e2",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/Ice",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 2114672,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 2113536,
+          "size": 2063968,
+          "slice_index": 1
+        },
+        "range_sha256": "0741d16ec49cab7b590407621b4073d6de55abd5621f1ded6036f56a155750eb",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/Ice",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 2115784,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 2113536,
+          "size": 2063968,
+          "slice_index": 1
+        },
+        "range_sha256": "b64be820b0d0d6d8a911a4c417c0655acc38d55063e28485388682673532a118",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/Ice",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 17520,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 2112800,
+          "slice_index": 0
+        },
+        "range_sha256": "7ef41e7d7268737a20256fd51cd4ede26efb77a9bf4e47b46be53c28e8e1e768",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/Ice",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 18632,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 2112800,
+          "slice_index": 0
+        },
+        "range_sha256": "e1cff1e6a4f908d577492280c41908f1b2894ef286a87eb9d3c3e441675e398b",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/Ice",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 2131056,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 2129920,
+          "size": 2081648,
+          "slice_index": 1
+        },
+        "range_sha256": "838dd7538baaf0a208b84867decc515286445c3e0dd42ea255467ec3b53375ed",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/Ice",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 2132168,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 2129920,
+          "size": 2081648,
+          "slice_index": 1
+        },
+        "range_sha256": "8f40fba32375332f117f8a5902b8a4d318c15598af94f14125d599ab6a96d828",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      }
+    ],
+    "interpretation": "Repository language byte counts indicate predominant source language; raw binary metadata corroborates toolchain presence, not a percentage of executed instructions."
+  },
+  "oracle": {
+    "status": "selected_source_facts_adjudicated; broader evaluation partial",
+    "acquisition": {
+      "previous": {
+        "source_id": "jordanbaird/Ice:200255553",
+        "retrieved_at": "2026-11-05T04:21:23Z",
+        "publisher_release_url": "https://github.com/jordanbaird/Ice/releases/tag/0.11.11"
+      },
+      "current": {
+        "source_id": "jordanbaird/Ice:202659926",
+        "retrieved_at": "2026-11-05T04:21:23Z",
+        "publisher_release_url": "https://github.com/jordanbaird/Ice/releases/tag/0.11.12"
+      }
+    },
+    "version": "security-delta-raw-oracle-v1",
+    "retained_payload_policy": "Public metadata/hashes/locators only; raw bytes and captures remain local-only and require legitimate reacquisition to reproduce.",
+    "case_evaluation": {
+      "observation_counts": {
+        "supported": 109,
+        "unresolved": 14
+      },
+      "finding_counts": {
+        "supported": 22,
+        "unresolved": 14
+      },
+      "expected_change_counts": {
+        "true_positive": 20,
+        "unresolved": 15
+      }
+    }
+  }
+}

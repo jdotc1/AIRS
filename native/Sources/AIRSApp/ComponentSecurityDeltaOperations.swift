@@ -299,8 +299,8 @@ enum ComponentSecurityDeltaOperations {
         guard unit.inventoryID == inventory.id, unit.relativePath.utf8.elementsEqual(record.relativePath.utf8) else { return try unavailable("evidence_binding_mismatch") }
         do {
             guard let info = declarations.first(where: { $0.componentID == componentID && $0.category == .info }),
-                  info.state == .present, let bytes = info.bytes,
-                  try CodeUnitPreflight.inspect(unit).infoBytes == bytes else { return try unavailable("source_stale") }
+                  info.state == .present, let bytes = info.bytes else { return try unavailable("source_unavailable") }
+            guard try CodeUnitPreflight.inspect(unit).infoBytes == bytes else { return try unavailable("source_stale") }
             let snapshot = try await reader.read(unit: unit, architecture: session.review.architecture)
             try Task.checkCancellation()
             guard snapshot.architecture == session.review.architecture,

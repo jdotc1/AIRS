@@ -1,0 +1,338 @@
+{
+  "schema_version": 1,
+  "case_id": "alienator88.pearcleaner.5.4.2-to-5.4.3",
+  "publisher": "alienator88",
+  "application": "pearcleaner",
+  "selection": {
+    "architecture": "arm64",
+    "purpose": "authentic_release_pair"
+  },
+  "previous": {
+    "version": "5.4.2",
+    "release_url": "https://github.com/alienator88/Pearcleaner/releases/download/5.4.2/Pearcleaner.zip",
+    "sha256": "f37b2a7690e216ac018d1549589533d95a7bcd561abc9718704fc1992f3f8f28",
+    "license_note": "Apache-2.0 with Commons Clause; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/alienator88/Pearcleaner/blob/main/LICENSE.md",
+    "app_relative_path": "Pearcleaner.app",
+    "published_at": "2025-11-21T23:33:18Z",
+    "archive_kind": "zip"
+  },
+  "current": {
+    "version": "5.4.3",
+    "release_url": "https://github.com/alienator88/Pearcleaner/releases/download/5.4.3/Pearcleaner.zip",
+    "sha256": "16d0463dbe7082b3c4f85138f776c14e4ea292e25b86b76ffe09af4306fb30b2",
+    "license_note": "Apache-2.0 with Commons Clause; publisher license provenance recorded; third-party archive retained privately for read-only inspection, not redistributed.",
+    "license_url": "https://github.com/alienator88/Pearcleaner/blob/main/LICENSE.md",
+    "app_relative_path": "Pearcleaner.app",
+    "published_at": "2025-11-26T23:18:50Z",
+    "archive_kind": "zip"
+  },
+  "expected": {
+    "adjudication": "independently_adjudicated",
+    "source_digests": {
+      "previous": "f37b2a7690e216ac018d1549589533d95a7bcd561abc9718704fc1992f3f8f28",
+      "current": "16d0463dbe7082b3c4f85138f776c14e4ea292e25b86b76ffe09af4306fb30b2"
+    },
+    "declaration_facts": [
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "9109f3ba9893af8c004d08b04da21169a752012da89442c09c1a0cf641c485fa",
+        "archive_sha256": "f37b2a7690e216ac018d1549589533d95a7bcd561abc9718704fc1992f3f8f28",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 2936
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.alienator88.Pearcleaner"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "9109f3ba9893af8c004d08b04da21169a752012da89442c09c1a0cf641c485fa",
+        "archive_sha256": "f37b2a7690e216ac018d1549589533d95a7bcd561abc9718704fc1992f3f8f28",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 2936
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "5.4.2"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "9109f3ba9893af8c004d08b04da21169a752012da89442c09c1a0cf641c485fa",
+        "archive_sha256": "f37b2a7690e216ac018d1549589533d95a7bcd561abc9718704fc1992f3f8f28",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 2936
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "120"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "3436ddb9d2f6c5cd2ec10cb8e97398297054eaf390e2d822727796b91c072eea",
+        "archive_sha256": "16d0463dbe7082b3c4f85138f776c14e4ea292e25b86b76ffe09af4306fb30b2",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleIdentifier",
+          "offset": 0,
+          "length": 2936
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "com.alienator88.Pearcleaner"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "3436ddb9d2f6c5cd2ec10cb8e97398297054eaf390e2d822727796b91c072eea",
+        "archive_sha256": "16d0463dbe7082b3c4f85138f776c14e4ea292e25b86b76ffe09af4306fb30b2",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleShortVersionString",
+          "offset": 0,
+          "length": 2936
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "5.4.3"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/Info.plist",
+        "source_sha256": "3436ddb9d2f6c5cd2ec10cb8e97398297054eaf390e2d822727796b91c072eea",
+        "archive_sha256": "16d0463dbe7082b3c4f85138f776c14e4ea292e25b86b76ffe09af4306fb30b2",
+        "locator": {
+          "kind": "plist_key",
+          "key": "CFBundleVersion",
+          "offset": 0,
+          "length": 2936
+        },
+        "state": "observed",
+        "expected_value": {
+          "type": "string",
+          "value": "121"
+        },
+        "adjudicator": "Independent raw plist oracle v1; selected declaration fact only"
+      }
+    ],
+    "expected_refusals": [],
+    "adjudicator": "Independent raw-source parser; selected Info facts only. Complete-case acceptance remains partial in CASE_MATRIX and RESULTS."
+  },
+  "coverage_tags": [
+    "entitlements",
+    "frameworks",
+    "loader",
+    "privacy_manifest",
+    "services",
+    "signature",
+    "simple",
+    "universal"
+  ],
+  "language_evidence": {
+    "source_url": "https://api.github.com/repos/alienator88/Pearcleaner/languages",
+    "repository_bytes": {
+      "Swift": 1908954,
+      "Objective-C": 47576,
+      "C": 163,
+      "Shell": 128
+    },
+    "binary_confirmation": [
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/Pearcleaner",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 17680,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 7334096,
+          "slice_index": 0
+        },
+        "range_sha256": "29d824ac466b40636f0c6906f339b0b9826fde7033a40c0474aefa4bb04e2457",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/Pearcleaner",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 18632,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 7334096,
+          "slice_index": 0
+        },
+        "range_sha256": "d03294eb064de879f5a49e4acf35aeb2dad174ac1e80c7f797ebd4754b74d9ac",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/Pearcleaner",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 7357712,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 7356416,
+          "size": 7005584,
+          "slice_index": 1
+        },
+        "range_sha256": "238d04cfa9f0d7f82bf71e76aa6164a9166fcccec9f653b9c26726127de069a8",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "previous",
+        "source_path": "Contents/MacOS/Pearcleaner",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 7358664,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 7356416,
+          "size": 7005584,
+          "slice_index": 1
+        },
+        "range_sha256": "f2587a74f4d0734c3dafa46499e36cf1f6dc6c927beab919d0b30e881d30d3e5",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/Pearcleaner",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 17680,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 7376976,
+          "slice_index": 0
+        },
+        "range_sha256": "11d0e3857f7a7c4bbf828aaae559b5c60af13c0a563782add9a33ef450fa93de",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/Pearcleaner",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 18632,
+        "slice": {
+          "cpu_subtype": 3,
+          "cpu_type": 16777223,
+          "magic": 4277009103,
+          "offset": 16384,
+          "size": 7376976,
+          "slice_index": 0
+        },
+        "range_sha256": "d07137711bf43479b44b029d7fc26ed6ac2f0bace9ec23ab7e9e538f98ec6032",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/Pearcleaner",
+        "family": "Swift",
+        "section": "__swift5_types",
+        "section_header_offset": 7406864,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 7405568,
+          "size": 7056480,
+          "slice_index": 1
+        },
+        "range_sha256": "917d1a901b3177f2975b9c273e4e5ca3b09cd11fa7ca45cfcf23cfef720e946d",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      },
+      {
+        "side": "current",
+        "source_path": "Contents/MacOS/Pearcleaner",
+        "family": "Objective-C",
+        "section": "__objc_classlist",
+        "section_header_offset": 7407816,
+        "slice": {
+          "cpu_subtype": 0,
+          "cpu_type": 16777228,
+          "magic": 4277009103,
+          "offset": 7405568,
+          "size": 7056480,
+          "slice_index": 1
+        },
+        "range_sha256": "c6fd549d7b4a6ab4616010802981009266bd21e98f95b6a078f8722d235b547a",
+        "binding": "Separate non-atomic recorded-range observation; original container digest not recomputed"
+      }
+    ],
+    "interpretation": "Repository language byte counts indicate predominant source language; raw binary metadata corroborates toolchain presence, not a percentage of executed instructions."
+  },
+  "oracle": {
+    "status": "selected_source_facts_adjudicated; broader evaluation partial",
+    "acquisition": {
+      "previous": {
+        "source_id": "alienator88/Pearcleaner:319420340",
+        "retrieved_at": "2026-11-05T04:21:49Z",
+        "publisher_release_url": "https://github.com/alienator88/Pearcleaner/releases/tag/5.4.2"
+      },
+      "current": {
+        "source_id": "alienator88/Pearcleaner:321260813",
+        "retrieved_at": "2026-11-05T04:21:49Z",
+        "publisher_release_url": "https://github.com/alienator88/Pearcleaner/releases/tag/5.4.3"
+      }
+    },
+    "version": "security-delta-raw-oracle-v1",
+    "retained_payload_policy": "Public metadata/hashes/locators only; raw bytes and captures remain local-only and require legitimate reacquisition to reproduce.",
+    "case_evaluation": {
+      "observation_counts": {
+        "supported": 122,
+        "unresolved": 28
+      },
+      "finding_counts": {
+        "supported": 12,
+        "unresolved": 28
+      },
+      "expected_change_counts": {
+        "true_positive": 9,
+        "unresolved": 24
+      }
+    }
+  }
+}
