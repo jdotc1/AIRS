@@ -14,10 +14,12 @@ This is the **single active AIRS development repository**. Development branches,
 pull requests, issues and future releases belong here.
 
 The current release is the
-[AIRS 0.3.4/build 13 preview](https://github.com/jdotc1/AIRS/releases/tag/v0.3.4-build13),
-using the accepted signed, notarized and stapled candidate. Browser-download and
-local App Translocation acceptance are recorded in
-[current release qualification](docs/CURRENT_SOURCE_RELEASE_GATES.md).
+[AIRS 0.3.4/build 25 preview](https://github.com/jdotc1/AIRS/releases/tag/v0.3.4-build25),
+using the accepted signed, notarized and stapled application. It adds evidence-linked
+Security Changes in Component Review. The release includes source, checksums and a
+qualification summary describing reused evidence and the limited installed-app check.
+Historical build 13 browser-download and local App Translocation acceptance remain
+recorded in [prior release qualification](docs/CURRENT_SOURCE_RELEASE_GATES.md).
 **Independent clean-machine and minimum-macOS acceptance remain pending.**
 The [build 12 records](docs/RELEASE_0_3_3_BUILD12.md) and
 [sidebar acceptance](docs/SIDEBAR_NAVIGATION.md) retain their historical scope.
