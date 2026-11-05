@@ -149,7 +149,8 @@ def _function_starts(data: bytes, offset: int, size: int, base: int,
 
 
 def _symbol_names(data: bytes, command: tuple[int, int, int, int] | None,
-                  sections: tuple[Section, ...], limits: Limits) -> dict[int, str]:
+                  sections: tuple[Section, ...], limits: Limits, *,
+                  pie_header_address: int | None = None) -> dict[int, str]:
     if command is None:
         return {}
     symoff, count, stroff, strsize = command
@@ -169,6 +170,16 @@ def _symbol_names(data: bytes, command: tuple[int, int, int, int] | None,
             raise InputError("symbol_section_index", "A defined symbol has an invalid section index", record + 5)
         section = sections[section_number - 1]
         if not section.address <= address <= section.end:
+            # PIE linkers can attach the header marker to the first __text
+            # section even though its value is the mapped Mach header address.
+            # Exclude only that exact metadata record; never mint a code entry.
+            marker = b"__mh_execute_header\0"
+            if (pie_header_address is not None and address == pie_header_address
+                    and kind == 0x0F and section_number == 1
+                    and section.segment == "__TEXT" and section.name == "__text"
+                    and 0 < strx <= strsize - len(marker)
+                    and data[stroff + strx:stroff + strx + len(marker)] == marker):
+                continue
             raise InputError("symbol_address_extent", "A defined symbol lies outside its declared section", record + 8)
         if not section.executable or address == section.end or (section.flags & 0xFF) in _ZEROFILL_TYPES:
             continue
@@ -219,7 +230,7 @@ def parse_macho(data: bytes, path: str = "<memory>", limits: Limits = Limits(),
             raise InputError("unsupported_macho_format", "Only little-endian 64-bit Mach-O images are supported", 0)
         raise InputError("unrecognized_magic", "The selected input is not a supported Mach-O image", 0)
     _extent(0, 32, len(selected), "truncated_macho_header", "Mach-O64 header")
-    _, cpu, subtype, filetype, ncmds, sizeofcmds, _, reserved = struct.unpack_from("<IIIIIIII", selected)
+    _, cpu, subtype, filetype, ncmds, sizeofcmds, header_flags, reserved = struct.unpack_from("<IIIIIIII", selected)
     if advertised is not None and (cpu, subtype) != advertised:
         raise InputError("slice_identity_mismatch", "The selected Mach-O header disagrees with its FAT architecture record", 4)
     architecture = _architecture(cpu, subtype)
@@ -243,6 +254,7 @@ def parse_macho(data: bytes, path: str = "<memory>", limits: Limits = Limits(),
     section_file_ranges: list[tuple[int, int, int]] = []
     section_keys: set[tuple[str, str]] = set()
     preferred_base = None
+    pie_header_address = None
     function_command = None
     symbol_command = None
     dynamic_symbol_command = None
@@ -294,6 +306,8 @@ def parse_macho(data: bytes, path: str = "<memory>", limits: Limits = Limits(),
                 if preferred_base is not None:
                     raise InputError("duplicate_text_segment", "The image has more than one __TEXT segment", cursor)
                 preferred_base = vmaddr
+                if filetype == 2 and header_flags & 0x200000 and fileoff == 0 and filesize >= command_end:
+                    pie_header_address = vmaddr
             for section_index in range(nsects):
                 section_offset = cursor + 72 + section_index * 80
                 fields = struct.unpack_from("<16s16sQQIIIIIIII", selected, section_offset)
@@ -427,7 +441,8 @@ def parse_macho(data: bytes, path: str = "<memory>", limits: Limits = Limits(),
     executable = tuple(sorted((section for section in sections if section.executable and section.size), key=lambda s: s.address))
     if not executable:
         issues.append(Issue("no_executable_sections", "No nonempty executable section is available"))
-    names = _symbol_names(selected, symbol_command, all_sections, limits)
+    names = _symbol_names(selected, symbol_command, all_sections, limits,
+                          pie_header_address=pie_header_address)
     starts = _function_starts(selected, *function_command, preferred_base, executable, limits) if function_command else []
     if starts:
         source = "lc_function_starts"
