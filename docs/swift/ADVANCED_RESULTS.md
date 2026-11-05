@@ -30,5 +30,16 @@ never prove runtime reachability or call return. Validator work can repeat a
 caller scan across calls but is bounded by the aggregate budget; no persistent
 trusted cache or cross-process source authentication is claimed.
 
-Native UI, installation, release, public delivery and MacScope acceptance were
-not exercised. The handback is staged locally only, with no remote upload.
+The original implementation qualification did not exercise native UI,
+installation, release, public delivery or MacScope acceptance. Its private handback
+remains separate from public release assets.
+
+The reviewed implementation was subsequently integrated without semantic changes
+and published in [AIRS build 26](https://github.com/jdotc1/AIRS/releases/tag/v0.3.4-build26).
+The 47 distinct test methods and two independent reviews were reused. Native
+compiler inputs were unchanged, so accepted native executable/resource outputs
+were reused without recompilation. The new package received its own content checks,
+Developer ID signing, Apple notarization and stapling, and a packaged CLI import/help
+smoke check. Public delivery metadata was reconciled against the prepared assets.
+The release qualification record preserves the narrower native/runtime and platform
+acceptance limits; no new native UI or MacScope integration is claimed.

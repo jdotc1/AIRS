@@ -14,9 +14,10 @@ This is the **single active AIRS development repository**. Development branches,
 pull requests, issues and future releases belong here.
 
 The current release is the
-[AIRS 0.3.4/build 25 preview](https://github.com/jdotc1/AIRS/releases/tag/v0.3.4-build25),
-using the accepted signed, notarized and stapled application. It adds evidence-linked
-Security Changes in Component Review. The release includes source, checksums and a
+[AIRS 0.3.4/build 26 preview](https://github.com/jdotc1/AIRS/releases/tag/v0.3.4-build26),
+using the accepted signed, notarized and stapled application. It includes evidence-linked
+Security Changes in Component Review and adds opt-in Swift structural method and
+outcome-witness analysis in the engine/CLI. The release includes source, checksums and a
 qualification summary describing reused evidence and the limited installed-app check.
 Historical build 13 browser-download and local App Translocation acceptance remain
 recorded in [prior release qualification](docs/CURRENT_SOURCE_RELEASE_GATES.md).
