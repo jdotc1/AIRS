@@ -10,7 +10,7 @@ final class SwiftBroadFlowReportTests: XCTestCase {
         bound["callee"] = ["start_pc": "0x1100", "end_pc_exclusive": "0x1108", "boundary_source": "lc_function_starts"]
         bound["call_pc"] = "0x1004"
         let candidate: [String: Any] = ["model_version": "swift-outcome-witness-v2", "validation_model": "swift-outcome-validation-v2", "profile": "broad-v1", "source_models": ["edge": "swift-broad-error-flow-v1", "witness": "swift-outcome-witness-v2", "validation": "swift-outcome-validation-v2", "cfg": "swift-bounded-structural-cfg-v1", "value": "swift-outcome-values-v1"], "status": "unresolved", "eligible": false, "identity": bound, "completeness": ["complete": true, "missing": []], "call": ["pc": "0x1004", "callee_pc": "0x1100", "abi": ["status": "admitted", "profile": "swift6-arm64-sync-untyped-stable-research-v2", "error_register": "x21"], "declaration": ["status": "syntax_admitted"]], "post_call": ["test_pc": "0x1008", "success_successor_pc": "0x1010", "error_successor_pc": "0x100c"], "regions": ["paths": []], "cfg": ["edges": []], "value_facts": ["seed": ["origin": "raw_post_call_register:x21"]]]
-        let validation: [String: Any] = ["model_version": "swift-outcome-validation-v2", "status": "eligible_structural_only", "eligible": true, "reason": "independent_bounded_byte_replay", "eligibility_scope": "checked_structural_facts_only", "completeness": ["complete": true, "missing": []], "facts": ["call": "independently checked"], "fact_statuses": ["identity": "checked", "call": "checked", "abi": "checked", "cfg": "checked", "post_call": "checked", "regions": "checked", "values": "checked"], "accounting": ["work": 24, "instructions": 4], "runtime_branch_proven": false, "call_return_proven": false, "error_state_proven": false, "source_reconstruction_allowed": false, "handler_semantics_proven": false, "exclusive_entry_proven": false]
+        let validation: [String: Any] = ["model_version": "swift-outcome-validation-v2", "status": "eligible_structural_only", "eligible": true, "reason": "independent_bounded_byte_replay", "eligibility_scope": "checked_structural_facts_only", "completeness": ["complete": true, "missing": []], "value_fact_status": "checked_symbolic_values", "facts": ["call": "independently checked"], "fact_statuses": ["identity": "checked", "call": "checked", "abi": "checked", "cfg": "checked", "post_call": "checked", "regions": "checked", "values": "checked_symbolic_values"], "accounting": ["work": 24, "instructions": 4], "runtime_branch_proven": false, "call_return_proven": false, "error_state_proven": false, "source_reconstruction_allowed": false, "handler_semantics_proven": false, "exclusive_entry_proven": false]
         return ["model_version": "swift-broad-error-flow-v1", "profile": "broad-v1", "witness_model_version": "swift-outcome-witness-v2", "validation_model_version": "swift-outcome-validation-v2", "identity": identity, "word_scan_complete": true, "call_details_complete": true, "outcome_witnesses_complete": true, "observed_call_instructions": 1, "selected_call_candidates": 1, "omitted_calls": 0, "scanned_words": 24, "analysis_work": 100, "research_only": true, "call_return_proven": false, "runtime_reachability_proven": false, "status_counts": ["eligible_structural_only": 1], "reason_counts": ["independent_bounded_byte_replay": 1], "calls": [["caller_pc": "0x1000", "call_pc": "0x1004", "admission": ["status": "admitted_callsite", "call_pc": 4100, "callee_pc": 4352, "symbol": "$sOwned", "abi": ["status": "admitted", "profile": "swift6-arm64-sync-untyped-stable-research-v2", "error_register": "x21"], "declaration": ["status": "syntax_admitted"]], "candidate": candidate, "validation": validation]], "limitations": ["structural_only"]]
     }
     func decode(_ value: [String: Any]) throws -> SwiftFlowReport {
@@ -120,6 +120,44 @@ final class SwiftBroadFlowReportTests: XCTestCase {
         var object = fixture(), rows = object["calls"] as! [[String: Any]], candidate = rows[0]["candidate"] as! [String: Any], call = candidate["call"] as! [String: Any], abi = call["abi"] as! [String: Any]
         abi["profile"] = "future"; call["abi"] = abi; candidate["call"] = call; rows[0]["candidate"] = candidate; object["calls"] = rows
         XCTAssertNotEqual(try decode(object).calls.first?.witnessStatus, "eligible_structural_only")
+    }
+
+    func testNonobjectRangesAndMissingNumericAdmissionCannotBindEligibility() throws {
+        for key in ["caller", "callee"] {
+            var object = fixture(), rows = object["calls"] as! [[String: Any]], candidate = rows[0]["candidate"] as! [String: Any], identity = candidate["identity"] as! [String: Any]
+            identity[key] = NSNull(); candidate["identity"] = identity; rows[0]["candidate"] = candidate; object["calls"] = rows
+            XCTAssertThrowsError(try decode(object))
+        }
+        for key in ["call_pc", "callee_pc"] {
+            var object = fixture(), rows = object["calls"] as! [[String: Any]], admission = rows[0]["admission"] as! [String: Any]
+            admission.removeValue(forKey: key); rows[0]["admission"] = admission; object["calls"] = rows
+            XCTAssertNotEqual(try decode(object).calls.first?.witnessStatus, "eligible_structural_only")
+        }
+    }
+    func testIndependentCoreFactsMustBeCheckedAndValueUnknownsRemainExplicit() throws {
+        for key in ["identity", "call", "abi", "cfg", "post_call", "regions"] {
+            var object = fixture(), rows = object["calls"] as! [[String: Any]], validation = rows[0]["validation"] as! [String: Any], facts = validation["fact_statuses"] as! [String: String]
+            facts[key] = "unchecked"; validation["fact_statuses"] = facts; rows[0]["validation"] = validation; object["calls"] = rows
+            let call = try XCTUnwrap(try decode(object).calls.first)
+            XCTAssertNotEqual(call.witnessStatus, "eligible_structural_only")
+            XCTAssertTrue(call.witnessReason?.contains("Recorded eligibility") == true)
+        }
+        for state in ["checked_symbolic_values", "checked_with_explicit_unknowns", "not_applicable_no_return_paths"] {
+            var object = fixture(), rows = object["calls"] as! [[String: Any]], validation = rows[0]["validation"] as! [String: Any], facts = validation["fact_statuses"] as! [String: String]
+            facts["values"] = state; validation["fact_statuses"] = facts; validation["value_fact_status"] = state; rows[0]["validation"] = validation; object["calls"] = rows
+            XCTAssertEqual(try decode(object).calls.first?.witnessStatus, "eligible_structural_only")
+        }
+    }
+    func testForeignFactKeysAndOversizedStatusesStayInRawDetails() throws {
+        var object = fixture(), rows = object["calls"] as! [[String: Any]], validation = rows[0]["validation"] as! [String: Any], facts = validation["fact_statuses"] as! [String: String]
+        for index in 0..<1000 { facts["foreign-\(index)"] = "checked" }
+        facts["cfg"] = String(repeating: "x", count: 10000)
+        validation["fact_statuses"] = facts; rows[0]["validation"] = validation; object["calls"] = rows
+        let call = try XCTUnwrap(try decode(object).calls.first)
+        XCTAssertLessThanOrEqual(call.witnessFacts.filter { $0.hasPrefix("Independent ") }.count, 7)
+        XCTAssertLessThan(call.witnessFacts.joined().utf8.count, 4096)
+        XCTAssertTrue(call.detailJSON.contains("foreign-999"))
+        XCTAssertNotEqual(call.witnessStatus, "eligible_structural_only")
     }
 
 }

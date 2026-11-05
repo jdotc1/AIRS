@@ -7,12 +7,18 @@ enum SwiftBroadFlowReport {
     static let maximumBytes = 16 * 1024 * 1024
     static let maximumCalls = 4096
 
-    static func decode(_ object: [String: Any], data: Data) throws -> SwiftFlowReport {
-        func fail(_ message: String) -> SwiftFlowReportError { .invalid("broad-v1: " + message) }
-        guard data.count <= maximumBytes else { throw fail("16 MiB report limit exceeded") }
+    static func validateJSON(_ data: Data) throws {
+        guard data.count <= SwiftFlowReport.maximumBytes else { throw SwiftFlowReportError.invalid("64 MiB JSON input limit exceeded") }
         try Task.checkCancellation()
         var wire = BroadJSONKeyPreflight(data: data)
         try wire.check()
+    }
+
+    static func decode(_ object: [String: Any], data: Data, jsonPreflighted: Bool = false) throws -> SwiftFlowReport {
+        func fail(_ message: String) -> SwiftFlowReportError { .invalid("broad-v1: " + message) }
+        guard data.count <= maximumBytes else { throw fail("16 MiB report limit exceeded") }
+        try Task.checkCancellation()
+        if !jsonPreflighted { try validateJSON(data) }
         var nodes = 0
         func inspect(_ value: Any, depth: Int) throws {
             nodes += 1
@@ -125,12 +131,16 @@ enum SwiftBroadFlowReport {
                 }
                 if let pc = binding["call_pc"], address(pc) != callPC { throw fail("candidate call binding mismatch") }
                 if let call = candidate["call"] as? [String: Any], let pc = call["pc"], address(pc) != callPC { throw fail("candidate call evidence mismatch") }
+                for role in ["caller", "callee"] where binding[role] != nil {
+                    guard binding[role] is [String: Any] else { throw fail("candidate function range must be an object") }
+                }
                 if let caller = binding["caller"] as? [String: Any] {
                     guard address(caller["start_pc"]) == callerPC, let end = hex(caller["end_pc_exclusive"], aligned: true), end > callNumber,
                           caller["boundary_source"] as? String == "lc_function_starts" else { throw fail("candidate caller range mismatch") }
                 }
                 let identityKeys = ["container_sha256", "slice_sha256", "architecture", "cpu_subtype", "uuid", "preferred_base", "slice_index", "container_slice_count", "slice_offset", "slice_size", "call_pc", "caller", "callee"]
                 fullyBound = identityKeys.allSatisfy { binding[$0] != nil }
+                    && binding["caller"] is [String: Any] && binding["callee"] is [String: Any]
                 if let callee = binding["callee"] as? [String: Any] {
                     guard let start = hex(callee["start_pc"], aligned: true), let end = hex(callee["end_pc_exclusive"], aligned: true), end > start,
                           callee["boundary_source"] as? String == "lc_function_starts" else { throw fail("candidate callee range mismatch") }
@@ -151,11 +161,21 @@ enum SwiftBroadFlowReport {
             let abiProfile = candidateABI?["profile"] as? String ?? ""
             let abiSupported = ["swift6-arm64-sync-untyped-research-v1", "swift6-arm64-sync-untyped-stable-research-v2"].contains(abiProfile)
                 && candidateABI?["status"] as? String == "admitted" && candidateABI?["error_register"] as? String == "x21"
+            let candidateIdentity = candidate?["identity"] as? [String: Any]
+            let candidateCallee = candidateIdentity?["callee"] as? [String: Any]
+            let targetPC = hex(candidateCallee?["start_pc"], aligned: true)
             let admissionConsistent = try admission?["status"] as? String == "admitted_callsite" && abiSupported
+                && unsigned(admission?["call_pc"]) == callNumber && targetPC != nil && unsigned(admission?["callee_pc"]) == targetPC
                 && candidateABI != nil && admittedABI != nil && json(candidateABI ?? [:]) == json(admittedABI ?? [:])
                 && candidateDeclaration?["status"] as? String == "syntax_admitted" && admittedDeclaration != nil
                 && json(candidateDeclaration ?? [:]) == json(admittedDeclaration ?? [:])
-            let consistent = validationModels && sourceModelsSupported && admissionConsistent && fullyBound && candidate?["status"] as? String == "unresolved" && boolean(candidate?["eligible"]) == false
+            let factStatuses = validation?["fact_statuses"] as? [String: String] ?? [:]
+            let coreFacts = ["identity", "call", "abi", "cfg", "post_call", "regions"]
+            let valueStatus = validation?["value_fact_status"] as? String ?? ""
+            let valueStates = ["checked_symbolic_values", "checked_with_explicit_unknowns", "not_applicable_no_return_paths"]
+            let checkedFacts = coreFacts.allSatisfy { factStatuses[$0] == "checked" }
+                && valueStates.contains(valueStatus) && factStatuses["values"] == valueStatus
+            let consistent = validationModels && sourceModelsSupported && admissionConsistent && checkedFacts && fullyBound && candidate?["status"] as? String == "unresolved" && boolean(candidate?["eligible"]) == false
                 && proofs.allSatisfy { boolean(validation?[$0]) == false } && nonclaims(candidate ?? [:]) && nonclaims(validation ?? [:])
                 && validation?["eligibility_scope"] as? String == "checked_structural_facts_only"
             let eligible = consistent && recordedStatus == "eligible_structural_only" && boolean(validation?["eligible"]) == true
@@ -167,13 +187,23 @@ enum SwiftBroadFlowReport {
             let rawDetail = try json(row, pretty: true)
             guard rawDetail.count <= 1024 * 1024 else { throw fail("call detail exceeds 1 MiB") }
             var facts: [String] = []
+            func summary(_ text: String) -> String {
+                text.utf8.count <= 2048 ? text : String(text.prefix(512)) + " … [summary truncated; see original JSON]"
+            }
             if supported {
-                for key in ["status", "reason"] { if let text = admission?[key] as? String { facts.append("Admission \(key): \(text)") } }
+                for key in ["status", "reason"] { if let text = admission?[key] as? String { facts.append("Admission \(key): \(summary(text))") } }
                 for key in ["declaration", "abi"] {
-                    if let value = admission?[key] as? [String: Any] { facts.append("\(key): \(value["status"] as? String ?? "unavailable") · \(value["reason"] as? String ?? "see recorded details")") }
+                    if let value = admission?[key] as? [String: Any] { facts.append("\(key): \(summary(value["status"] as? String ?? "unavailable")) · \(summary(value["reason"] as? String ?? "see recorded details"))") }
                 }
-                if let statuses = validation?["fact_statuses"] as? [String: String] { facts += statuses.keys.sorted().map { "Independent \($0): \(statuses[$0] ?? "unchecked")" } }
-                if let value = validation?["outcome_scope"] as? String { facts.append("Outcome scope: \(value)") }
+                let knownFacts = coreFacts + ["values"]
+                let knownStates = ["checked", "unchecked"] + valueStates
+                for key in knownFacts {
+                    let state = factStatuses[key] ?? "unchecked"
+                    facts.append("Independent \(key): \(knownStates.contains(state) ? state : "unrecognized; see original JSON")")
+                }
+                let additional = factStatuses.keys.filter { !knownFacts.contains($0) }.count
+                if additional > 0 { facts.append("\(additional) additional fact-status fields retained in original JSON.") }
+                if let value = validation?["outcome_scope"] as? String { facts.append("Outcome scope: \(summary(value))") }
                 facts.append("Recorded validation only; no source bytes were reread by this view.")
             }
             let postCall = candidate?["post_call"] as? [String: Any]
