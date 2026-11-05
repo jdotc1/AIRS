@@ -35,7 +35,7 @@ struct SwiftFlowView: View {
             }
             .toggleStyle(.checkbox)
             Text(workspace.profile != .standard
-                 ? "Broad: recorded declaration, ABI, callsite, control-flow, value and independent witness checks. ARM64 only. Function limit: \(workspace.profile == .broad ? "8,192" : "9,216"); image 8 MiB, report 16 MiB. Other metadata and work limits may still refuse or truncate analysis. Structural eligibility is not runtime or source proof."
+                 ? "Broad: recorded declaration, ABI, callsite, control-flow, value and independent witness checks. ARM64 only. Function limit: \(workspace.profile == .broad ? "8,192" : "9,216"); scan limit: \(workspace.profile == .broadExtended ? "2,097,152" : "262,144") words; retained calls: \(workspace.profile == .broadExtended ? "8,192" : "4,096"); image 8 MiB, report 16 MiB. Call, metadata, per-function and work limits can still make results incomplete. Structural eligibility is not runtime or source proof."
                  : "Methods: qualified synchronous Int → Int struct calls only. Witnesses include required region, entry and presentation evidence. ARM64 only; other forms decline or remain unresolved.")
                 .font(.caption).foregroundStyle(.secondary)
             if let report = workspace.report {

@@ -3,6 +3,40 @@ import XCTest
 @testable import AIRSCore
 
 final class SwiftBroadFlowReportTests: XCTestCase {
+    func testExtendedCallEnvelopeAtLimitAndAbove() throws {
+        var value = fixture()
+        value["model_version"] = "swift-broad-error-flow-extended-v1"; value["profile"] = "broad-extended-v1"
+        let rows = (0..<8193).map { ["caller_pc": "0x1000", "call_pc": "0x" + String(4100 + $0 * 4, radix: 16), "admission": ["status": "unresolved", "reason": "unqualified"], "candidate": NSNull(), "validation": NSNull()] as [String: Any] }
+        value["calls"] = Array(rows.prefix(8192)); value["selected_call_candidates"] = 8192
+        value["observed_call_instructions"] = 8192; value["status_counts"] = ["unresolved": 8192]; value["reason_counts"] = ["unqualified": 8192]
+        XCTAssertEqual(try decode(value).calls.count,8192)
+        value["calls"] = rows
+        XCTAssertThrowsError(try decode(value))
+    }
+    func testExtendedProfileAdmitsLargerRetainedCallEnvelope() throws {
+        var value = fixture()
+        value["model_version"] = "swift-broad-error-flow-extended-v1"; value["profile"] = "broad-extended-v1"
+        value["calls"] = (0..<4097).map { ["caller_pc": "0x1000", "call_pc": "0x" + String(4100 + $0 * 4, radix: 16), "admission": ["status": "unresolved", "reason": "unqualified"], "candidate": NSNull(), "validation": NSNull()] as [String: Any] }
+        value["selected_call_candidates"] = 4097; value["observed_call_instructions"] = 4097
+        value["status_counts"] = ["unresolved": 4097]; value["reason_counts"] = ["unqualified": 4097]
+        XCTAssertEqual(try decode(value).calls.count,4097)
+        value["model_version"] = "swift-broad-error-flow-large-v1"; value["profile"] = "broad-large-v1"
+        XCTAssertThrowsError(try decode(value))
+    }
+    func testExtendedProfileModelAndPartialEvidenceAdmission() throws {
+        let options = SwiftFlowOptions(profile: .broadExtended)
+        XCTAssertTrue(options.arguments(input: URL(fileURLWithPath: "/owned"), output: URL(fileURLWithPath: "/out")).contains("broad-extended-v1"))
+        var value = fixture()
+        value["model_version"] = "swift-broad-error-flow-extended-v1"; value["profile"] = "broad-extended-v1"
+        value["selected_call_candidates"] = 2; value["observed_call_instructions"] = 2; value["omitted_calls"] = 1
+        value["scanned_words"] = 500_000; value["call_details_complete"] = false; value["outcome_witnesses_complete"] = false
+        let data = try JSONSerialization.data(withJSONObject: value, options: [.sortedKeys])
+        let result = try SwiftFlowReport.decode(data)
+        XCTAssertTrue(result.supportsInterpretation); XCTAssertTrue(result.wordScanComplete)
+        XCTAssertFalse(result.callDetailsComplete); XCTAssertEqual(result.omittedCallCount, 1)
+        value["profile"] = "broad-large-v1"
+        XCTAssertFalse(try decode(value).supportsInterpretation)
+    }
     func testLargerProfileRoutingAndHistoricalModelBinding() throws {
         let options = SwiftFlowOptions(profile: .broadLarge)
         XCTAssertTrue(options.arguments(input: URL(fileURLWithPath: "/owned"), output: URL(fileURLWithPath: "/out")).contains("broad-large-v1"))

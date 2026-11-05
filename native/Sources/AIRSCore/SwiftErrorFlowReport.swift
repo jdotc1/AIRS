@@ -2,13 +2,30 @@ import Foundation
 import CoreFoundation
 
 public enum SwiftFlowProfile: String, CaseIterable, Identifiable, Sendable {
-    case standard, broad, broadLarge
+    case standard, broad, broadLarge, broadExtended
     public var id: Self { self }
     public var title: String {
         switch self {
         case .standard: return "Standard Swift · v37/v38"
         case .broad: return "Broad Swift · broad-v1"
         case .broadLarge: return "Broad Swift · larger function inventory"
+        case .broadExtended: return "Broad Swift · extended scan"
+        }
+    }
+    public var broadModel: String? {
+        switch self {
+        case .standard: return nil
+        case .broad: return "swift-broad-error-flow-v1"
+        case .broadLarge: return "swift-broad-error-flow-large-v1"
+        case .broadExtended: return "swift-broad-error-flow-extended-v1"
+        }
+    }
+    public var broadArgument: String? {
+        switch self {
+        case .standard: return nil
+        case .broad: return "broad-v1"
+        case .broadLarge: return "broad-large-v1"
+        case .broadExtended: return "broad-extended-v1"
         }
     }
 }
@@ -23,7 +40,7 @@ public struct SwiftFlowOptions: Sendable, Equatable {
     public func arguments(input: URL, output: URL) -> [String] {
         var result = ["swift-error-flow", "--format", "json", "--output", output.path,
                       "--include-error-regions", "--validate-region-entries", "--include-structured-presentation"]
-        if profile != .standard { result += ["--swift-profile", profile == .broad ? "broad-v1" : "broad-large-v1", "--include-outcome-witnesses"] }
+        if let broadArgument = profile.broadArgument { result += ["--swift-profile", broadArgument, "--include-outcome-witnesses"] }
         else {
             if includeMethods { result.append("--include-swift-methods") }
             if includeWitnesses { result.append("--include-outcome-witnesses") }
@@ -79,7 +96,10 @@ public struct SwiftFlowReport: Sendable {
         try SwiftBroadFlowReport.validateJSON(data)
         let raw = try JSONSerialization.jsonObject(with: data)
         if let object = raw as? [String: Any],
-           ["swift-broad-error-flow-v1", "swift-broad-error-flow-large-v1"].contains(object["model_version"] as? String ?? "") || ["broad-v1", "broad-large-v1"].contains(object["profile"] as? String ?? "") {
+           SwiftFlowProfile.allCases.contains(where: { profile in
+               (profile.broadModel.map { $0 == object["model_version"] as? String } ?? false)
+               || (profile.broadArgument.map { $0 == object["profile"] as? String } ?? false)
+           }) {
             return try SwiftBroadFlowReport.decode(object, data: data, jsonPreflighted: true)
         }
         // Bound recursive display/storage before retaining any per-call representation.

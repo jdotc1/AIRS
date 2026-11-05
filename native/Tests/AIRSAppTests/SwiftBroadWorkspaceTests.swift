@@ -3,6 +3,38 @@ import AIRSCore
 @testable import AIRSApp
 
 final class SwiftBroadWorkspaceTests: XCTestCase {
+    @MainActor func testExtendedHistoricalReopenAndCancellation() async throws {
+        let original = try broad()
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: original) as? [String: Any])
+        object["model_version"] = "swift-broad-error-flow-extended-v1"; object["profile"] = "broad-extended-v1"
+        let data = try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys])
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("local-evidence/track-b-integration/extended-history-" + UUID().uuidString)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let input = root.appendingPathComponent("report.json"); try data.write(to: input)
+        let workspace = SwiftFlowWorkspace(execute: { _, _, _ in XCTFail("Historical import must not acquire input"); return Data() })
+        workspace.importReport(input); await workspace.waitUntilSettled()
+        XCTAssertTrue(workspace.isHistorical); XCTAssertEqual(workspace.profile,.broadExtended); XCTAssertNil(workspace.input)
+        XCTAssertEqual(workspace.report?.sourceData,data)
+        let cancelling = SwiftFlowWorkspace(execute: { _, _, _ in try await Task.sleep(for: .seconds(20)); return Data() })
+        cancelling.profile = .broadExtended; cancelling.selectInput(URL(fileURLWithPath: "/owned/input")); cancelling.run(configuration: configuration)
+        cancelling.cancel(); await cancelling.waitUntilSettled()
+        XCTAssertNil(cancelling.report); XCTAssertTrue(cancelling.isHistorical); XCTAssertFalse(cancelling.isBusy)
+    }
+    @MainActor func testExtendedProfileRoutesAndRejectsMismatchedReply() async throws {
+        let old = try broad()
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: old) as? [String: Any])
+        object["model_version"] = "swift-broad-error-flow-extended-v1"; object["profile"] = "broad-extended-v1"
+        let data = try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys])
+        let rejected = SwiftFlowWorkspace(execute: { _, _, _ in old })
+        rejected.profile = .broadExtended; rejected.selectInput(URL(fileURLWithPath: "/owned/input")); rejected.run(configuration: configuration)
+        await rejected.waitUntilSettled(); XCTAssertNil(rejected.report); XCTAssertNotNil(rejected.errorMessage)
+        let accepted = SwiftFlowWorkspace(execute: { _, options, _ in XCTAssertEqual(options.profile, .broadExtended); return data })
+        accepted.profile = .broadExtended; accepted.selectInput(URL(fileURLWithPath: "/owned/input")); accepted.run(configuration: configuration)
+        await accepted.waitUntilSettled(); XCTAssertNil(accepted.errorMessage); XCTAssertFalse(accepted.isHistorical)
+        XCTAssertEqual(accepted.report?.modelVersion, "swift-broad-error-flow-extended-v1")
+    }
     @MainActor func testLargeProfileRejectsOtherProfileAndAcceptsItsOwnResult() async throws {
         let old = try broad()
         var object = try XCTUnwrap(JSONSerialization.jsonObject(with: old) as? [String: Any])

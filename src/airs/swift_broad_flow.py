@@ -5,7 +5,8 @@ import json
 from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
-from .swift_broad_profiles import BROAD_MODEL, BROAD_PROFILE, BROAD_LARGE_PROFILE, BROAD_LARGE_MODEL
+from .swift_broad_profiles import (BROAD_MODEL, BROAD_PROFILE, BROAD_LARGE_PROFILE, BROAD_LARGE_MODEL,
+                                   BROAD_EXTENDED_PROFILE, BROAD_EXTENDED_MODEL)
 from .swift_callsite_admission import (CallsiteLimits, CallsiteSessionError,
     create_callsite_session, admit_callsite_capability)
 from .swift_declaration_profiles import parse_broad_declaration
@@ -20,7 +21,14 @@ BROAD_LIMITS=Limits(max_file_bytes=8*1024*1024,max_functions=8192,
     max_instructions_per_function=4096,max_total_instructions=262144,
     max_observations_per_function=256,max_total_evidence=4096)
 from dataclasses import replace
+from types import MappingProxyType
 LARGE_BROAD_LIMITS=replace(BROAD_LIMITS,max_functions=9216)
+EXTENDED_BROAD_LIMITS=replace(LARGE_BROAD_LIMITS,max_total_instructions=2097152,
+                              max_instructions_per_function=262144,max_total_evidence=8192)
+PROFILE_LIMITS=MappingProxyType({BROAD_PROFILE:BROAD_LIMITS, BROAD_LARGE_PROFILE:LARGE_BROAD_LIMITS,
+                                BROAD_EXTENDED_PROFILE:EXTENDED_BROAD_LIMITS})
+PROFILE_MODELS=MappingProxyType({BROAD_PROFILE:BROAD_MODEL, BROAD_LARGE_PROFILE:BROAD_LARGE_MODEL,
+                                BROAD_EXTENDED_PROFILE:BROAD_EXTENDED_MODEL})
 REPORT_BYTES=16*1024*1024
 AGGREGATE_WORK=512*1024*1024
 CALLSITE_WORK_RESERVATION=2_000_000
@@ -51,9 +59,9 @@ def _abi(image,record,caller_start,capability):
 
 def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
                             *, witness_limits=BroadWitnessLimits(), profile=BROAD_PROFILE)->dict:
-    if profile not in (BROAD_PROFILE, BROAD_LARGE_PROFILE):
+    if profile not in PROFILE_LIMITS:
         raise InputError('swift_broad_profile','Unsupported broad profile')
-    ceiling = BROAD_LIMITS if profile == BROAD_PROFILE else LARGE_BROAD_LIMITS
+    ceiling = PROFILE_LIMITS[profile]
     if limits is None: limits=ceiling
     if any(getattr(limits, name) > getattr(ceiling, name) for name in limits.__dataclass_fields__):
         raise InputError('swift_broad_limit','Requested limits exceed profile bounds')
@@ -66,7 +74,7 @@ def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
     functions={f.start:f for f in image.functions}
     if len(functions)!=len(image.functions):
         raise InputError('swift_broad_boundaries','Function entries must be unique')
-    report=dict(model_version=BROAD_MODEL if profile == BROAD_PROFILE else BROAD_LARGE_MODEL,profile=profile,
+    report=dict(model_version=PROFILE_MODELS[profile],profile=profile,
         witness_model_version='swift-outcome-witness-v2',validation_model_version='swift-outcome-validation-v2',
         identity=dict(container_sha256=image.container_sha256,slice_sha256=image.slice_sha256,
             architecture=image.architecture,cpu_subtype=image.cpu_subtype,
@@ -169,9 +177,9 @@ def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
 
 def recover_swift_broad_flow_path(path: Path|str, *, requested_arch: str='auto',
                                  limits: Limits|None=None, profile: str=BROAD_PROFILE)->dict:
-    if profile not in (BROAD_PROFILE, BROAD_LARGE_PROFILE):
+    if profile not in PROFILE_LIMITS:
         raise InputError('swift_broad_profile','Unsupported broad profile')
-    ceiling = BROAD_LIMITS if profile == BROAD_PROFILE else LARGE_BROAD_LIMITS
+    ceiling = PROFILE_LIMITS[profile]
     if limits is None: limits=ceiling
     if any(getattr(limits, name) > getattr(ceiling, name) for name in limits.__dataclass_fields__):
         raise InputError('swift_broad_limit','Requested limits exceed profile bounds')

@@ -60,6 +60,8 @@ enum SwiftBroadFlowReport {
         func json(_ value: Any, pretty: Bool = false) throws -> Data {
             try JSONSerialization.data(withJSONObject: value, options: pretty ? [.sortedKeys, .prettyPrinted] : [.sortedKeys, .fragmentsAllowed])
         }
+        let maxCalls = object["model_version"] as? String == "swift-broad-error-flow-extended-v1"
+            && object["profile"] as? String == "broad-extended-v1" ? 8192 : maximumCalls
         guard let model = object["model_version"] as? String,
               let identity = object["identity"] as? [String: Any],
               let architecture = identity["architecture"] as? String,
@@ -69,7 +71,7 @@ enum SwiftBroadFlowReport {
               let offset = hex(identity["slice_offset"]), let size = hex(identity["slice_size"]), size > 0, offset <= UInt64.max - size,
               let sliceIndex = unsigned(identity["slice_index"]), let sliceCount = unsigned(identity["container_slice_count"]),
               sliceCount > 0, sliceCount <= 4096, sliceIndex < sliceCount,
-              let rows = object["calls"] as? [[String: Any]], rows.count <= maximumCalls,
+              let rows = object["calls"] as? [[String: Any]], rows.count <= maxCalls,
               let limitations = object["limitations"] as? [String], limitations.count <= 64,
               let wordComplete = boolean(object["word_scan_complete"]), let detailsComplete = boolean(object["call_details_complete"]),
               let witnessesComplete = boolean(object["outcome_witnesses_complete"]),
@@ -80,7 +82,7 @@ enum SwiftBroadFlowReport {
         guard let uuid = identity["uuid"], uuid is NSNull || ((uuid as? String).flatMap(UUID.init(uuidString:)) != nil) else { throw fail("missing or malformed UUID state") }
         if omitted > 0 && (detailsComplete || witnessesComplete) { throw fail("omissions contradict completeness") }
         for key in ["status_counts", "reason_counts"] {
-            guard let counters = object[key] as? [String: Any], counters.count <= maximumCalls else { throw fail("invalid status/reason accounting") }
+            guard let counters = object[key] as? [String: Any], counters.count <= maxCalls else { throw fail("invalid status/reason accounting") }
             var total = 0
             for value in counters.values {
                 guard let n = count(value), n <= 262_144, total <= 524_288 - n else { throw fail("invalid status/reason counts") }; total += n
@@ -89,6 +91,7 @@ enum SwiftBroadFlowReport {
         }
         let profilePairSupported = (model == "swift-broad-error-flow-v1" && object["profile"] as? String == "broad-v1")
             || (model == "swift-broad-error-flow-large-v1" && object["profile"] as? String == "broad-large-v1")
+            || (model == "swift-broad-error-flow-extended-v1" && object["profile"] as? String == "broad-extended-v1")
         let supported = profilePairSupported
             && object["witness_model_version"] as? String == "swift-outcome-witness-v2"
             && object["validation_model_version"] as? String == "swift-outcome-validation-v2"
