@@ -35,6 +35,24 @@ class SecurityDeltaCorpusManifestTests(unittest.TestCase):
             self.decode(value)
         self.assertEqual(result.exception.code, code)
 
+    def test_malformed_fact_tags_bits_and_data_are_classified(self):
+        for typed in [{"type":[]},{"type":"real","bits":"7ff0000000000000"},{"type":"date","bits":"7ff8000000000000"},{"type":"data","base64":"not base64"}]:
+            value=owned_manifest()
+            fact=dict(side="previous",source_path="Contents/Info.plist",source_sha256="c"*64,archive_sha256="a"*64,
+                locator=dict(kind="plist_key",key="owned"),state="observed",expected_value=typed,adjudicator="owned independent parser")
+            value["expected"]["declaration_facts"]=[fact]
+            with self.subTest(typed=typed):
+                with self.assertRaises(CorpusRefusal): self.decode(value)
+
+    def test_structured_adjudicated_fact_and_empty_typed_string(self):
+        value=owned_manifest()
+        fact=dict(side="previous",source_path="Contents/Info.plist",source_sha256="c"*64,archive_sha256="a"*64,
+            locator=dict(kind="plist_key",key="CFBundleVersion"),state="observed",expected_value=dict(type="string",value=""),adjudicator="owned independent parser")
+        value["expected"].update(adjudication="independently_adjudicated",adjudicator="owned reviewer",declaration_facts=[fact])
+        self.decode(value)
+        fact["archive_sha256"]="b"*64
+        self.refused(value,"fact_source_binding_mismatch")
+
     def test_owned_protocol_roundtrip_is_immutable(self):
         manifest = self.decode(owned_manifest())
         self.assertEqual(manifest.case_id, "owned.app.1-to-2")

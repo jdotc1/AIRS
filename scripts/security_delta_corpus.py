@@ -2,6 +2,9 @@
 """Opt-in corpus qualification protocol. Never launches inspected applications."""
 from __future__ import annotations
 import argparse
+import base64
+import binascii
+import math
 import hashlib
 from dataclasses import dataclass
 from datetime import datetime
@@ -38,8 +41,8 @@ def refuse(code):
     raise CorpusRefusal(code)
 
 
-def text(value, maximum=4096):
-    if not isinstance(value, str) or not value:
+def text(value, maximum=4096, *, allow_empty=False):
+    if not isinstance(value, str) or (not value and not allow_empty):
         refuse("manifest_value")
     try:
         raw = value.encode("utf-8", "strict")
@@ -115,6 +118,58 @@ class CorpusManifest:
     canonical_bytes: bytes
 
 
+def validate_expected_fact(fact, source_digests):
+    fields(fact, ("side", "source_path", "source_sha256", "archive_sha256", "locator", "state", "expected_value", "adjudicator"))
+    side=fact["side"]
+    if side not in ("previous", "current") or fact["archive_sha256"] != source_digests[side]:
+        refuse("fact_source_binding_mismatch")
+    relative_path(fact["source_path"]); digest(fact["source_sha256"]); text(fact["adjudicator"])
+    locator=fact["locator"]
+    fields(locator, ("kind",), ("key", "offset", "length", "slice"))
+    if locator["kind"] not in ("plist_key", "macho_command", "signature_slot", "source_presence"):
+        refuse("invalid_fact_locator")
+    if locator["kind"] == "plist_key": text(locator.get("key"))
+    for key in ("offset", "length"):
+        if key in locator and (type(locator[key]) is not int or not 0 <= locator[key] <= 536870912):
+            refuse("invalid_fact_locator")
+    if "slice" in locator:
+        fields(locator["slice"], ("cpu_type", "cpu_subtype", "magic", "index", "offset", "size"))
+        if any(type(v) is not int or not 0 <= v <= 5368709120 for v in locator["slice"].values()): refuse("invalid_fact_locator")
+    if fact["state"] not in ("observed", "absent", "unavailable", "unexamined", "excluded", "ambiguous", "stale", "truncated"):
+        refuse("invalid_fact_state")
+    def typed(value, depth=0):
+        if depth > 32: refuse("typed_depth_limit")
+        if not isinstance(value, dict) or "type" not in value: refuse("invalid_fact_value")
+        kind=value["type"]
+        value_keys={"boolean":("value",),"integer":("decimal","representation"),"real":("bits",),"date":("bits",),"string":("value",),"data":("base64",),"array":("items",),"dictionary":("entries",)}
+        if not isinstance(kind,str) or kind not in value_keys: refuse("invalid_fact_value")
+        fields(value, ("type",)+value_keys[kind])
+        if kind=="boolean" and type(value["value"]) is not bool: refuse("invalid_fact_value")
+        if kind=="integer":
+            number=text(value["decimal"], 21)
+            if re.fullmatch(r"-?(0|[1-9][0-9]*)",number) is None or not -(1<<63) <= int(number) < 1<<64 or value["representation"] != "unspecified": refuse("invalid_fact_value")
+        if kind in ("real","date") and re.fullmatch(r"[0-9a-f]{16}",text(value["bits"],16)) is None: refuse("invalid_fact_value")
+        if kind in ("real","date") and not math.isfinite(struct.unpack(">d",bytes.fromhex(value["bits"]))[0]): refuse("invalid_fact_value")
+        if kind=="data":
+            try:
+                encoded=value["base64"]
+                if not isinstance(encoded,str) or base64.b64encode(base64.b64decode(encoded,validate=True)).decode("ascii") != encoded: refuse("invalid_fact_value")
+            except (ValueError,binascii.Error): refuse("invalid_fact_value")
+        if kind in ("string","data"): text(value["value" if kind=="string" else "base64"], 65536, allow_empty=True)
+        if kind=="array":
+            if not isinstance(value["items"],list): refuse("invalid_fact_value")
+            for child in value["items"]: typed(child,depth+1)
+        if kind=="dictionary":
+            if not isinstance(value["entries"],list): refuse("invalid_fact_value")
+            seen=set()
+            for entry in value["entries"]:
+                fields(entry,("key","value")); key=text(entry["key"]).encode("utf-8")
+                if key in seen: refuse("duplicate_fact_key")
+                seen.add(key);typed(entry["value"],depth+1)
+    if fact["state"]=="observed": typed(fact["expected_value"])
+    elif fact["expected_value"] is not None: refuse("invalid_fact_state")
+
+
 def decode_manifest(data: bytes) -> CorpusManifest:
     if len(data) > MAX_MANIFEST_BYTES:
         refuse("manifest_byte_limit")
@@ -187,6 +242,16 @@ def decode_manifest(data: bytes) -> CorpusManifest:
     for key in ("declaration_facts", "expected_refusals"):
         if not isinstance(expected[key], list) or len(expected[key]) > 1024:
             refuse("manifest_collection_limit")
+    for fact in expected["declaration_facts"]:
+        validate_expected_fact(fact, expected["source_digests"])
+    for refusal in expected["expected_refusals"]:
+        fields(refusal, ("side", "source_path", "archive_sha256", "code", "adjudicator"))
+        side=refusal["side"]
+        if side not in ("previous", "current") or refusal["archive_sha256"] != expected["source_digests"][side]: refuse("fact_source_binding_mismatch")
+        relative_path(refusal["source_path"]);text(refusal["code"],128);text(refusal["adjudicator"])
+    if expected["adjudication"] == "independently_adjudicated":
+        text(expected.get("adjudicator"))
+        if not expected["declaration_facts"]: refuse("unjustified_adjudication")
     tags = doc["coverage_tags"]
     if not isinstance(tags, list) or len(tags) > len(COVERAGE_TAGS):
         refuse("manifest_collection_limit")
@@ -227,12 +292,25 @@ def open_directory_no_follow(directory: Path):
             os.close(descriptor)
 
 
+def bounded_directory_names(descriptor, maximum):
+    """Retain at most the admitted population plus one sentinel, never list all."""
+    names = []
+    with os.scandir(descriptor) as entries:
+        for entry in entries:
+            if len(names) == maximum:
+                refuse("directory_entry_limit")
+            names.append(entry.name)
+    return names
+
+
 def load_manifests(directory: Path):
     descriptor = open_directory_no_follow(directory)
     try:
-        names = sorted(os.listdir(descriptor))
-        if len(names) > MAX_CASES:
-            refuse("case_limit")
+        try:
+            names = sorted(bounded_directory_names(descriptor, MAX_CASES))
+        except CorpusRefusal as error:
+            if error.code == "directory_entry_limit": refuse("case_limit")
+            raise
         result = []
         for name in names:
             if not name.endswith(".json"):

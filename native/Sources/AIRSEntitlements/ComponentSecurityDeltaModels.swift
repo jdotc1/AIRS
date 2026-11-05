@@ -69,6 +69,7 @@ func securityDeltaBoundary<T>(_ operation: () throws -> T) throws -> T {
         if case .limitExceeded = error { throw SecurityDeltaRefusal(.resourceLimit) }
         throw SecurityDeltaRefusal(.invalidReview)
     }
+    catch is BoundReviewError { throw SecurityDeltaRefusal(.invalidReview) }
     catch is DecodingError { throw SecurityDeltaRefusal(.invalidReview) }
 }
 

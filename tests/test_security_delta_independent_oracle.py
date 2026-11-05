@@ -129,7 +129,7 @@ class SecurityDeltaIndependentOracleTests(unittest.TestCase):
 
     def test_unrepresentable_directory_name_is_classified(self):
         with tempfile.TemporaryDirectory(dir=ROOT / "local-evidence/security-delta-track-a") as folder:
-            with patch("security_delta_independent_oracle.os.listdir", return_value=["\udcff"]):
+            with patch("security_delta_independent_oracle.bounded_directory_names", return_value=["\udcff"]):
                 with self.assertRaises(OracleRefusal) as result:
                     observe_bundle(Path(folder))
                 self.assertEqual(result.exception.code, "invalid_utf8_path")
@@ -150,6 +150,52 @@ class SecurityDeltaIndependentOracleTests(unittest.TestCase):
                 (root / str(i)).write_bytes(b"opaque")
             result = observe_bundle(root)
             self.assertEqual(result["scope"]["read_source_bytes"], 16)
+
+    def test_duplicate_signature_command_cannot_hide_invalid_region(self):
+        valid_blob = struct.pack(">III", 0xfade0cc0, 12, 0)
+        good = struct.pack("<4I", 0x1d, 16, 64, len(valid_blob))
+        bad = struct.pack("<4I", 0x1d, 16, 9999, 12)
+        result = observe_macho(image([bad, good]) + valid_blob)
+        self.assertEqual(result["slices"][0]["signature"]["state"], "unavailable")
+        self.assertEqual(result["slices"][0]["signature"]["reason"], "signature_command_ambiguous")
+
+    def test_signature_slot_identity_magic_and_overlap_are_not_guessed(self):
+        from security_delta_independent_oracle import signature_facts
+        payload = plistlib.dumps({"owned": True})
+        def region(records, blobs):
+            length = 12 + 8 * len(records) + len(blobs)
+            return struct.pack(">III", 0xfade0cc0, length, len(records)) + b"".join(struct.pack(">II", *r) for r in records) + blobs
+        wrong = struct.pack(">II", 0x12345678, len(payload) + 8) + payload
+        result = signature_facts(region([(5, 20)], wrong), 0, 20 + len(wrong))
+        self.assertNotEqual(result.get("slots", [{}])[0].get("entitlements_state"), "observed")
+        blob = struct.pack(">II", 0xfade7171, len(payload) + 8) + payload
+        for records in [[(5, 28), (5, 28)], [(5, 28), (7, 28)]]:
+            data = region(records, blob)
+            self.assertEqual(signature_facts(data, 0, len(data))["state"], "unavailable")
+
+    def test_minimum_os_and_toolchain_sections_are_raw_qualified(self):
+        build=struct.pack("<6I",0x32,24,1,0x000e0200,0x001b0000,0)
+        segment=struct.pack("<II16sQQQQIIII",0x19,152,b"__TEXT",0,0,0,0,7,5,1,0)
+        section=struct.pack("<16s16sQQIIIIIIII",b"__swift5_types",b"__TEXT",0,0,0,0,0,0,0,0,0,0)
+        result=observe_macho(image([build,segment+section]))["slices"][0]
+        self.assertEqual(result["minimum_os"],[{"command":50,"platform":1,"minimum":918016,"sdk":1769472,"offset":32}])
+        self.assertEqual(result["sections"][0]["section"],"__swift5_types")
+
+    def test_failed_stale_read_consumes_work_budget(self):
+        from security_delta_corpus import file_metadata
+        with tempfile.TemporaryDirectory(dir=ROOT / "local-evidence/security-delta-track-a") as folder:
+            root=Path(folder); raw=plistlib.dumps({"owned":"value"})
+            (root/"Info.plist").write_bytes(raw)
+            calls=0
+            def metadata(info):
+                nonlocal calls
+                calls+=1; result=file_metadata(info)
+                if calls==2: return tuple(list(result[:3])+[result[3]+1]+list(result[4:]))
+                return result
+            with patch("security_delta_independent_oracle.file_metadata",side_effect=metadata):
+                result=observe_bundle(root)
+            self.assertEqual(result["plists"]["Info.plist"]["reason"],"source_stale")
+            self.assertEqual(result["scope"]["read_source_bytes"],len(raw)+4)
 
     def test_document_publish_is_atomic_and_never_overwrites(self):
         from security_delta_independent_oracle import write_document

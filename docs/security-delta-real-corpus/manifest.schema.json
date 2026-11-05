@@ -202,14 +202,163 @@
           "type": "array",
           "maxItems": 1024,
           "items": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "side",
+              "source_path",
+              "source_sha256",
+              "archive_sha256",
+              "locator",
+              "state",
+              "expected_value",
+              "adjudicator"
+            ],
+            "properties": {
+              "side": {
+                "enum": [
+                  "previous",
+                  "current"
+                ]
+              },
+              "source_path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "source_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "archive_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "locator": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind"
+                ],
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "plist_key",
+                      "macho_command",
+                      "signature_slot",
+                      "source_presence"
+                    ]
+                  },
+                  "key": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  "offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 536870912
+                  },
+                  "length": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 536870912
+                  },
+                  "slice": {
+                    "type": "object"
+                  }
+                }
+              },
+              "state": {
+                "enum": [
+                  "observed",
+                  "absent",
+                  "unavailable",
+                  "unexamined",
+                  "excluded",
+                  "ambiguous",
+                  "stale",
+                  "truncated"
+                ]
+              },
+              "expected_value": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "adjudicator": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              }
+            }
           }
         },
         "expected_refusals": {
           "type": "array",
-          "maxItems": 1024
+          "maxItems": 1024,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "side",
+              "source_path",
+              "archive_sha256",
+              "code",
+              "adjudicator"
+            ],
+            "properties": {
+              "side": {
+                "enum": [
+                  "previous",
+                  "current"
+                ]
+              },
+              "source_path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              },
+              "archive_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "code": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "adjudicator": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096
+              }
+            }
+          }
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "adjudication": {
+                "const": "independently_adjudicated"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "adjudicator"
+            ],
+            "properties": {
+              "declaration_facts": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
     },
     "coverage_tags": {
       "type": "array",

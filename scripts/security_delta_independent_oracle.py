@@ -19,7 +19,7 @@ import time
 import argparse
 import tempfile
 from pathlib import Path, PurePosixPath
-from security_delta_corpus import open_directory_no_follow, file_metadata
+from security_delta_corpus import open_directory_no_follow, file_metadata, bounded_directory_names, CorpusRefusal
 
 MAX_IMAGE_BYTES = 256 * 1_048_576
 MAX_PLIST_BYTES = 65_536
@@ -47,6 +47,8 @@ def check_plist_keys(data):
         if not 1 <= offset_size <= 8 or not 1 <= ref_size <= 8 or not 0 < count <= 10000 or top >= count or table + count * offset_size > len(data) - 32:
             reject("plist_unavailable")
         offsets = [int.from_bytes(data[table + i * offset_size:table + (i + 1) * offset_size], "big") for i in range(count)]
+        if any(not 8 <= position < table for position in offsets):
+            reject("plist_unavailable")
         def length(position):
             if position >= table:
                 reject("plist_unavailable")
@@ -171,6 +173,7 @@ def signature_facts(data, begin, size):
         return {"state": "unavailable", "reason": "signature_superblob_invalid", "offset": begin, "size": size}
     result = {"state": "observed", "offset": begin, "size": size,
               "digest": hashlib.sha256(region).hexdigest(), "slots": []}
+    seen_types, ranges = set(), []
     for index in range(count):
         kind, offset = struct.unpack_from(">II", region, 12 + index * 8)
         if offset < 12 + count * 8 or offset + 8 > length:
@@ -178,16 +181,22 @@ def signature_facts(data, begin, size):
         blob_magic, blob_length = struct.unpack_from(">II", region, offset)
         if blob_length < 8 or offset + blob_length > length:
             return {"state": "unavailable", "reason": "signature_slot_invalid", "offset": begin, "size": size}
+        if kind in seen_types or any(offset < b + n and b < offset + blob_length for b, n in ranges):
+            return {"state": "unavailable", "reason": "signature_slot_ambiguous", "offset": begin, "size": size}
+        seen_types.add(kind); ranges.append((offset, blob_length))
         blob = region[offset:offset + blob_length]
         slot = {"index": index, "type": kind, "magic": blob_magic, "offset": begin + offset,
                 "size": blob_length, "digest": hashlib.sha256(blob).hexdigest()}
         if kind == 5:
+            if blob_magic != 0xfade7171:
+                slot["entitlements_state"] = "unavailable"; slot["reason"] = "entitlement_blob_magic_invalid"
+                result["slots"].append(slot); continue
             try:
                 slot["entitlements"] = observe_plist(blob[8:].rstrip(b"\0"))
                 slot["entitlements_state"] = "observed"
             except OracleRefusal as error:
                 slot["entitlements_state"] = "unavailable"; slot["reason"] = error.code
-        elif kind == 0x10005:
+        elif kind == 7:
             slot["der_semantics"] = "unexamined"
         result["slots"].append(slot)
     return result
@@ -241,9 +250,10 @@ def observe_macho(data):
                 "magic": int.from_bytes(magic, endian == "<" and "little" or "big"),
                 "slice_index": index, "offset": offset, "size": size}, "filetype": filetype,
                 "slice_digest": result["container_digest"] if offset == 0 and size == len(data) else hashlib.sha256(memoryview(data)[offset:offset + size]).hexdigest(),
-                "loader": [], "commands": [], "uuid": None, "signature": {"state": "absent"}}
+                "loader": [], "commands": [], "minimum_os": [], "sections": [], "uuid": None, "signature": {"state": "absent"}}
         cursor, end = offset + header_size, offset + header_size + command_size
         signatures = []
+        signature_commands = 0
         for command_index in range(count):
             if cursor + 8 > end:
                 reject("load_command_unavailable")
@@ -264,11 +274,33 @@ def observe_macho(data):
                     stamp, current, compatibility = struct.unpack_from(endian + "III", data, cursor + 12)
                     record.update(timestamp=stamp, current_version=current, compatibility_version=compatibility)
                 fact["loader"].append(record)
+            elif command in (0x32, 0x24):
+                if command == 0x32:
+                    if length < 24: reject("build_version_unavailable")
+                    platform, minimum, sdk, tools = struct.unpack_from(endian + "4I", data, cursor + 8)
+                    if tools > 4096 or 24 + tools * 8 != length: reject("build_version_unavailable")
+                else:
+                    if length != 16: reject("build_version_unavailable")
+                    platform=1; minimum,sdk=struct.unpack_from(endian+"II",data,cursor+8)
+                fact["minimum_os"].append({"command":command,"platform":platform,"minimum":minimum,"sdk":sdk,"offset":cursor})
+            elif command in (0x19, 0x1):
+                header, section_size, count_offset=(72,80,64) if command==0x19 else (56,68,48)
+                if length < header: reject("segment_command_unavailable")
+                sections=struct.unpack_from(endian+"I",data,cursor+count_offset)[0]
+                if sections > 4096 or header + sections * section_size != length: reject("segment_command_unavailable")
+                for section_index in range(sections):
+                    start=cursor+header+section_index*section_size
+                    try:
+                        section=data[start:start+16].split(b"\0",1)[0].decode("utf-8","strict")
+                        segment=data[start+16:start+32].split(b"\0",1)[0].decode("utf-8","strict")
+                    except UnicodeError: reject("section_name_unavailable")
+                    fact["sections"].append({"section":section,"segment":segment,"offset":start,"command_offset":cursor})
             elif command == 0x1b:
                 if length != 24 or fact["uuid"] is not None:
                     reject("uuid_command_invalid")
                 fact["uuid"] = str(uuid.UUID(bytes=data[cursor + 8:cursor + 24]))
             elif command == 0x1d:
+                signature_commands += 1
                 if length != 16:
                     reject("signature_command_invalid")
                 begin, extent = struct.unpack_from(endian + "II", data, cursor + 8)
@@ -279,7 +311,9 @@ def observe_macho(data):
             cursor += length
         if cursor != end:
             reject("load_command_size_mismatch")
-        if len(signatures) == 1:
+        if signature_commands > 1:
+            fact["signature"] = {"state": "unavailable", "reason": "signature_command_ambiguous"}
+        elif len(signatures) == 1:
             fact["signature"] = signature_facts(data, *signatures[0])
         elif len(signatures) > 1:
             fact["signature"] = {"state": "unavailable", "reason": "signature_command_ambiguous"}
@@ -338,7 +372,11 @@ def observe_bundle(root: Path, *, maximum_files=20000, maximum_fact_bytes=16 * 1
         while True:
             if cancelled():
                 reject("cancelled")
-            part = os.read(fd, min(65536, maximum + 1 - len(data)))
+            remaining = 512 * 1_048_576 - scope["read_source_bytes"]
+            if remaining <= 0:
+                reject("oracle_read_byte_limit")
+            part = os.read(fd, min(65536, maximum + 1 - len(data), remaining))
+            scope["read_source_bytes"] += len(part)
             if not part:
                 break
             data.extend(part)
@@ -346,7 +384,6 @@ def observe_bundle(root: Path, *, maximum_files=20000, maximum_fact_bytes=16 * 1
                 reject("source_byte_limit")
         if before != file_metadata(os.fstat(fd)) or len(data) != before[2]:
             reject("source_stale")
-        scope["read_source_bytes"] += len(data)
         return bytes(data)
     def visit(directory, prefix, depth):
         if scope.get("reason") == "oracle_output_limit":
@@ -354,7 +391,9 @@ def observe_bundle(root: Path, *, maximum_files=20000, maximum_fact_bytes=16 * 1
         if depth > 32:
             limit("oracle_depth_limit"); return
         try:
-            names = os.listdir(directory)
+            names = bounded_directory_names(directory, max(0, maximum_files - scope["visited_entries"]))
+        except CorpusRefusal:
+            limit("oracle_entry_limit"); return
         except OSError:
             retain(result["exclusions"], None, {"path": prefix, "state": "unavailable", "reason": "directory_unavailable"})
             scope["state"] = "partial"; return
@@ -518,7 +557,7 @@ def crosscheck_apple_tools(bundle, facts, requested_architecture):
     if loader_fact["state"] == "observed" and len(slices) == 1:
         loader_fact["comparison"] = compare_loader_tool(loader_fact["output"], slices[0]["loader"])
     entitlement_fact = bounded_tool(["codesign", "--display", "--entitlements", ":-", code], bundle)
-    return {"source_path": path, "dwarfdump": uuid_fact, "otool": loader_fact, "codesign_display": entitlement_fact,
+    return {"source_path": path, "binding": "unbound_supplementary_pathname_read", "dwarfdump": uuid_fact, "otool": loader_fact, "codesign_display": entitlement_fact,
             "limitations": "Apple display tools supplement raw parsing; no signature verification or trust evaluation, no dynamic loading."}
 
 

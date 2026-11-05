@@ -73,3 +73,51 @@ A3-atomic-red/green in the private task evidence directory.
 Jeff approved one bounded 47-release/35-pair qualification pass plus 100 pure
 retained-input replays. Raw oracle capture started; capture results will be
 reported separately from adjudication. No third-party application is executed.
+
+## Capture, replay and repair receipts
+
+First authorized pass: 47/47 independent raw captures, 35/35 AIRS captured pairs,
+35/35 retained delta archives, 100/100 pure deterministic replays on five distinct
+retained cases, and 35/35 fresh-invocation historical replays. Native capture test:
+19.966 s; historical replay test: 4.814 s. Outer command wall times: 22.63 s and
+7.59 s. Outer Swift-driver RSS was ~77 MB; this does not measure combined child
+process peak. Oracle peak RSS was 521,994,240 bytes; summed per-source time 6.53 s.
+No inspected app was launched.
+
+New selectors:
+`SecurityDeltaRealWorkflowTests.testDriverRequiresDistinctSidesAndBoundedCases`
+(1 passed after missing-driver RED),
+`SecurityDeltaRealWorkflowTests.testAuthorizedAuthenticCaptureAndPureReplay`
+(1 passed, 35 cases/100 replays),
+`SecurityDeltaRealWorkflowTests.testFreshInvocationHistoricalReplay`
+(1 passed, 35 archives),
+`SecurityDeltaRealWorkflowTests.testHarnessNeverReplacesEvidenceAndBoundsReads`
+(1 passed, 0.006 s),
+`SecurityDeltaRealArchiveAcceptanceTests.testSeventeenOwnedArchiveMutationsRefuse`
+(1 passed after classified-error RED), and
+`SecurityDeltaRealArchiveAcceptanceTests.testOptInAuthenticArchiveTamperingRefuses`
+(1 passed, 17/17 refusals, 1.551 s).
+These use focused `swift test --package-path native --filter ...`; already-built
+corpus/replay/tamper invocations use `--skip-build`. Missing opt-in artifacts raise
+XCTSkip in ordinary CI and do not count as authentic passes.
+
+Forty newly named owned mutation methods passed (0.007 s), after four manifest
+admission failures. Additional targeted regression methods cover review repairs.
+Two independent adversarial source reviews and repair records are separate files.
+The real AIRSApp product was compiled by the native test builds. No release build,
+installation, signing, notarization, download or MacScope operation occurred.
+
+Checker v4: 35 cases; 2,459/3,837 source observations supported, 1,378 unresolved,
+0 disagreements in the supported subset. Finding constituent support: 846/1,424;
+578 unresolved. Independently enumerated expected changes: 761/1,368 true positives,
+607 unresolved, 0 false negatives in that enumerated scope. These are provisional
+until the remaining requested raw fields and final review closure are recorded.
+Earlier v1 dependency disagreements were checker count-versus-array mistakes;
+a new owned regression corrected the checker, without changing AIRS semantics.
+
+Visible native observation so far: one authentic historical Pearcleaner comparison
+opened via Open Report, Components and Security Changes switched, previous→current
+arm64 direction and partial scope visible, correlated Info version/digest finding
+selected, previous String 5.4.0 inspected. This is one visible historical case,
+not five live pair-selection/capture workflows. No screenshot containing local
+file-picker paths is included publicly. Remaining native gates are still open.
