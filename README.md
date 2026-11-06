@@ -14,10 +14,11 @@ This is the **single active AIRS development repository**. Development branches,
 pull requests, issues and future releases belong here.
 
 The current release is the
-[AIRS 0.3.4/build 29 preview](https://github.com/jdotc1/AIRS/releases/tag/v0.3.4-build29),
+[AIRS 0.3.4/build 32 preview](https://github.com/jdotc1/AIRS/releases/tag/v0.3.4-build32),
 using the accepted signed, notarized and stapled application. It includes evidence-linked
 Security Changes in Component Review and native Standard/Broad Swift analysis,
-including broad-v1 declaration, ABI, control-flow, value and recorded witness evidence. The release includes source, checksums and a
+including broad-v1 declaration, ABI, control-flow, value and recorded witness evidence,
+plus the explicitly selected extended Swift scan profile. The release includes source, checksums and a
 qualification summary describing reused evidence and the limited installed-app check.
 Historical build 13 browser-download and local App Translocation acceptance remain
 recorded in [prior release qualification](docs/CURRENT_SOURCE_RELEASE_GATES.md).
