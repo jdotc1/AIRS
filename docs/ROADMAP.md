@@ -135,13 +135,16 @@ merged since build 32.
    and the native CI job runs on the hosted macOS 27 image with Xcode 27.2 (the
    label is `xcode-27`, marked preview on 2026-11-12; if it is renamed the job
    moves with it). The Python jobs are unchanged.
-2. Add a release-acceptance workflow, started by hand for a release tag. On a fresh
-   hosted macOS 27 runner it downloads the published archive, checks it against the
-   published checksums, checks the signature, the notarization ticket and the
-   Gatekeeper assessment, runs the bundled interpreter and engine on the owned
-   fixtures, and compares the counters with the expected files. Its record is the
+2. Added, with no completed run yet: a release-acceptance workflow, started by
+   hand for a release tag
+   ([RELEASE_ACCEPTANCE.md](RELEASE_ACCEPTANCE.md)). On a fresh hosted runner it
+   downloads the published archive, checks it against the published checksums,
+   checks the signature, the notarization ticket and the Gatekeeper assessment,
+   compares the bundled engine with the tagged source, runs the bundled
+   interpreter on owned fixtures against an independently installed Python and
+   requires identical reports, and starts the application. Its record is the
    clean-machine and minimum-system evidence for that release, with its limits
-   stated: no person, no browser download, no network isolation.
+   stated: no person, no first-open dialog, no network isolation.
 3. Freeze the source, package, and probe the bundled engine.
 4. Maintainer: sign, notarize, staple, tag and publish.
 5. Run the acceptance workflow on the published archive and record the result in the

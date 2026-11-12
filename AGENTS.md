@@ -90,6 +90,13 @@ is authoritative for versions, matrices and skip allowances; this summary can la
   backstop, not a publication clearance. A workflow-skip token in a head commit
   message stops both workflows from starting, so do not use one on a change that
   touches source or lands on main (CONTRIBUTING.md).
+- .github/workflows/release-acceptance.yml ("Release acceptance") is started by hand
+  with a published release tag. On a hosted macOS runner it downloads that release,
+  checks it against the published checksums, runs scripts/release_preflight.py,
+  compares the bundled engine with the tagged source, runs the bundled interpreter
+  on owned fixtures against an independent Python, and starts the application. It
+  reads the release and changes nothing. Its limits are in
+  docs/RELEASE_ACCEPTANCE.md.
 
 ### Local commands documented in the repository
 
