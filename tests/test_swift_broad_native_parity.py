@@ -16,6 +16,9 @@ from airs.swift_broad_flow import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+# Profiles the engine offers and the native app does not admit. Each must exist in
+# the engine, and the native app must name every other engine pair and no more.
+ENGINE_ONLY_PROFILES = frozenset({"broad-imports-got-v1"})
 
 
 class SwiftBroadNativeParityTests(unittest.TestCase):
@@ -47,7 +50,10 @@ class SwiftBroadNativeParityTests(unittest.TestCase):
         arguments = property_cases("broadArgument")
         self.assertEqual(set(models), set(arguments))
         actual = {(models[case], arguments[case]) for case in models}
-        self.assertEqual(actual, {(PROFILE_MODELS[profile], profile) for profile in PROFILE_LIMITS})
+        engine = {(PROFILE_MODELS[profile], profile) for profile in PROFILE_LIMITS}
+        engine_only = {pair for pair in engine if pair[1] in ENGINE_ONLY_PROFILES}
+        self.assertEqual(len(engine_only), len(ENGINE_ONLY_PROFILES))
+        self.assertEqual(actual, engine - engine_only)
 
     def test_import_model_reason_stub_and_limitation_literals_match_engine(self):
         source = self.native_source("SwiftBroadFlowReport.swift")

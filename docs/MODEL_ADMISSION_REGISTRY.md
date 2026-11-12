@@ -47,7 +47,12 @@ only. The recognized declaration syntax is `swift-import-declaration-syntax-v1`;
 other syntax strings retain raw evidence without a throwing interpretation.
 Unknown stub models in the exact imports pair refuse.
 
+The engine also offers `swift-broad-error-flow-imports-got-v1` /
+`broad-imports-got-v1`. It is engine-only: the native app does not admit that
+pair and offers no way to request it.
+
 `tests/test_swift_broad_native_parity.py` pins the Python/native pairs and import
-model/count literals. Native report and workspace tests cover admission,
+model/count literals, and names the engine-only profile explicitly so that a new
+engine profile cannot go unlisted on either side. Native report and workspace tests cover admission,
 refusals and requested-model pinning. These broad identities do not alter the
 CFG identity registry or historical audit admission.
