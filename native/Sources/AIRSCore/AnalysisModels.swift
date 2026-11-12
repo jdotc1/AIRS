@@ -52,6 +52,8 @@ enum AnalysisModels {
         "arm64-bounded-test-bit-branch-v50",
         "arm64-bounded-cfi-control-v36",
     ]
+    /// The one current engine model. Must equal the engine ANALYSIS_MODEL_VERSION; reuse is pinned to it.
+    static let current = "arm64-bounded-test-bit-branch-v50"
     static let known = cfg.union(["arm64-linear-v1", "arm64-linear-dwarf-v2"])
     static let evaluatedCFI = cfg.union(["arm64-linear-dwarf-v2"])
 }
