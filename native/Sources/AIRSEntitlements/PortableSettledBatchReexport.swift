@@ -54,7 +54,9 @@ public struct PortableSettledBatchReexport: Sendable {
         guard destination != recipientStore.standardizedFileURL,
               !destination.path.hasPrefix(recipientStore.standardizedFileURL.path + "/"),
               destination != project.packageURL.standardizedFileURL,
-              !destination.path.hasPrefix(project.packageURL.standardizedFileURL.path + "/") else {
+              !destination.path.hasPrefix(project.packageURL.standardizedFileURL.path + "/"),
+              !PathContainment.isSameOrInside(target, recipientStore),
+              !PathContainment.isSameOrInside(target, project.packageURL) else {
             throw InspectionArchiveError.invalid
         }
         try Task.checkCancellation()

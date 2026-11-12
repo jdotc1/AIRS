@@ -1,3 +1,4 @@
+import Darwin
 import XCTest
 import AIRSCore
 import EntitlementDiffCore
@@ -117,4 +118,46 @@ final class PortableSettledBatchEvidenceTests: XCTestCase {
         XCTAssertThrowsError(try PortableSettledBatchEvidence.decode(Data(repeating: 32, count: PortableSettledBatchEvidence.maximumBytes + 1), project: project))
     }
 
+    func testCompanionWriteAndReconstructRefuseNestedAliasesInBothDirections() async throws {
+        let short = FileManager.default.temporaryDirectory.appendingPathComponent("airs-alias-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: short, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: short) }
+        let pointer = try XCTUnwrap(realpath(short.path, nil)); defer { free(pointer) }
+        let long = URL(fileURLWithPath: String(cString: pointer), isDirectory: true)
+        try XCTSkipIf(long.path == short.path, "temporary folder has no aliased ancestor here")
+        for (base, alternate) in [(short, long), (long, short)] {
+            let name = UUID().uuidString
+            let root = base.appendingPathComponent(name)
+            let otherRoot = alternate.appendingPathComponent(name)
+            try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+            let (project, id, bytes) = try fixture()
+            let child = root.appendingPathComponent("child.airsproject")
+            try PortableProjectWriter.write(project: project, metadata: project.data(), evidence: [:], to: child)
+            let admission = try PortableProjectReader.prepare(at: child)
+            let history = try PortableSettledBatchEvidence.prepare(project: project, records: [id: bytes])
+            let nestedWrite = otherRoot.appendingPathComponent("child.airsproject/nested-export")
+            XCTAssertThrowsError(try PortableSettledBatchProject.write(admission, history: history, to: nestedWrite)) { error in
+                XCTAssertEqual(error as? InspectionArchiveError, .invalid)
+            }
+            XCTAssertFalse(FileManager.default.fileExists(atPath: nestedWrite.path))
+            let outside = otherRoot.appendingPathComponent("companion")
+            try PortableSettledBatchProject.write(admission, history: history, to: outside)
+            // Admit through the protected spelling; target uses its other alias.
+            let admitted = try PortableSettledBatchProject.prepare(at: root.appendingPathComponent("companion"))
+            let nestedReconstruct = otherRoot.appendingPathComponent("companion/nested-recipient")
+            do {
+                _ = try await PortableSettledBatchProject.reconstruct(admitted, to: nestedReconstruct)
+                XCTFail("Nested reconstruction must be refused")
+            } catch {
+                XCTAssertEqual(error as? InspectionArchiveError, .invalid)
+            }
+            XCTAssertFalse(FileManager.default.fileExists(atPath: nestedReconstruct.path))
+            let recipient = otherRoot.appendingPathComponent("outside-recipient")
+            let store = try await PortableSettledBatchProject.reconstruct(admitted, to: recipient)
+            let restored = try await store.load(project.id)
+            XCTAssertEqual(restored.id, project.id)
+            let review = try PortableSettledBatchProject.history(in: recipient, project: restored)
+            XCTAssertEqual(review.originalBytes, history.originalBytes)
+        }
+    }
 }

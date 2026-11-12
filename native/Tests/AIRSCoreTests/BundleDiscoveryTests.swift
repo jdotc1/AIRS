@@ -34,7 +34,8 @@ final class BundleDiscoveryTests: XCTestCase {
         XCTAssertTrue(result.entries.contains { $0.state == "non_image" })
         XCTAssertFalse(result.entries.contains { $0.relativePath.contains("Resources") })
         let main = try XCTUnwrap(result.entries.first { $0.relativePath == "Contents/MacOS/OwnedMain" }?.provenance)
-        XCTAssertEqual(main.bundle.path, app.path); XCTAssertTrue(result.entries.first { $0.provenance == main }?.message.contains("Principal executable") == true)
+        // Discovery records the bundle with parent aliases resolved.
+        XCTAssertEqual(main.bundle.path, app.resolvingSymlinksInPath().path); XCTAssertTrue(result.entries.first { $0.provenance == main }?.message.contains("Principal executable") == true)
         XCTAssertNoThrow(try BundleDiscovery.validate(main, input: app.appendingPathComponent(main.relativePath)))
         XCTAssertLessThanOrEqual(result.headerBytes, 1_048_576)
     }

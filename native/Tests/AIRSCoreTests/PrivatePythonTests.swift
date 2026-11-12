@@ -23,11 +23,12 @@ final class PrivatePythonTests: XCTestCase {
     func testBundledDefaultIgnoresStaleSettingAndExternalOverrideIsExplicit() throws {
         let (root, bundle, python) = try mockApp(); defer { try? FileManager.default.removeItem(at: root) }
         let result = try EngineConfiguration.resolve(pythonSetting: "/stale/python", environment: ["AIRS_PYTHON": "/another/stale/python"], bundle: bundle)
-        XCTAssertTrue(result.isBundled); XCTAssertEqual(result.pythonExecutable, python)
+        // The resolved executable uses Foundation's spelling of an aliased parent.
+        XCTAssertTrue(result.isBundled); XCTAssertEqual(result.pythonExecutable.resolvingSymlinksInPath().path, python.resolvingSymlinksInPath().path)
         let external = root.appendingPathComponent("external-python")
         try FileManager.default.copyItem(at: python, to: external)
         let override = try EngineConfiguration.resolve(pythonSetting: external.path, useExternalPython: true, environment: [:], bundle: bundle)
-        XCTAssertFalse(override.isBundled); XCTAssertEqual(override.pythonExecutable, external)
+        XCTAssertFalse(override.isBundled); XCTAssertEqual(override.pythonExecutable.resolvingSymlinksInPath().path, external.resolvingSymlinksInPath().path)
         XCTAssertThrowsError(try EngineConfiguration.resolve(pythonSetting: "", useExternalPython: true, environment: [:], bundle: bundle))
     }
     func testDamagedPackagedRuntimeAndMissingEngineNeverFallbackToSystemOrCheckout() throws {

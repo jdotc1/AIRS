@@ -1,3 +1,4 @@
+import Darwin
 import XCTest
 import AIRSCore
 import EntitlementDiffCore
@@ -12,12 +13,12 @@ final class PortableSettledBatchReexportTests: XCTestCase {
         let historyBytes: Data
     }
 
-    private func fixture() async throws -> Fixture {
+    private func fixture(root requestedRoot: URL? = nil) async throws -> Fixture {
         let checkout = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
             .deletingLastPathComponent().deletingLastPathComponent()
         let base = ProcessInfo.processInfo.environment["AIRS_TEST_OUTPUT_ROOT"].map { URL(fileURLWithPath: $0) }
             ?? checkout.appendingPathComponent("build/settled-batch-reexport")
-        let root = base.appendingPathComponent(UUID().uuidString)
+        let root = requestedRoot ?? base.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         let sourceRoot = root.appendingPathComponent("source"), store = InspectionProjectStore(root: sourceRoot)
         let historyRoot = root.appendingPathComponent("live-history"), history = EntitlementBatchHistory(root: historyRoot)
@@ -121,5 +122,33 @@ final class PortableSettledBatchReexportTests: XCTestCase {
         XCTAssertFalse(FileManager.default.fileExists(atPath: cancelled.path))
         XCTAssertEqual(try Data(contentsOf: fixture.recipient.appendingPathComponent("settled-batches.json")), fixture.historyBytes)
         XCTAssertFalse(try FileManager.default.contentsOfDirectory(atPath: fixture.root.path).contains { $0.hasPrefix(".airsproject-") })
+    }
+
+    func testReexportRefusesRecipientAndPackageAliasDestinationsInBothDirections() async throws {
+        let short = FileManager.default.temporaryDirectory.appendingPathComponent("airs-alias-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: short, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: short) }
+        let pointer = try XCTUnwrap(realpath(short.path, nil)); defer { free(pointer) }
+        let long = URL(fileURLWithPath: String(cString: pointer), isDirectory: true)
+        try XCTSkipIf(long.path == short.path, "temporary folder has no aliased ancestor here")
+        for (base, alternate) in [(short, long), (long, short)] {
+            let name = UUID().uuidString
+            let fixture = try await fixture(root: base.appendingPathComponent(name))
+            let otherRoot = alternate.appendingPathComponent(name)
+            let prepared = try PortableSettledBatchReexport.prepare(project: fixture.project, recipientStore: fixture.recipient)
+            let recipientTarget = otherRoot.appendingPathComponent("recipient/nested-export")
+            let packageTarget = otherRoot.appendingPathComponent("admitted.airsproject/nested-export")
+            for target in [recipientTarget, packageTarget] {
+                XCTAssertThrowsError(try prepared.write(to: target)) { error in
+                    XCTAssertEqual(error as? InspectionArchiveError, .invalid)
+                }
+                XCTAssertFalse(FileManager.default.fileExists(atPath: target.path))
+            }
+            let outside = otherRoot.appendingPathComponent("outside-export")
+            try prepared.write(to: outside)
+            let admitted = try PortableSettledBatchProject.prepare(at: outside)
+            XCTAssertEqual(admitted.project.project.id, fixture.project.project.id)
+            XCTAssertEqual(admitted.history.originalBytes, fixture.historyBytes)
+        }
     }
 }

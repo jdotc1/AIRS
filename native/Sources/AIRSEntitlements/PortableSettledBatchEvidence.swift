@@ -146,7 +146,8 @@ public enum PortableSettledBatchProject {
         // The evidence value cannot be forged publicly, but can belong to another project.
         _ = try PortableSettledBatchEvidence.decode(history.originalBytes, project: project.project)
         guard target.standardizedFileURL != project.packageURL.standardizedFileURL,
-              !target.standardizedFileURL.path.hasPrefix(project.packageURL.standardizedFileURL.path + "/") else { throw InspectionArchiveError.invalid }
+              !target.standardizedFileURL.path.hasPrefix(project.packageURL.standardizedFileURL.path + "/"),
+              !PathContainment.isSameOrInside(target, project.packageURL) else { throw InspectionArchiveError.invalid }
         let stage = try PortableProjectFiles.freshStage(for: target)
         defer { try? FileManager.default.removeItem(at: stage) }
         try Task.checkCancellation()
@@ -162,7 +163,8 @@ public enum PortableSettledBatchProject {
     public static func reconstruct(_ admitted: PortableSettledBatchAdmission, to target: URL,
                                    beforePublish: @Sendable () throws -> Void = {}) async throws -> InspectionProjectStore {
         guard target.standardizedFileURL != admitted.root.standardizedFileURL,
-              !target.standardizedFileURL.path.hasPrefix(admitted.root.standardizedFileURL.path + "/") else { throw InspectionArchiveError.invalid }
+              !target.standardizedFileURL.path.hasPrefix(admitted.root.standardizedFileURL.path + "/"),
+              !PathContainment.isSameOrInside(target, admitted.root) else { throw InspectionArchiveError.invalid }
         try Task.checkCancellation(); try validateCurrent(admitted)
         let stage = try PortableProjectFiles.freshStage(for: target)
         defer { try? FileManager.default.removeItem(at: stage) }

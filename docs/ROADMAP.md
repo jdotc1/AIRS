@@ -16,6 +16,14 @@ checkpoint under History disagree, this section is current.
 class and corrects the refusal reason for words outside it. It adds no
 instruction support. See EXTRACT_CLASS.md.
 
+### Source checkpoint since that commit: path aliases
+
+Export, reconstruction and location checks in the native application no longer
+depend on whether a path is spelled through `/private`. A destination nested
+in a protected folder below an aliased folder is now refused, and a relative
+manifest or a discovered image below one is no longer refused. The analysis
+model is unchanged. See PATH_ALIASES.md.
+
 ### Merged and released
 
 - Published preview: AIRS 0.3.4, build 32 (tag v0.3.4-build32, application source
