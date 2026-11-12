@@ -271,10 +271,13 @@ files. Porting notes continue with each released model
 1. Rewrite README.md as an introduction: what AIRS does, what it never does, how to
    install it, what it requires and what its results do not establish. Its build
    history moves to the release documents.
-2. One version identity. The application is 0.3.4 and the Python package and engine
-   report 0.3.3. First read whether any validator pins the generator version; the
-   preferred result is one version source read by the package, the engine and the
-   application.
+2. Done: one version identity, 0.4.0. The engine literal in `src/airs/__init__.py`
+   is the authority. `pyproject.toml` and a Swift constant are literal copies, and
+   a test fails when any of the three differs. No validator pins the generator
+   version, so stored reports keep the version that produced them. Release
+   preflight checks the bundle version against the version in the tag. Deferred:
+   the build provenance record does not carry the semantic version yet; it is
+   added with the next change to that record.
 3. Done by disclosure: [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) and
    [ARCHITECTURE.md](ARCHITECTURE.md) each open with a note that says what the page
    records and points here. Neither is rewritten.
