@@ -1,0 +1,1023 @@
+# AIRS roadmap history
+
+These are the dated checkpoints that preceded the current [roadmap](ROADMAP.md). They were moved
+here unchanged on 2026-11-12, when the roadmap was rewritten as a forward plan. Nothing in this
+file is a plan. The last section is the state the roadmap recorded immediately before it was
+rewritten.
+
+
+Everything below is the record of past checkpoints, kept as written. Headings that
+begin "Current" or "Next" were true when written. Three points for reading it:
+
+- Pull-request numbers come from more than one numbering (for example PR32 to PR41 is
+  followed by public PR2 to PR27) and may not match this repository's pull-request
+  page.
+- A checkpoint that calls a Swift model current (for example `swift-sync-error-edges-v5`)
+  describes the model current when it was written. The identities now in the source
+  are listed in [ADVANCED_SWIFT_ERROR_FLOW.md](ADVANCED_SWIFT_ERROR_FLOW.md) and in
+  `src/airs/swift_broad_profiles.py`.
+- The summary that opens this history names build 13 as the current preview; build 32
+  is current. The newest checkpoint is the last section, not the first.
+
+### Summary written at build 13
+
+This public repository is the single development baseline. Plans describe intended
+work; acceptance records establish completed scope. Build 13 is the current
+published preview, with clean-machine and minimum-macOS acceptance pending.
+Source-only increments do not replace installed apps.
+
+| Milestone | Current position | Remaining boundary |
+| --- | --- | --- |
+| Native evidence review and saved workflows | Build 12 includes accepted Settings, comparison and persistent sidebar corrections | Qualify each changed user interaction after pending work settles |
+| Conservative ARM64/CFI model | Merged through CLS v47; MOVK v48 and CBZ/CBNZ v49 merged in PR32; TBZ/TBNZ v50 merged in PR33 with bounded source/native qualification; historical identities remain distinct | New instruction/rule families require distinct positive and refusal evidence and independent review |
+| Saved-report coverage triage | Reason selection, terminal-safe output, bounded detail and literal code ordering implemented | Additional triage tools must preserve full denominators, overlap, duplicate/conflict and exact identity context |
+| Public distribution | Build 13 preview is signed, notarized and stapled; published browser download and local App Translocation are accepted | Independent clean-machine, minimum-macOS and offline qualification remain pending; this preview targets Apple silicon |
+
+### Current bounded increment
+
+Coverage triage, W SDIV/W UDIV and owned-image qualification are merged through
+PRs #13–20; scalar REV/REV16/REV32 through PRs #21–23. Accepted results are reused.
+Scalar [CLS W/X v47](CLS.md) is merged in PR #24 with accepted
+[qualification results](CLS_RESULTS.md) reused.
+
+Exact model-admission registry hardening is merged in PR #25; its accepted
+[qualification](MODEL_ADMISSION_REGISTRY.md) is reused.
+
+Historical/unknown-model decoder boundary tests are merged in PR #26; their
+[accepted results](MODEL_ADMISSION_BOUNDARIES.md) are reused.
+
+Coverage-text escaped-allocation preflight is merged in PR #27 with
+[accepted results](COVERAGE_TEXT_PREFLIGHT.md) reused.
+
+Exact refusal-instruction evidence is merged in PR #28 with
+[accepted results](REFUSAL_INSTRUCTION_EVIDENCE.md) reused.
+
+Refused direct-edge target diagnostics are merged in PR #29 with
+[accepted results](REFUSED_BRANCH_TARGETS.md) reused.
+
+Unknown CFG recovery evidence is merged in PR #30 with
+[accepted results](CFG_UNKNOWN_RECOVERY_EVIDENCE.md) reused.
+
+Possible-path discrepancy evidence is merged in PR #31 with
+[accepted results](CFG_POSSIBLE_DISCREPANCY_EVIDENCE.md) reused.
+
+The preceding local analysis improvement retains configured and completed CFG
+state-visit counts in the existing work-budget exhaustion evidence row. Limits
+still stop exploration immediately and retain unresolved status without checked
+PCs; no supported subset or model change is added.
+See [work-budget qualification](CFG_WORK_BUDGET_EVIDENCE.md).
+Installation and release remain unchanged.
+
+### MacScope reuse implementation
+
+MOVK W/X v48 and CBZ/CBNZ W/X v49 are merged in PR32 with independent review,
+owned-image qualification and native admission. See MOVK_RESULTS.md and
+COMPARE_BRANCH_RESULTS.md. MacScope is read-only; no new binary is installed.
+Recent multiply/CMN literal boundary cases are adapted as three passing regression
+methods; existing AIRS arithmetic needed no change. Function matching and proof
+fact recording remain subsequent work, not claimed implemented by this increment.
+
+TBZ/TBNZ v50 is merged in PR33, with separate owned positive/refusal
+evidence. See TEST_BIT_BRANCH.md and TEST_BIT_BRANCH_RESULTS.md. Binary release
+and installation remain separate.
+
+The first function-matching reuse increment, merged in PR34, adapts MacScope's generated-name
+guard to saved-report comparison. Generic entry/section and address-shaped donor
+labels no longer create cross-build symbol joins. Exact-image matching and model/
+configuration checks remain authoritative. See GENERATED_SYMBOL_MATCHING.md for
+behavior and eight new plus three affected passing methods. No fingerprint
+matcher or new analysis model is claimed.
+
+Manual finding pairs, merged in PR35, add validated explicit selections to the
+saved-report API and CLI. MacScope's one-to-one pin precedence is adapted without
+copying its framework or adding fingerprints. See MANUAL_FUNCTION_PAIRS.md for
+nine new API, five isolated CLI and eleven affected passing methods. Manual pairs
+remain review candidates and cannot override exact-image or compatibility guards.
+
+The producer, merged in PR36, emits optional exact-byte body fingerprints through
+an audit API/CLI opt-in, using only already-supported substantial functions.
+See FUNCTION_BODY_FINGERPRINTS.md for bounds and twelve new plus fourteen affected
+passing methods. Default/native-app output is unchanged. Fingerprints do not
+perform matching or change unwind findings.
+
+Exact-body candidate matching, merged in PR37, adds explicit API/CLI opt-in
+matching after manual/unique-symbol matches. Duplicate evidence and ambiguous
+symbol groups are not guessed; compatibility guards remain authoritative.
+See EXACT_BODY_CANDIDATES.md for fourteen new API, four isolated CLI, one fresh
+pipeline and twenty-five affected passing methods. Default/native-app matching
+is unchanged; no identity proof or new analysis semantics is claimed.
+
+The native codec increment, merged in PR39, preserves optional fingerprint fields through
+typed report round trips, validates exact shape and qualifying context, and leaves
+missing evidence unavailable. It does not enable fingerprint production or
+matching in the app. See NATIVE_BODY_FINGERPRINT_CODEC.md for qualification.
+
+The comparison-context codec, merged in PR40, preserves configuration-change status,
+exact-body opt-in status and manual-pair records. Missing facts stay unavailable;
+malformed or conflicting selection metadata rejects. See NATIVE_COMPARISON_CONTEXT.md
+for eleven focused passing methods and a successful real app build. No native
+matching or GUI activation is included.
+
+The endpoint helper, merged in PR41, explicitly binds recorded manual endpoints and row facts
+to two selected source audit reports. It validates declared identities/flags and
+source-side ID membership without authenticating reports or recomputing change
+classification/configuration identity. See MANUAL_PAIR_SOURCE_BINDING.md for ten
+new passing methods and a successful real app build. No app workflow is activated.
+
+Manual-pair compatibility, merged in public PR2, adds saved-configuration/model prerequisites on top of
+endpoint binding. Explicit status must match original source data, and incompatible
+manual rows must stay ambiguous. See MANUAL_PAIR_COMPATIBILITY.md for eleven new
+passing methods and a real app build. Change-signature verification and native
+workflow activation remain separate.
+
+Manual-row change verification, merged in public PR3, checks changed/unchanged labels against selected
+source finding signatures, reusing the donor comparator's separation of matching
+and audit observations. See MANUAL_PAIR_CHANGES.md for bounded native qualification.
+Nonmanual rows, summary integrity and automatic workflow activation remain separate.
+
+Comparison row accounting, merged in public PR4, checks bounded row shape, per-side endpoint
+uniqueness and exact six-field summary totals. See COMPARISON_ROW_ACCOUNTING.md
+for focused native qualification. It is separate from source binding, matching
+truth and signature verification; native app activation remains unchanged.
+
+Selected-source fact binding, merged in public PR5, extends side-specific ID/verdict/scope
+binding to every selected row, including nonmanual and one-sided rows. See
+COMPARISON_SOURCE_FACTS.md. This does not verify matching semantics, source
+completeness, configuration identity or nonmanual finding signatures.
+
+Matched-change label verification, merged in public PR6, composes selected-source/accounting and
+manual checks, then verifies all other selected pairs with the same observation
+signature. See MATCHED_CHANGE_LABELS.md. Matching-basis semantics, source
+completeness and native GUI activation remain separate.
+
+Exact-image offset validation, merged in public PR7, checks host offset authority and declared
+numeric offset groups, rejecting guessed selections from duplicate groups. See
+EXACT_IMAGE_OFFSET_ROWS.md. Source completeness and cross-image symbol/body
+matching semantics remain separate; no native workflow is activated.
+
+The unique-symbol pair validator, merged in public PR8, checks raw source names, generated-name
+exclusions and post-manual singleton groups for selected two-sided claims. See
+UNIQUE_SYMBOL_PAIRS.md. One-sided symbol groups, body matching and completeness
+remain separate; no matching producer or GUI workflow is activated.
+
+The exact-body pair validator, merged in public PR9, checks explicit opt-in and selected
+fingerprint buckets against the post-manual source snapshot, retaining symbol
+precedence and duplicate blockers. See BODY_CANDIDATE_PAIRS.md. It does not
+activate matching or prove body authenticity, identity or source completeness.
+
+The duplicate-symbol group validator, merged in public PR10, checks actual source-name multiplicity,
+required singleton-side selections and ambiguous labels after validated manual
+pins. See DUPLICATE_SYMBOL_GROUPS.md. Singleton one-sided matching outcomes and
+source completeness remain separate; native workflows are not activated.
+
+The singleton one-sided symbol-row validator, merged in public PR11, checks added/removed claims
+against post-manual source groups and deterministic body consumption. Missing
+body metadata refuses only outcomes the option could change. See
+ONE_SIDED_SYMBOL_ROWS.md. Omitted groups and unmatched/future bases remain separate.
+
+The unmatched-row validator, merged in public PR12, binds side-specific added/removed claims to
+admitted source IDs, unusable host names and unconsumed endpoints. See
+UNMATCHED_ROWS.md. Omitted groups, future bases and completeness remain separate;
+matching defaults and native workflows are unchanged.
+
+The recorded matching-policy validator, merged in public PR13, checks canonical producer metadata
+against validated manual pins and explicit body status, and rejects unsupported
+basis names at this opt-in boundary. See MATCHING_POLICY.md. Generic decoding,
+producer defaults, full-output reconstruction and native workflows remain separate.
+
+The canonical manual-pair key validator, merged in public PR14, binds each manual row key to its
+selected baseline/current IDs in producer order. See MANUAL_PAIR_KEYS.md. Earlier
+APIs, matching defaults, complete-output reconstruction and native workflows retain
+their existing scope.
+
+The selected function-name validator, merged in public PR15, binds recorded labels to the selected
+current finding, otherwise the selected baseline finding, using exact source text.
+See SELECTED_FUNCTION_NAMES.md. Unselected group labels, complete output and native
+workflow activation remain separate; names do not establish identity.
+
+The unselected-symbol name validator, merged in public PR16, binds zero-endpoint ambiguity labels
+to the exact admitted source-group name. See UNSELECTED_SYMBOL_NAMES.md. Its
+AIRSApp build and 13 focused tests passed; independent review found no actionable
+defect. Unselected offset-group labels and native activation remain separate.
+
+The unselected-offset name validator, merged in public PR17, binds zero-endpoint exact-image
+ambiguity labels to the producer's first recorded current member, otherwise its
+first baseline member. See UNSELECTED_OFFSET_NAMES.md. Its AIRSApp build and 14
+focused tests passed; independent review found no actionable defect. Source-order
+authenticity, complete-output reconstruction and native activation remain separate.
+
+The canonical row-order validator, merged in public PR18, checks strictly ascending raw UTF-8
+complete keys after the existing declared-row proofs. See CANONICAL_ROW_ORDER.md.
+Its AIRSApp build and 16 focused tests passed; independent review found no
+actionable defect. Input is not reordered; complete-output reconstruction,
+authenticity, identity and native activation remain separate.
+
+The same-image row-coverage validator, merged in public PR19, detects omitted offset groups from
+the union of two admitted saved reports. See SAME_IMAGE_ROW_COVERAGE.md. Its
+AIRSApp build and 17 focused tests passed; independent review found no actionable
+defect. Cross-image use refuses; original-binary coverage, remaining producer
+fields, authenticity, identity and native activation remain separate.
+
+The body-disabled cross-image coverage validator, merged in public PR20, detects omitted manual,
+symbol and side-specific unmatched groups after validated pins. See
+BODY_DISABLED_ROW_COVERAGE.md. Its AIRSApp build and 18 focused tests passed;
+independent review found no actionable defect. Explicit false body status is
+required; unknown/enabled status and same-image use refuse. Body-enabled
+coverage, binary completeness, authenticity and native activation remain separate.
+
+The body-enabled cross-image coverage validator, merged in public PR21, requires every projected
+body pair plus all remaining groups after manual/body consumption. See
+BODY_ENABLED_ROW_COVERAGE.md. Its AIRSApp build and 20 focused tests passed;
+independent review found no actionable defect. Existing candidate precedence and
+architecture/subtype gates are reused; unknown/false status and same-image use
+refuse. Original-binary completeness, authenticity, remaining producer fields and
+native activation remain separate.
+
+The covered comparison decoder, merged in public PR22, provides one bounded native entry point
+for the three saved-report coverage domains. See COVERED_COMPARISON_DECODE.md.
+Its AIRSApp build and 16 focused tests passed; independent review found no
+actionable defect. Generic decode remains broader; cross-image missing body
+status refuses. Native workflow activation, remaining producer fields,
+authenticity and identity remain separate.
+
+The explicit body-status producer change, merged in public PR23, records false as well as true in
+new comparison metadata. See EXPLICIT_BODY_STATUS.md. Eleven new tests and two
+affected checks passed, including the CLI default path; independent review found
+no actionable defect. Accepted native evidence is reused. Matching remains off
+by default; historical absence stays unknown, and app activation remains separate.
+
+The covered batch-runner policy, merged in public PR24, exposes saved-report coverage as explicit
+acceptance opt-in. See COVERED_BATCH_COMPARISON.md. The real AIRSApp build passed;
+ten async methods qualified through nine accepted results and one corrected
+payload check. Independent review found no actionable production defect. Existing
+no-argument initialization and GUI callers retain legacy acceptance; GUI activation,
+authenticity and identity remain separate.
+
+The comparison-schema alignment, merged in public PR25, admits current manual/body policies and
+bases, plus optional typed body status and bounded exact manual-pair objects. See
+COMPARISON_SCHEMA_ALIGNMENT.md. Fourteen development-validator tests passed with
+zero skips; independent review found no actionable defect. Only baseline-diff was
+regenerated. Structural validity does not establish semantic coverage, source
+binding, authenticity or GUI activation; accepted runtime evidence is reused.
+
+The owned producer/native coverage bridge, merged in public PR26, qualifies exact Python-produced
+comparison bytes through covered decoding and strict batch acceptance. See
+PRODUCER_COVERAGE_BRIDGE.md. Eight new controls and two mutation refusals passed;
+independent review found no actionable defect. Production behavior and GUI callers
+are unchanged; accepted app/runtime evidence is reused. Packaged transport,
+authenticity, identity and GUI acceptance remain separate.
+
+The producer/native observation-parity qualification, merged in public PR27, checks reason sorting
+and multiplicity, relative addresses, checked-PC order and raw evidence text. See
+PRODUCER_OBSERVATION_PARITY.md. Seven new controls and two consistent-accounting
+label refusals passed; independent review found no actionable defect. Existing
+coverage controls and production code remain unchanged; accepted app/runtime
+evidence is reused. Binary equivalence, authenticity and GUI acceptance remain separate.
+
+The batch acceptance-policy provenance records requested strict policy in
+immutable results and strict-only export metadata. See BATCH_ACCEPTANCE_POLICY.md.
+The real AIRSApp build and six focused methods passed; independent review found
+no actionable defect. Legacy wire shape is unchanged, and policy metadata is not
+a success certificate or portable proof. GUI defaults and installed data remain unchanged.
+
+Next reuse sequence:
+
+1. FunctionVersionMatcher adaptation for cross-build review candidates, beginning
+   with separately qualified native preservation/activation or additional explicit
+   evidence. Manual pairs, body production and exact-body candidate
+   selection are merged. Historical reports lack fingerprints; CFG fingerprints
+   and call-graph propagation are not implemented. Structural
+   matches must never replace exact image identity or model/configuration checks.
+2. Structured refusal facts where they remove duplicated diagnostic handling;
+   retain AIRS unknown/discrepancy precedence instead of donor proof precedence.
+
+### Next candidates, one bounded item at a time
+
+1. Use the documented saved-report workflow to identify a concrete unresolved
+   behavior worth improving; avoid adding filters without a specific review need.
+2. Select a next semantic extension from an explicit owned example and independently
+   derived recovery expectation. Reason frequency in supplied reports is prioritization
+   input, not representative prevalence or automatic permission to widen support.
+3. Complete clean-machine/minimum-OS acceptance when an appropriate environment is
+   available. Development-Mac acceptance does not close these gates.
+
+Reuse accepted results for unchanged inputs. Run only changed-boundary checks and
+keep source tests, native GUI acceptance, packaging, signing/notarization, installation
+and release publication distinct. Runtime evidence and user data stay outside source.
+
+
+### Local workspace maintenance
+
+Completed worktrees and merged feature branches can be pruned after preserving
+unique source/evidence. Rebuildable caches and intermediate packaged app copies
+need not remain alongside the active public checkout. See WORKSPACE_FOOTPRINT.md.
+The saved native fingerprint-codec draft was completed and merged in PR39. Typed native
+preservation and structural admission now have nine focused passing tests and a
+successful real AIRSApp build. See NATIVE_BODY_FINGERPRINT_CODEC.md. Build products
+are removed after retaining logs. Fingerprint production/matching activation and
+GUI acceptance remain separate; no installed binary or release changes.
+
+### Swift decompilation: synchronous error paths
+
+The first bounded throwing-call return-edge model is implemented and qualified
+against an owned optimized Swift image; see SWIFT_ERROR_FLOW.md. It recovers
+local success/error successors without claiming complete source reconstruction.
+Next extend explicit declaration coverage with owned examples, then bounded
+handler-region recovery. Async continuation reconstruction remains separate.
+
+The next bounded slice now adds opt-in local error-region intervals with raw
+instructions and opaque call targets, qualified against the existing owned Swift
+example and eleven new focused methods. Exclusive entry, catch type, reachable
+join and source-like handler reconstruction remain unimplemented. The next
+semantic step should establish incoming-edge constraints before widening region
+layouts or presenting structured source.
+
+Caller-local direct-entry validation is now implemented as an opt-in supplement,
+with 17 focused passing controls and accepted owned-caller qualification. It
+reports observed side entries or unresolved classification without claiming
+exclusive entry. Next establish a separate structured-presentation eligibility
+contract that consumes these statuses and preserves unresolved indirect/external
+entry limits before presenting source-like handler structure.
+
+Structured-presentation eligibility now consumes qualified region/direct-entry
+facts and emits bounded labeled display plans only for eligible structural
+candidates. Seventeen new focused controls and the accepted owned-example records
+qualify the source contract. Source reconstruction remains disabled. Next add a
+bounded renderer that preserves blocked/unresolved evidence, raw instructions,
+opaque-call labels and all proof limits; native UI activation remains separate.
+
+The bounded terminal renderer is implemented with thirteen focused passing
+controls and renderer-only accepted-record qualification. It retains eligible,
+blocked and unresolved outcomes, raw evidence and source denominators within
+explicit row/byte caps. Next improve bounded signature/handler coverage from
+owned Swift examples, or separately adapt this qualified presentation contract to
+native UI. Full source reconstruction and native activation remain separate.
+
+The v2 Swift edge model now admits exact ordinary Int-to-Void throwing free
+functions, qualified by ten new controls and one owned compiler example. The
+example recovers correct success/error edges but conservatively declines its
+error block's jump past a distinct success entry into the epilogue. That concrete
+layout is the next bounded region-recovery candidate; it requires separate join
+and entry analysis rather than treating the success entry as the true join.
+
+### Saved-report coverage GUI integration
+
+The saved-batch pairing window now exposes strict coverage with a captured
+per-invocation policy. Legacy programmatic behavior remains the default. The real
+app build and a new refusal/export/policy-separation workspace test passed;
+accepted core controls were reused. Isolated native interaction confirmed strict
+refusal, legacy opt-out, busy-state locking and cancellation without stale output. See GUI_SAVED_REPORT_COVERAGE.md for delivered and held scope.
+
+### Published preview qualification
+
+Strict saved-batch coverage has composed workspace/native interaction
+qualification. Version 0.3.4/build 13 is locally signed, notarized and stapled,
+with exact frozen source identity and a qualified local distribution archive.
+See CURRENT_SOURCE_RELEASE_GATES.md. The new archive has isolated GUI
+and actual App Translocation acceptance on the development Mac. Published
+browser-download delivery is accepted for the identical archive.
+Independent clean-machine and minimum-macOS acceptance remain open. Build 13 is
+published as a preview; qualification did not replace an installed app. No
+historical release qualification is transferred to build 13.
+
+### Shared Swift error-handler epilogue recovery
+
+The next bounded source increment recovers a terminal error-arm jump over a
+separate success arm into a narrowly qualified common restore/return tail.
+Region, direct-entry and presentation component identities advance to v2;
+edge identity and unwind verdicts remain unchanged. Fourteen new and 60 affected
+focused methods passed, with independent semantic review. Captured owned caller
+words and accepted edge facts establish changed-stage qualification without
+repeating binary admission or compilation. See SWIFT_ERROR_FLOW.md. New end-to-end
+binary/CLI, native UI and release qualification remain separate; build 13 and
+installed stores are unchanged.
+
+Shared Swift error epilogues are merged in PR #34 with accepted results reused.
+The next bounded local increment recognizes a final SP post-indexed LDP/RET tail
+through the existing decoder under region v3. Eleven new focused methods and
+three affected controls passed; independent semantic review found no blocker.
+See SWIFT_ERROR_FLOW.md. This is synthetic source/CLI qualification only; installed
+build 13, production stores and MacScope remain unchanged.
+
+Final post-indexed epilogue recovery is merged in PR #35 with accepted results
+reused. The next local bounded increment recognizes the exact FP-to-SP reset,
+ordered FP/LR post-indexed pop and RET sequence under region v4. Twelve new
+focused methods and four affected controls passed, with independent semantic
+review. Qualification remains synthetic source/CLI; installed build 13,
+production settings/stores and MacScope are unchanged. See SWIFT_ERROR_FLOW.md.
+
+Frame-pointer-reset recovery is merged in PR #36 with accepted results reused.
+The next bounded local increment covers success-fallthrough / forward-error
+XCBNZ layouts with separate bounded arms and an existing shared return tail.
+Region v5, entry v3 and presentation v3 preserve conservative unknown handling
+and proof limits. Seventeen new methods and 95 affected controls passed in
+composed scope; independent semantic review found no remaining blocker.
+Qualification is synthetic source/CLI only. No installed application, production
+settings/stores or MacScope source was changed. See SWIFT_ERROR_FLOW.md.
+
+Forward-error-arm recovery is merged in PR #37 with accepted results reused. The
+next local bounded increment admits exact parameterless throwing Void declarations
+under edge v3, reusing existing x21, region, entry and presentation recovery.
+Twelve new methods and 30 affected controls passed, with independent review. One
+new owned ARM64 compiler example recovered a parameterless call and structurally
+eligible handler, with 14 other calls explicitly declined. No old binary checks
+were repeated; native UI, installation and release qualification remain separate.
+MacScope, installed build 13 and production settings/stores are unchanged.
+
+### Bounded parameterless throwing Int recovery
+
+Edge v4 adds only exact `SiyKF` free-function declarations: no parameters and
+Swift.Int result, ordinary synchronous untyped throws. Prior declaration facts
+remain unchanged. Other result types, methods, async, typed throws, generics and
+thunks remain refused. Region v5, incoming v3 and presentation v3 are unchanged;
+source reconstruction and runtime identity proof remain disabled.
+
+Five new focused tests and 38 affected declaration/renderer/component controls
+passed in composed runs. One initial test incorrectly compared a declaration
+with a call record containing additional attribution fields; only that changed
+test was rerun after correcting its comparison. Existing owned-image results
+are reused for their original signatures; this extension has synthetic source
+and renderer qualification, not a new compiled-image or installed-app claim.
+
+### Bounded success-result evidence
+
+When structured presentation is requested, `swift-success-result-v1` records
+whether x0 is preserved along the recorded success path of an exact Swift.Int
+throwing call. Swift's ARM64 calling-convention summary assigns the first integer
+result to x0. The new result requires eligible caller-local structural evidence
+and the existing bounded shared return tail. It reuses admitted caller bytes,
+with at most eight post-call words, eight success-arm words and eight tail words.
+Post-call NOP and MOV to other registers, success NOP and MOV/MOVZ/MOVN to other
+registers, and the exact terminal success branch to the shared join are admitted.
+The existing tail whitelist restores x19..x30, adjusts SP and ends in RET x30.
+Any x0 write, call, unknown operation, unsupported return, incomplete entry check
+or missing shared tail withholds the candidate. Even x0 self-copy is declined
+by this initial conservative subset.
+
+The candidate describes selected-path register preservation only. Runtime value,
+path exclusivity, caller return type and source-reconstruction proof remain false.
+No error-arm result is inferred. Default edge-only output and edge v4, region v5,
+incoming v3 and presentation v3 identities are unchanged. JSON carries raw bounded
+path evidence; text exposes the same scoped result with explicit omission counts.
+The text renderer accepts prior reports lacking the optional result model, but
+requires the current model when result evidence is present.
+
+Twelve new focused methods passed in composed runs, including both arm layouts,
+x0 clobbers, post-call writes, call/unknown/return refusals, partial scans, direct
+side entries, unsupported declarations, default-output isolation and CLI JSON/text.
+Exact 24-word coverage and each independent one-word overflow were checked;
+text displays the success-result model identity. Independent semantic review
+found no false-preserved-result blocker.
+Forty-nine affected renderer, declaration, forward-arm and shared-tail controls
+passed once. Existing owned-image results are reused only for their original
+scopes; this increment has synthetic analysis/CLI qualification and no new native
+app, compiled-image, installed-app or release qualification.
+
+### Bounded success-result copies
+
+Success-result v2 adds live 64-bit MOV result-copy tracking across existing
+bounded post-call/success paths. Overwritten copies are removed and XZR is
+excluded; x0 must hold a live copy before the existing return tail. Copied
+candidates are distinguished from direct preservation. Other component models,
+24-word maximum and all proof restrictions are unchanged. Eight new and
+25 affected synthetic controls passed. See SWIFT_ERROR_FLOW.md for exact scope.
+
+### Success-entry return-tail recovery
+
+Success-result v3 recognizes the existing bounded return-tail whitelist directly
+at a success entry equal to the recorded error join. Complete caller-local direct
+entry checks protect the entire tail, with only exact test/terminal-error-branch
+exemptions. Unsupported or conflicting evidence withholds the result; all runtime
+and source proof flags remain false. Thirteen new and 33 affected synthetic/CLI
+controls passed. See SWIFT_ERROR_FLOW.md for exact limits and evidence scope.
+
+### Bounded success-path constants
+
+A separate success-constant v1 component tracks complete 64-bit literal patterns
+assigned within an eligible bounded success arm and retained through its shared
+return tail. It starts with no incoming constants, uses only existing MOVZ/MOVN
+and MOV decoding, and distinguishes literals from call-result preservation.
+Evidence is at most 16 words; runtime, caller-type, exclusive-path and source
+proofs remain false. Twelve new and 46 affected synthetic/CLI controls passed.
+See SWIFT_ERROR_FLOW.md for exact scope and exclusions.
+
+### Bounded error-arm constants
+
+Error-constant v1 reuses the success constant rules on eligible bounded error
+intervals, clearing all known constants at every opaque call. Known x0 bits must
+be assigned after the last call and survive the validated shared return tail.
+Call return and handler/source/runtime meaning remain unproven. Evidence stays
+within 24 words; prior models are unchanged. Thirteen new and 58 affected
+synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md for exact scope.
+
+### Bound return-choice summaries
+
+Return-choice v1 combines eligible same-call, same-tail success/error evidence
+into a structural summary. It requires an error literal and an unambiguous
+success literal or direct/copied call result. Missing or inconsistent outcomes
+remain unresolved. Literal equality is unknown for a call-result/literal pair;
+all runtime/source proof restrictions and existing models remain unchanged.
+Twelve new and 38 affected synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md.
+
+### Owned return-choice layout coverage
+
+A fresh optimized owned Swift input qualified two Int throwing-call layouts.
+Error-constant v2 and return-choice v2 close the observed success-entry-tail gap
+by binding to the already validated result candidate, exact tail words, call and
+entry identities and x0. Explicit source/layout guards reject mixed metadata.
+Eleven new and 50 affected synthetic/CLI controls passed; a seven-word replay
+of retained owned evidence qualified the changed boundary without rebuilding,
+rehashing or readmitting the binary. See SWIFT_ERROR_FLOW.md for evidence scopes.
+
+### Literal outcomes after Void validation calls
+
+Existing admitted throwing Void declarations can now supply caller-assigned
+literal outcome evidence through success-constant v2, error-constant v3 and
+return-choice v3. X0 is never treated as a Void call result or assumed literal;
+explicit selected-arm assignments are required. Bounds, entry checks and proof
+restrictions remain unchanged. Eleven new and 61 affected controls passed; a
+nine-word retained owned-example replay qualified the new helper context without
+recompilation, rehashing or readmission. See SWIFT_ERROR_FLOW.md for exact scope.
+
+### Known-seeded MOVK outcome literals
+
+Bounded success/error arms now admit decoded 64-bit MOVK. Complete known values
+receive exact lane replacement; unknown values remain unknown. Result aliases
+are invalidated at the updated destination. No W-width, post-call-window or
+return-tail support is added. Region v6 and the updated outcome model identities
+retain existing bounds and proof restrictions. Thirteen new and 171 affected
+synthetic/CLI controls passed with independent review. See SWIFT_ERROR_FLOW.md.
+
+### Zero-extended W move-wide outcomes
+
+A Swift-local adapter admits exact W MOVZ/MOVN seeds using existing move-wide
+field decoding, with reserved shifts rejected and original words retained.
+Literal patterns zero-extend from 32 bits; result aliases are invalidated at the
+written destination. Core decoding/admission, post-call windows and return-tail
+whitelists remain unchanged. Twelve new and 218 affected synthetic/CLI controls
+passed. See SWIFT_ERROR_FLOW.md for model identities, bounds and exclusions.
+
+### Known-seeded W MOVK outcome updates
+
+Bounded arms now admit the existing decoded W MOVK form. Known values receive
+exact lane replacement with zero extension; unknown values stay unknown and
+written result aliases are invalidated. Decoder/admission, entry classification,
+post-call windows, tail whitelists and evidence limits retain prior scope.
+Twelve new and 196 affected controls passed in composed runs with independent
+review. See SWIFT_ERROR_FLOW.md for model identities and qualification limits.
+
+### Canonical W-register outcome copies
+
+Exact unshifted W MOV copies now propagate known zero-extended literal patterns
+within bounded outcome arms. Unknown sources invalidate constants; W copies do
+not preserve original 64-bit call-result aliases. The existing logical decoder
+is reused through a local canonical-alias adapter. Core decoding, post-call
+windows, return tails and evidence limits retain prior scope. Twelve new and
+208 affected synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md for details.
+
+### Owned W outcome qualification
+
+One fresh optimized Swift fixture qualified two throwing-Void handler outcomes:
+32-bit literal assembly and W-versus-X all-ones width. The first 205-word scan
+retained all 17 calls, recovering two candidates and declining 15. Twenty-two
+captured words matched retained disassembly and relocated regression fixtures;
+six new regression/CLI methods passed. Analyzer semantics are unchanged and
+prior checks are reused. W-copy compiler coverage remains open because no such
+word was emitted. See SWIFT_ERROR_FLOW.md for exact scope and acceptance limits.
+
+### Scalar SP restore-tail candidates
+
+Bounded return tails now admit existing unsigned 64-bit SP-relative LDR into
+x19..x30 at scaled offsets through 4096 bytes. No x0, W-width, FP-base or indexed
+load is added. Tail/prefix/entry bounds remain unchanged and restored-state/frame
+proof stays false. Twelve new and 226 affected synthetic/CLI controls passed
+with independent review. See SWIFT_ERROR_FLOW.md for model scopes and limits.
+
+### Terminal scalar post-index tail candidates
+
+Bounded tails now admit SP post-index 64-bit LDR into x19..x30 with positive
+16-byte-aligned increments through 240, immediately followed by RET x30. Local
+word decoding reuses existing field/sign helpers; explicit writeback evidence
+does not establish frame or runtime state. Bounds, source proof restrictions
+and arm/post-call subsets retain prior scope. Twelve new and 272 affected
+synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md for model identities.
+
+### Exact split FP/LR restore tails
+
+After an exact FP-to-SP reset, a bounded LDR x30,[sp,#8], post-index LDR
+x29,[sp],#16 and RET x30 sequence is now admitted as a structural tail.
+Wrong order/fields and incomplete or over-budget lookahead are refused.
+Existing decoding, entry protection and runtime/source proof restrictions
+remain unchanged. Twelve new and 250 affected synthetic/CLI controls passed.
+See SWIFT_ERROR_FLOW.md for model identities and qualification scope.
+
+### Owned assembler-backed epilogue qualification
+
+A fresh Swift-provider/assembly-handler input qualified canonical W-copy and
+scalar/post-index/split-tail encodings as data. The first 232-word scan retained
+all 21 calls, recovering two candidates and declining 19. Twenty-two captured
+words matched disassembly and relocated fixtures; six new regression/CLI methods
+passed. Analyzer code/models are unchanged. This is assembler-backed evidence;
+Swift-frontend emission and runtime/ABI/CFI/native-release gates remain open.
+See SWIFT_ERROR_FLOW.md for exact scope.
+
+### Adjacent compare-zero return edges
+
+The current edge model is `swift-sync-error-edges-v5`. In the existing eight-word
+post-call window, exact unshifted `SUBS XZR,Xn,#0` (the 64-bit CMP alias) may test
+a live x21 alias when immediately followed by B.EQ or B.NE. EQ targets success;
+NE targets error. Both successors must remain distinct, forward and inside the
+caller. Raw comparison/branch words, comparison PC, condition and tested register
+are retained. W comparisons, nonzero/shifted immediates, unrelated registers,
+intervening instructions and other conditions are refused.
+
+This addition recovers selected-word edges only. For this form, error-region
+recovery declines with `compare_branch_region_not_qualified`; incoming-entry,
+structured presentation and outcome recovery remain withheld. In particular,
+no flag-entry or general NZCV dataflow proof is claimed. Existing CBZ/CBNZ region
+behavior retains its prior qualification. Compiler-produced CMP emission,
+flag-entry qualification and native/release acceptance remain open.
+
+Ten new focused methods and 94 affected edge/signature/tail/CLI/rendering methods
+passed. Prior owned-image qualification is reused without recompilation,
+disassembly, binary admission or hashing.
+
+### Bounded compare-window flag-entry inspection
+
+Retained recovered CMP-zero edges now have opt-in caller-local direct-entry
+inspection, reusing the bounded caller scan. Entries into aliases, CMP or B.cond
+are conflicts; unknown/partial scans preserve unresolved absence. JSON and text
+retain counts, capped evidence, model identity and false proof flags. Nineteen
+new and 121 affected controls passed with independent review. General NZCV and
+indirect/external-entry proof, compiler-emission qualification, comparison-based
+handler regions and structured outcomes remain open. See SWIFT_ERROR_FLOW.md.
+
+### CMP/B.EQ error-fallthrough recovery
+
+Bounded CMP-zero/B.EQ handler intervals now reuse the existing region decoder,
+with exact call/window binding and complete clear caller-local flag-entry
+screening. Raw instructions, opaque calls and interval incoming conflicts remain
+visible in JSON/text. Twenty-one new and 208 affected methods passed. CMP-based
+B.NE handlers, shared epilogues and structured presentation/outcomes remain open,
+as do compiler-emission and runtime qualification. See SWIFT_ERROR_FLOW.md.
+
+### CMP structural presentation eligibility
+
+Screened CMP-zero/B.EQ simple handler intervals now have bounded structural
+plans in JSON/text, retaining both instruction PCs, raw words, encoded EQ and
+the nonzero error predicate. Flag-window and handler-entry gates are independent.
+Twelve new and 206 affected methods passed. Explicit CMP outcome guards remain
+closed; result/constant/choice recovery, B.NE/shared CMP layouts, compiler-emission
+and runtime qualification are still open. See SWIFT_ERROR_FLOW.md.
+
+### CMP selected-path outcome recovery
+
+Qualified CMP-zero/B.EQ simple handler plans can now pair a preserved/copied call
+result with error literal bits using the existing bounded success-entry return
+tail checks. Both PCs and the encoded/logical condition remain bound in the choice.
+Fifteen new and 215 affected methods passed. Success-path literals, B.NE/shared
+CMP layouts, compiler-emission and runtime proof remain open. No native release
+or installed-app qualification is added. See SWIFT_ERROR_FLOW.md.
+
+### CMP success-literal recovery
+
+Screened simple CMP/B.EQ handlers now support bounded X MOVZ/MOVN success seeds
+and copies, with independent protected-tail validation and literal-versus-literal
+choices. Error aliases, exact raw-word binding and false proof flags remain
+conservative. Twenty-four new and 256 affected methods passed. W/MOVK success
+prefixes, B.NE/shared CMP layouts and compiler/runtime/native qualification remain
+open. See SWIFT_ERROR_FLOW.md.
+
+### CMP MOVK success-literal updates
+
+Bounded CMP success prefixes now reuse X MOVK known-state updates across all four
+halfwords. Unseeded updates remain unknown, error aliases are invalidated, and
+entry/tail checks remain intact. Fifteen new and 268 affected methods passed.
+W success prefixes, B.NE/shared CMP layouts and compiler/runtime/native acceptance
+remain open. See SWIFT_ERROR_FLOW.md.
+
+### CMP W-register success seeds
+
+CMP success prefixes now reuse W MOVZ/MOVN zero-extension semantics, preserving
+width distinctions, reserved-encoding refusal and full error-alias invalidation.
+Fifteen new and 271 affected methods passed. W MOVK/copy prefixes, B.NE/shared CMP
+handlers and compiler/runtime/native qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+### CMP W MOVK success updates
+
+CMP success prefixes now reuse known-state W MOVK updates with explicit X upper-bit
+clearing, unknown-state refusal and full error-alias invalidation. Fifteen new
+and 286 affected methods passed with independent review. W-copy prefixes,
+B.NE/shared CMP handlers and compiler/runtime/native qualification remain open.
+See SWIFT_ERROR_FLOW.md.
+
+### CMP W-register copy recovery
+
+Bounded CMP success prefixes now reuse canonical W MOV constant transfer with
+zero extension, unknown-state invalidation and conservative error-alias handling.
+Fifteen new and 301 affected methods passed with independent review. Narrow call
+results remain unpreserved; B.NE/shared CMP layouts and compiler/runtime/native
+qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+### CMP shared-epilogue regions
+
+Flag-screened CMP/B.EQ error-fallthrough regions now retain bounded success arms,
+shared restore/RET tail words and caller-local entry evidence. The exact recorded
+EQ edge is distinguished from unexpected entries. Thirteen new and 364 affected
+methods passed. Shared CMP presentation/outcomes, NE/forward handlers and
+compiler/runtime/native qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+### CMP shared-epilogue presentation
+
+Screened CMP/B.EQ shared regions now have structural display plans, with explicit
+error-exit and complete success/tail consistency checks. Eleven new and 330
+affected methods passed. CMP shared outcomes, NE/forward layouts and compiler,
+runtime and native qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+### CMP shared-epilogue outcomes
+
+Screened CMP/B.EQ shared regions can now pair a preserved or copied Int call
+result with an error-arm literal while retaining the shared return and condition
+binding. Fourteen new and 284 affected methods passed, and independent review
+found no blocking issue. Shared CMP success literals and NE/forward layouts
+remain open; compiler, runtime and native qualification retain their existing
+scope. See SWIFT_ERROR_FLOW.md.
+
+### CMP shared success literals
+
+Screened CMP/B.EQ shared outcomes now include bounded success literals, with
+ordered prefix and success-arm transfer and exact recorded-arm and tail binding.
+Independent review prompted a stale-arm fix, and focused and affected checks
+passed after an obsolete refusal expectation was updated. Runtime, compiler and
+native qualification remain within their earlier scope; NE and forward CMP
+handlers remain open. See SWIFT_ERROR_FLOW.md.
+
+### CMP/B.NE forward regions
+
+Screened CMP/B.NE success-fallthrough and forward-error regions can now be
+recorded as bounded structural evidence, with exact instruction and entry
+binding. Eight new methods and affected checks passed, and independent review
+found no blocker. Presentation, outcomes and runtime qualification remain open.
+See SWIFT_ERROR_FLOW.md.
+
+### CMP/B.NE forward presentation
+
+Screened CMP/B.NE forward-error regions now have structural display plans with
+caller-byte binding and full bounded-region consistency checks. Eleven new and
+232 affected methods passed, with independent review after a stale-word binding
+correction. B.NE outcomes and runtime qualification remain open. See
+SWIFT_ERROR_FLOW.md.
+
+### Shifted success arithmetic
+
+Screened shared success arms can now recover a single ADD or SUB with a 12-bit
+immediate shift, using the effective scaled amount and retaining exact operand
+and instruction bindings. Thirteen new and 706 affected Swift methods passed,
+with no blocking independent-review finding. This is synthetic structural
+evidence; frontend, binary and runtime qualification remain separate. See
+SWIFT_ERROR_FLOW.md.
+
+### CMP/B.NE error literals
+
+Screened forward-error arms can now retain structural literal candidates after
+binding caller entries and instructions to the supplied bytes. Nine new and
+260 affected methods passed, and independent review found no blocker. B.NE
+success outcomes, return choices and runtime qualification remain open. See
+SWIFT_ERROR_FLOW.md.
+
+### CMP/B.NE success result
+
+Screened B.NE forward handlers can now retain selected-path preserved or copied
+Int call-result evidence. Twelve new and 280 affected methods passed with
+independent semantic review. Success literals, return choices and runtime
+qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+### CMP/B.NE return choices
+
+Screened forward B.NE paths can now pair a preserved or copied Int result with
+an error literal as structural evidence. Ten new and 314 affected methods
+passed after updating an older refusal expectation; independent review found no
+blocker. Success literals and runtime qualification remain open. See
+SWIFT_ERROR_FLOW.md.
+
+### CMP/B.NE success literals
+
+Screened forward B.NE success arms now retain selected-path literal bits and
+can pair them with error literals as structural choices. Thirteen new and 336
+affected methods passed after updating an older result-clobber expectation;
+independent review found no blocker. Runtime qualification remains open. See
+SWIFT_ERROR_FLOW.md.
+
+### Owned CMP/B.NE qualification
+
+A new assembler/linker-produced forward handler qualified the bounded B.NE
+literal choice against retained disassembly and eight regression words. Five
+new methods passed. Swift frontend emission, runtime and native release
+qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+### Swift frontend post-call arithmetic
+
+A new Swift-compiled throwing-call example emitted CBZ and a wrapping ADD on
+the success path. AIRS recovered the edge and conservatively withheld the
+shared region and choice. Four new regression methods passed against the
+captured window; supporting bounded success-path arithmetic is a distinct next
+semantic change. CMP/B.NE frontend emission and runtime qualification remain
+open. See SWIFT_ERROR_FLOW.md.
+
+### Bounded success-path ADD
+
+The captured Swift-frontend window now has a relocated regression for one
+screened 64-bit X0 add-immediate operation on the call result. AIRS reports a
+modulo-64 structural choice rather than claiming a runtime or Swift-source
+result. Fourteen new and 425 affected methods passed; independent review found
+no blocker. The sealed source image was not reanalyzed. Wider arithmetic and
+runtime qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+### ADD result text summary
+
+Qualified bounded ADD choices now have a readable machine-operation summary in
+structural text output, guarded by producer identity and proof checks. Eight
+focused and 14 affected text/CLI methods passed. Analysis semantics and runtime
+qualification remain unchanged. See SWIFT_ERROR_FLOW.md.
+
+### Bounded success-path SUB
+
+Screened CBZ shared success arms now admit a single nonflagging 64-bit X0
+subtract-immediate operation, described as structural modulo-64 evidence. New
+and affected checks passed with independent review and evidence-binding and
+output-bound corrections. This synthetic increment does not qualify Swift
+frontend emission or runtime behavior. See SWIFT_ERROR_FLOW.md.
+
+### Copies around bounded success arithmetic
+
+Screened shared success arms can now retain full-width copies before and after
+one admitted ADD or SUB while distinguishing original and adjusted values.
+Eleven new and 467 affected methods passed with independent semantic review.
+The increment is synthetic structural evidence; frontend and runtime
+qualification remain open. See SWIFT_ERROR_FLOW.md.
+
+### Arithmetic on a tracked result register
+
+Screened success arms can now adjust a live full-width result copy in x0–x30
+and restore it to x0 before returning. Twelve new and 478 affected methods
+passed with independent semantic review. The increment is synthetic structural
+evidence; frontend and runtime qualification remain open. See
+SWIFT_ERROR_FLOW.md.
+
+### Cross-register success arithmetic
+
+Screened success arms can now adjust a tracked full-width result alias into a
+different register and restore the adjusted value to x0. Eleven new and 490
+affected methods passed with independent semantic review. This is synthetic
+structural evidence; compiler and runtime qualification remain open. See
+SWIFT_ERROR_FLOW.md.
+
+### Imported Swift callees through verified stubs
+
+The opt-in `broad-imports-v1` profile attributes `__TEXT,__stubs` entries to
+undefined external symbols through a double indirect-symbol binding (the stub's
+entry and the GOT or lazy-pointer slot it loads must name the same symbol). It
+reports direct calls to imported `$s` symbols as unresolved
+`imported_callee_abi_unqualified` rows with declaration syntax only. Earlier
+profiles are unchanged. Independent synthetic tests and one owned Swift 6.4.2
+binary, checked against Apple-tool output, cover the increment. ABI admission,
+witnesses, chained-fixup binding, native app admission and GOT-loaded `BLR`
+sites remain open. See SWIFT_BROAD_IMPORTS_PROFILE.md.
+
+Declaration-coverage checkpoint: `parse_import_declaration` uses
+`swift-import-declaration-syntax-v1`. The 19 owned fixture symbols split into
+10 admitted non-throwing, 1 admitted throwing and 8 declined. The 27 Swift stub
+call sites now yield 12 rows and 15 skipped calls. Earlier declaration parsing
+and profiles are unchanged. The unreleased imports profile retains its outer
+identity pending native admission. See SWIFT_IMPORT_DECLARATIONS.md.
+
+### State recorded on 2026-11-12, before the roadmap was rewritten
+
+The text below was the "Current state" section of the roadmap at that time, kept as written.
+
+Written against main at commit 400ac21 (2026-11-12). Where this section and a
+checkpoint under History disagree, this section is current.
+
+#### Source checkpoint since that commit: extract class v51
+
+`arm64-bounded-extract-class-v51` restricts extract-family entry to the EXTR
+class and corrects the refusal reason for words outside it. It adds no
+instruction support. See EXTRACT_CLASS.md.
+
+#### Source checkpoint since that commit: path aliases
+
+Export, reconstruction and location checks in the native application no longer
+depend on whether a path is spelled through `/private`. A destination nested
+in a protected folder below an aliased folder is now refused, and a relative
+manifest or a discovered image below one is no longer refused. The analysis
+model is unchanged. See PATH_ALIASES.md.
+
+#### Merged and released
+
+- Published preview: AIRS 0.3.4, build 32 (tag v0.3.4-build32, application source
+  db7347b), signed, notarized and stapled for Apple silicon. It includes Security
+  Changes in Component Review and native Standard and Broad Swift analysis, with the
+  explicitly selected extended scan profile. See
+  [RELEASE_0_3_4_BUILD32.md](RELEASE_0_3_4_BUILD32.md) and
+  [RELEASE_NOTES.md](../RELEASE_NOTES.md).
+- ARM64/CFI model: the source model at that commit is
+  `arm64-bounded-test-bit-branch-v50`; v51 follows it (above). Versions
+  42 to 50 added W SDIV and UDIV, REV, REV16, REV32, CLS, MOVK, CBZ/CBNZ and TBZ/TBNZ.
+  Historical identities stay distinct. See [ANALYSIS_CONTRACT.md](ANALYSIS_CONTRACT.md).
+- Saved-report comparison: coverage triage, manual finding pairs, and opt-in exact-body
+  fingerprints and matching, with native codecs and validators. Default output is
+  unchanged.
+- Swift error-flow: the default (edge v37), methods (v38), broad-v1, broad-large-v1 and
+  broad-extended-v1 profiles. Results are structural; none establishes runtime
+  execution or source reconstruction. See [SWIFT_ERROR_FLOW.md](SWIFT_ERROR_FLOW.md),
+  [ADVANCED_SWIFT_ERROR_FLOW.md](ADVANCED_SWIFT_ERROR_FLOW.md) and
+  [SWIFT_BROAD_SCOPE.md](SWIFT_BROAD_SCOPE.md).
+- Verification: the Source verification workflow (`.github/workflows/verify.yml`) runs
+  the Python tests on Python 3.11 and 3.15 and the Swift build and tests on macOS 15
+  arm64. Hosted results are on the repository's Actions page, not recorded here.
+  Publication gates are described in [PUBLICATION_POLICY.md](PUBLICATION_POLICY.md).
+
+#### Merged since build 32
+
+None of the following is in a released build.
+
+- `broad-imports-v1`: an opt-in broad profile that attributes `__TEXT,__stubs` entries
+  to undefined external symbols through a double indirect-symbol binding, and reports
+  direct calls to imported `$s` symbols as unresolved `imported_callee_abi_unqualified`
+  rows with declaration syntax only. Earlier profiles are unchanged. See
+  [SWIFT_BROAD_IMPORTS_PROFILE.md](SWIFT_BROAD_IMPORTS_PROFILE.md).
+- A dedicated declaration grammar for imported callees
+  (`swift-import-declaration-syntax-v1`). A call is skipped as non-throwing only when
+  the grammar consumes the whole symbol and the outer function type carries no throws
+  marker. In the one owned real-toolchain case the 19 imported `$s` symbols split into
+  10 admitted non-throwing, 1 admitted throwing and 8 declined, and their 27 call
+  sites give 12 rows and 15 skipped calls. See
+  [SWIFT_IMPORT_DECLARATIONS.md](SWIFT_IMPORT_DECLARATIONS.md).
+- Native admission of the imports profile: the app's report reader accepts exactly the
+  `swift-broad-error-flow-imports-v1` / `broad-imports-v1` pair and presents its rows as
+  unresolved. App launch, real-input acceptance, packaging and distribution of this
+  change are not done. See [NATIVE_BROAD_RESULTS.md](NATIVE_BROAD_RESULTS.md).
+- `broad-imports-got-v1`: an opt-in, engine-only profile that attributes GOT-loaded
+  `BLR` calls when the indirect symbol table and the chained-fixup import agree on the
+  slot's symbol. The native app does not admit it. See
+  [SWIFT_IMPORT_GOT_ATTRIBUTION.md](SWIFT_IMPORT_GOT_ATTRIBUTION.md).
+- A fix for a save race in the native batch history store: a temporary batch save now
+  holds one inventory lease across its batch lease and its write.
+- Native analysis reuse is pinned to the engine's current model, with a symlink
+  containment fix, so a new model identity cannot silently reuse older results.
+- An ARM64 decode-oracle differential harness. It has had a smoke run only; no full
+  run is recorded.
+- The publication gate runs in CI over the commits a change adds. A green run is a
+  backstop, not a publication clearance.
+- Slow Swift type-checks are reported by the local build, and the slowest expressions
+  were shortened.
+- A repair of stale Python source tests and a slow Swift type-check that had failed
+  the first CI run on this tree, and an agent guide (AGENTS.md) that names existing
+  files.
+  Analysis behavior is unchanged.
+
+#### In flight
+
+No increment is recorded as in progress in this file. The repository's pull-request
+page lists open pull requests and is the record of work in flight; branches are
+listed on its branches page.
+
+#### Open items
+
+- Release gates: independent clean-machine acceptance on a separately provisioned
+  Apple silicon Mac or VM (none is available), plus minimum-macOS, offline and
+  Intel-host qualification. No new release may be described as fully qualified until
+  they close.
+- Release identity: before the next binary release, assign one and reconcile the
+  package and source version constants. The Python package and engine still report
+  0.3.3. See [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md).
+- Imported Swift callees: ABI admission and outcome witnesses. Attribution says which
+  symbol a call site names; it does not say that a callee throws, returns, or which
+  library dyld binds. Native admission of the GOT profile, a measurement on a real
+  third-party input, and the 8 fixture symbols the declaration grammar declines remain
+  open.
+- ARM64 decode: the first full run of the decode-oracle harness has not been made. One
+  known candidate from its smoke run: valid FEAT_PAuth_LR words are declined with an
+  invalid-encoding reason where an unsupported-instruction reason would be accurate.
+  The decoder still declines them, so no path is wrongly accepted.
+- Swift error-flow: Swift-frontend emission and runtime qualification for the CMP-based
+  layouts, wider success arithmetic, and native UI activation of structured
+  presentation. Async continuation reconstruction and full source reconstruction
+  remain separate.
+- Saved-report matching: cross-build review candidates beyond exact-body matching (CFG
+  fingerprints and call-graph propagation are not implemented), structured refusal
+  facts, and native activation of the validated manual-pair and coverage workflows.
+  Structural matches must never replace exact image identity or model checks.
+- Native app: qualify each changed user interaction after pending work settles. Picker
+  suppression and historical-panel GUI acceptance for settled project companions
+  remain incomplete.
+- Documentation: ANALYSIS_CONTRACT.md cites 137 distinct pages by file name and 79 of
+  them are not in the repository; ARCHITECTURE.md cites four absent pages. Both now
+  carry a note saying so. Each absent page should be restored or its citation removed.
+  DEVELOPMENT_STATUS.md records the model chain through v51 and carries a note pointing
+  here for releases after build 12 and for later work outside that chain.
+- Next candidates, as in the checkpoint of that name under History: use the documented
+  saved-report workflow to find a concrete unresolved behavior worth improving, and
+  choose a semantic extension only from an explicit owned example with an
+  independently derived recovery expectation. Reason frequency in supplied reports is
+  prioritization input, not prevalence or permission to widen support.

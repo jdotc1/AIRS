@@ -21,8 +21,9 @@ Every file named here exists in the repository.
   behavior. Its opening lines state the current source model.
 - docs/DEVELOPMENT_STATUS.md: retained evidence by area. Its opening paragraph still
   names build 12; README.md names the current release.
-- docs/ROADMAP.md: planned work and chronological checkpoints. Headings that begin
-  "Current" or "Next" were true when written, so read each section's own scope.
+- docs/ROADMAP.md: the current plan and the reasons for it. The dated checkpoints
+  that preceded it are in docs/ROADMAP_HISTORY.md; headings there that begin
+  "Current" or "Next" were true when written.
 - docs/ARCHITECTURE.md: the engine and app split. Its opening status note predates the
   current model; take the current model from docs/ANALYSIS_CONTRACT.md.
 - docs/CURRENT_SOURCE_RELEASE_GATES.md, docs/PRIVATE_PYTHON.md and RELEASE_NOTES.md:
