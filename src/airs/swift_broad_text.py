@@ -12,7 +12,9 @@ def render_swift_broad_text(report):
             or (report.get('model_version')=='swift-broad-error-flow-extended-v1'
                 and report.get('profile')=='broad-extended-v1')
             or (report.get('model_version')=='swift-broad-error-flow-imports-v1'
-                and report.get('profile')=='broad-imports-v1'))):
+                and report.get('profile')=='broad-imports-v1')
+            or (report.get('model_version')=='swift-broad-error-flow-imports-got-v1'
+                and report.get('profile')=='broad-imports-got-v1'))):
         raise InputError('swift_broad_text_model','Unsupported broad report model')
     # JSON quoting escapes terminal control characters; it does not authenticate
     # imported reports or promote recorded validator outcomes to fresh checks.
@@ -32,7 +34,8 @@ def render_swift_broad_text(report):
     for name in ('word_scan_complete','call_details_complete','outcome_witnesses_complete',
                  'scanned_words','selected_call_candidates','omitted_calls'):
         lines.append(name+': '+safe(report.get(name)))
-    imports=report.get('profile')=='broad-imports-v1'
+    imports=report.get('profile') in ('broad-imports-v1','broad-imports-got-v1')
+    got=report.get('profile')=='broad-imports-got-v1'
     if imports:
         # Imported callees are attribution and declaration syntax only.
         lines.append('Imported stub calls: attribution and declaration syntax only; no ABI, witness or runtime binding.')
@@ -43,6 +46,23 @@ def render_swift_broad_text(report):
         for name in ('attributed_stubs','declined_stubs','invalid_stub_sections','selected_import_calls',
                      'non_throwing_swift_import_calls','non_swift_import_calls','declined_stub_calls'):
             lines.append('import_stub_counts.'+name+': '+safe(counts.get(name)))
+    if got:
+        # GOT-loaded BLR calls are attribution only from two agreeing binding tables.
+        lines.append('GOT-loaded BLR calls: attribution only from two agreeing binding tables; no ABI, witness or runtime binding.')
+        for name in ('got_binding_model','chained_fixups_model','got_window_model','got_bindings_complete',
+                     'got_binding_reason','chained_fixups_status'):
+            lines.append(name+': '+safe(report.get(name)))
+        counts=report.get('got_counts') or {}
+        if type(counts) is not dict:raise InputError('swift_broad_text_shape','GOT counts must be an object')
+        for name in ('got_slots','agreeing_got_slots','declined_got_slots','blr_instructions','got_candidates',
+                     'attributed_got_calls','declined_got_calls','selected_got_calls',
+                     'non_throwing_swift_got_calls','non_swift_got_calls'):
+            lines.append('got_counts.'+name+': '+safe(counts.get(name)))
+        for key in ('got_decline_counts','got_slot_decline_counts'):
+            table=report.get(key) or {}
+            if type(table) is not dict:raise InputError('swift_broad_text_shape','GOT decline counts must be an object')
+            for name in sorted(table)[:64]:
+                lines.append(key+'.'+safe(name)+': '+safe(table[name]))
     calls=report.get('calls',[])
     if type(calls) is not list:raise InputError('swift_broad_text_shape','Calls must be an array')
     size=sum(len(line)+1 for line in lines);shown=0
@@ -56,7 +76,12 @@ def render_swift_broad_text(report):
         post=candidate.get('post_call') or {}
         if type(post) is not dict:raise InputError('swift_broad_text_shape','Post-call must be an object')
         admission=row.get('admission') or {}
-        if imports and type(admission) is dict and admission.get('model_version')=='swift-broad-import-callsite-v1':
+        if got and type(admission) is dict and admission.get('model_version')=='swift-broad-got-callsite-v1':
+            declaration=admission.get('declaration') or {}
+            if type(declaration) is not dict:raise InputError('swift_broad_text_shape','Declaration must be an object')
+            detail.append('  import '+safe(admission.get('symbol'))+'; slot '+safe(admission.get('slot_address'))+
+                         '; '+safe(admission.get('call_kind'))+'; declaration '+safe(declaration.get('status')))
+        elif imports and type(admission) is dict and admission.get('model_version')=='swift-broad-import-callsite-v1':
             declaration=admission.get('declaration') or {}
             if type(declaration) is not dict:raise InputError('swift_broad_text_shape','Declaration must be an object')
             detail.append('  import '+safe(admission.get('symbol'))+'; stub '+safe(admission.get('callee_stub_pc'))+

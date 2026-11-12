@@ -1,0 +1,1237 @@
+{
+ "binary": "OwnedImports.macho",
+ "binary_sha256": "ef13dd492b9ff8eda4843564fa03535789496eeaf31d089add3868f1980dbfb1",
+ "model": "arm64-got-blr-two-source-binding-v1",
+ "profile": "broad-imports-got-v1",
+ "derivation": {
+  "statement": "Derived only from saved Apple developer tool output on a scratch copy of the committed binary; no AIRS code was run and the binary was never executed. Decline reasons apply the contract window rule (ADRP/LDR/BLR straight-line window, closed gap allowlist) to the objdump -d text.",
+  "commands": [
+   "xcrun otool -l OwnedImports.macho",
+   "xcrun otool -hv OwnedImports.macho",
+   "xcrun otool -Iv OwnedImports.macho",
+   "xcrun otool -chained_fixups OwnedImports.macho",
+   "xcrun dyld_info -fixup_chain_details OwnedImports.macho",
+   "xcrun dyld_info -fixups OwnedImports.macho",
+   "xcrun dyld_info -imports OwnedImports.macho",
+   "xcrun objdump -d OwnedImports.macho"
+  ],
+  "joins": "slot -> symbol index and name: otool -Iv (__DATA_CONST,__got); slot VM offset -> raw qword and bind ordinal: dyld_info -fixup_chain_details; ordinal -> lib_ordinal, weak_import, name_offset, name: otool -chained_fixups (cross-checked with dyld_info -imports and dyld_info -fixups); lib_ordinal -> path: LC_LOAD_DYLIB and LC_LOAD_WEAK_DYLIB order in otool -l; window words and branch targets: objdump -d.",
+  "toolchain": "Apple LLVM 21.0.0 (Xcode developer tools)"
+ },
+ "image_base": 4294967296,
+ "symbol_tables": {
+  "symoff": 51416,
+  "nsyms": 66,
+  "stroff": 52728,
+  "strsize": 2160,
+  "ilocalsym": 0,
+  "nlocalsym": 1,
+  "iextdefsym": 1,
+  "nextdefsym": 2,
+  "iundefsym": 3,
+  "nundefsym": 63,
+  "indirectsymoff": 52472,
+  "nindirectsyms": 64
+ },
+ "segments": [
+  {
+   "segname": "__PAGEZERO",
+   "vmaddr": 0,
+   "vmsize": 4294967296,
+   "fileoff": 0,
+   "filesize": 0
+  },
+  {
+   "segname": "__TEXT",
+   "vmaddr": 4294967296,
+   "vmsize": 16384,
+   "fileoff": 0,
+   "filesize": 16384
+  },
+  {
+   "segname": "__DATA_CONST",
+   "vmaddr": 4294983680,
+   "vmsize": 16384,
+   "fileoff": 16384,
+   "filesize": 16384
+  },
+  {
+   "segname": "__DATA",
+   "vmaddr": 4295000064,
+   "vmsize": 16384,
+   "fileoff": 32768,
+   "filesize": 16384
+  },
+  {
+   "segname": "__LINKEDIT",
+   "vmaddr": 4295016448,
+   "vmsize": 16384,
+   "fileoff": 49152,
+   "filesize": 6320
+  }
+ ],
+ "got_section": {
+  "segment": "__DATA_CONST",
+  "section": "__got",
+  "addr": 4294984088,
+  "size": 280,
+  "offset": 16792,
+  "flags": 6,
+  "reserved1": 29
+ },
+ "dylibs": [
+  {
+   "command": "LC_LOAD_DYLIB",
+   "path": "/usr/lib/libSystem.B.dylib"
+  },
+  {
+   "command": "LC_LOAD_DYLIB",
+   "path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation"
+  },
+  {
+   "command": "LC_LOAD_DYLIB",
+   "path": "/usr/lib/swift/libswiftCore.dylib"
+  },
+  {
+   "command": "LC_LOAD_WEAK_DYLIB",
+   "path": "/usr/lib/swift/libswiftCoreFoundation.dylib"
+  },
+  {
+   "command": "LC_LOAD_WEAK_DYLIB",
+   "path": "/usr/lib/swift/libswiftDarwin.dylib"
+  },
+  {
+   "command": "LC_LOAD_WEAK_DYLIB",
+   "path": "/usr/lib/swift/libswiftDispatch.dylib"
+  },
+  {
+   "command": "LC_LOAD_WEAK_DYLIB",
+   "path": "/usr/lib/swift/libswiftIOKit.dylib"
+  },
+  {
+   "command": "LC_LOAD_WEAK_DYLIB",
+   "path": "/usr/lib/swift/libswiftObjectiveC.dylib"
+  },
+  {
+   "command": "LC_LOAD_WEAK_DYLIB",
+   "path": "/usr/lib/swift/libswiftXPC.dylib"
+  }
+ ],
+ "chained_fixups": {
+  "dataoff": 49152,
+  "datasize": 2168,
+  "header": {
+   "fixups_version": 0,
+   "starts_offset": 32,
+   "imports_offset": 80,
+   "symbols_offset": 304,
+   "imports_count": 56,
+   "imports_format": 1,
+   "symbols_format": 0
+  },
+  "seg_count": 5,
+  "seg_info_offset": [
+   0,
+   0,
+   24,
+   0,
+   0
+  ],
+  "segment_record": {
+   "segment_index": 2,
+   "segment": "__DATA_CONST",
+   "size": 24,
+   "page_size": 16384,
+   "pointer_format": 6,
+   "segment_offset": 16384,
+   "max_valid_pointer": 0,
+   "page_count": 1,
+   "page_start": [
+    8
+   ]
+  }
+ },
+ "got_slots": [
+  {
+   "address": 4294984088,
+   "slot_index": 0,
+   "symbol_index": 48,
+   "symbol": "___chkstk_darwin",
+   "indirect_entry_index": 29,
+   "chain_member_index": 35,
+   "raw": "0x8010000000000015",
+   "next": 2,
+   "import_ordinal": 21,
+   "import_raw": "0x0004dc01",
+   "import_name": "___chkstk_darwin",
+   "lib_ordinal": 1,
+   "weak_import": false,
+   "name_offset": 622,
+   "library_path": "/usr/lib/libSystem.B.dylib",
+   "member_slice_file_offset": 16792,
+   "import_entry_offset": 49316,
+   "names_agree": true
+  },
+  {
+   "address": 4294984096,
+   "slot_index": 1,
+   "symbol_index": 3,
+   "symbol": "_$s10Foundation11JSONDecoderC6decode_4fromxxm_AA4DataVtKSeRzlFTj",
+   "indirect_entry_index": 30,
+   "chain_member_index": 36,
+   "raw": "0x8010000000000016",
+   "next": 2,
+   "import_ordinal": 22,
+   "import_raw": "0x0004fe02",
+   "import_name": "_$s10Foundation11JSONDecoderC6decode_4fromxxm_AA4DataVtKSeRzlFTj",
+   "lib_ordinal": 2,
+   "weak_import": false,
+   "name_offset": 639,
+   "library_path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+   "member_slice_file_offset": 16800,
+   "import_entry_offset": 49320,
+   "names_agree": true
+  },
+  {
+   "address": 4294984104,
+   "slot_index": 2,
+   "symbol_index": 4,
+   "symbol": "_$s10Foundation11JSONDecoderCACycfc",
+   "indirect_entry_index": 31,
+   "chain_member_index": 37,
+   "raw": "0x8010000000000017",
+   "next": 2,
+   "import_ordinal": 23,
+   "import_raw": "0x00058002",
+   "import_name": "_$s10Foundation11JSONDecoderCACycfc",
+   "lib_ordinal": 2,
+   "weak_import": false,
+   "name_offset": 704,
+   "library_path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+   "member_slice_file_offset": 16808,
+   "import_entry_offset": 49324,
+   "names_agree": true
+  },
+  {
+   "address": 4294984112,
+   "slot_index": 3,
+   "symbol_index": 5,
+   "symbol": "_$s10Foundation11JSONDecoderCMa",
+   "indirect_entry_index": 32,
+   "chain_member_index": 38,
+   "raw": "0x8010000000000018",
+   "next": 2,
+   "import_ordinal": 24,
+   "import_raw": "0x0005c802",
+   "import_name": "_$s10Foundation11JSONDecoderCMa",
+   "lib_ordinal": 2,
+   "weak_import": false,
+   "name_offset": 740,
+   "library_path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+   "member_slice_file_offset": 16816,
+   "import_entry_offset": 49328,
+   "names_agree": true
+  },
+  {
+   "address": 4294984120,
+   "slot_index": 4,
+   "symbol_index": 6,
+   "symbol": "_$s10Foundation3URLV15fileURLWithPathACSSh_tcfC",
+   "indirect_entry_index": 33,
+   "chain_member_index": 39,
+   "raw": "0x8010000000000019",
+   "next": 2,
+   "import_ordinal": 25,
+   "import_raw": "0x00060802",
+   "import_name": "_$s10Foundation3URLV15fileURLWithPathACSSh_tcfC",
+   "lib_ordinal": 2,
+   "weak_import": false,
+   "name_offset": 772,
+   "library_path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+   "member_slice_file_offset": 16824,
+   "import_entry_offset": 49332,
+   "names_agree": true
+  },
+  {
+   "address": 4294984128,
+   "slot_index": 5,
+   "symbol_index": 7,
+   "symbol": "_$s10Foundation3URLVMa",
+   "indirect_entry_index": 34,
+   "chain_member_index": 40,
+   "raw": "0x801000000000001a",
+   "next": 2,
+   "import_ordinal": 26,
+   "import_raw": "0x00066802",
+   "import_name": "_$s10Foundation3URLVMa",
+   "lib_ordinal": 2,
+   "weak_import": false,
+   "name_offset": 820,
+   "library_path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+   "member_slice_file_offset": 16832,
+   "import_entry_offset": 49336,
+   "names_agree": true
+  },
+  {
+   "address": 4294984136,
+   "slot_index": 6,
+   "symbol_index": 8,
+   "symbol": "_$s10Foundation4DataV10contentsOf7optionsAcA3URLVh_So20NSDataReadingOptionsVtKcfC",
+   "indirect_entry_index": 35,
+   "chain_member_index": 41,
+   "raw": "0x801000000000001b",
+   "next": 2,
+   "import_ordinal": 27,
+   "import_raw": "0x00069602",
+   "import_name": "_$s10Foundation4DataV10contentsOf7optionsAcA3URLVh_So20NSDataReadingOptionsVtKcfC",
+   "lib_ordinal": 2,
+   "weak_import": false,
+   "name_offset": 843,
+   "library_path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+   "member_slice_file_offset": 16840,
+   "import_entry_offset": 49340,
+   "names_agree": true
+  },
+  {
+   "address": 4294984144,
+   "slot_index": 7,
+   "symbol_index": 17,
+   "symbol": "_$sSS10FoundationE8EncodingV4utf8ACvgZ",
+   "indirect_entry_index": 36,
+   "chain_member_index": 42,
+   "raw": "0x801000000000001c",
+   "next": 2,
+   "import_ordinal": 28,
+   "import_raw": "0x00073a02",
+   "import_name": "_$sSS10FoundationE8EncodingV4utf8ACvgZ",
+   "lib_ordinal": 2,
+   "weak_import": false,
+   "name_offset": 925,
+   "library_path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+   "member_slice_file_offset": 16848,
+   "import_entry_offset": 49344,
+   "names_agree": true
+  },
+  {
+   "address": 4294984152,
+   "slot_index": 8,
+   "symbol_index": 18,
+   "symbol": "_$sSS10FoundationE8EncodingVMa",
+   "indirect_entry_index": 37,
+   "chain_member_index": 43,
+   "raw": "0x801000000000001d",
+   "next": 2,
+   "import_ordinal": 29,
+   "import_raw": "0x00078802",
+   "import_name": "_$sSS10FoundationE8EncodingVMa",
+   "lib_ordinal": 2,
+   "weak_import": false,
+   "name_offset": 964,
+   "library_path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+   "member_slice_file_offset": 16856,
+   "import_entry_offset": 49348,
+   "names_agree": true
+  },
+  {
+   "address": 4294984160,
+   "slot_index": 9,
+   "symbol_index": 24,
+   "symbol": "_$sSy10FoundationE5write2to10atomically8encodingyAA3URLV_SbSSAAE8EncodingVtKF",
+   "indirect_entry_index": 38,
+   "chain_member_index": 44,
+   "raw": "0x801000000000001e",
+   "next": 2,
+   "import_ordinal": 30,
+   "import_raw": "0x0007c602",
+   "import_name": "_$sSy10FoundationE5write2to10atomically8encodingyAA3URLV_SbSSAAE8EncodingVtKF",
+   "lib_ordinal": 2,
+   "weak_import": false,
+   "name_offset": 995,
+   "library_path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+   "member_slice_file_offset": 16864,
+   "import_entry_offset": 49352,
+   "names_agree": true
+  },
+  {
+   "address": 4294984168,
+   "slot_index": 10,
+   "symbol_index": 19,
+   "symbol": "_$sSSN",
+   "indirect_entry_index": 39,
+   "chain_member_index": 45,
+   "raw": "0x801000000000001f",
+   "next": 2,
+   "import_ordinal": 31,
+   "import_raw": "0x00086203",
+   "import_name": "_$sSSN",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1073,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16872,
+   "import_entry_offset": 49356,
+   "names_agree": true
+  },
+  {
+   "address": 4294984176,
+   "slot_index": 11,
+   "symbol_index": 20,
+   "symbol": "_$sSSSysMc",
+   "indirect_entry_index": 40,
+   "chain_member_index": 46,
+   "raw": "0x8010000000000020",
+   "next": 2,
+   "import_ordinal": 32,
+   "import_raw": "0x00087003",
+   "import_name": "_$sSSSysMc",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1080,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16880,
+   "import_entry_offset": 49360,
+   "names_agree": true
+  },
+  {
+   "address": 4294984184,
+   "slot_index": 12,
+   "symbol_index": 23,
+   "symbol": "_$sSiN",
+   "indirect_entry_index": 41,
+   "chain_member_index": 47,
+   "raw": "0x8010000000000021",
+   "next": 2,
+   "import_ordinal": 33,
+   "import_raw": "0x00088603",
+   "import_name": "_$sSiN",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1091,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16888,
+   "import_entry_offset": 49364,
+   "names_agree": true
+  },
+  {
+   "address": 4294984192,
+   "slot_index": 13,
+   "symbol_index": 25,
+   "symbol": "_$ss11CommandLineO9argumentsSaySSGvgZ",
+   "indirect_entry_index": 42,
+   "chain_member_index": 48,
+   "raw": "0x8010000000000022",
+   "next": 2,
+   "import_ordinal": 34,
+   "import_raw": "0x00089403",
+   "import_name": "_$ss11CommandLineO9argumentsSaySSGvgZ",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1098,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16896,
+   "import_entry_offset": 49368,
+   "names_agree": true
+  },
+  {
+   "address": 4294984200,
+   "slot_index": 14,
+   "symbol_index": 26,
+   "symbol": "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF",
+   "indirect_entry_index": 43,
+   "chain_member_index": 49,
+   "raw": "0x8010000000000023",
+   "next": 2,
+   "import_ordinal": 35,
+   "import_raw": "0x0008e003",
+   "import_name": "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1136,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16904,
+   "import_entry_offset": 49372,
+   "names_agree": true
+  },
+  {
+   "address": 4294984208,
+   "slot_index": 15,
+   "symbol_index": 27,
+   "symbol": "_$ss22KeyedDecodingContainerVMn",
+   "indirect_entry_index": 44,
+   "chain_member_index": 50,
+   "raw": "0x8010000000000024",
+   "next": 2,
+   "import_ordinal": 36,
+   "import_raw": "0x00094c03",
+   "import_name": "_$ss22KeyedDecodingContainerVMn",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1190,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16912,
+   "import_entry_offset": 49376,
+   "names_agree": true
+  },
+  {
+   "address": 4294984216,
+   "slot_index": 16,
+   "symbol_index": 30,
+   "symbol": "_$ss23_ContiguousArrayStorageCMn",
+   "indirect_entry_index": 45,
+   "chain_member_index": 51,
+   "raw": "0x8010000000000025",
+   "next": 2,
+   "import_ordinal": 37,
+   "import_raw": "0x00098c03",
+   "import_name": "_$ss23_ContiguousArrayStorageCMn",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1222,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16920,
+   "import_entry_offset": 49380,
+   "names_agree": true
+  },
+  {
+   "address": 4294984224,
+   "slot_index": 17,
+   "symbol_index": 31,
+   "symbol": "_$ss27_stringCompareWithSmolCheck__9expectingSbs11_StringGutsV_ADs01_G16ComparisonResultOtF",
+   "indirect_entry_index": 46,
+   "chain_member_index": 52,
+   "raw": "0x8010000000000026",
+   "next": 2,
+   "import_ordinal": 38,
+   "import_raw": "0x0009ce03",
+   "import_name": "_$ss27_stringCompareWithSmolCheck__9expectingSbs11_StringGutsV_ADs01_G16ComparisonResultOtF",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1255,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16928,
+   "import_entry_offset": 49384,
+   "names_agree": true
+  },
+  {
+   "address": 4294984232,
+   "slot_index": 18,
+   "symbol_index": 34,
+   "symbol": "_$ss5print_9separator10terminatoryypd_S2StF",
+   "indirect_entry_index": 47,
+   "chain_member_index": 53,
+   "raw": "0x8010000000000027",
+   "next": 2,
+   "import_ordinal": 39,
+   "import_raw": "0x000a8603",
+   "import_name": "_$ss5print_9separator10terminatoryypd_S2StF",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1347,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16936,
+   "import_entry_offset": 49388,
+   "names_agree": true
+  },
+  {
+   "address": 4294984240,
+   "slot_index": 19,
+   "symbol_index": 35,
+   "symbol": "_$ss6HasherV5_seedABSi_tcfC",
+   "indirect_entry_index": 48,
+   "chain_member_index": 54,
+   "raw": "0x8010000000000028",
+   "next": 2,
+   "import_ordinal": 40,
+   "import_raw": "0x000ade03",
+   "import_name": "_$ss6HasherV5_seedABSi_tcfC",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1391,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16944,
+   "import_entry_offset": 49392,
+   "names_agree": true
+  },
+  {
+   "address": 4294984248,
+   "slot_index": 20,
+   "symbol_index": 36,
+   "symbol": "_$ss6HasherV8_combineyySuF",
+   "indirect_entry_index": 49,
+   "chain_member_index": 55,
+   "raw": "0x8010000000000029",
+   "next": 2,
+   "import_ordinal": 41,
+   "import_raw": "0x000b1603",
+   "import_name": "_$ss6HasherV8_combineyySuF",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1419,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16952,
+   "import_entry_offset": 49396,
+   "names_agree": true
+  },
+  {
+   "address": 4294984256,
+   "slot_index": 21,
+   "symbol_index": 37,
+   "symbol": "_$ss6HasherV9_finalizeSiyF",
+   "indirect_entry_index": 50,
+   "chain_member_index": 56,
+   "raw": "0x801000000000002a",
+   "next": 2,
+   "import_ordinal": 42,
+   "import_raw": "0x000b4c03",
+   "import_name": "_$ss6HasherV9_finalizeSiyF",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1446,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16960,
+   "import_entry_offset": 49400,
+   "names_agree": true
+  },
+  {
+   "address": 4294984264,
+   "slot_index": 22,
+   "symbol_index": 38,
+   "symbol": "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj",
+   "indirect_entry_index": 51,
+   "chain_member_index": 57,
+   "raw": "0x801000000000002b",
+   "next": 2,
+   "import_ordinal": 43,
+   "import_raw": "0x000b8203",
+   "import_name": "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1473,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16968,
+   "import_entry_offset": 49404,
+   "names_agree": true
+  },
+  {
+   "address": 4294984272,
+   "slot_index": 23,
+   "symbol_index": 46,
+   "symbol": "_$ss9CodingKeyPsE11descriptionSSvg",
+   "indirect_entry_index": 52,
+   "chain_member_index": 58,
+   "raw": "0x801000000000002c",
+   "next": 2,
+   "import_ordinal": 44,
+   "import_raw": "0x000c3803",
+   "import_name": "_$ss9CodingKeyPsE11descriptionSSvg",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1564,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16976,
+   "import_entry_offset": 49408,
+   "names_agree": true
+  },
+  {
+   "address": 4294984280,
+   "slot_index": 24,
+   "symbol_index": 47,
+   "symbol": "_$ss9CodingKeyPsE16debugDescriptionSSvg",
+   "indirect_entry_index": 53,
+   "chain_member_index": 59,
+   "raw": "0x801000000000002d",
+   "next": 2,
+   "import_ordinal": 45,
+   "import_raw": "0x000c7e03",
+   "import_name": "_$ss9CodingKeyPsE16debugDescriptionSSvg",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1599,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16984,
+   "import_entry_offset": 49412,
+   "names_agree": true
+  },
+  {
+   "address": 4294984288,
+   "slot_index": 25,
+   "symbol_index": 56,
+   "symbol": "_swift_allocBox",
+   "indirect_entry_index": 54,
+   "chain_member_index": 60,
+   "raw": "0x801000000000002e",
+   "next": 2,
+   "import_ordinal": 46,
+   "import_raw": "0x000cce03",
+   "import_name": "_swift_allocBox",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1639,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 16992,
+   "import_entry_offset": 49416,
+   "names_agree": true
+  },
+  {
+   "address": 4294984296,
+   "slot_index": 26,
+   "symbol_index": 57,
+   "symbol": "_swift_allocObject",
+   "indirect_entry_index": 55,
+   "chain_member_index": 61,
+   "raw": "0x801000000000002f",
+   "next": 2,
+   "import_ordinal": 47,
+   "import_raw": "0x000cee03",
+   "import_name": "_swift_allocObject",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1655,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 17000,
+   "import_entry_offset": 49420,
+   "names_agree": true
+  },
+  {
+   "address": 4294984304,
+   "slot_index": 27,
+   "symbol_index": 58,
+   "symbol": "_swift_bridgeObjectRelease",
+   "indirect_entry_index": 56,
+   "chain_member_index": 62,
+   "raw": "0x8010000000000030",
+   "next": 2,
+   "import_ordinal": 48,
+   "import_raw": "0x000d1403",
+   "import_name": "_swift_bridgeObjectRelease",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1674,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 17008,
+   "import_entry_offset": 49424,
+   "names_agree": true
+  },
+  {
+   "address": 4294984312,
+   "slot_index": 28,
+   "symbol_index": 59,
+   "symbol": "_swift_bridgeObjectRetain",
+   "indirect_entry_index": 57,
+   "chain_member_index": 63,
+   "raw": "0x8010000000000031",
+   "next": 2,
+   "import_ordinal": 49,
+   "import_raw": "0x000d4a03",
+   "import_name": "_swift_bridgeObjectRetain",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1701,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 17016,
+   "import_entry_offset": 49428,
+   "names_agree": true
+  },
+  {
+   "address": 4294984320,
+   "slot_index": 29,
+   "symbol_index": 60,
+   "symbol": "_swift_errorRelease",
+   "indirect_entry_index": 58,
+   "chain_member_index": 64,
+   "raw": "0x8010000000000032",
+   "next": 2,
+   "import_ordinal": 50,
+   "import_raw": "0x000d7e03",
+   "import_name": "_swift_errorRelease",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1727,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 17024,
+   "import_entry_offset": 49432,
+   "names_agree": true
+  },
+  {
+   "address": 4294984328,
+   "slot_index": 30,
+   "symbol_index": 61,
+   "symbol": "_swift_getErrorValue",
+   "indirect_entry_index": 59,
+   "chain_member_index": 65,
+   "raw": "0x8010000000000033",
+   "next": 2,
+   "import_ordinal": 51,
+   "import_raw": "0x000da603",
+   "import_name": "_swift_getErrorValue",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1747,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 17032,
+   "import_entry_offset": 49436,
+   "names_agree": true
+  },
+  {
+   "address": 4294984336,
+   "slot_index": 31,
+   "symbol_index": 62,
+   "symbol": "_swift_getTypeByMangledNameInContext",
+   "indirect_entry_index": 60,
+   "chain_member_index": 66,
+   "raw": "0x8010000000000034",
+   "next": 2,
+   "import_ordinal": 52,
+   "import_raw": "0x000dd003",
+   "import_name": "_swift_getTypeByMangledNameInContext",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1768,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 17040,
+   "import_entry_offset": 49440,
+   "names_agree": true
+  },
+  {
+   "address": 4294984344,
+   "slot_index": 32,
+   "symbol_index": 63,
+   "symbol": "_swift_getWitnessTable",
+   "indirect_entry_index": 61,
+   "chain_member_index": 67,
+   "raw": "0x8010000000000035",
+   "next": 2,
+   "import_ordinal": 53,
+   "import_raw": "0x000e1a03",
+   "import_name": "_swift_getWitnessTable",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1805,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 17048,
+   "import_entry_offset": 49444,
+   "names_agree": true
+  },
+  {
+   "address": 4294984352,
+   "slot_index": 33,
+   "symbol_index": 64,
+   "symbol": "_swift_release",
+   "indirect_entry_index": 62,
+   "chain_member_index": 68,
+   "raw": "0x8010000000000036",
+   "next": 2,
+   "import_ordinal": 54,
+   "import_raw": "0x000e4803",
+   "import_name": "_swift_release",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1828,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 17056,
+   "import_entry_offset": 49448,
+   "names_agree": true
+  },
+  {
+   "address": 4294984360,
+   "slot_index": 34,
+   "symbol_index": 65,
+   "symbol": "_swift_slowAlloc",
+   "indirect_entry_index": 63,
+   "chain_member_index": 69,
+   "raw": "0x8000000000000037",
+   "next": 0,
+   "import_ordinal": 55,
+   "import_raw": "0x000e6603",
+   "import_name": "_swift_slowAlloc",
+   "lib_ordinal": 3,
+   "weak_import": false,
+   "name_offset": 1843,
+   "library_path": "/usr/lib/swift/libswiftCore.dylib",
+   "member_slice_file_offset": 17064,
+   "import_entry_offset": 49452,
+   "names_agree": true
+  }
+ ],
+ "branch_sites": [
+  {
+   "call_pc": 4294970588,
+   "register": 8,
+   "instruction": "blr x8",
+   "context": [
+    {
+     "pc": 4294970564,
+     "text": "add x0, x19, #0x20"
+    },
+    {
+     "pc": 4294970568,
+     "text": "bl 0x100000de8 <_main+0x2d0>"
+    },
+    {
+     "pc": 4294970572,
+     "text": "ldur x8, [x22, #-0x8]"
+    },
+    {
+     "pc": 4294970576,
+     "text": "ldr x8, [x8, #0x10]"
+    },
+    {
+     "pc": 4294970580,
+     "text": "mov x1, x20"
+    },
+    {
+     "pc": 4294970584,
+     "text": "mov x2, x22"
+    },
+    {
+     "pc": 4294970588,
+     "text": "blr x8"
+    }
+   ],
+   "ldr_pc": 4294970576,
+   "ldr_offset": 16,
+   "base_register": 8,
+   "gap_ldr_to_blr": 2,
+   "gap_adrp_to_ldr": 0,
+   "outcome": "declined",
+   "reason": "got_base_not_adrp",
+   "base_writer_pc": 4294970572,
+   "base_writer_text": "ldur x8, [x22, #-0x8]"
+  },
+  {
+   "call_pc": 4294971200,
+   "register": 16,
+   "instruction": "blr x16",
+   "context": [
+    {
+     "pc": 4294971176,
+     "text": "mov x24, x0"
+    },
+    {
+     "pc": 4294971180,
+     "text": "ldur x26, [x0, #-0x8]"
+    },
+    {
+     "pc": 4294971184,
+     "text": "ldr x8, [x26, #0x40]"
+    },
+    {
+     "pc": 4294971188,
+     "text": "mov x9, x8"
+    },
+    {
+     "pc": 4294971192,
+     "text": "adrp x16, 0x100004000 <_swift_slowAlloc+0x100004000>"
+    },
+    {
+     "pc": 4294971196,
+     "text": "ldr x16, [x16, #0x198]"
+    },
+    {
+     "pc": 4294971200,
+     "text": "blr x16"
+    }
+   ],
+   "ldr_pc": 4294971196,
+   "ldr_offset": 408,
+   "base_register": 16,
+   "gap_ldr_to_blr": 0,
+   "gap_adrp_to_ldr": 0,
+   "outcome": "attributed",
+   "adrp_pc": 4294971192,
+   "adrp_page": 4294983680,
+   "slot_address": 4294984088,
+   "slot_index": 0,
+   "symbol": "___chkstk_darwin",
+   "library_path": "/usr/lib/libSystem.B.dylib",
+   "library_ordinal": 1,
+   "weak_import": false,
+   "import_ordinal": 21,
+   "swift_symbol": false
+  },
+  {
+   "call_pc": 4294971292,
+   "register": 8,
+   "instruction": "blr x8",
+   "context": [
+    {
+     "pc": 4294971268,
+     "text": "mov x21, x19"
+    },
+    {
+     "pc": 4294971272,
+     "text": "bl 0x1000016a4 <_swift_slowAlloc+0x1000016a4>"
+    },
+    {
+     "pc": 4294971276,
+     "text": "mov x19, x21"
+    },
+    {
+     "pc": 4294971280,
+     "text": "ldr x8, [x26, #0x8]"
+    },
+    {
+     "pc": 4294971284,
+     "text": "mov x0, x25"
+    },
+    {
+     "pc": 4294971288,
+     "text": "mov x1, x24"
+    },
+    {
+     "pc": 4294971292,
+     "text": "blr x8"
+    }
+   ],
+   "ldr_pc": 4294971280,
+   "ldr_offset": 8,
+   "base_register": 26,
+   "gap_ldr_to_blr": 2,
+   "gap_adrp_to_ldr": 1,
+   "outcome": "declined",
+   "reason": "got_base_not_adrp",
+   "base_writer_pc": 4294971272,
+   "base_writer_text": "bl 0x1000016a4 <_swift_slowAlloc+0x1000016a4>"
+  },
+  {
+   "call_pc": 4294971948,
+   "register": 16,
+   "instruction": "blr x16",
+   "context": [
+    {
+     "pc": 4294971924,
+     "text": "ldur x27, [x0, #-0x8]"
+    },
+    {
+     "pc": 4294971928,
+     "text": "ldr x9, [x27, #0x40]"
+    },
+    {
+     "pc": 4294971932,
+     "text": "add x8, x9, #0xf"
+    },
+    {
+     "pc": 4294971936,
+     "text": "and x8, x8, #0xfffffffffffffff0"
+    },
+    {
+     "pc": 4294971940,
+     "text": "adrp x16, 0x100004000 <_swift_slowAlloc+0x100004000>"
+    },
+    {
+     "pc": 4294971944,
+     "text": "ldr x16, [x16, #0x198]"
+    },
+    {
+     "pc": 4294971948,
+     "text": "blr x16"
+    }
+   ],
+   "ldr_pc": 4294971944,
+   "ldr_offset": 408,
+   "base_register": 16,
+   "gap_ldr_to_blr": 0,
+   "gap_adrp_to_ldr": 0,
+   "outcome": "attributed",
+   "adrp_pc": 4294971940,
+   "adrp_page": 4294983680,
+   "slot_address": 4294984088,
+   "slot_index": 0,
+   "symbol": "___chkstk_darwin",
+   "library_path": "/usr/lib/libSystem.B.dylib",
+   "library_ordinal": 1,
+   "weak_import": false,
+   "import_ordinal": 21,
+   "swift_symbol": false
+  },
+  {
+   "call_pc": 4294972068,
+   "register": 8,
+   "instruction": "blr x8",
+   "context": [
+    {
+     "pc": 4294972044,
+     "text": "bl 0x1000016bc <_swift_slowAlloc+0x1000016bc>"
+    },
+    {
+     "pc": 4294972048,
+     "text": "mov x20, x0"
+    },
+    {
+     "pc": 4294972052,
+     "text": "mov x23, x21"
+    },
+    {
+     "pc": 4294972056,
+     "text": "ldr x8, [x27, #0x8]"
+    },
+    {
+     "pc": 4294972060,
+     "text": "mov x0, x24"
+    },
+    {
+     "pc": 4294972064,
+     "text": "mov x1, x22"
+    },
+    {
+     "pc": 4294972068,
+     "text": "blr x8"
+    }
+   ],
+   "ldr_pc": 4294972056,
+   "ldr_offset": 8,
+   "base_register": 27,
+   "gap_ldr_to_blr": 2,
+   "gap_adrp_to_ldr": 2,
+   "outcome": "declined",
+   "reason": "got_base_not_adrp",
+   "base_writer_pc": 4294972044,
+   "base_writer_text": "bl 0x1000016bc <_swift_slowAlloc+0x1000016bc>"
+  },
+  {
+   "pc": 4294972252,
+   "instruction": "br x2",
+   "outcome": "not_blr",
+   "context": [
+    {
+     "pc": 4294972228,
+     "text": "ret"
+    },
+    {
+     "pc": 4294972232,
+     "text": "ldr x1, [x0, #0x18]"
+    },
+    {
+     "pc": 4294972236,
+     "text": "ldur x8, [x1, #-0x8]"
+    },
+    {
+     "pc": 4294972240,
+     "text": "ldrb w9, [x8, #0x52]"
+    },
+    {
+     "pc": 4294972244,
+     "text": "tbnz w9, #0x1, 0x100001360 <_main+0x848>"
+    },
+    {
+     "pc": 4294972248,
+     "text": "ldr x2, [x8, #0x8]"
+    },
+    {
+     "pc": 4294972252,
+     "text": "br x2"
+    }
+   ]
+  },
+  {
+   "call_pc": 4294972352,
+   "register": 16,
+   "instruction": "blr x16",
+   "context": [
+    {
+     "pc": 4294972328,
+     "text": "ldur x28, [x0, #-0x8]"
+    },
+    {
+     "pc": 4294972332,
+     "text": "ldr x9, [x28, #0x40]"
+    },
+    {
+     "pc": 4294972336,
+     "text": "add x8, x9, #0xf"
+    },
+    {
+     "pc": 4294972340,
+     "text": "and x8, x8, #0xfffffffffffffff0"
+    },
+    {
+     "pc": 4294972344,
+     "text": "adrp x16, 0x100004000 <_swift_slowAlloc+0x100004000>"
+    },
+    {
+     "pc": 4294972348,
+     "text": "ldr x16, [x16, #0x198]"
+    },
+    {
+     "pc": 4294972352,
+     "text": "blr x16"
+    }
+   ],
+   "ldr_pc": 4294972348,
+   "ldr_offset": 408,
+   "base_register": 16,
+   "gap_ldr_to_blr": 0,
+   "gap_adrp_to_ldr": 0,
+   "outcome": "attributed",
+   "adrp_pc": 4294972344,
+   "adrp_page": 4294983680,
+   "slot_address": 4294984088,
+   "slot_index": 0,
+   "symbol": "___chkstk_darwin",
+   "library_path": "/usr/lib/libSystem.B.dylib",
+   "library_ordinal": 1,
+   "weak_import": false,
+   "import_ordinal": 21,
+   "swift_symbol": false
+  },
+  {
+   "call_pc": 4294972472,
+   "register": 8,
+   "instruction": "blr x8",
+   "context": [
+    {
+     "pc": 4294972448,
+     "text": "bl 0x1000016bc <_swift_slowAlloc+0x1000016bc>"
+    },
+    {
+     "pc": 4294972452,
+     "text": "mov x20, x0"
+    },
+    {
+     "pc": 4294972456,
+     "text": "mov x24, x21"
+    },
+    {
+     "pc": 4294972460,
+     "text": "ldr x8, [x28, #0x8]"
+    },
+    {
+     "pc": 4294972464,
+     "text": "mov x0, x25"
+    },
+    {
+     "pc": 4294972468,
+     "text": "mov x1, x23"
+    },
+    {
+     "pc": 4294972472,
+     "text": "blr x8"
+    }
+   ],
+   "ldr_pc": 4294972460,
+   "ldr_offset": 8,
+   "base_register": 28,
+   "gap_ldr_to_blr": 2,
+   "gap_adrp_to_ldr": 2,
+   "outcome": "declined",
+   "reason": "got_base_not_adrp",
+   "base_writer_pc": 4294972448,
+   "base_writer_text": "bl 0x1000016bc <_swift_slowAlloc+0x1000016bc>"
+  }
+ ],
+ "expected_counts": {
+  "got_slots": 35,
+  "agreeing_got_slots": 35,
+  "declined_got_slots": 0,
+  "blr_instructions": 7,
+  "got_candidates": 7,
+  "attributed_got_calls": 3,
+  "declined_got_calls": 4,
+  "selected_got_calls": 0,
+  "non_throwing_swift_got_calls": 0,
+  "non_swift_got_calls": 3
+ },
+ "expected_decline_counts": {
+  "got_base_not_adrp": 4
+ }
+}
