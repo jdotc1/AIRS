@@ -35,3 +35,14 @@ class AnalysisModelRegistryTests(unittest.TestCase):
         source = (Path(__file__).resolve().parents[1] / 'native/Sources/AIRSCore/AnalysisModels.swift').read_text()
         native_cfg = source.split('static let cfg:', 1)[1].split('static let known', 1)[0]
         self.assertEqual(set(re.findall(r'"(arm64-[^"]+)"', native_cfg)), CFG_MODELS)
+
+    def test_native_current_model_matches_engine_and_registered_cfg(self):
+        from pathlib import Path
+        import re
+        import airs
+        source = (Path(__file__).resolve().parents[1] / 'native/Sources/AIRSCore/AnalysisModels.swift').read_text()
+        current = re.findall(r'^[ \t]*static let current = "([^"\r\n]+)"[ \t]*$', source, re.MULTILINE)
+        message = 'Update the native current constant deliberately when the engine model changes.'
+        self.assertEqual(len(current), 1, message)
+        self.assertEqual(current[0], airs.ANALYSIS_MODEL_VERSION, message)
+        self.assertIn(current[0], CFG_MODELS, message)

@@ -132,3 +132,103 @@ final class SwiftBroadWorkspaceTests: XCTestCase {
     }
 
 }
+
+extension SwiftBroadWorkspaceTests {
+    private func importsData() throws -> Data {
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: broad()) as? [String: Any])
+        object["model_version"] = "swift-broad-error-flow-imports-v1"
+        object["profile"] = "broad-imports-v1"
+        object["import_stub_model"] = "arm64-import-stub-double-binding-v1"
+        object["import_stubs_complete"] = true
+        object["import_stub_reason"] = NSNull()
+        var counts: [String: Any] = [:]
+        for key in ["attributed_stubs", "declined_stubs", "invalid_stub_sections", "selected_import_calls",
+                    "non_throwing_swift_import_calls", "non_swift_import_calls", "declined_stub_calls"] {
+            counts[key] = 0
+        }
+        object["import_stub_counts"] = counts
+        object["limitations"] = ["structural_only", "imported_callees_attribution_only"]
+        return try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys])
+    }
+
+    private func importsTemporaryRoot() throws -> URL {
+        let environmentRoot = ProcessInfo.processInfo.environment["AIRS_TEST_OUTPUT_ROOT"]
+        let base = environmentRoot.map { URL(fileURLWithPath: $0, isDirectory: true) }
+            ?? FileManager.default.temporaryDirectory
+        let root = base.appendingPathComponent("imports-workspace-" + UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        return root
+    }
+
+    func testImportsArgumentsSelectProfileAndForceWitnesses() {
+        let base = FileManager.default.temporaryDirectory
+        let options = SwiftFlowOptions(includeWitnesses: false, profile: .broadImports)
+        let args = options.arguments(input: base.appendingPathComponent("input"), output: base.appendingPathComponent("output"))
+        let profileIndex = args.firstIndex(of: "--swift-profile")
+        XCTAssertNotNil(profileIndex)
+        if let index = profileIndex, index + 1 < args.count { XCTAssertEqual(args[index + 1], "broad-imports-v1") }
+        else { XCTFail("Profile flag must have its argument") }
+        XCTAssertEqual(args.filter { $0 == "--include-outcome-witnesses" }.count, 1)
+    }
+
+    @MainActor func testImportsProfileRoutesAndRejectsExtendedReply() async throws {
+        let data = try importsData()
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: broad()) as? [String: Any])
+        object["model_version"] = "swift-broad-error-flow-extended-v1"
+        object["profile"] = "broad-extended-v1"
+        let extended = try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys])
+        XCTAssertTrue(try SwiftFlowReport.decode(extended).supportsInterpretation)
+        let input = FileManager.default.temporaryDirectory.appendingPathComponent("owned-input")
+        let accepted = SwiftFlowWorkspace(execute: { _, options, _ in
+            XCTAssertEqual(options.profile, .broadImports)
+            return data
+        })
+        accepted.profile = .broadImports; accepted.selectInput(input)
+        accepted.run(configuration: configuration); await accepted.waitUntilSettled()
+        XCTAssertNil(accepted.errorMessage); XCTAssertFalse(accepted.isHistorical)
+        XCTAssertEqual(accepted.report?.modelVersion, "swift-broad-error-flow-imports-v1")
+        let rejected = SwiftFlowWorkspace(execute: { _, _, _ in extended })
+        rejected.profile = .broadImports; rejected.selectInput(input)
+        rejected.run(configuration: configuration); await rejected.waitUntilSettled()
+        XCTAssertNil(rejected.report); XCTAssertNotNil(rejected.errorMessage)
+    }
+
+    @MainActor func testImportsHistoricalReopenPreservesBytesWithoutExecution() async throws {
+        let root = try importsTemporaryRoot()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let data = try importsData()
+        let input = root.appendingPathComponent("report.json")
+        try data.write(to: input)
+        let workspace = SwiftFlowWorkspace(execute: { _, _, _ in
+            XCTFail("Historical import must not execute the engine")
+            return Data()
+        })
+        workspace.importReport(input); await workspace.waitUntilSettled()
+        XCTAssertNil(workspace.errorMessage); XCTAssertTrue(workspace.isHistorical)
+        XCTAssertEqual(workspace.profile, .broadImports); XCTAssertNil(workspace.input)
+        XCTAssertEqual(workspace.report?.sourceData, data)
+    }
+
+    @MainActor func testImportsMalformedStubModelPreservesPreviousReport() async throws {
+        let root = try importsTemporaryRoot()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let data = try importsData()
+        let original = root.appendingPathComponent("original.json")
+        try data.write(to: original)
+        let workspace = SwiftFlowWorkspace(execute: { _, _, _ in
+            XCTFail("Historical import must not execute the engine")
+            return Data()
+        })
+        workspace.importReport(original); await workspace.waitUntilSettled()
+        XCTAssertNil(workspace.errorMessage)
+        XCTAssertEqual(workspace.report?.sourceData, data)
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        object["import_stub_model"] = "future"
+        let malformed = root.appendingPathComponent("malformed.json")
+        try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys]).write(to: malformed)
+        workspace.importReport(malformed); await workspace.waitUntilSettled()
+        XCTAssertNotNil(workspace.errorMessage)
+        XCTAssertEqual(workspace.report?.sourceData, data)
+        XCTAssertEqual(workspace.profile, .broadImports)
+    }
+}

@@ -6,6 +6,8 @@ validation path and accidentally use generic import rules for a recognized model
 Each language now maintains one immutable explicit CFG identity set, with known
 and evaluated-CFI sets derived by adding the exact historical linear identities.
 
+The current CFG label count is asserted by the registry tests (49 at the imports admission change). The count below describes its historical checkpoint.
+
 No prefix, version range or current-engine label determines admission. All 46 CFG
 labels, including the distinct historical CFI-control v36 alias, retain their
 previous policies. Linear v1/v2 differences and unknown-label generic validation
@@ -24,3 +26,28 @@ Fresh bounded validation:
 Accepted CLS v47 and earlier semantic, owned-image, GUI and distribution results
 are reused. No corpus pass, app launch, packaging, signing, installation or release
 was performed. Installed app, settings and stores were left unchanged.
+
+
+## Broad Swift model/profile pairs
+
+Broad Swift admission uses a separate exact-pair registry:
+
+| Model | Profile |
+|---|---|
+| `swift-broad-error-flow-v1` | `broad-v1` |
+| `swift-broad-error-flow-large-v1` | `broad-large-v1` |
+| `swift-broad-error-flow-extended-v1` | `broad-extended-v1` |
+| `swift-broad-error-flow-imports-v1` | `broad-imports-v1` |
+
+No prefix or version range grants admission. Mismatched known model/profile
+pairs remain unsupported raw evidence. Imports require callsite model
+`swift-broad-import-callsite-v1` and stub model
+`arm64-import-stub-double-binding-v1`; import rows remain unresolved attribution
+only. The recognized declaration syntax is `swift-import-declaration-syntax-v1`;
+other syntax strings retain raw evidence without a throwing interpretation.
+Unknown stub models in the exact imports pair refuse.
+
+`tests/test_swift_broad_native_parity.py` pins the Python/native pairs and import
+model/count literals. Native report and workspace tests cover admission,
+refusals and requested-model pinning. These broad identities do not alter the
+CFG identity registry or historical audit admission.

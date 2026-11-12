@@ -44,7 +44,7 @@ Its `candidate` and `validation` are empty. The report adds `import_stub_model`,
 
 An imported row is attribution plus declaration syntax only. It carries no Swift ABI admission and no outcome witness. It does not claim that the callee throws or returns at runtime, or that dyld binds the symbol to a particular library. A `$s` symbol outside the declaration parser's subset is selected because its throwing status is unknown, not because it is known to throw. Calls that load a GOT slot and branch through `BLR` stay unresolved, as before.
 
-The native app does not yet admit this model. Its importer accepts only the three earlier model/profile pairs, so it treats a `broad-imports-v1` report as unsupported.
+The native app admits the exact `swift-broad-error-flow-imports-v1` / `broad-imports-v1` pair, validates its recorded import envelope and stub arithmetic, and presents import rows as unresolved attribution only. Mismatched pairs remain unsupported raw evidence. The importer never rereads source bytes; section bounds are not recorded, so native section containment cannot be checked.
 
 ## Evidence
 
@@ -61,4 +61,4 @@ The new synthetic tests are in `tests/test_swift_broad_imports.py`, 48 methods i
 
 The 54 calls to stubs split into 27 `$s` calls and 27 Swift-runtime calls. The 27 runtime calls are counted as non-Swift. The 19 distinct `$s` symbols split into 10 admitted non-throwing, 1 admitted throwing and 8 declined. Their 27 call sites produce 12 selected rows and 15 skipped non-throwing calls, replacing the previous 27 rows and 0 skipped calls. All 7 calls whose demangled name contains `throws` remain rows. The Data initializer row is `syntax_admitted` with `throws: true`; declined declarations are `syntax_unresolved`. The binary is never executed. This is one owned case, not real-app or runtime qualification.
 
-See [Imported Swift declaration syntax](SWIFT_IMPORT_DECLARATIONS.md) for the closed grammar, decline reasons, evidence and residual symbol-override hazard. The syntax model is `swift-import-declaration-syntax-v1`. The outer profile and model identities are unchanged because they are unreleased and not yet admitted by the native app; a change after native admission would need a new identity.
+See [Imported Swift declaration syntax](SWIFT_IMPORT_DECLARATIONS.md) for the closed grammar, decline reasons, evidence and residual symbol-override hazard. The syntax model is `swift-import-declaration-syntax-v1`. The outer profile and model identities were retained while the declaration grammar settled before native admission; subsequent semantic changes require a new identity.

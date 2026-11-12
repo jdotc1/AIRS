@@ -2,7 +2,7 @@ import Foundation
 import CoreFoundation
 
 public enum SwiftFlowProfile: String, CaseIterable, Identifiable, Sendable {
-    case standard, broad, broadLarge, broadExtended
+    case standard, broad, broadLarge, broadExtended, broadImports
     public var id: Self { self }
     public var title: String {
         switch self {
@@ -10,6 +10,7 @@ public enum SwiftFlowProfile: String, CaseIterable, Identifiable, Sendable {
         case .broad: return "Broad Swift · broad-v1"
         case .broadLarge: return "Broad Swift · larger function inventory"
         case .broadExtended: return "Broad Swift · extended scan"
+        case .broadImports: return "Broad Swift · imported callees (attribution only)"
         }
     }
     public var broadModel: String? {
@@ -18,6 +19,7 @@ public enum SwiftFlowProfile: String, CaseIterable, Identifiable, Sendable {
         case .broad: return "swift-broad-error-flow-v1"
         case .broadLarge: return "swift-broad-error-flow-large-v1"
         case .broadExtended: return "swift-broad-error-flow-extended-v1"
+        case .broadImports: return "swift-broad-error-flow-imports-v1"
         }
     }
     public var broadArgument: String? {
@@ -26,6 +28,7 @@ public enum SwiftFlowProfile: String, CaseIterable, Identifiable, Sendable {
         case .broad: return "broad-v1"
         case .broadLarge: return "broad-large-v1"
         case .broadExtended: return "broad-extended-v1"
+        case .broadImports: return "broad-imports-v1"
         }
     }
 }
