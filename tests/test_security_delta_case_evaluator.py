@@ -112,6 +112,84 @@ class SecurityDeltaCaseEvaluatorTests(unittest.TestCase):
         report["observations"][0]["disposition"]="unresolved"
         self.assertEqual(evaluate_expected_changes(report,expected)[0]["state"],"unresolved")
 
+    def test_expected_row_unresolved_basis(self):
+        from security_delta_case_evaluator import evaluate_expected_changes
+        expected=[dict(component_path='Main',category='entitlements',subject='key:owned',disposition='unresolved',reason='exact_executable_correspondence_unaccepted')]
+        row=evaluate_expected_changes({'observations':[]},expected)[0]
+        self.assertEqual(row,dict(expected[0],state='unresolved',unresolved_basis='expected_row_unresolved'))
+
+    def test_exact_observation_unresolved_basis(self):
+        from security_delta_case_evaluator import evaluate_expected_changes
+        expected=[dict(component_path='Main',category='entitlements',subject='key:owned',disposition='observedChange')]
+        observation=dict(componentPath='Main',category='entitlements',subject='key:owned',disposition='unresolved')
+        row=evaluate_expected_changes({'observations':[observation]},expected)[0]
+        self.assertEqual(row,dict(expected[0],state='unresolved',unresolved_basis='exact_observation_unresolved'))
+
+    def test_exact_observation_declined_basis(self):
+        from security_delta_case_evaluator import evaluate_expected_changes
+        expected=[dict(component_path='Main',category='entitlements',subject='key:owned',disposition='observedChange')]
+        observation=dict(componentPath='Main',category='entitlements',subject='key:owned',disposition='declined')
+        row=evaluate_expected_changes({'observations':[observation]},expected)[0]
+        self.assertEqual(row,dict(expected[0],state='unresolved',unresolved_basis='exact_observation_declined'))
+
+    def test_no_observation_for_component_category_basis(self):
+        from security_delta_case_evaluator import evaluate_expected_changes
+        expected=[dict(component_path='Main',category='entitlements',subject='key:owned',disposition='observedChange')]
+        row=evaluate_expected_changes({'observations':[]},expected)[0]
+        self.assertEqual(row,dict(expected[0],state='unresolved',unresolved_basis='no_observation_for_component_category'))
+
+    def test_context_observation_unresolved_basis(self):
+        from security_delta_case_evaluator import evaluate_expected_changes
+        expected=[dict(component_path='Main',category='entitlements',subject='key:owned',disposition='observedChange')]
+        observation=dict(componentPath='Main',category='entitlements',subject='presence',disposition='unresolved')
+        row=evaluate_expected_changes({'observations':[observation]},expected)[0]
+        self.assertEqual(row,dict(expected[0],state='unresolved',unresolved_basis='context_observation_unresolved',unresolved_context_subject='presence'))
+
+    def test_context_observation_declined_basis(self):
+        from security_delta_case_evaluator import evaluate_expected_changes
+        expected=[dict(component_path='Main',category='entitlements',subject='key:owned',disposition='observedChange')]
+        observation=dict(componentPath='Main',category='entitlements',subject='slice',disposition='declined')
+        row=evaluate_expected_changes({'observations':[observation]},expected)[0]
+        self.assertEqual(row,dict(expected[0],state='unresolved',unresolved_basis='context_observation_declined',unresolved_context_subject='slice'))
+
+    def test_certain_expected_changes_have_no_unresolved_fields(self):
+        from security_delta_case_evaluator import evaluate_expected_changes
+        expected=[dict(component_path='Main',category='entitlements',subject='key:'+subject,disposition='observedChange') for subject in ('found','missing')]
+        observations=[dict(componentPath='Main',category='entitlements',subject='key:found',disposition='observedChange',limitations=[dict(code='owned',diagnostic='Owned limitation.')]),dict(componentPath='Main',category='entitlements',subject='presence',disposition='declined')]
+        rows=evaluate_expected_changes({'observations':observations},expected[:1])
+        rows+=evaluate_expected_changes({'observations':observations[:1]},expected[1:])
+        self.assertEqual(rows,[dict(expected[0],state='true_positive'),dict(expected[1],state='false_negative')])
+
+    def test_mixed_expected_change_unresolved_counts(self):
+        from security_delta_case_evaluator import evaluate_case
+        from unittest.mock import patch
+        expected=[dict(component_path='Main',category=category,subject='key:'+subject,disposition='observedChange') for category,subject in [('entitlements','exact'),('entitlements','context'),('loadCommands','absent'),('privacyManifest','found'),('privacyManifest','missing')]]
+        expected.append(dict(component_path='Main',category='privacyManifest',subject='owner',disposition='unresolved'))
+        observations=[dict(id='exact',componentPath='Main',category='entitlements',subject='key:exact',disposition='unresolved'),dict(id='context',componentPath='Main',category='entitlements',subject='presence',disposition='declined'),dict(id='found',componentPath='Main',category='privacyManifest',subject='key:found',disposition='observedChange',evidence=[])]
+        with patch('security_delta_case_evaluator.enumerate_changes',return_value=expected):
+            result=evaluate_case({'observations':observations,'findings':[]},{'previous':{},'current':{}})
+        self.assertEqual(result['expected_change_counts'],{'unresolved':4,'true_positive':1,'false_negative':1})
+        self.assertEqual(result['expected_change_unresolved_basis_counts'],{'exact_observation_unresolved':1,'context_observation_declined':1,'no_observation_for_component_category':1,'expected_row_unresolved':1})
+        self.assertEqual(result['expected_change_unresolved_by_category'],{'entitlements|exact_observation_unresolved':1,'entitlements|context_observation_declined':1,'loadCommands|no_observation_for_component_category':1,'privacyManifest|expected_row_unresolved':1})
+        self.assertEqual(sum(result['expected_change_unresolved_basis_counts'].values()),result['expected_change_counts']['unresolved'])
+        self.assertEqual(sum(result['expected_change_unresolved_by_category'].values()),result['expected_change_counts']['unresolved'])
+
+    def test_first_context_subject_and_sorted_observation_codes(self):
+        from security_delta_case_evaluator import evaluate_expected_changes
+        expected=[dict(component_path='Main',category='entitlements',subject='key:owned',disposition='observedChange')]
+        def observation(subject,disposition,**extra):
+            return dict(componentPath='Main',category='entitlements',subject=subject,disposition=disposition,**extra)
+        limitations=[dict(code=code,diagnostic='Owned limitation.') for code in ('source_unavailable','category_unexamined')]
+        observations=[observation('presence','unchanged'),observation('key:other','unresolved'),observation('one-sided-context','declined',limitations=limitations),observation('slice','unresolved',limitations=[dict(code='later',diagnostic='Later context.')])]
+        row=evaluate_expected_changes({'observations':observations},expected)[0]
+        self.assertEqual(row,dict(expected[0],state='unresolved',unresolved_basis='context_observation_declined',unresolved_context_subject='one-sided-context',unresolved_observation_codes=['category_unexamined','source_unavailable']))
+        observations.append(observation('key:owned','unresolved',limitations=limitations))
+        row=evaluate_expected_changes({'observations':observations},expected)[0]
+        self.assertEqual(row,dict(expected[0],state='unresolved',unresolved_basis='exact_observation_unresolved',unresolved_observation_codes=['category_unexamined','source_unavailable']))
+        for absent in ([],None,['not a record'],[dict(code=7)]):
+            observations[-1]['limitations']=absent
+            self.assertNotIn('unresolved_observation_codes',evaluate_expected_changes({'observations':observations},expected)[0])
+
     def test_dependency_count_observation_uses_raw_group_membership(self):
         def facts(rows):
             return {"images":{"Main":{"state":"observed","slices":[{"identity":{"cpu_type":0x100000c,"cpu_subtype":0},"loader":rows}]}}}

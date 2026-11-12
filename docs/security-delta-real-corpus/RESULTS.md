@@ -70,6 +70,19 @@ The false-negative denominator covers independent exact-location paired Info key
 present privacy keys, recorded loader groups and raw digest/signature observations.
 Unsupported/missing sources remain unresolved. It does not enumerate every possible
 application behavior, dependency resolution or unsupported DER/date interpretation.
+
+An expected change is counted unresolved, not false negative, on four grounds: the
+expected row is itself unresolved because executable correspondence was not accepted;
+the AIRS observation for the same component, category and subject is unresolved or
+declined; a presence, slice or one-sided-context observation for that component and
+category is unresolved or declined; or the report has no observation at all for that
+component and category. The 607 above were not broken down by ground when this run
+was recorded, and the per-change records were not kept. "0 false negatives" therefore
+means that no expected change was contradicted by an AIRS observation. It does not
+mean that AIRS produced an observation for every expected change: the fourth ground
+is counted as unresolved. The evaluator now records the ground for each unresolved
+row (`unresolved_basis`) and totals them per case and per run, so the next recorded
+run can state the split.
 Finding qualification checks constituent source facts, required references,
 category/disposition triggers, exact component grouping, recorded physical ancestry
 and strict repeated transitions. It establishes no causation or runtime behavior.

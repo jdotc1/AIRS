@@ -157,6 +157,12 @@ After 0.4.0, each milestone below that changes what a user sees ends in a releas
 1. Break the 607 unresolved expected changes of the corpus down by reason, and take
    the largest class that has an owned example. Exit for each class: its corpus count
    moves, with no new false positive and no false negative in the enumerated scope.
+   State: the per-change records of the recorded run were not kept, so the split
+   cannot be read from what exists. The evaluator now records the ground for each
+   unresolved row and totals them per case and per run. One of the four grounds is
+   "the report has no observation for that component and category", which may hide
+   misses; the first thing the split has to show is how many of the 607 it accounts
+   for. The recorded run that produces the split has not been made.
 2. Activate in the application the manual finding pairs and the coverage triage that
    the engine and the native validators already support.
 3. Cross-build review candidates beyond exact-body matching (CFG fingerprints,
