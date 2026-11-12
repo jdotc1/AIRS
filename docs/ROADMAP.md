@@ -850,3 +850,15 @@ different register and restore the adjusted value to x0. Eleven new and 490
 affected methods passed with independent semantic review. This is synthetic
 structural evidence; compiler and runtime qualification remain open. See
 SWIFT_ERROR_FLOW.md.
+
+## Imported Swift callees through verified stubs
+
+The opt-in `broad-imports-v1` profile attributes `__TEXT,__stubs` entries to
+undefined external symbols through a double indirect-symbol binding (the stub's
+entry and the GOT or lazy-pointer slot it loads must name the same symbol). It
+reports direct calls to imported `$s` symbols as unresolved
+`imported_callee_abi_unqualified` rows with declaration syntax only. Earlier
+profiles are unchanged. Independent synthetic tests and one owned Swift 6.4.2
+binary, checked against Apple-tool output, cover the increment. ABI admission,
+witnesses, chained-fixup binding, native app admission and GOT-loaded `BLR`
+sites remain open. See SWIFT_BROAD_IMPORTS_PROFILE.md.

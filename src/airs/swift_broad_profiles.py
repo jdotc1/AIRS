@@ -13,6 +13,8 @@ BROAD_LARGE_PROFILE = 'broad-large-v1'
 BROAD_LARGE_MODEL = 'swift-broad-error-flow-large-v1'
 BROAD_EXTENDED_PROFILE = 'broad-extended-v1'
 BROAD_EXTENDED_MODEL = 'swift-broad-error-flow-extended-v1'
+BROAD_IMPORTS_PROFILE = 'broad-imports-v1'
+BROAD_IMPORTS_MODEL = 'swift-broad-error-flow-imports-v1'
 BROAD_MODEL = 'swift-broad-error-flow-v1'
 BROAD_WITNESS_MODEL = 'swift-outcome-witness-v2'
 BROAD_VALIDATION_MODEL = 'swift-outcome-validation-v2'
@@ -34,6 +36,7 @@ PROFILES = MappingProxyType({
     BROAD_PROFILE: SwiftProfile(BROAD_MODEL, None, BROAD_WITNESS_MODEL, BROAD_VALIDATION_MODEL),
     BROAD_LARGE_PROFILE: SwiftProfile(BROAD_LARGE_MODEL, None, BROAD_WITNESS_MODEL, BROAD_VALIDATION_MODEL),
     BROAD_EXTENDED_PROFILE: SwiftProfile(BROAD_EXTENDED_MODEL, None, BROAD_WITNESS_MODEL, BROAD_VALIDATION_MODEL),
+    BROAD_IMPORTS_PROFILE: SwiftProfile(BROAD_IMPORTS_MODEL, None, BROAD_WITNESS_MODEL, BROAD_VALIDATION_MODEL),
 })
 
 
