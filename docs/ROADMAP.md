@@ -108,11 +108,11 @@ listed on its branches page.
 - Native app: qualify each changed user interaction after pending work settles. Picker
   suppression and historical-panel GUI acceptance for settled project companions
   remain incomplete.
-- Documentation: some files name pages that are not in the repository.
-  CONTRIBUTING.md names `docs/RELEASE_VERIFICATION.md`; ARCHITECTURE.md and
-  `scripts/verify-macos.sh` name `docs/NATIVE_BUILD.md`. Each reference should be
-  restored or removed. DEVELOPMENT_STATUS.md still describes build 12 as the current
-  preview.
+- Documentation: ANALYSIS_CONTRACT.md cites 137 distinct pages by file name and 79 of
+  them are not in the repository; ARCHITECTURE.md cites four absent pages. Both now
+  carry a note saying so. Each absent page should be restored or its citation removed.
+  DEVELOPMENT_STATUS.md stops at model v47 and carries a note pointing here; it has
+  not been brought up to date.
 - Next candidates, as in the checkpoint of that name under History: use the documented
   saved-report workflow to find a concrete unresolved behavior worth improving, and
   choose a semantic extension only from an explicit owned example with an
