@@ -208,3 +208,422 @@ final class SwiftBroadFlowReportTests: XCTestCase {
     }
 
 }
+
+extension SwiftBroadFlowReportTests {
+    private func importCounts(_ selected: Int = 2) -> [String: Any] {
+        var counts: [String: Any] = [:]
+        counts["attributed_stubs"] = selected
+        counts["declined_stubs"] = 0
+        counts["invalid_stub_sections"] = 0
+        counts["selected_import_calls"] = selected
+        counts["non_throwing_swift_import_calls"] = 0
+        counts["non_swift_import_calls"] = 0
+        counts["declined_stub_calls"] = 0
+        return counts
+    }
+
+    func importsFixture() -> [String: Any] {
+        var value = fixture()
+        value["model_version"] = "swift-broad-error-flow-imports-v1"
+        value["profile"] = "broad-imports-v1"
+        value["import_stub_model"] = "arm64-import-stub-double-binding-v1"
+        value["import_stubs_complete"] = true
+        value["import_stub_reason"] = NSNull()
+        value["import_stub_counts"] = importCounts()
+        value["limitations"] = ["structural_only", "imported_callees_attribution_only"]
+        var rows = value["calls"] as! [[String: Any]]
+        rows.append(importRow(index: 0, admitted: true))
+        rows.append(importRow(index: 1, admitted: false))
+        value["calls"] = rows
+        value["observed_call_instructions"] = 3
+        value["selected_call_candidates"] = 3
+        value["status_counts"] = ["eligible_structural_only": 1, "unresolved": 2]
+        value["reason_counts"] = ["independent_bounded_byte_replay": 1, "imported_callee_abi_unqualified": 2]
+        return value
+    }
+
+    private func importRow(index: Int, admitted: Bool) -> [String: Any] {
+        let symbol = admitted ? "_$s4Test3fooyS2iKF" : "_$sZZZ"
+        var identity: [String: Any] = [:]
+        identity["syntax_model"] = "swift-import-declaration-syntax-v1"
+        identity["symbol"] = symbol
+        identity["entity"] = "function"
+        identity["module"] = "Test"
+        identity["name"] = "foo"
+        identity["context"] = [Any]()
+        identity["parameter_labels"] = [NSNull()]
+        var integerType: [String: Any] = [:]
+        integerType["name"] = "Swift.Int"
+        integerType["arguments"] = [Any]()
+        integerType["inout"] = false
+        integerType["label"] = NSNull()
+        integerType["generic_depth"] = NSNull()
+        integerType["generic_index"] = NSNull()
+        integerType["nominal_kind"] = "struct"
+        identity["parameter_types"] = [integerType]
+        identity["result_type"] = integerType
+        identity["throws"] = true
+        var declaration: [String: Any] = [:]
+        declaration["status"] = admitted ? "syntax_admitted" : "syntax_unresolved"
+        if admitted {
+            declaration["identity"] = identity
+            declaration["reason"] = NSNull()
+        } else {
+            declaration["identity"] = NSNull()
+            declaration["reason"] = "unsupported_syntax"
+        }
+        // Default synthetic stub from test_swift_broad_imports.provenance; the second
+        // slot uses stub_image_helpers.ldr_x_uimm's eight-byte offset encoding.
+        let stub = 0x100001008 + index * 12
+        let pointer = 0x100004000 + index * 8
+        let words: [String] = ["0xf0000010", index == 0 ? "0xf9400210" : "0xf9400610", "0xd61f0200"]
+        var recorded: [[String: Any]] = []
+        for k in 0..<3 {
+            var word: [String: Any] = [:]
+            word["pc"] = stub + k * 4
+            word["word"] = words[k]
+            word["slice_file_offset"] = 0x1008 + index * 12 + k * 4
+            word["container_file_offset"] = 0x2008 + index * 12 + k * 4
+            recorded.append(word)
+        }
+        var provenance: [String: Any] = [:]
+        provenance["stub_words"] = recorded
+        provenance["stub_indirect_entry_offset"] = 0x8038 + index * 4
+        provenance["pointer_indirect_entry_offset"] = 0x8040 + index * 4
+        provenance["nlist_offset"] = 0x8018 + index * 16
+        provenance["stub_model"] = "arm64-import-stub-double-binding-v1"
+        provenance["stub_section"] = "__TEXT,__stubs"
+        provenance["stub_index"] = index
+        provenance["symbol_index"] = index + 1
+        provenance["pointer_address"] = pointer
+        provenance["pointer_section"] = "__DATA_CONST,__got"
+        var admission: [String: Any] = [:]
+        admission["model_version"] = "swift-broad-import-callsite-v1"
+        admission["status"] = "unresolved"
+        admission["reason"] = "imported_callee_abi_unqualified"
+        admission["call_kind"] = index == 0 ? "bl" : "b"
+        admission["call_pc"] = 0x100001000 + index * 4
+        admission["caller_start"] = 0x100001000
+        admission["callee_stub_pc"] = stub
+        admission["symbol"] = symbol
+        admission["library_ordinal"] = 2
+        admission["declaration"] = declaration
+        admission["import_provenance"] = provenance
+        admission["details_complete"] = true
+        admission["call_return_proven"] = false
+        admission["syntactic_call_target_admitted"] = false
+        admission["import_attribution_admitted"] = true
+        admission["work_steps"] = 16 + symbol.utf8.count
+        var row: [String: Any] = [:]
+        row["caller_pc"] = "0x100001000"
+        row["call_pc"] = "0x" + String(0x100001000 + index * 4, radix: 16)
+        row["admission"] = admission
+        row["candidate"] = NSNull()
+        row["validation"] = NSNull()
+        return row
+    }
+
+    private func replacingImportField(_ node: Any, path: ArraySlice<String>, with replacement: Any?) -> Any {
+        guard let key = path.first else { return replacement ?? NSNull() }
+        if var array = node as? [Any], let index = Int(key) {
+            array[index] = replacingImportField(array[index], path: path.dropFirst(), with: replacement)
+            return array
+        }
+        var object = node as! [String: Any]
+        if path.count == 1 { object[key] = replacement }
+        else { object[key] = replacingImportField(object[key]!, path: path.dropFirst(), with: replacement) }
+        return object
+    }
+
+    private func changingImportField(_ value: [String: Any], _ path: String, _ replacement: Any?) -> [String: Any] {
+        replacingImportField(value, path: path.components(separatedBy: ".")[...], with: replacement) as! [String: Any]
+    }
+
+    private func assertImportRefusals(_ value: [String: Any], _ mutations: [(String, Any?)],
+                                      file: StaticString = #filePath, line: UInt = #line) throws {
+        for (path, replacement) in mutations {
+            XCTAssertTrue(try decode(value).supportsInterpretation, "Positive control: \(path)", file: file, line: line)
+            let malformed = changingImportField(value, path, replacement)
+            XCTAssertThrowsError(try decode(malformed), path, file: file, line: line)
+        }
+    }
+
+    private func incompleteImportsFixture() -> [String: Any] {
+        var value = importsFixture()
+        value["import_stubs_complete"] = false
+        value["import_stub_reason"] = "missing_indirect_symbol_table"
+        value["call_details_complete"] = false
+        value["import_stub_counts"] = importCounts(0)
+        var rows = value["calls"] as! [[String: Any]]
+        for index in 1...2 {
+            let admission: [String: Any] = ["status": "unresolved", "reason": "imported_callee_abi_unqualified"]
+            rows[index]["admission"] = admission
+        }
+        value["calls"] = rows
+        return value
+    }
+
+    func testImportsPairKeepsAttributionUnresolvedAndLocalEligibility() throws {
+        let value = importsFixture()
+        let data = try JSONSerialization.data(withJSONObject: value, options: [.sortedKeys])
+        let report = try SwiftFlowReport.decode(data)
+        XCTAssertTrue(report.supportsInterpretation)
+        XCTAssertEqual(report.sourceData, data)
+        XCTAssertEqual(report.calls[0].witnessStatus, "eligible_structural_only")
+        XCTAssertEqual(report.calls[0].status, "eligible_structural_only")
+        let symbols = ["_$s4Test3fooyS2iKF", "_$sZZZ"]
+        for (index, row) in report.calls.dropFirst().enumerated() {
+            XCTAssertEqual(row.status, "unresolved")
+            XCTAssertNil(row.witnessStatus)
+            XCTAssertEqual(row.reason, "imported_callee_abi_unqualified")
+            XCTAssertEqual(row.calleeSymbol, symbols[index])
+            XCTAssertNil(row.testPC); XCTAssertNil(row.successPC); XCTAssertNil(row.errorPC)
+            XCTAssertFalse(row.witnessFacts.contains { $0.hasPrefix("Independent ") })
+            XCTAssertTrue(row.witnessFacts.contains { $0.contains("attribution only") })
+        }
+        XCTAssertTrue(report.summaryText.contains("import stubs"))
+    }
+
+    func testImportsIncompleteTableDecodesAsPartial() throws {
+        let report = try decode(incompleteImportsFixture())
+        XCTAssertTrue(report.supportsInterpretation)
+        XCTAssertFalse(report.callDetailsComplete)
+        XCTAssertTrue(report.summaryText.contains("missing_indirect_symbol_table"))
+    }
+
+    func testImportsCallEnvelopeAtLimitAndAbove() throws {
+        var value = importsFixture()
+        var rows: [[String: Any]] = []
+        for index in 0..<8193 {
+            var row: [String: Any] = [:]
+            row["caller_pc"] = "0x1000"
+            row["call_pc"] = "0x" + String(0x1004 + index * 4, radix: 16)
+            let admission: [String: Any] = ["status": "unresolved", "reason": "unqualified"]
+            row["admission"] = admission
+            row["candidate"] = NSNull(); row["validation"] = NSNull()
+            rows.append(row)
+        }
+        value["calls"] = Array(rows.prefix(8192))
+        value["selected_call_candidates"] = 8193
+        value["observed_call_instructions"] = 8193
+        value["omitted_calls"] = 1
+        // A report that omits calls cannot claim complete details or complete witnesses.
+        value["call_details_complete"] = false
+        value["outcome_witnesses_complete"] = false
+        value["import_stub_counts"] = importCounts(0)
+        value["status_counts"] = ["unresolved": 8192]
+        value["reason_counts"] = ["unqualified": 8192]
+        XCTAssertEqual(try decode(value).calls.count, 8192)
+        // Prepare an internally accounted over-limit report; only the call envelope is invalid.
+        value["calls"] = rows; value["omitted_calls"] = 0
+        value["status_counts"] = ["unresolved": 8193]
+        value["reason_counts"] = ["unqualified": 8193]
+        XCTAssertThrowsError(try decode(value))
+    }
+
+    func testImportsMismatchedProfilePairsRemainRawOnly() throws {
+        for (model, profile) in [("swift-broad-error-flow-imports-v1", "broad-extended-v1"),
+                                 ("swift-broad-error-flow-extended-v1", "broad-imports-v1")] {
+            var value = importsFixture()
+            value["model_version"] = model; value["profile"] = profile
+            let report = try decode(value)
+            XCTAssertFalse(report.supportsInterpretation)
+            XCTAssertFalse(report.sourceData.isEmpty)
+        }
+    }
+
+    func testImportsUnknownDeclarationSyntaxRemainsRawOnly() throws {
+        for model in ["future", "swift-broad-declaration-syntax-v1"] {
+            var value = changingImportField(importsFixture(), "calls.1.admission.declaration.identity.syntax_model", model)
+            value = changingImportField(value, "calls.1.admission.declaration.identity.throws", false)
+            let report = try decode(value)
+            XCTAssertTrue(report.supportsInterpretation)
+            XCTAssertEqual(report.calls[1].status, "unresolved")
+            XCTAssertNil(report.calls[1].witnessStatus)
+            XCTAssertTrue(report.calls[1].witnessFacts.contains { $0.contains("declaration syntax model unrecognized; raw only") })
+        }
+    }
+
+    func testImportsEnvelopeFieldsRefuseMalformedValues() throws {
+        var mutations: [(String, Any?)] = []
+        mutations.append(("import_stub_model", "future"))
+        mutations.append(("import_stubs_complete", 1))
+        mutations.append(("import_stubs_complete", "true"))
+        mutations.append(("import_stub_reason", "unexpected"))
+        mutations.append(("import_stub_counts.attributed_stubs", nil))
+        mutations.append(("import_stub_counts.extra", 0))
+        for bad in [true, -1, 1.5] as [Any] { mutations.append(("import_stub_counts.declined_stubs", bad)) }
+        mutations.append(("import_stub_counts.selected_import_calls", 1))
+        mutations.append(("import_stub_counts.selected_import_calls", 4))
+        for key in ["declined_stub_calls", "non_swift_import_calls", "non_throwing_swift_import_calls"] {
+            mutations.append(("import_stub_counts." + key, 1))
+        }
+        mutations.append(("limitations", ["structural_only"]))
+        mutations.append(("limitations", ["structural_only", "imported_callees_attribution_only", "imported_callees_attribution_only"]))
+        try assertImportRefusals(importsFixture(), mutations)
+    }
+
+    func testImportsIncompleteTableContradictionsRefuse() throws {
+        let imported = importRow(index: 0, admitted: true)
+        let admission = imported["admission"] as! [String: Any]
+        let mutations: [(String, Any?)] = [
+            ("import_stub_reason", NSNull()), ("call_details_complete", true),
+            ("calls.1.admission", admission)
+        ]
+        try assertImportRefusals(incompleteImportsFixture(), mutations)
+    }
+
+    func testImportsDuplicateStubModelKeyRefusesRawData() throws {
+        let data = try JSONSerialization.data(withJSONObject: importsFixture(), options: [.sortedKeys])
+        XCTAssertTrue(try SwiftFlowReport.decode(data).supportsInterpretation)
+        let text = String(decoding: data, as: UTF8.self)
+        let key = "\"import_stub_model\":\"arm64-import-stub-double-binding-v1\""
+        let duplicate = key + "," + key
+        let raw = Data(text.replacingOccurrences(of: key, with: duplicate).utf8)
+        XCTAssertNotEqual(raw, data)
+        XCTAssertThrowsError(try SwiftFlowReport.decode(raw))
+    }
+
+    func testImportsAdmissionFieldsRefuseClaimsAndMalformedValues() throws {
+        var fields: [(String, Any?)] = []
+        fields.append(("status", "eligible_structural_only"))
+        fields.append(("reason", "unqualified"))
+        fields.append(("call_kind", "blr"))
+        fields.append(("caller_start", 0x100001004))
+        fields.append(("callee_stub_pc", 0x100001009))
+        fields.append(("callee_stub_pc", "0x100001008"))
+        fields.append(("symbol", "_ordinary"))
+        fields.append(("library_ordinal", 256))
+        fields.append(("details_complete", false))
+        fields.append(("call_return_proven", true))
+        fields.append(("syntactic_call_target_admitted", true))
+        fields.append(("import_attribution_admitted", false))
+        fields.append(("import_attribution_admitted", 1))
+        fields.append(("abi", [String: Any]()))
+        fields.append(("callee_pc", 0x100001008))
+        fields.append(("import_provenance.foo_proven", true))
+        fields.append(("declaration.identity.source_reconstruction_allowed", true))
+        let mutations = fields.map { ("calls.1.admission." + $0.0, $0.1) }
+        try assertImportRefusals(importsFixture(), mutations)
+        let candidate: [String: Any] = [:]
+        let validation: [String: Any] = ["eligible": true]
+        try assertImportRefusals(importsFixture(), [("calls.1.candidate", candidate), ("calls.1.validation", validation)])
+    }
+
+    func testImportsStubProvenanceRefusesInconsistentRecordedArithmetic() throws {
+        let value = importsFixture()
+        let rows = value["calls"] as! [[String: Any]]
+        let admission = rows[1]["admission"] as! [String: Any]
+        let provenance = admission["import_provenance"] as! [String: Any]
+        let words = provenance["stub_words"] as! [[String: Any]]
+        var fields: [(String, Any?)] = []
+        fields.append(("stub_model", "future"))
+        fields.append(("stub_words", Array(words.prefix(2))))
+        fields.append(("stub_words.1.pc", 0x100001010))
+        fields.append(("stub_words.0.container_file_offset", 0x200c))
+        fields.append(("pointer_address", 0x100004001))
+        fields.append(("pointer_address", 0x100004008))
+        // Well-formed word text with the wrong instruction/register must still refuse.
+        fields.append(("stub_words.0.word", "0xf0000011"))
+        fields.append(("stub_words.1.word", "0xf9400231"))
+        fields.append(("stub_words.2.word", "0xd61f0220"))
+        fields.append(("stub_words.0.word", "0xF0000010"))
+        try assertImportRefusals(value, fields.map { ("calls.1.admission.import_provenance." + $0.0, $0.1) })
+    }
+
+    func testImportsSameStubCannotCarryDifferentSymbols() throws {
+        var value = importsFixture()
+        var rows = value["calls"] as! [[String: Any]]
+        var repeated = rows[2]
+        var admission = repeated["admission"] as! [String: Any]
+        repeated["call_pc"] = "0x100001000"
+        admission["call_pc"] = 0x100001000
+        repeated["admission"] = admission
+        rows[1] = repeated; value["calls"] = rows
+        try assertImportRefusals(value, [("calls.2.admission.symbol", "_$sOther")])
+    }
+
+    func testImportsDeclarationTripleAndRecognizedIdentityRefuseContradictions() throws {
+        var fields: [(String, Any?)] = []
+        fields.append(("status", "admitted"))
+        fields.append(("identity", NSNull()))
+        fields.append(("reason", "unexpected"))
+        fields.append(("extra", 0))
+        fields.append(("identity.symbol", "_$sOther"))
+        fields.append(("identity.throws", false))
+        fields.append(("identity.throws", "true"))
+        fields.append(("identity.syntax_model", nil))
+        fields.append(("identity.syntax_model", 1))
+        try assertImportRefusals(importsFixture(), fields.map { ("calls.1.admission.declaration." + $0.0, $0.1) })
+        let identity: [String: Any] = [:]
+        try assertImportRefusals(importsFixture(), [("calls.2.admission.declaration.identity", identity),
+                                                   ("calls.2.admission.declaration.reason", NSNull())])
+    }
+
+    func testImportsOnlyKeysRequireImportCallsiteModel() throws {
+        try assertImportRefusals(importsFixture(), [("calls.1.admission.model_version", "swift-broad-callsite-v1"),
+                                                   ("calls.1.admission.model_version", nil)])
+    }
+
+    func testImportsIdentityAtSerializedDepthCapAndOneLevelBeyond() throws {
+        // swift_import_declarations: native limit 32 minus identity report level 5.
+        let maximumIdentityValueDepth = 27
+        var type: [String: Any] = ["name": "Int"]
+        for _ in 0..<12 {
+            let wrapper: [String: Any] = ["name": "Optional", "arguments": [type]]
+            type = wrapper
+        }
+        // identity -> parameter_types -> element -> twelve arguments/element pairs -> name.
+        let value = changingImportField(importsFixture(), "calls.1.admission.declaration.identity.parameter_types", [type])
+        XCTAssertEqual(2 + 12 * 2 + 1, maximumIdentityValueDepth)
+        let data = try JSONSerialization.data(withJSONObject: value, options: [.sortedKeys])
+        XCTAssertTrue(try SwiftFlowReport.decode(data).supportsInterpretation)
+        var leafPath = "calls.1.admission.declaration.identity.parameter_types.0"
+        for _ in 0..<12 { leafPath.append(".arguments.0") }
+        leafPath.append(".name")
+        // One child container moves the deepest scalar from report depth 32 to 33.
+        let deeper = changingImportField(value, leafPath, ["arguments": "Int"])
+        let tooDeep = try JSONSerialization.data(withJSONObject: deeper, options: [.sortedKeys])
+        XCTAssertThrowsError(try SwiftFlowReport.decode(tooDeep))
+        XCTAssertThrowsError(try decode(deeper))
+    }
+
+    func testImportsCallCountersCoverTheScanLimit() throws {
+        // The imports scan limit is 2,097,152 words, so a skipped-call counter can pass 1,048,576.
+        var value = importsFixture()
+        var counts = value["import_stub_counts"] as! [String: Any]
+        counts["non_swift_import_calls"] = 1_048_577
+        value["import_stub_counts"] = counts
+        value["observed_call_instructions"] = 3 + 1_048_577
+        XCTAssertTrue(try decode(value).supportsInterpretation)
+        counts["non_swift_import_calls"] = 2_097_153
+        value["import_stub_counts"] = counts
+        value["observed_call_instructions"] = 3 + 2_097_153
+        XCTAssertThrowsError(try decode(value))
+    }
+
+    func testImportsStubMayEndExactlyAtTheSliceEnd() throws {
+        // The second fixture stub occupies slice offsets 0x1014 up to, not including, 0x1020.
+        let exact = resizingSlice(importsFixture(), to: "0x1020") as! [String: Any]
+        XCTAssertTrue(try decode(exact).supportsInterpretation)
+        let short = resizingSlice(importsFixture(), to: "0x101f") as! [String: Any]
+        XCTAssertThrowsError(try decode(short))
+    }
+
+    func testImportsStubWordsMustBeConsecutiveInTheFile() throws {
+        // Each word is individually in range and agrees with its container offset; only the order is wrong.
+        let word = "calls.2.admission.import_provenance.stub_words.1."
+        var value = importsFixture()
+        XCTAssertTrue(try decode(value).supportsInterpretation)
+        value = changingImportField(value, word + "slice_file_offset", 0x101c)
+        value = changingImportField(value, word + "container_file_offset", 0x201c)
+        XCTAssertThrowsError(try decode(value))
+    }
+
+    private func resizingSlice(_ node: Any, to size: String) -> Any {
+        if let array = node as? [Any] { return array.map { resizingSlice($0, to: size) } }
+        guard var object = node as? [String: Any] else { return node }
+        for (key, child) in object { object[key] = key == "slice_size" ? size : resizingSlice(child, to: size) }
+        return object
+    }
+}

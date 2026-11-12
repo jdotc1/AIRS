@@ -36,7 +36,7 @@ A symbol with several unsupported features can decline at the first one encounte
 
 Admitted non-throwing calls increment `non_throwing_swift_import_calls` and are skipped. Admitted throwing calls remain rows with declaration status `syntax_admitted` and `throws: true`. The fixture's `Data.init(contentsOf:options:)` is such a row. Declined symbols remain rows with declaration status `syntax_unresolved`. All retained import rows remain `unresolved` with reason `imported_callee_abi_unqualified`. Attribution and declaration syntax establish neither the callee's ABI nor which library is bound.
 
-The outer identities remain `broad-imports-v1` and `swift-broad-error-flow-imports-v1`. This profile is on main but unreleased, and the native app does not admit it yet, so its content can still settle. A later change after native admission would need a new identity.
+The outer identities remain `broad-imports-v1` and `swift-broad-error-flow-imports-v1`. The native app admits exactly this pair, so any later change to what the profile reports needs a new identity.
 
 ## Evidence and limits
 

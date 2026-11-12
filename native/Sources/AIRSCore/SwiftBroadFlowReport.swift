@@ -60,8 +60,11 @@ enum SwiftBroadFlowReport {
         func json(_ value: Any, pretty: Bool = false) throws -> Data {
             try JSONSerialization.data(withJSONObject: value, options: pretty ? [.sortedKeys, .prettyPrinted] : [.sortedKeys, .fragmentsAllowed])
         }
-        let maxCalls = object["model_version"] as? String == "swift-broad-error-flow-extended-v1"
-            && object["profile"] as? String == "broad-extended-v1" ? 8192 : maximumCalls
+        let importsProfile = object["model_version"] as? String == "swift-broad-error-flow-imports-v1"
+            && object["profile"] as? String == "broad-imports-v1"
+        let extendedProfile = object["model_version"] as? String == "swift-broad-error-flow-extended-v1"
+            && object["profile"] as? String == "broad-extended-v1"
+        let maxCalls: Int = importsProfile || extendedProfile ? 8192 : maximumCalls
         guard let model = object["model_version"] as? String,
               let identity = object["identity"] as? [String: Any],
               let architecture = identity["architecture"] as? String,
@@ -92,6 +95,12 @@ enum SwiftBroadFlowReport {
         let profilePairSupported = (model == "swift-broad-error-flow-v1" && object["profile"] as? String == "broad-v1")
             || (model == "swift-broad-error-flow-large-v1" && object["profile"] as? String == "broad-large-v1")
             || (model == "swift-broad-error-flow-extended-v1" && object["profile"] as? String == "broad-extended-v1")
+            || importsProfile
+        let importSummary: String
+        if importsProfile {
+            importSummary = try validateImportEnvelope(object, rows: rows, selected: selected, observed: observed,
+                detailsComplete: detailsComplete, limitations: limitations, boolean: boolean, count: count)
+        } else { importSummary = "" }
         let supported = profilePairSupported
             && object["witness_model_version"] as? String == "swift-outcome-witness-v2"
             && object["validation_model_version"] as? String == "swift-outcome-validation-v2"
@@ -112,6 +121,7 @@ enum SwiftBroadFlowReport {
             return boolean(record["complete"]) == true && missing.isEmpty
         }
         var seen = Set<String>(), calls: [SwiftFlowCall] = []
+        var importStubs: [UInt64: Data] = [:]
         for row in rows {
             try Task.checkCancellation()
             guard let callPC = address(row["call_pc"]), let callerPC = address(row["caller_pc"]),
@@ -127,6 +137,20 @@ enum SwiftBroadFlowReport {
                 guard try json(record).count <= 256 * 1024 else { throw fail("witness/validation exceeds 256 KiB") }
             }
             if let pc = admission?["call_pc"], unsigned(pc) != callNumber { throw fail("admission call binding mismatch") }
+            let importRow = importsProfile && admission?["model_version"] as? String == "swift-broad-import-callsite-v1"
+            var importFacts: [String] = []
+            if importsProfile {
+                if importRow, let admission {
+                    importFacts = try validateImportRow(row, admission: admission, call: callNumber,
+                        caller: callerNumber, sliceOffset: offset, sliceSize: size, stubs: &importStubs,
+                        boolean: boolean, unsigned: unsigned, count: count, nonclaims: nonclaims)
+                } else {
+                    let importKeys = ["import_attribution_admitted", "callee_stub_pc", "import_provenance", "library_ordinal"]
+                    if importKeys.contains(where: { admission?[$0] != nil }) {
+                        throw fail("import evidence without import callsite model")
+                    }
+                }
+            }
             var fullyBound = false
             if let candidate {
                 guard let binding = candidate["identity"] as? [String: Any] else { throw fail("missing candidate identity state") }
@@ -195,7 +219,9 @@ enum SwiftBroadFlowReport {
             func summary(_ text: String) -> String {
                 text.utf8.count <= 2048 ? text : String(text.prefix(512)) + " … [summary truncated; see original JSON]"
             }
-            if supported {
+            if supported && importRow {
+                facts = importFacts.map { summary($0) }
+            } else if supported {
                 for key in ["status", "reason"] { if let text = admission?[key] as? String { facts.append("Admission \(key): \(summary(text))") } }
                 for key in ["declaration", "abi"] {
                     if let value = admission?[key] as? [String: Any] { facts.append("\(key): \(summary(value["status"] as? String ?? "unavailable")) · \(summary(value["reason"] as? String ?? "see recorded details"))") }
@@ -232,8 +258,190 @@ enum SwiftBroadFlowReport {
             imageDescription: "\(architecture) · full CPU subtype \(subtype) · UUID \(uuidText) · base \(base) · slice index \(sliceIndex) of \(sliceCount) · container offset 0x\(String(offset, radix: 16)) · slice size 0x\(String(size, radix: 16)) · slice SHA256 \(sliceDigest) · container SHA256 \(containerDigest)",
             modelVersion: model, supportsInterpretation: supported, wordScanComplete: wordComplete,
             callDetailsComplete: detailsComplete, witnessesComplete: witnessesComplete, calls: calls,
-            limitations: limitations, summaryText: accounting, omittedCallCount: omitted)
+            limitations: limitations, summaryText: accounting + importSummary, omittedCallCount: omitted)
     }
+
+    private static func validateImportEnvelope(
+        _ object: [String: Any], rows: [[String: Any]], selected: Int, observed: Int,
+        detailsComplete: Bool, limitations: [String], boolean: (Any?) -> Bool?, count: (Any?) -> Int?
+    ) throws -> String {
+        func fail(_ message: String) -> SwiftFlowReportError { .invalid("broad-v1: " + message) }
+        let keys: Set<String> = ["attributed_stubs", "declined_stubs", "invalid_stub_sections",
+            "selected_import_calls", "non_throwing_swift_import_calls", "non_swift_import_calls", "declined_stub_calls"]
+        guard object["import_stub_model"] as? String == "arm64-import-stub-double-binding-v1",
+              let complete = boolean(object["import_stubs_complete"]),
+              let rawCounts = object["import_stub_counts"] as? [String: Any], Set(rawCounts.keys) == keys,
+              limitations.filter({ $0 == "imported_callees_attribution_only" }).count == 1,
+              boolean(object["call_return_proven"]) == false,
+              boolean(object["runtime_reachability_proven"]) == false else {
+            throw fail("invalid import envelope or non-claims")
+        }
+        var counts: [String: Int] = [:]
+        // Call counters can reach the imports scan limit (2,097,152 words); the stub and section
+        // counts keep their own tighter caps in the accounting check below.
+        for key in keys {
+            guard let value = count(rawCounts[key]), value <= 2_097_152 else { throw fail("invalid import count") }
+            counts[key] = value
+        }
+        let attributed = counts["attributed_stubs", default: 0]
+        let declined = counts["declined_stubs", default: 0]
+        let invalid = counts["invalid_stub_sections", default: 0]
+        let selectedImports = counts["selected_import_calls", default: 0]
+        var importRows = 0
+        for row in rows {
+            let admission = row["admission"] as? [String: Any]
+            if admission?["model_version"] as? String == "swift-broad-import-callsite-v1" { importRows += 1 }
+        }
+        guard attributed + declined <= 65_536, invalid <= 4096,
+              selectedImports <= selected, importRows <= selectedImports else { throw fail("invalid import accounting") }
+        var accounted = selected
+        for key in ["declined_stub_calls", "non_swift_import_calls", "non_throwing_swift_import_calls"] {
+            let value = counts[key, default: 0]
+            guard value <= observed - accounted else { throw fail("import calls exceed observed instructions") }
+            accounted += value
+        }
+        let state: String
+        if complete {
+            guard object["import_stub_reason"] is NSNull else { throw fail("complete import table has a reason") }
+            state = "complete"
+        } else {
+            guard let reason = object["import_stub_reason"] as? String, !reason.isEmpty, reason.utf8.count <= 256,
+                  !detailsComplete, attributed == 0, declined == 0, invalid == 0,
+                  selectedImports == 0, importRows == 0 else { throw fail("invalid incomplete import table") }
+            state = "incomplete: " + reason
+        }
+        let nonSwift = counts["non_swift_import_calls", default: 0]
+        let nonThrowing = counts["non_throwing_swift_import_calls", default: 0]
+        let declinedCalls = counts["declined_stub_calls", default: 0]
+        var summary = " · import stubs \(state)"
+        summary += " · \(attributed) attributed / \(declined) declined stubs"
+        summary += " · \(selectedImports) selected import calls"
+        summary += " · \(nonSwift)/\(nonThrowing)/\(declinedCalls) skipped"
+        return summary
+    }
+
+    private static func validateImportRow(
+        _ row: [String: Any], admission: [String: Any], call: UInt64, caller: UInt64,
+        sliceOffset: UInt64, sliceSize: UInt64, stubs: inout [UInt64: Data],
+        boolean: (Any?) -> Bool?, unsigned: (Any?) -> UInt64?, count: (Any?) -> Int?,
+        nonclaims: (Any) -> Bool
+    ) throws -> [String] {
+        func fail(_ message: String) -> SwiftFlowReportError { .invalid("broad-v1: " + message) }
+        guard row["candidate"] is NSNull, row["validation"] is NSNull,
+              admission["status"] as? String == "unresolved",
+              admission["reason"] as? String == "imported_callee_abi_unqualified",
+              let kind = admission["call_kind"] as? String, ["bl", "b"].contains(kind),
+              unsigned(admission["call_pc"]) == call, unsigned(admission["caller_start"]) == caller,
+              let stub = unsigned(admission["callee_stub_pc"]), stub % 4 == 0, stub != call,
+              let symbol = admission["symbol"] as? String, !symbol.isEmpty, symbol.utf8.count <= 4096,
+              symbol.utf8.allSatisfy({ $0 < 128 }), symbol.drop(while: { $0 == "_" }).hasPrefix("$s"),
+              let ordinal = unsigned(admission["library_ordinal"]), ordinal <= 255 else {
+            throw fail("invalid import call binding")
+        }
+        guard boolean(admission["details_complete"]) == true,
+              boolean(admission["call_return_proven"]) == false,
+              boolean(admission["syntactic_call_target_admitted"]) == false,
+              boolean(admission["import_attribution_admitted"]) == true,
+              count(admission["work_steps"]) != nil, nonclaims(admission),
+              admission["abi"] == nil, admission["callee_pc"] == nil else {
+            throw fail("invalid import attribution non-claims")
+        }
+        guard let provenance = admission["import_provenance"] as? [String: Any],
+              provenance["stub_model"] as? String == "arm64-import-stub-double-binding-v1",
+              let stubSection = provenance["stub_section"] as? String, stubSection.utf8.count <= 64,
+              let pointerSection = provenance["pointer_section"] as? String, pointerSection.utf8.count <= 64,
+              let stubIndex = unsigned(provenance["stub_index"]),
+              let symbolIndex = unsigned(provenance["symbol_index"]),
+              let pointer = unsigned(provenance["pointer_address"]), pointer % 8 == 0,
+              unsigned(provenance["stub_indirect_entry_offset"]) != nil,
+              unsigned(provenance["pointer_indirect_entry_offset"]) != nil,
+              unsigned(provenance["nlist_offset"]) != nil,
+              let words = provenance["stub_words"] as? [[String: Any]], words.count == 3 else {
+            throw fail("invalid import stub provenance")
+        }
+        var decoded: [UInt64] = []
+        var firstFileOffset: UInt64 = 0
+        for (index, word) in words.enumerated() {
+            let delta = UInt64(index * 4)
+            // The three words are consecutive, and the 12-byte stub lies inside the slice.
+            let remaining: UInt64 = 12 - delta
+            guard stub <= UInt64.max - delta, unsigned(word["pc"]) == stub + delta,
+                  let text = word["word"] as? String, text.utf8.count == 10, text.hasPrefix("0x"),
+                  text.dropFirst(2).utf8.allSatisfy({ (48...57).contains($0) || (97...102).contains($0) }),
+                  let number = UInt64(text.dropFirst(2), radix: 16),
+                  let fileOffset = unsigned(word["slice_file_offset"]),
+                  fileOffset <= sliceSize, sliceSize - fileOffset >= remaining,
+                  fileOffset <= UInt64.max - sliceOffset,
+                  unsigned(word["container_file_offset"]) == fileOffset + sliceOffset else {
+                throw fail("invalid import stub word or offset")
+            }
+            if index == 0 { firstFileOffset = fileOffset }
+            guard fileOffset >= delta, fileOffset - delta == firstFileOffset else {
+                throw fail("import stub words are not consecutive")
+            }
+            decoded.append(number)
+        }
+        // The single admitted pattern is ADRP x16; LDR x16, [x16, #imm]; BR x16.
+        let w0 = decoded[0], w1 = decoded[1], w2 = decoded[2]
+        guard w0 & 0x9f00001f == 0x90000010, w1 & 0xffc003ff == 0xf9400210,
+              w2 == 0xd61f0200 else { throw fail("invalid import stub instruction pattern") }
+        let immediateHigh: UInt64 = ((w0 >> 5) & 0x7ffff) << 2
+        let immediateLow: UInt64 = (w0 >> 29) & 3
+        var immediate = Int64(immediateHigh | immediateLow)
+        if immediate & (1 << 20) != 0 { immediate -= 1 << 21 }
+        let displacement: Int64 = immediate * 4096 + Int64(((w1 >> 10) & 0xfff) * 8)
+        let page: UInt64 = stub & ~UInt64(0xfff)
+        let slot: UInt64
+        if displacement < 0 {
+            let magnitude = UInt64(-displacement)
+            guard page >= magnitude else { throw fail("import pointer underflow") }
+            slot = page - magnitude
+        } else {
+            let magnitude = UInt64(displacement)
+            guard page <= UInt64.max - magnitude else { throw fail("import pointer overflow") }
+            slot = page + magnitude
+        }
+        guard slot == pointer, slot <= UInt64.max - 7 else { throw fail("import pointer binding mismatch") }
+        guard let declaration = admission["declaration"] as? [String: Any],
+              Set(declaration.keys) == Set(["status", "identity", "reason"]),
+              let declarationStatus = declaration["status"] as? String else { throw fail("invalid import declaration") }
+        let declarationFact: String
+        switch declarationStatus {
+        case "syntax_admitted":
+            guard let identity = declaration["identity"] as? [String: Any], declaration["reason"] is NSNull,
+                  identity["symbol"] as? String == symbol,
+                  let syntax = identity["syntax_model"] as? String else { throw fail("invalid admitted import declaration") }
+            if syntax == "swift-import-declaration-syntax-v1" {
+                guard boolean(identity["throws"]) == true else { throw fail("import declaration is not throwing") }
+                declarationFact = "Declaration syntax: syntax_admitted (throws per mangled name)"
+            } else {
+                declarationFact = "Declaration syntax: declaration syntax model unrecognized; raw only"
+            }
+        case "syntax_unresolved":
+            guard declaration["identity"] is NSNull, let reason = declaration["reason"] as? String,
+                  !reason.isEmpty, reason.utf8.count <= 256 else { throw fail("invalid unresolved import declaration") }
+            declarationFact = "Declaration syntax: syntax_unresolved · " + reason
+        default: throw fail("invalid import declaration status")
+        }
+        var binding: [String: Any] = [:]
+        binding["symbol"] = symbol
+        binding["library_ordinal"] = ordinal
+        binding["import_provenance"] = provenance
+        binding["declaration"] = declaration
+        let encoded = try JSONSerialization.data(withJSONObject: binding, options: [.sortedKeys])
+        if let previous = stubs[stub], previous != encoded { throw fail("inconsistent repeated import stub") }
+        stubs[stub] = encoded
+        let stubText = "0x" + String(stub, radix: 16)
+        let pointerText = "0x" + String(pointer, radix: 16)
+        var attribution = "Imported callee: attributed through stub \(stubText) (\(stubSection) #\(stubIndex))"
+        attribution += " · pointer \(pointerText) in \(pointerSection) · symbol index \(symbolIndex)"
+        attribution += " · library ordinal \(ordinal) (recorded; not a dyld binding)"
+        return [attribution, declarationFact,
+            "No ABI admission, outcome witness or validation was recorded for this call (attribution only).",
+            "Recorded attribution only; no source bytes were reread by this view.",
+            "Stub section bounds are not recorded; this view cannot check section containment."]
+    }
+
 }
 
 /// A lexical preflight preserving exact decoded key bytes. Foundation remains the

@@ -58,3 +58,39 @@ harness failures, not semantic RED evidence; the actual native failure establish
 the defect. Independent source review approved this one-line correction. Native
 binaries and accepted engine/corpus qualification are reused; only the changed
 app resource/provenance seal receives new signing and notarization.
+
+
+## Imported callee profile admission
+
+The native adapter now recognizes the exact `swift-broad-error-flow-imports-v1` /
+`broad-imports-v1` pair with the 8,192-call envelope. Import table counts,
+completeness, declaration states, non-claims and repeated-stub bindings are
+validated before presentation. Recorded ADRP/LDR/BR words must match the stub
+model and derive the recorded pointer address with bounded arithmetic. This is
+record consistency, not a fresh source-byte or section-containment check.
+
+Import rows remain unresolved, without ABI admission, outcome witnesses,
+validation or eligibility. The header includes import completeness and counters;
+details show attribution, declaration syntax and its limitations. Unknown
+declaration syntax models retain raw evidence without a throwing interpretation.
+Earlier profiles retain their existing decoding and presentation. Workspace
+model pinning and historical imports use the profile registry; Swift flow runs
+have no analysis-reuse path.
+
+Import call counters are accepted up to the profile's scan limit of 2,097,152
+words; stub and section counts keep their own tighter caps. A recorded stub must
+lie wholly inside the slice, and its three words must be consecutive in the file.
+
+Results for this change, each run once on the final source: the native package
+built; `SwiftBroadFlowReportTests` passed (36 tests), including the counter
+limit, a stub ending exactly at the slice end and one byte past it, and
+non-consecutive stub words; `SwiftBroadWorkspaceTests` passed (16 tests); and
+`tests/test_swift_broad_native_parity.py` passed (4 tests), which compares the
+native identity, reason and limit literals with the engine's. The admission and
+refusal tests were written independently of the implementation. An independent
+source review preceded the final run; the three boundary tests named above were
+added in response to it and are not independently authored.
+
+Not done for this change: app launch, real-input acceptance, packaging and any
+distribution check. The consistency checks above read the report only; they do
+not re-read the analysed file.
