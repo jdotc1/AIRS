@@ -1011,9 +1011,13 @@ final class AIRSFileOpen {
         case .assessments,.componentReview,.securityDelta: throw InspectionArchiveError.invalid
         }
         let digest=AssessmentDocument.digest(data),prefix=String(digest.prefix(32))
-        let parts=[String(prefix.prefix(8)),String(prefix.dropFirst(8).prefix(4)),String(prefix.dropFirst(12).prefix(4)),String(prefix.dropFirst(16).prefix(4)),String(prefix.dropFirst(20))]
+        // Fixed 8-4-4-4-rest grouping of the first 32 digest characters. Keep each group a
+        // small typed call: one array literal of five String(Substring) conversions was
+        // slow to type-check.
+        func group(_ offset:Int,_ length:Int) -> String {String(prefix.dropFirst(offset).prefix(length))}
+        let parts:[String]=[group(0,8),group(8,4),group(12,4),group(16,4),group(20,Int.max)]
         let name=parts.joined(separator:"-")
-        guard let id=UUID(uuidString:String(name)) else {throw InspectionArchiveError.invalid}
+        guard let id=UUID(uuidString:name) else {throw InspectionArchiveError.invalid}
         // Stable wrapper identity keeps repeated raw-document imports idempotent.
         return try InspectionArchive(attachments:[.init(id:id,kind:kind,schemaVersion:1,mediaType:"application/json",sha256:digest,byteCount:data.count,bytes:data)],
             components: componentIDs.map { .init(id: $0, evidenceIDs: [id]) }).encode()

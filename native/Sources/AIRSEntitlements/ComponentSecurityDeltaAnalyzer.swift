@@ -25,27 +25,32 @@ public enum ComponentSecurityDeltaAnalyzer {
                 throw SecurityDeltaRefusal(.duplicateComponentIdentity)
             }
         }
+        // Two guards of three comparisons each keep every condition list short for the type
+        // checker. Both throw the same refusal, in the same order as one six-term guard.
         guard review.previousDeclarations.count <= 384, review.currentDeclarations.count <= 384,
-              review.entitlementResults.count <= 128, input.signatureEvidence.count <= 128, input.entitlementEvidence.count <= 128, input.signatureRefusals.count <= 128 else { throw SecurityDeltaRefusal(.sourceRecordLimit) }
+              review.entitlementResults.count <= 128 else { throw SecurityDeltaRefusal(.sourceRecordLimit) }
+        guard input.signatureEvidence.count <= 128, input.entitlementEvidence.count <= 128,
+              input.signatureRefusals.count <= 128 else { throw SecurityDeltaRefusal(.sourceRecordLimit) }
+        let retainedByteLimit: Int = 32 * 1_048_576
         var retainedBytes = 0
         for side in [review.previousDeclarations, review.currentDeclarations] {
             for item in side {
                 let count = item.bytes?.count ?? 0
-                guard count <= 32 * 1_048_576 - retainedBytes else { throw SecurityDeltaRefusal(.retainedByteLimit) }
+                guard count <= retainedByteLimit - retainedBytes else { throw SecurityDeltaRefusal(.retainedByteLimit) }
                 retainedBytes += count
             }
         }
         for item in input.signatureEvidence {
-            guard item.sourceBytes.count <= 32 * 1_048_576 - retainedBytes else { throw SecurityDeltaRefusal(.retainedByteLimit) }
+            guard item.sourceBytes.count <= retainedByteLimit - retainedBytes else { throw SecurityDeltaRefusal(.retainedByteLimit) }
             retainedBytes += item.sourceBytes.count
         }
         for item in input.entitlementEvidence {
-            guard item.sourceBytes.count <= 32 * 1_048_576 - retainedBytes else { throw SecurityDeltaRefusal(.retainedByteLimit) }
+            guard item.sourceBytes.count <= retainedByteLimit - retainedBytes else { throw SecurityDeltaRefusal(.retainedByteLimit) }
             retainedBytes += item.sourceBytes.count
             if let value = item.values { try value.validate(maxNodes: 10_000, maxBytes: 8 * 1_048_576) }
         }
         for item in input.signatureRefusals {
-            guard item.sourceBytes.count <= 32 * 1_048_576 - retainedBytes else { throw SecurityDeltaRefusal(.retainedByteLimit) }
+            guard item.sourceBytes.count <= retainedByteLimit - retainedBytes else { throw SecurityDeltaRefusal(.retainedByteLimit) }
             retainedBytes += item.sourceBytes.count
         }
         var remainingNodes = 100_000, remainingValueBytes = 16 * 1_048_576
@@ -166,7 +171,7 @@ public enum ComponentSecurityDeltaAnalyzer {
         // records and category evidence. This is not verification of original files.
         var basisHasher = SHA256(), basisBytes = 0
         func appendBasis(_ bytes: Data) throws {
-            guard bytes.count <= 32 * 1_048_576 - basisBytes else { throw SecurityDeltaRefusal(.retainedByteLimit) }
+            guard bytes.count <= retainedByteLimit - basisBytes else { throw SecurityDeltaRefusal(.retainedByteLimit) }
             basisBytes += bytes.count
             var length = UInt64(bytes.count).bigEndian
             withUnsafeBytes(of: &length) { basisHasher.update(data: Data($0)) }

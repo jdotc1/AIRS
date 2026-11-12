@@ -37,13 +37,18 @@ struct AIRSApp: App {
             fatalError("Isolated Settings review rejected: \(error); no production fallback")
         }
         settingsReview = review
-        _normalEntitlements = State(initialValue: review == nil ? EntitlementsWorkspace() : nil)
-        _normalFileOpen = State(initialValue: review == nil ? AIRSFileOpen() : nil)
-        LumenThemeStore.install(LumenThemeStore(registry: LumenRegistry(packs: [.core]),
-            configuration: LumenStoreConfiguration(appName: "AIRS",
-                themesDirectory: review?.root.appendingPathComponent("themes", isDirectory: true),
-                defaultThemeID: LumenThemes.standardID,
-                defaultsSuiteName: review.map { $0.suite + ".lumen" })))
+        // Typed intermediate values keep each statement a small, separate type-check.
+        let isNormalRun: Bool = review == nil
+        let normalEntitlementsValue: EntitlementsWorkspace? = isNormalRun ? EntitlementsWorkspace() : nil
+        _normalEntitlements = State(initialValue: normalEntitlementsValue)
+        let normalFileOpenValue: AIRSFileOpen? = isNormalRun ? AIRSFileOpen() : nil
+        _normalFileOpen = State(initialValue: normalFileOpenValue)
+        let lumenRegistry = LumenRegistry(packs: [.core])
+        let themesDirectory: URL? = review?.root.appendingPathComponent("themes", isDirectory: true)
+        let defaultsSuiteName: String? = review.map { $0.suite + ".lumen" }
+        let lumenConfiguration = LumenStoreConfiguration(appName: "AIRS", themesDirectory: themesDirectory,
+            defaultThemeID: LumenThemes.standardID, defaultsSuiteName: defaultsSuiteName)
+        LumenThemeStore.install(LumenThemeStore(registry: lumenRegistry, configuration: lumenConfiguration))
         #if DEBUG
         // Process-local review only; never changes system appearance or saved preferences.
         if ProcessInfo.processInfo.environment["AIRS_UI_REVIEW_APPEARANCE"] == "dark" {

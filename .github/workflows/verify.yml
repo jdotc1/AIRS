@@ -93,8 +93,8 @@ jobs:
         id: native_build
         run: |
           set -o pipefail
-          xcrun swift build --package-path native --configuration release --product AIRSApp 2>&1 | tee build/verification/native-app-build.log
-          xcrun swift build --package-path native --configuration release --product airs-entitlements 2>&1 | tee build/verification/native-cli-build.log
+          xcrun swift build --package-path native --configuration release --product AIRSApp -Xswiftc -Xfrontend -Xswiftc -warn-long-expression-type-checking=300 -Xswiftc -Xfrontend -Xswiftc -warn-long-function-bodies=300 2>&1 | tee build/verification/native-app-build.log
+          xcrun swift build --package-path native --configuration release --product airs-entitlements -Xswiftc -Xfrontend -Xswiftc -warn-long-expression-type-checking=300 -Xswiftc -Xfrontend -Xswiftc -warn-long-function-bodies=300 2>&1 | tee build/verification/native-cli-build.log
       - name: Run sequential native tests
         id: native_tests
         env:

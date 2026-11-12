@@ -58,8 +58,12 @@ export AIRS_PYTHON="$PYTHON_EXECUTABLE"
 swift --version
 /usr/bin/xcrun --show-sdk-path
 "$PYTHON_EXECUTABLE" -I "$PROJECT_DIR/airs_cli.py" --version
-swift build --package-path "$PROJECT_DIR/native" --configuration debug --product AIRSApp
-swift test --package-path "$PROJECT_DIR/native" --configuration debug
+# Report any expression or function body that takes 300 ms or more to type-check
+# (warnings only, never errors). Keep the flags identical on both commands.
+TYPECHECK_BUDGET_FLAGS=(-Xswiftc -Xfrontend -Xswiftc -warn-long-expression-type-checking=300
+                        -Xswiftc -Xfrontend -Xswiftc -warn-long-function-bodies=300)
+swift build --package-path "$PROJECT_DIR/native" --configuration debug --product AIRSApp "${TYPECHECK_BUDGET_FLAGS[@]}"
+swift test --package-path "$PROJECT_DIR/native" --configuration debug "${TYPECHECK_BUDGET_FLAGS[@]}"
 
 # Python tests are stdlib unittest; keep their discovery rooted in this checkout.
 (
