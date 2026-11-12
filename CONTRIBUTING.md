@@ -17,8 +17,11 @@ Validate changed behavior and retain existing valid receipts for unchanged input
 Native UI fixes require stable interaction acceptance after pending work settles;
 compile-only or immediate selection evidence is insufficient. Source checks, GUI
 acceptance, signing/notarization and release publication remain distinct gates.
-Do not represent a skipped workflow as a passed workflow. See docs/ANALYSIS_CONTRACT.md
-and docs/RELEASE_VERIFICATION.md for the retained product and distribution contracts.
+Do not represent a skipped workflow as a passed workflow. Do not put `[skip ci]` or
+another workflow-skip token in a commit message or pull-request title when the
+change touches source or lands on main, because it can stop the publication gate
+and source verification from running. See docs/ANALYSIS_CONTRACT.md and
+docs/RELEASE_VERIFICATION.md for the retained product and distribution contracts.
 
 Ordinary development does not authorize a binary release. Public binary releases
 require their own reviewed artifact identity and acceptance. Keep account and

@@ -127,6 +127,30 @@ refuses stale receipts rather than silently rescanning sealed assets. An accepte
 baseline must come from retained evidence; choosing an unchecked baseline would
 omit it from the range and is prohibited.
 
+## Continuous integration check
+
+`.github/workflows/publication-gate.yml` runs `scripts/publication_gate.py` in
+range mode on pull requests and on pushes to `main`. For each commit from the
+merge base to the head (for a push, the merge base with the previous tip) it
+checks identities, messages and trailers, file names and changed blobs, plus the
+pull request title, body and branch name. The gate needs no receipt, local
+configuration or network. The job runs the gate as it exists at the pull-request
+base commit (for a push, the previous tip), so a change under review cannot
+weaken the gate that scans it.
+
+It is a backstop, not a pre-exposure control or a clearance:
+
+- A pull-request branch is public before the job runs.
+- GitHub composes a squash or merge commit after the pull-request job, so text
+  added only there is seen by the later push job, after the fact.
+- Existing history on `main` (commits at or before the base) is not scanned.
+- GitHub starts no push or pull_request workflow for a head commit whose
+  message carries a skip token such as `[skip ci]`; that commit is not scanned.
+  Do not use one on a commit that changes source or lands on `main`.
+- The trusted copy protects the gate script, not the workflow, which a pull
+  request can edit. Enforcement needs a required status check and restricted
+  ownership of `.github/`, which are repository settings, not set by this file.
+
 ## Qualification and remaining limits
 
 Eighteen focused publication-tooling tests cover path classes, credentials,
