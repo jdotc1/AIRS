@@ -1,7 +1,8 @@
 """Owned synthetic fixtures for broad-imports-v1 and airs.macho_stubs.
 
-Expectations derive from local-evidence/broad-imported-stubs/CONTRACT.md and
-from the independent byte layout in stub_image_helpers (documented there).
+Expectations derive from the written contract for the profile (summarised in
+docs/SWIFT_BROAD_IMPORTS_PROFILE.md) and from the independent byte layout in
+stub_image_helpers (documented there).
 Addresses and offsets below are hand-derived from that layout, never copied
 from implementation output. No image is executed.
 """
