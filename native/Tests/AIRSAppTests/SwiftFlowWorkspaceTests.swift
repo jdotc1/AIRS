@@ -116,6 +116,28 @@ final class SwiftFlowWorkspaceTests: XCTestCase {
         XCTAssertEqual(try Data(contentsOf: second), Data([2]))
     }
 
+    @MainActor func testExportRefusesSelectedAppUnderAnotherSpellingOfItsFolder() async throws {
+        let short = FileManager.default.temporaryDirectory.appendingPathComponent("airs-flow-alias-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: short, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: short) }
+        let pointer = try XCTUnwrap(realpath(short.path, nil)); defer { free(pointer) }
+        let long = URL(fileURLWithPath: String(cString: pointer), isDirectory: true)
+        try XCTSkipIf(long.path == short.path, "temporary folder has no aliased ancestor here")
+        let saved = short.appendingPathComponent("saved.json")
+        let data = try fixture(); try data.write(to: saved)
+        try FileManager.default.createDirectory(at: short.appendingPathComponent("Selected.app/Contents"), withIntermediateDirectories: true)
+        let workspace = SwiftFlowWorkspace(execute: { _, _, _ in data })
+        workspace.importReport(saved); await workspace.waitUntilSettled()
+        for (base, alternate) in [(short, long), (long, short)] {
+            workspace.selectInput(base.appendingPathComponent("Selected.app", isDirectory: true))
+            let nested = alternate.appendingPathComponent("Selected.app/Contents/report.json")
+            XCTAssertThrowsError(try workspace.export(to: nested))
+            XCTAssertFalse(FileManager.default.fileExists(atPath: nested.path))
+            let outside = alternate.appendingPathComponent("outside-\(UUID().uuidString).json")
+            XCTAssertNoThrow(try workspace.export(to: outside))
+            XCTAssertTrue(FileManager.default.fileExists(atPath: outside.path))
+        }
+    }
     @MainActor func testCentralAndDelegateFileOpeningRefuseDuringSwiftJob() async throws {
         let workspace = SwiftFlowWorkspace(execute: { _, _, _ in try await Task.sleep(for: .seconds(20)); return Data() })
         let navigation = AIRSNavigation(swiftFlow: workspace)
