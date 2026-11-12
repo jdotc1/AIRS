@@ -86,12 +86,14 @@ class B11MeasuringContractTests(unittest.TestCase):
         self.assertTrue(evidence['checked_cfg']);self.assertFalse(evidence['source_semantics_recovered'])
 
     def test_absence_needs_index_and_complete_matching_caller_bytes(self):
-        row=dict(capture='primary',mode='O',feature='indexed_owned_call_absence',
+        row=dict(capture='primary',mode='O',feature='owned_source_callee_call_absence',
             source_callers=[dict(case_id='new-absence',caller='broad_caller_0001_0',source_geometry='inline_absence_challenge')])
         before=h.required_challenge_dispositions(row)[0]
         self.assertEqual(before['disposition'],'unproven');self.assertFalse(before['actual_form_observed'])
         row['absence_callers']=[dict(caller_token='broad_caller_0001_0',caller_pc='0x3000',complete=True,
             call_instruction_count=0,extent_evidence=[dict(pc='0x3000',word='0xd65f03c0')])]
+        self.assertEqual(h.required_challenge_dispositions(row)[0]['disposition'],'unproven')
+        row['complete']=True
         after=h.required_challenge_dispositions(row)[0]
         self.assertEqual(after['disposition'],'observed');self.assertTrue(after['actual_form_observed'])
         self.assertIn('cause unproven',after['reason'])

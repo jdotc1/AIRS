@@ -515,7 +515,8 @@ class LargeEvidenceSupplementTests(unittest.TestCase):
         with self.assertRaises(p.PackageError):p.supplemental_lineage(qualification,receipt)
 
     def test_supplemental_views_and_digest_labels_preserve_full_evidence_without_hashing(self):
-        with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1]/'local-evidence') as tmp:
+        evidence=Path(__file__).resolve().parents[1]/'local-evidence';evidence.mkdir(exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=evidence) as tmp:
             root=Path(tmp);receipt=self.receipt()
             (root/'SupplementalOwnedChallenges.swift').write_text('public func owned() {}\n')
             for name in ('source-manifest.json','compiler-index.json'):
@@ -524,6 +525,7 @@ class LargeEvidenceSupplementTests(unittest.TestCase):
                 row['command']=[receipt['swiftc'],'-sdk',receipt['sdk'],'-'+mode,str(root/'SupplementalOwnedChallenges.swift'),'-o',str(root/row['library'])]
                 row['custody_after']={'dev':1,'ino':2}
                 for kind in ('nm','objdump'):(root/f'{kind}-{mode}.txt').write_text(str(root/row['library'])+' raw observation\n')
+                (root/f'compile-{mode}.log').write_text(str(root/'SupplementalOwnedChallenges.swift')+': recorded diagnostic\n')
             replacements=p.relocations({'supplemental':root},{'supplemental':receipt},{})
             budget=p.EvidenceBudget();payload=p.EvidencePayload(budget)
             with patch('hashlib.sha256',side_effect=AssertionError('no hashes')):
