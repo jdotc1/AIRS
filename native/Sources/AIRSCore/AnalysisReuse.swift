@@ -59,7 +59,7 @@ public actor AnalysisReuse {
                 guard count <= 8192 else { return nil }
                 let values = try file.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey])
                 if values.isSymbolicLink == true {
-                    guard file.resolvingSymlinksInPath().path.hasPrefix(folder.path + "/") else { return nil }
+                    guard file.resolvingSymlinksInPath().path.hasPrefix(folder.resolvingSymlinksInPath().path + "/") else { return nil }
                     links.append(file.path + "=" + (try FileManager.default.destinationOfSymbolicLink(atPath: file.path)))
                     continue
                 }
