@@ -1212,12 +1212,33 @@ class BoundedAndTotalTests(GotTestCase):
                     self.assertEqual(found[0], 'declined')
                     self.assertIs(type(found[1]), str)
 
-    def test_classify_every_pc_never_raises(self):
+    def test_classify_every_pc_has_valid_shape_and_only_expected_blr_is_attributed(self):
         data, layout = build_got_image((default_call(), (NOP, ('b', ('word', 0, 0)), RET)))
         image, table = table_of(data)
+        attributed = []
         for function in image.functions:
             for pc in range(function.start - 8, function.end + 8):
-                table.classify(function, pc)
+                with self.subTest(function=function.start, pc=pc):
+                    result = table.classify(function, pc)
+                    if result is None:
+                        continue
+                    self.assertIs(type(result), tuple)
+                    self.assertEqual(len(result), 2)
+                    kind, payload = result
+                    self.assertIn(kind, {'declined', 'attributed'})
+                    if kind == 'declined':
+                        self.assertIs(type(payload), str)
+                    else:
+                        self.assertIs(type(payload), GotCall)
+                        self.assertEqual(payload.call_pc, pc)
+                    offset = pc - layout.text_addr
+                    is_blr = (0 <= offset <= layout.text_size - 4 and offset % 4 == 0
+                              and (u32(data, layout.text_off + offset) & 0xFFFFFC1F) == 0xD63F0000)
+                    if not is_blr:
+                        self.assertNotEqual(kind, 'attributed')
+                    if kind == 'attributed':
+                        attributed.append((function.start, pc))
+        self.assertEqual(attributed, [(layout.caller_addrs[0], layout.word_addr(0, 2))])
 
 
 if __name__ == '__main__':
