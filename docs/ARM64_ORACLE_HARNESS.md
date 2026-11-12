@@ -60,4 +60,36 @@ Only `invalid_*` error codes are validity claims. A gap in the script's kind tab
 - Refusals are allowed, so SCOPE-DECLINE is not a defect.
 - It does not validate the oracle; validity depends on the oracle's extensions.
 - No vector file or disassembler output is vendored here.
-- A full run over the real vectors is recorded separately as its own evidence.
+- A full run over the real vectors is recorded below as its own evidence.
+
+## First full run
+
+Made on 2026-11-12 with the engine source at commit f5eefd5 and Python 3.15.2, over
+all six vector files (34,863 rows, 34,761 distinct instruction words). All six input
+pins matched and no row was malformed. The run used 0.6 seconds of CPU time.
+
+| Class | CFG decoder | Linear decoder |
+| --- | ---: | ---: |
+| AGREE | 1,747 | 825 |
+| AGREE-REJECT | 128 | 0 |
+| BOTH-REJECT | 10,386 | 10,514 |
+| SCOPE-DECLINE | 22,500 | 23,422 |
+| Blocking rows | 0 | 0 |
+
+The AGREE-REJECT reasons are `invalid_bitfield_encoding` (63),
+`invalid_extract_encoding` (43), `invalid_logical_immediate` (15) and
+`invalid_movk_shift` (7).
+
+What the run leaves open:
+
+- Six kinds the CFG decoder supports never reach AGREE in these vectors (`ret`,
+  `smsubl`, `wldr`, `wlsl`, `wsdiv`, `wstr`), and one for the linear decoder (`ret`).
+  Whether the vectors lack an accepted form of them or the script's kind table sends
+  them to SCOPE-DECLINE has not been examined. Until it is, the result says nothing
+  about those kinds.
+- About 65% of the rows are SCOPE-DECLINE. The run checks the subset the decoders
+  claim and nothing beyond it.
+- 19 words differ in validity between oracle files. The summary reports them and
+  they block nothing.
+
+The vectors and the run's output are not stored in this repository.

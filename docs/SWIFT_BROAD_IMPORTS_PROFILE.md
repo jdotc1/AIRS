@@ -62,3 +62,23 @@ The new synthetic tests are in `tests/test_swift_broad_imports.py`, 48 methods i
 The 54 calls to stubs split into 27 `$s` calls and 27 Swift-runtime calls. The 27 runtime calls are counted as non-Swift. The 19 distinct `$s` symbols split into 10 admitted non-throwing, 1 admitted throwing and 8 declined. Their 27 call sites produce 12 selected rows and 15 skipped non-throwing calls, replacing the previous 27 rows and 0 skipped calls. All 7 calls whose demangled name contains `throws` remain rows. The Data initializer row is `syntax_admitted` with `throws: true`; declined declarations are `syntax_unresolved`. The binary is never executed. This is one owned case, not real-app or runtime qualification.
 
 See [Imported Swift declaration syntax](SWIFT_IMPORT_DECLARATIONS.md) for the closed grammar, decline reasons, evidence and residual symbol-override hazard. The syntax model is `swift-import-declaration-syntax-v1`. The outer profile and model identities were retained while the declaration grammar settled before native admission; subsequent semantic changes require a new identity.
+
+## Real-input measurement
+
+One third-party application was measured on 2026-11-12 with the engine source at commit f5eefd5 and Python 3.15.2: Maccy 2.8.0, from the release archive whose SHA-256 is recorded in `docs/security-delta-real-corpus/cases/p0deje.maccy.2.7.1-to-2.8.0.json`. The ARM64 slice has 393,880 instruction words and 55,863 call instructions. The binary was read as data and never executed. This is a measurement of attribution on one input. It is not a correctness claim and not prevalence.
+
+| | `broad-extended-v1` | `broad-imports-v1` | `broad-imports-got-v1` |
+| --- | ---: | ---: | ---: |
+| Candidates | 5,263 | 12,690 | 11,241 |
+| Retained rows (limit 8,192) | 5,263 | 8,192 | 8,192 |
+| Omitted by the limit | 0 | 4,498 | 3,049 |
+| Retained `imported_callee_abi_unqualified` | 0 | 5,123 | 5,809 |
+| Retained `indirect_target_unresolved` | 5,263 | 3,069 | 2,383 |
+
+The extended-profile figures equal the ones recorded for build 32. With the imports profile, all 1,219 stubs were attributed and none declined. Calls through stubs split into 23,615 to non-Swift symbols, 3,145 to Swift symbols admitted as non-throwing (skipped) and 7,427 selected as rows. With the GOT profile, 2,140 GOT slots were read (1,893 agreeing, 247 declined) and 1,449 of 3,200 GOT candidates were attributed, all to non-Swift symbols; 1,746 of the 1,751 declines are `got_base_not_adrp`.
+
+Because rows were omitted, both imports runs report incomplete call details and exit with status 1, as designed.
+
+Declaration syntax of the retained imported-callee rows (imports profile / GOT profile): admitted 4 / 4; unresolved 5,119 / 5,805. The unresolved reasons are generic requirements 1,742 / 1,984, unknown substitution 1,679 / 1,971, unsupported production 1,129 / 1,240, protocol context 438 / 471, unconsumed suffix 71 / 71, invalid grammar 27 / 31, thunk or specialization 17 / 17 and closure type 16 / 20.
+
+What this shows: stub attribution and the non-throwing skip work on a real application. The declaration grammar admits almost none of the symbols that remain, the retention limit is exceeded, and every retained row is still unresolved. [ROADMAP.md](ROADMAP.md) section 4.3 is the plan that follows from it.
