@@ -112,6 +112,12 @@ Advanced Swift error-flow adaptation is specified in
 `docs/PORTING_SWIFT_OUTCOMES_TO_MACSCOPE.md`. It has separate model, byte-admission
 and qualification requirements; the component-security contract above is preserved.
 
+## Separate imported-callee attribution note
+
+Stub attribution, imported declaration syntax and GOT-loaded call attribution are
+described in `docs/PORTING_SWIFT_IMPORTS_TO_MACSCOPE.md`. It is attribution only and has
+its own model identities, limits and refusal reasons.
+
 ## Real-release qualification replay
 
 The independent corpus protocol, source manifests, owned mutations and host replay
