@@ -258,8 +258,9 @@ ranking. Until the ranking exists the chain is treated as complete.
 3. Keep the engine at most one capability ahead of the application. The GOT profile
    is engine-only today; its successor in section 4.3 is admitted natively before
    another engine-only capability is added.
-4. Generate the Python and Swift model registries from one file, so that parity is a
-   build fact and not a test that has to be amended by hand.
+4. Done. Python and Swift model registries are generated from `registry/models.json`,
+   including exact broad-profile admission pairs. Tests reject stale generated files
+   and check the engine and application bindings.
 5. Qualify changed user interactions: picker suppression and historical-panel GUI
    acceptance for settled project companions remain incomplete.
 

@@ -1,3 +1,4 @@
+# Generated from registry/models.json; do not edit by hand.
 """Exact historical report-admission identities, independent of engine capability.
 
 Unknown labels keep generic import validation. Never infer admission from a
@@ -56,5 +57,14 @@ CFG_MODELS = frozenset((
     'arm64-bounded-extract-class-v51',
     'arm64-bounded-cfi-control-v36',
 ))
-KNOWN_MODELS = CFG_MODELS | frozenset(("arm64-linear-v1", "arm64-linear-dwarf-v2"))
-EVALUATED_CFI_MODELS = CFG_MODELS | frozenset(("arm64-linear-dwarf-v2",))
+KNOWN_MODELS = CFG_MODELS | frozenset(('arm64-linear-v1', 'arm64-linear-dwarf-v2'))
+EVALUATED_CFI_MODELS = CFG_MODELS | frozenset(('arm64-linear-dwarf-v2',))
+CURRENT_MODEL = 'arm64-bounded-extract-class-v51'
+SWIFT_BROAD_PAIRS = (
+    ('swift-broad-error-flow-v1', 'broad-v1'),
+    ('swift-broad-error-flow-large-v1', 'broad-large-v1'),
+    ('swift-broad-error-flow-extended-v1', 'broad-extended-v1'),
+    ('swift-broad-error-flow-imports-v1', 'broad-imports-v1'),
+    ('swift-broad-error-flow-imports-got-v1', 'broad-imports-got-v1'),
+)
+SWIFT_BROAD_ENGINE_ONLY_PROFILES = frozenset(('broad-imports-got-v1',))
