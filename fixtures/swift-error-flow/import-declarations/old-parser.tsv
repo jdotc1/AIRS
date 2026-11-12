@@ -1,0 +1,514 @@
+mangled	supported	reason	offset	detail	identity_json
+$s9OracleLib11EnumRawQ016O8rawValueACSgSi_tcfC	false	closure_type	43	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib11EnumRawQ016O8rawValueSivg	false	unsupported_production	38	unsupported grammar operator: v	
+$s9OracleLib11EnumRawQ016OMa	false	invalid_grammar	26	expected identifier literal length	
+$s9OracleLib11GenInitQ380V4Q381ACx_tKclufC	false	closure_type	37	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib11GenInitQ380V4Q382ACx_tYaKcAA15HelperProtoQ901RzlufC	false	async_context	36	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib11GenInitQ380V4Q382ACx_tYaKcAA15HelperProtoQ901RzlufCTu	false	async_context	36	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib11GenInitQ380VMa	false	invalid_grammar	26	expected identifier literal length	
+$s9OracleLib12ClassSubQ008CMa	false	invalid_grammar	27	expected identifier literal length	
+$s9OracleLib12ClassSubQ008CfD	false	invalid_grammar	27	expected identifier literal length	
+$s9OracleLib12ClassSubQ008Cfd	false	invalid_grammar	27	expected identifier literal length	
+$s9OracleLib12InitEnumQ122O21__derived_enum_equalsySbAC_ACtFZ	true		0		{"callable_kind":"static_method","context":[{"kind":"enum","name":"InitEnumQ122"}],"function_name":"__derived_enum_equals","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[null,null],"parameter_types":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"OracleLib.InitEnumQ122","nominal_kind":"enum"},{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"OracleLib.InitEnumQ122","nominal_kind":"enum"}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Bool","nominal_kind":"struct"},"specialization":null,"symbol":"$s9OracleLib12InitEnumQ122O21__derived_enum_equalsySbAC_ACtFZ","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib12InitEnumQ122O4Q123ACSi_tcfC	false	closure_type	38	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib12InitEnumQ122O4Q124ACSS_tKcfC	false	closure_type	39	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib12InitEnumQ122O4hash4intoys6HasherVz_tF	false	unsupported_production	46	unsupported Swift nominal type	
+$s9OracleLib12InitEnumQ122O9hashValueSivg	false	unsupported_production	40	unsupported grammar operator: v	
+$s9OracleLib12InitEnumQ122OMa	false	invalid_grammar	27	expected identifier literal length	
+$s9OracleLib12LazyHostQ373C018$__lazy_storage_$_F7VarQ37433_8EB33C0B6A84A68AB098D323AC6324B2LLSiSgvpfi	false	invalid_grammar	57	invalid expanded identifier	
+$s9OracleLib12LazyHostQ373C11lazyVarQ374SivM	false	unsupported_production	43	unsupported grammar operator: v	
+$s9OracleLib12LazyHostQ373C11lazyVarQ374SivMTq	false	unsupported_production	43	unsupported grammar operator: v	
+$s9OracleLib12LazyHostQ373C11lazyVarQ374Sivg	false	unsupported_production	43	unsupported grammar operator: v	
+$s9OracleLib12LazyHostQ373C11lazyVarQ374SivgTq	false	unsupported_production	43	unsupported grammar operator: v	
+$s9OracleLib12LazyHostQ373C11lazyVarQ374Sivs	false	unsupported_production	43	unsupported grammar operator: v	
+$s9OracleLib12LazyHostQ373C11lazyVarQ374SivsTq	false	unsupported_production	43	unsupported grammar operator: v	
+$s9OracleLib12LazyHostQ373CMa	false	invalid_grammar	27	expected identifier literal length	
+$s9OracleLib12LazyHostQ373CfD	false	invalid_grammar	27	expected identifier literal length	
+$s9OracleLib12LazyHostQ373Cfd	false	invalid_grammar	27	expected identifier literal length	
+$s9OracleLib12PropHostQ020V10getSetQ023SivM	false	unsupported_production	42	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V10getSetQ023Sivg	false	unsupported_production	42	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V10getSetQ023Sivs	false	unsupported_production	42	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V10modifyQ027SivM	false	unsupported_production	42	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V10modifyQ027Sivg	false	unsupported_production	42	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V10modifyQ027Sivs	false	unsupported_production	42	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V12observedQ025SivM	false	unsupported_production	44	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V12observedQ025Sivg	false	unsupported_production	44	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V12observedQ025Sivpfi	false	unsupported_production	44	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V12observedQ025Sivs	false	unsupported_production	44	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V13staticGetQ022SivgZ	false	unsupported_production	45	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V13staticLetQ033Sivau	false	unsupported_production	45	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V13staticLetQ033SivgZ	false	unsupported_production	45	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V14closureOptQ031SiyKcSgvM	false	closure_type	47	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib12PropHostQ020V14closureOptQ031SiyKcSgvg	false	closure_type	47	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib12PropHostQ020V14closureOptQ031SiyKcSgvpfi	false	closure_type	47	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib12PropHostQ020V14closureOptQ031SiyKcSgvs	false	closure_type	47	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib12PropHostQ020V14getterOnlyQ021Sivg	false	unsupported_production	46	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V16closureAsyncQ030yyYacvM	false	async_context	47	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib12PropHostQ020V16closureAsyncQ030yyYacvg	false	async_context	47	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib12PropHostQ020V16closureAsyncQ030yyYacvpfi	false	async_context	47	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib12PropHostQ020V16closureAsyncQ030yyYacvs	false	async_context	47	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib12PropHostQ020V16staticGetSetQ024SivMZ	false	unsupported_production	48	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V16staticGetSetQ024SivgZ	false	unsupported_production	48	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V16staticGetSetQ024SivsZ	false	unsupported_production	48	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V16staticStoredQ032SivMZ	false	unsupported_production	48	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V16staticStoredQ032Sivau	false	unsupported_production	48	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V16staticStoredQ032SivgZ	false	unsupported_production	48	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V16staticStoredQ032SivsZ	false	unsupported_production	48	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V16willObservedQ026SivM	false	unsupported_production	48	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V16willObservedQ026Sivg	false	unsupported_production	48	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V16willObservedQ026Sivpfi	false	unsupported_production	48	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V16willObservedQ026Sivs	false	unsupported_production	48	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V17closureThrowsQ029yyKcvM	false	closure_type	49	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib12PropHostQ020V17closureThrowsQ029yyKcvg	false	closure_type	49	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib12PropHostQ020V17closureThrowsQ029yyKcvpfi	false	closure_type	49	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib12PropHostQ020V17closureThrowsQ029yyKcvs	false	closure_type	49	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib12PropHostQ020V8readQ028Sivg	false	unsupported_production	39	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020V8readQ028Sivr	false	unsupported_production	39	unsupported grammar operator: v	
+$s9OracleLib12PropHostQ020VMa	false	invalid_grammar	27	expected identifier literal length	
+$s9OracleLib12ProtoReqQ062PAAE12protoExtQ087S2i_tcig	false	protocol_context	26	protocol declaration/requirement needs separate qualification	
+$s9OracleLib12ProtoReqQ062PAAE14protoExtFnQ078yyF	false	protocol_context	26	protocol declaration/requirement needs separate qualification	
+$s9OracleLib12ProtoReqQ062PAAE15protoExtGetQ081Sivg	false	protocol_context	26	protocol declaration/requirement needs separate qualification	
+$s9OracleLib12ProtoReqQ062PAAE17protoExtAsyncQ080yyYaF	false	protocol_context	26	protocol declaration/requirement needs separate qualification	
+$s9OracleLib12ProtoReqQ062PAAE17protoExtAsyncQ080yyYaFTu	false	protocol_context	26	protocol declaration/requirement needs separate qualification	
+$s9OracleLib12ProtoReqQ062PAAE18protoExtThrowsQ079yyKF	false	protocol_context	26	protocol declaration/requirement needs separate qualification	
+$s9OracleLib12ProtoReqQ062PAAE19protoExtGenericQ086yyqd__KAA06HelperC4Q901Rd__lF	false	protocol_context	26	protocol declaration/requirement needs separate qualification	
+$s9OracleLib12ProtoReqQ062PAAE20protoExtRethrowsQ085yyyyKXEKF	false	protocol_context	26	protocol declaration/requirement needs separate qualification	
+$s9OracleLib12ProtoReqQ062PAAE20protoExtStaticFnQ084yyKFZ	false	protocol_context	26	protocol declaration/requirement needs separate qualification	
+$s9OracleLib12ProtoReqQ062PAAE21protoExtGetThrowsQ082Sivg	false	protocol_context	26	protocol declaration/requirement needs separate qualification	
+$s9OracleLib12ProtoReqQ062PAAE21protoExtStaticGetQ083SivgZ	false	protocol_context	26	protocol declaration/requirement needs separate qualification	
+$s9OracleLib12freePackQ376yyxxQpRvzlF	false	unsupported_production	31	unsupported grammar operator: Q	
+$s9OracleLib12freeYaKFQ371yyF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeYaKFQ371","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib12freeYaKFQ371yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib13ActorHostQ230C13actorPropQ236Sivg	false	unsupported_production	46	unsupported grammar operator: v	
+$s9OracleLib13ActorHostQ230C13actorPropQ236SivgTq	false	unsupported_production	46	unsupported grammar operator: v	
+$s9OracleLib13ActorHostQ230C14actorAsyncQ234yyYaF	false	async_context	46	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13ActorHostQ230C14actorAsyncQ234yyYaFTq	false	async_context	46	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13ActorHostQ230C14actorAsyncQ234yyYaFTu	false	async_context	46	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13ActorHostQ230C14actorPlainQ232yyF	true		0		{"callable_kind":"class_instance_method","context":[{"kind":"class","name":"ActorHostQ230"}],"function_name":"actorPlainQ232","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib13ActorHostQ230C14actorPlainQ232yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib13ActorHostQ230C14actorPlainQ232yyFTq	false	thunk_or_specialization	47	unsupported thunk or specialization production	
+$s9OracleLib13ActorHostQ230C15actorThrowsQ233yyKF	true		0		{"callable_kind":"class_instance_method","context":[{"kind":"class","name":"ActorHostQ230"}],"function_name":"actorThrowsQ233","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib13ActorHostQ230C15actorThrowsQ233yyKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib13ActorHostQ230C15actorThrowsQ233yyKFTq	false	thunk_or_specialization	49	unsupported thunk or specialization production	
+$s9OracleLib13ActorHostQ230C15unownedExecutorScevg	false	unknown_substitution	46	unknown standard type substitution	
+$s9OracleLib13ActorHostQ230C19actorNonisoPropQ237Sivg	false	unsupported_production	52	unsupported grammar operator: v	
+$s9OracleLib13ActorHostQ230C19actorNonisoPropQ237SivgTq	false	unsupported_production	52	unsupported grammar operator: v	
+$s9OracleLib13ActorHostQ230C20actorNonisolatedQ235yyF	true		0		{"callable_kind":"class_instance_method","context":[{"kind":"class","name":"ActorHostQ230"}],"function_name":"actorNonisolatedQ235","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib13ActorHostQ230C20actorNonisolatedQ235yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib13ActorHostQ230C20actorNonisolatedQ235yyFTq	false	thunk_or_specialization	53	unsupported thunk or specialization production	
+$s9OracleLib13ActorHostQ230C23actorGetAsyncThrowsQ238Sivg	false	unsupported_production	56	unsupported grammar operator: v	
+$s9OracleLib13ActorHostQ230C23actorGetAsyncThrowsQ238SivgTq	false	unsupported_production	56	unsupported grammar operator: v	
+$s9OracleLib13ActorHostQ230C23actorGetAsyncThrowsQ238SivgTu	false	unsupported_production	56	unsupported grammar operator: v	
+$s9OracleLib13ActorHostQ230C4Q231ACSi_tcfC	false	closure_type	39	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13ActorHostQ230C4Q231ACSi_tcfCTq	false	closure_type	39	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13ActorHostQ230C4Q231ACSi_tcfc	false	closure_type	39	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13ActorHostQ230CMa	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13ActorHostQ230CfD	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13ActorHostQ230Cfd	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13EnumPlainQ012O21__derived_enum_equalsySbAC_ACtFZ	true		0		{"callable_kind":"static_method","context":[{"kind":"enum","name":"EnumPlainQ012"}],"function_name":"__derived_enum_equals","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[null,null],"parameter_types":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"OracleLib.EnumPlainQ012","nominal_kind":"enum"},{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"OracleLib.EnumPlainQ012","nominal_kind":"enum"}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Bool","nominal_kind":"struct"},"specialization":null,"symbol":"$s9OracleLib13EnumPlainQ012O21__derived_enum_equalsySbAC_ACtFZ","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib13EnumPlainQ012O4hash4intoys6HasherVz_tF	false	unsupported_production	47	unsupported Swift nominal type	
+$s9OracleLib13EnumPlainQ012O9hashValueSivg	false	unsupported_production	41	unsupported grammar operator: v	
+$s9OracleLib13EnumPlainQ012OMa	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13HelperErrQ900O21__derived_enum_equalsySbAC_ACtFZ	true		0		{"callable_kind":"static_method","context":[{"kind":"enum","name":"HelperErrQ900"}],"function_name":"__derived_enum_equals","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[null,null],"parameter_types":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"OracleLib.HelperErrQ900","nominal_kind":"enum"},{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"OracleLib.HelperErrQ900","nominal_kind":"enum"}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Bool","nominal_kind":"struct"},"specialization":null,"symbol":"$s9OracleLib13HelperErrQ900O21__derived_enum_equalsySbAC_ACtFZ","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib13HelperErrQ900O4hash4intoys6HasherVz_tF	false	unsupported_production	47	unsupported Swift nominal type	
+$s9OracleLib13HelperErrQ900O9hashValueSivg	false	unsupported_production	41	unsupported grammar operator: v	
+$s9OracleLib13HelperErrQ900OMa	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13HelperObjQ903CMa	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13HelperObjQ903CfD	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13HelperObjQ903Cfd	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13HelperValQ902VMa	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13InitClassQ105C4Q106ACSi_tcfC	false	closure_type	39	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q106ACSi_tcfCTq	false	closure_type	39	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q106ACSi_tcfc	false	closure_type	39	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q107ACSi_tKcfC	false	closure_type	40	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q107ACSi_tKcfCTq	false	closure_type	40	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q107ACSi_tKcfc	false	closure_type	40	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q108ACSgSi_tcfC	false	closure_type	41	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q108ACSgSi_tcfCTq	false	closure_type	41	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q108ACSgSi_tcfc	false	closure_type	41	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q109ACSgSi_tKcfC	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q109ACSgSi_tKcfCTq	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q109ACSgSi_tKcfc	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q110ACSS_tcfC	false	closure_type	39	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q111ACSS_tKcfC	false	closure_type	40	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q112ACSgSS_tcfC	false	closure_type	41	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q113ACSd_tcfC	false	closure_type	39	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q113ACSd_tcfCTq	false	closure_type	39	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q113ACSd_tcfc	false	closure_type	39	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q114ACSf_tKcfC	false	closure_type	40	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q114ACSf_tKcfCTq	false	closure_type	40	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q114ACSf_tKcfc	false	closure_type	40	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13InitClassQ105C4Q115ACSi_tYacfC	false	async_context	39	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13InitClassQ105C4Q115ACSi_tYacfCTq	false	async_context	39	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13InitClassQ105C4Q115ACSi_tYacfCTu	false	async_context	39	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13InitClassQ105C4Q115ACSi_tYacfc	false	async_context	39	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13InitClassQ105C4Q115ACSi_tYacfcTu	false	async_context	39	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13InitClassQ105C4Q116ACSi_tYaKcfC	false	async_context	39	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13InitClassQ105C4Q116ACSi_tYaKcfCTq	false	async_context	39	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13InitClassQ105C4Q116ACSi_tYaKcfCTu	false	async_context	39	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13InitClassQ105C4Q116ACSi_tYaKcfc	false	async_context	39	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13InitClassQ105C4Q116ACSi_tYaKcfcTu	false	async_context	39	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13InitClassQ105C4Q117ACSi_tYaKcfC	false	async_context	39	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13InitClassQ105C4Q117ACSi_tYaKcfCTu	false	async_context	39	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13InitClassQ105CMa	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13InitClassQ105CfD	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13InitClassQ105Cfd	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13InitNoArgQ090VACycfC	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13InitNoArgQ090VMa	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13OpenClassQ290C04openD7VarQ300SivgZ	false	unsupported_production	46	unsupported grammar operator: v	
+$s9OracleLib13OpenClassQ290C04openD7VarQ300SivgZTq	false	unsupported_production	46	unsupported grammar operator: v	
+$s9OracleLib13OpenClassQ290C04openD8FuncQ295yyFZ	true		0		{"callable_kind":"static_method","context":[{"kind":"class","name":"OpenClassQ290"}],"function_name":"openClassFuncQ295","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib13OpenClassQ290C04openD8FuncQ295yyFZ","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib13OpenClassQ290C04openD8FuncQ295yyFZTq	false	thunk_or_specialization	48	unsupported thunk or specialization production	
+$s9OracleLib13OpenClassQ290C11openVarQ294Sivg	false	unsupported_production	44	unsupported grammar operator: v	
+$s9OracleLib13OpenClassQ290C11openVarQ294SivgTq	false	unsupported_production	44	unsupported grammar operator: v	
+$s9OracleLib13OpenClassQ290C13openAsyncQ297yyYaF	false	async_context	45	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13OpenClassQ290C13openAsyncQ297yyYaFTq	false	async_context	45	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13OpenClassQ290C13openAsyncQ297yyYaFTu	false	async_context	45	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13OpenClassQ290C14openMethodQ292yyF	true		0		{"callable_kind":"class_instance_method","context":[{"kind":"class","name":"OpenClassQ290"}],"function_name":"openMethodQ292","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib13OpenClassQ290C14openMethodQ292yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib13OpenClassQ290C14openMethodQ292yyFTq	false	thunk_or_specialization	47	unsupported thunk or specialization production	
+$s9OracleLib13OpenClassQ290C14openStoredQ298SivM	false	unsupported_production	47	unsupported grammar operator: v	
+$s9OracleLib13OpenClassQ290C14openStoredQ298SivMTq	false	unsupported_production	47	unsupported grammar operator: v	
+$s9OracleLib13OpenClassQ290C14openStoredQ298Sivg	false	unsupported_production	47	unsupported grammar operator: v	
+$s9OracleLib13OpenClassQ290C14openStoredQ298SivgTq	false	unsupported_production	47	unsupported grammar operator: v	
+$s9OracleLib13OpenClassQ290C14openStoredQ298Sivpfi	false	unsupported_production	47	unsupported grammar operator: v	
+$s9OracleLib13OpenClassQ290C14openStoredQ298Sivs	false	unsupported_production	47	unsupported grammar operator: v	
+$s9OracleLib13OpenClassQ290C14openStoredQ298SivsTq	false	unsupported_production	47	unsupported grammar operator: v	
+$s9OracleLib13OpenClassQ290C14openThrowsQ293yyKF	true		0		{"callable_kind":"class_instance_method","context":[{"kind":"class","name":"OpenClassQ290"}],"function_name":"openThrowsQ293","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib13OpenClassQ290C14openThrowsQ293yyKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib13OpenClassQ290C14openThrowsQ293yyKFTq	false	thunk_or_specialization	48	unsupported thunk or specialization production	
+$s9OracleLib13OpenClassQ290C15finalMethodQ296yyF	true		0		{"callable_kind":"class_instance_method","context":[{"kind":"class","name":"OpenClassQ290"}],"function_name":"finalMethodQ296","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib13OpenClassQ290C15finalMethodQ296yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib13OpenClassQ290C16openRethrowsQ301yyyyKXEKF	false	closure_type	51	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13OpenClassQ290C16openRethrowsQ301yyyyKXEKFTq	false	closure_type	51	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13OpenClassQ290C22openGetAsyncThrowsQ302Sivg	false	unsupported_production	55	unsupported grammar operator: v	
+$s9OracleLib13OpenClassQ290C22openGetAsyncThrowsQ302SivgTq	false	unsupported_production	55	unsupported grammar operator: v	
+$s9OracleLib13OpenClassQ290C22openGetAsyncThrowsQ302SivgTu	false	unsupported_production	55	unsupported grammar operator: v	
+$s9OracleLib13OpenClassQ290C4Q291ACSi_tcfC	false	closure_type	39	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13OpenClassQ290C4Q291ACSi_tcfCTq	false	closure_type	39	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13OpenClassQ290C4Q291ACSi_tcfc	false	closure_type	39	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13OpenClassQ290C4Q299S2i_tcig	false	closure_type	38	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13OpenClassQ290C4Q299S2i_tcigTq	false	closure_type	38	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib13OpenClassQ290CMa	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13OpenClassQ290CfD	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13OpenClassQ290Cfd	false	invalid_grammar	28	expected identifier literal length	
+$s9OracleLib13freeAsyncQ132yyYaF	false	async_context	29	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13freeAsyncQ132yyYaFTu	false	async_context	29	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib13freeInoutQ142yySizF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeInoutQ142","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[null],"parameter_types":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":true,"label":null,"name":"Swift.Int","nominal_kind":"struct"}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib13freeInoutQ142yySizF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib13freeNeverQ153s0D0OyF	false	unsupported_production	31	unsupported Swift nominal type	
+$s9OracleLib13freePlainQ130yyF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freePlainQ130","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib13freePlainQ130yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib13globalLetQ035SSvau	false	unsupported_production	30	unsupported grammar operator: v	
+$s9OracleLib13globalVarQ034Sivau	false	unsupported_production	30	unsupported grammar operator: v	
+$s9OracleLib14ActorPlainQ018C15unownedExecutorScevg	false	unknown_substitution	47	unknown standard type substitution	
+$s9OracleLib14ActorPlainQ018CMa	false	invalid_grammar	29	expected identifier literal length	
+$s9OracleLib14ActorPlainQ018CfD	false	invalid_grammar	29	expected identifier literal length	
+$s9OracleLib14ActorPlainQ018Cfd	false	invalid_grammar	29	expected identifier literal length	
+$s9OracleLib14ClassFinalQ009C12finalVarQ010SivM	false	unsupported_production	46	unsupported grammar operator: v	
+$s9OracleLib14ClassFinalQ009C12finalVarQ010Sivg	false	unsupported_production	46	unsupported grammar operator: v	
+$s9OracleLib14ClassFinalQ009C12finalVarQ010Sivpfi	false	unsupported_production	46	unsupported grammar operator: v	
+$s9OracleLib14ClassFinalQ009C12finalVarQ010Sivs	false	unsupported_production	46	unsupported grammar operator: v	
+$s9OracleLib14ClassFinalQ009CMa	false	invalid_grammar	29	expected identifier literal length	
+$s9OracleLib14ClassFinalQ009CfD	false	invalid_grammar	29	expected identifier literal length	
+$s9OracleLib14ClassFinalQ009Cfd	false	invalid_grammar	29	expected identifier literal length	
+$s9OracleLib14ClassPlainQ007CMa	false	invalid_grammar	29	expected identifier literal length	
+$s9OracleLib14ClassPlainQ007CfD	false	invalid_grammar	29	expected identifier literal length	
+$s9OracleLib14ClassPlainQ007Cfd	false	invalid_grammar	29	expected identifier literal length	
+$s9OracleLib14EnumNoCaseQ017OMa	false	invalid_grammar	29	expected identifier literal length	
+$s9OracleLib14InitStructQ094V4Q095ACSi_tcfC	false	closure_type	40	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib14InitStructQ094V4Q096ACSi_tKcfC	false	closure_type	41	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib14InitStructQ094V4Q097ACSgSi_tcfC	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib14InitStructQ094V4Q098ACSgSi_tKcfC	false	closure_type	43	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib14InitStructQ094V4Q099ACSi_tYacfC	false	async_context	40	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib14InitStructQ094V4Q099ACSi_tYacfCTu	false	async_context	40	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib14InitStructQ094V4Q100ACSi_tYaKcfC	false	async_context	40	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib14InitStructQ094V4Q100ACSi_tYaKcfCTu	false	async_context	40	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib14InitStructQ094V4Q101ACx_tclufC	false	closure_type	39	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib14InitStructQ094V4Q102ACSi_tAA13HelperErrQ900OYKcfC	false	typed_throws	58	typed throws annotation requires separate qualification	
+$s9OracleLib14InitStructQ094V4Q1031bACSi_SStcfC	false	closure_type	44	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib14InitStructQ094V4Q104ACSid_tcfC	false	unsupported_production	39	unsupported grammar operator: d	
+$s9OracleLib14InitStructQ094VMa	false	invalid_grammar	29	expected identifier literal length	
+$s9OracleLib14closureTwoQ214yyyyKXE_yyXEtKF	false	closure_type	33	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib14freeOpaqueQ157QryF	false	unsupported_production	29	unsupported grammar operator: Q	
+$s9OracleLib14freeParamsQ134yS2i_SStF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeParamsQ134","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[null,null],"parameter_types":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"},{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.String","nominal_kind":"struct"}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"},"specialization":null,"symbol":"$s9OracleLib14freeParamsQ134yS2i_SStF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib14freeThrowsQ131yyKF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeThrowsQ131","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib14freeThrowsQ131yyKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib15EnumGenericQ015OMa	false	invalid_grammar	30	expected identifier literal length	
+$s9OracleLib15EnumPayloadQ013OMa	false	invalid_grammar	30	expected identifier literal length	
+$s9OracleLib15GenericHostQ330V11genPropQ335Sivg	false	unsupported_production	46	unsupported grammar operator: v	
+$s9OracleLib15GenericHostQ330V13genMethodQ331yyF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"GenericHostQ330"}],"function_name":"genMethodQ331","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib15GenericHostQ330V13genMethodQ331yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib15GenericHostQ330V13genStaticQ336yyYaKFZ	false	async_context	47	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib15GenericHostQ330V13genStaticQ336yyYaKFZTu	false	async_context	47	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib15GenericHostQ330V14genMethodTQ333yxxKF	false	generic_requirements	51	generic parameter lacks a supported binding signature (including generic parent contexts)	
+$s9OracleLib15GenericHostQ330V17genPropThrowsQ338xvg	false	unsupported_production	51	unsupported grammar operator: v	
+$s9OracleLib15GenericHostQ330V18genMethodExtraQ334yyqd__AA15HelperProtoQ901Rd__lF	false	invalid_grammar	76	non-type operand	
+$s9OracleLib15GenericHostQ330V19genMethodThrowsQ332yyKF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"GenericHostQ330"}],"function_name":"genMethodThrowsQ332","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib15GenericHostQ330V19genMethodThrowsQ332yyKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib15GenericHostQ330V4Q337ACyxGx_tKcfC	false	unsupported_production	40	unsupported bound generic shape	
+$s9OracleLib15GenericHostQ330VMa	false	invalid_grammar	30	expected identifier literal length	
+$s9OracleLib15NoncopyableQ378VMa	false	invalid_grammar	30	expected identifier literal length	
+$s9OracleLib15StructPlainQ001VMa	false	invalid_grammar	30	expected identifier literal length	
+$s9OracleLib15freeGenericQ146yyxlF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeGenericQ146","generic_parameter_counts":[1],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[null],"parameter_types":[{"arguments":[],"generic_depth":0,"generic_index":0,"inout":false,"label":null,"name":"GenericParameter","nominal_kind":null}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib15freeGenericQ146yyxlF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib16ClassGenericQ011CMa	false	invalid_grammar	31	expected identifier literal length	
+$s9OracleLib16ClassGenericQ011CfD	false	invalid_grammar	31	expected identifier literal length	
+$s9OracleLib16ClassGenericQ011Cfd	false	invalid_grammar	31	expected identifier literal length	
+$s9OracleLib16DefaultsHostQ360V18defaultsMethodQ3621a1bySi_SStF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"DefaultsHostQ360"}],"function_name":"defaultsMethodQ362","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":["a","b"],"parameter_types":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"},{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.String","nominal_kind":"struct"}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16DefaultsHostQ360V18defaultsMethodQ3621a1bySi_SStF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib16DefaultsHostQ360V18defaultsStaticQ3631aySi_tKFZ	true		0		{"callable_kind":"static_method","context":[{"kind":"struct","name":"DefaultsHostQ360"}],"function_name":"defaultsStaticQ363","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":["a"],"parameter_types":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16DefaultsHostQ360V18defaultsStaticQ3631aySi_tKFZ","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib16DefaultsHostQ360V19defaultsGenericQ3641ayxSg_tlF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"DefaultsHostQ360"}],"function_name":"defaultsGenericQ364","generic_parameter_counts":[1],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":["a"],"parameter_types":[{"arguments":[{"arguments":[],"generic_depth":0,"generic_index":0,"inout":false,"label":null,"name":"GenericParameter","nominal_kind":null}],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Optional","nominal_kind":null}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16DefaultsHostQ360V19defaultsGenericQ3641ayxSg_tlF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib16DefaultsHostQ360V4Q361ACSi_tcfC	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16DefaultsHostQ360VMa	false	invalid_grammar	31	expected identifier literal length	
+$s9OracleLib16EnumIndirectQ014OMa	false	invalid_grammar	31	expected identifier literal length	
+$s9OracleLib16InitSubClassQ118C4Q106ACSi_tcfC	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16InitSubClassQ118C4Q106ACSi_tcfc	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16InitSubClassQ118C4Q107ACSi_tKcfC	false	closure_type	43	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16InitSubClassQ118C4Q107ACSi_tKcfc	false	closure_type	43	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16InitSubClassQ118C4Q108ACSgSi_tcfC	false	closure_type	44	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16InitSubClassQ118C4Q108ACSgSi_tcfc	false	closure_type	44	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16InitSubClassQ118C4Q109ACSgSi_tKcfC	false	closure_type	45	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16InitSubClassQ118C4Q109ACSgSi_tKcfc	false	closure_type	45	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16InitSubClassQ118C4Q113ACSd_tcfC	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16InitSubClassQ118C4Q113ACSd_tcfc	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16InitSubClassQ118C4Q114ACSf_tKcfC	false	closure_type	43	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16InitSubClassQ118C4Q114ACSf_tKcfc	false	closure_type	43	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16InitSubClassQ118C4Q115ACSi_tYacfC	false	async_context	42	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16InitSubClassQ118C4Q115ACSi_tYacfCTu	false	async_context	42	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16InitSubClassQ118C4Q115ACSi_tYacfc	false	async_context	42	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16InitSubClassQ118C4Q115ACSi_tYacfcTu	false	async_context	42	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16InitSubClassQ118C4Q116ACSi_tYaKcfC	false	async_context	42	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16InitSubClassQ118C4Q116ACSi_tYaKcfCTu	false	async_context	42	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16InitSubClassQ118C4Q116ACSi_tYaKcfc	false	async_context	42	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16InitSubClassQ118C4Q116ACSi_tYaKcfcTu	false	async_context	42	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16InitSubClassQ118C4Q119ACSi_tcfC	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16InitSubClassQ118CMa	false	invalid_grammar	31	expected identifier literal length	
+$s9OracleLib16InitSubClassQ118CfD	false	invalid_grammar	31	expected identifier literal length	
+$s9OracleLib16InitSubClassQ118Cfd	false	invalid_grammar	31	expected identifier literal length	
+$s9OracleLib16MethodStructQ180V07genericC4Q192yyxKlF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"MethodStructQ180"}],"function_name":"genericMethodQ192","generic_parameter_counts":[1],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[null],"parameter_types":[{"arguments":[],"generic_depth":0,"generic_index":0,"inout":false,"label":null,"name":"GenericParameter","nominal_kind":null}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16MethodStructQ180V07genericC4Q192yyxKlF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib16MethodStructQ180V09consumingC4Q193yyF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"MethodStructQ180"}],"function_name":"consumingMethodQ193","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16MethodStructQ180V09consumingC4Q193yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib16MethodStructQ180V15staticAsyncQ187yyYaFZ	false	async_context	50	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16MethodStructQ180V15staticAsyncQ187yyYaFZTu	false	async_context	50	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16MethodStructQ180V15staticPlainQ185yyFZ	true		0		{"callable_kind":"static_method","context":[{"kind":"struct","name":"MethodStructQ180"}],"function_name":"staticPlainQ185","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16MethodStructQ180V15staticPlainQ185yyFZ","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib16MethodStructQ180V16staticThrowsQ186yyKFZ	true		0		{"callable_kind":"static_method","context":[{"kind":"struct","name":"MethodStructQ180"}],"function_name":"staticThrowsQ186","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16MethodStructQ180V16staticThrowsQ186yyKFZ","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib16MethodStructQ180V17instanceAsyncQ183yyYaF	false	async_context	52	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16MethodStructQ180V17instanceAsyncQ183yyYaFTu	false	async_context	52	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16MethodStructQ180V17instancePlainQ181yyF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"MethodStructQ180"}],"function_name":"instancePlainQ181","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16MethodStructQ180V17instancePlainQ181yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib16MethodStructQ180V17methodReturnsQ191SiyF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"MethodStructQ180"}],"function_name":"methodReturnsQ191","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"},"specialization":null,"symbol":"$s9OracleLib16MethodStructQ180V17methodReturnsQ191SiyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib16MethodStructQ180V17mutatingPlainQ188yyF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"MethodStructQ180"}],"function_name":"mutatingPlainQ188","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16MethodStructQ180V17mutatingPlainQ188yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib16MethodStructQ180V18instanceThrowsQ182yyKF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"MethodStructQ180"}],"function_name":"instanceThrowsQ182","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16MethodStructQ180V18instanceThrowsQ182yyKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib16MethodStructQ180V18methodDefaultsQ1951a1bySi_SitKF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"MethodStructQ180"}],"function_name":"methodDefaultsQ195","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":["a","b"],"parameter_types":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"},{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16MethodStructQ180V18methodDefaultsQ1951a1bySi_SitKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib16MethodStructQ180V18methodRethrowsQ194yyyyKXEKF	false	closure_type	56	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16MethodStructQ180V18mutatingThrowsQ189yyKF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"MethodStructQ180"}],"function_name":"mutatingThrowsQ189","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16MethodStructQ180V18mutatingThrowsQ189yyKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib16MethodStructQ180V18staticRethrowsQ197yyyyKXEKFZ	false	closure_type	56	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16MethodStructQ180V21methodTypedThrowsQ196yyAA13HelperErrQ900OYKF	false	typed_throws	74	typed throws annotation requires separate qualification	
+$s9OracleLib16MethodStructQ180V23instanceAsyncThrowsQ184yyYaKF	false	async_context	58	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16MethodStructQ180V23instanceAsyncThrowsQ184yyYaKFTu	false	async_context	58	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16MethodStructQ180V23mutatingAsyncThrowsQ190yyYaKF	false	async_context	58	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16MethodStructQ180V23mutatingAsyncThrowsQ190yyYaKFTu	false	async_context	58	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib16MethodStructQ180VMa	false	invalid_grammar	31	expected identifier literal length	
+$s9OracleLib16OuterGenericQ318V14outerGenFnQ321yyF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"OuterGenericQ318"}],"function_name":"outerGenFnQ321","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16OuterGenericQ318V14outerGenFnQ321yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib16OuterGenericQ318V9InnerQ319V07innerOfD6FnQ320yyKF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"OuterGenericQ318"},{"kind":"struct","name":"InnerQ319"}],"function_name":"innerOfGenericFnQ320","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16OuterGenericQ318V9InnerQ319V07innerOfD6FnQ320yyKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib16OuterGenericQ318V9InnerQ319VMa	false	invalid_grammar	42	expected identifier literal length	
+$s9OracleLib16OuterGenericQ318VMa	false	invalid_grammar	31	expected identifier literal length	
+$s9OracleLib16StructStoredQ002V13storedLetQ004Sivg	false	unsupported_production	49	unsupported grammar operator: v	
+$s9OracleLib16StructStoredQ002V13storedVarQ003SivM	false	unsupported_production	49	unsupported grammar operator: v	
+$s9OracleLib16StructStoredQ002V13storedVarQ003Sivg	false	unsupported_production	49	unsupported grammar operator: v	
+$s9OracleLib16StructStoredQ002V13storedVarQ003Sivs	false	unsupported_production	49	unsupported grammar operator: v	
+$s9OracleLib16StructStoredQ002VMa	false	invalid_grammar	31	expected identifier literal length	
+$s9OracleLib16closureInoutQ221yyySizKXEKF	false	closure_type	37	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib16freeDefaultsQ140_1bySi_SStF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeDefaultsQ140","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[null,"b"],"parameter_types":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"},{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.String","nominal_kind":"struct"}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16freeDefaultsQ140_1bySi_SStF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib16freeKFThrowsQ372yyKF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeKFThrowsQ372","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16freeKFThrowsQ372yyKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib16freeKeyKnockQ370yyF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeKeyKnockQ370","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16freeKeyKnockQ370yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib16freeLabelledQ1395first6secondySi_SitF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeLabelledQ139","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":["first","second"],"parameter_types":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"},{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16freeLabelledQ1395first6secondySi_SitF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib16freeOptionalQ152ySiSgACF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeOptionalQ152","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[null],"parameter_types":[{"arguments":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"}],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Optional","nominal_kind":null}],"result_type":{"arguments":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"}],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Optional","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib16freeOptionalQ152ySiSgACF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib17EffectfulHostQ260V12getAsyncQ262Sivg	false	unsupported_production	49	unsupported grammar operator: v	
+$s9OracleLib17EffectfulHostQ260V12getAsyncQ262SivgTu	false	unsupported_production	49	unsupported grammar operator: v	
+$s9OracleLib17EffectfulHostQ260V13getThrowsQ261Sivg	false	unsupported_production	50	unsupported grammar operator: v	
+$s9OracleLib17EffectfulHostQ260V18getAsyncThrowsQ263Sivg	false	unsupported_production	55	unsupported grammar operator: v	
+$s9OracleLib17EffectfulHostQ260V18getAsyncThrowsQ263SivgTu	false	unsupported_production	55	unsupported grammar operator: v	
+$s9OracleLib17EffectfulHostQ260V18getTypedThrowsQ267Sivg	false	unsupported_production	55	unsupported grammar operator: v	
+$s9OracleLib17EffectfulHostQ260V18staticGetAsyncQ265SivgZ	false	unsupported_production	55	unsupported grammar operator: v	
+$s9OracleLib17EffectfulHostQ260V18staticGetAsyncQ265SivgZTu	false	unsupported_production	55	unsupported grammar operator: v	
+$s9OracleLib17EffectfulHostQ260V19staticGetThrowsQ264SivgZ	false	unsupported_production	56	unsupported grammar operator: v	
+$s9OracleLib17EffectfulHostQ260V20getThrowsClosureQ279yyKcvg	false	closure_type	57	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V24staticGetAsyncThrowsQ266SivgZ	false	unsupported_production	61	unsupported grammar operator: v	
+$s9OracleLib17EffectfulHostQ260V24staticGetAsyncThrowsQ266SivgZTu	false	unsupported_production	61	unsupported grammar operator: v	
+$s9OracleLib17EffectfulHostQ260V4Q268S2i_tcig	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q269S2i_tcig	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q269S2i_tcigTu	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q270S2i_tcig	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q270S2i_tcigTu	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q271S2i_tcig	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q272S2i_tciM	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q272S2i_tcig	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q272S2i_tcis	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q273S2i_tciM	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q273S2i_tcig	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q273S2i_tcis	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q274S2i_tcigZ	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q275Six_tcluig	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q276_S2i_Sitcig	false	closure_type	45	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q276_S2i_SitcigTu	false	closure_type	45	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q277S2i_tcig	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260V4Q278yyKcSi_tcig	false	closure_type	40	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17EffectfulHostQ260VMa	false	invalid_grammar	32	expected identifier literal length	
+$s9OracleLib17StructGenericQ005V17genericStoredQ006xvM	false	unsupported_production	53	unsupported grammar operator: v	
+$s9OracleLib17StructGenericQ005V17genericStoredQ006xvg	false	unsupported_production	53	unsupported grammar operator: v	
+$s9OracleLib17StructGenericQ005V17genericStoredQ006xvs	false	unsupported_production	53	unsupported grammar operator: v	
+$s9OracleLib17StructGenericQ005VAASQRzlE03extD4Q323yyKF	false	invalid_grammar	32	expected identifier literal length	
+$s9OracleLib17StructGenericQ005VMa	false	invalid_grammar	32	expected identifier literal length	
+$s9OracleLib17closureNestedQ219yyyyyKXEKXEF	false	closure_type	37	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib17freeMainActorQ155yyF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeMainActorQ155","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib17freeMainActorQ155yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib18InitNoArgClassQ092CACycfC	false	invalid_grammar	33	expected identifier literal length	
+$s9OracleLib18InitNoArgClassQ092CACycfCTq	false	invalid_grammar	33	expected identifier literal length	
+$s9OracleLib18InitNoArgClassQ092CACycfc	false	invalid_grammar	33	expected identifier literal length	
+$s9OracleLib18InitNoArgClassQ092CMa	false	invalid_grammar	33	expected identifier literal length	
+$s9OracleLib18InitNoArgClassQ092CfD	false	invalid_grammar	33	expected identifier literal length	
+$s9OracleLib18InitNoArgClassQ092Cfd	false	invalid_grammar	33	expected identifier literal length	
+$s9OracleLib18closureGenericQ222yxxxKXE_xtKlF	false	closure_type	37	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib18freeConcurrentQ172yyYaF	false	async_context	34	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib18freeConcurrentQ172yyYaFTu	false	async_context	34	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib18freeGenericReqQ148yyxAA15HelperProtoQ901RzlF	false	invalid_grammar	55	non-type operand	
+$s9OracleLib18freeNonsendingQ173yyYaF	false	async_context	34	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib18freeNonsendingQ173yyYaFTu	false	async_context	34	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib18freePackThrowsQ377yyxxQpKRvzlF	false	unsupported_production	37	unsupported grammar operator: Q	
+$s9OracleLib18freeTakesErrorQ165yys0E0_pF	false	unsupported_production	38	unsupported Swift nominal type	
+$s9OracleLib18globalComputedQ036Sivg	false	unsupported_production	35	unsupported grammar operator: v	
+$s9OracleLib18globalGetAsyncQ038Sivg	false	unsupported_production	35	unsupported grammar operator: v	
+$s9OracleLib18globalGetAsyncQ038SivgTu	false	unsupported_production	35	unsupported grammar operator: v	
+$s9OracleLib19InitNoArgThrowsQ091VACyKcfC	false	invalid_grammar	34	expected identifier literal length	
+$s9OracleLib19InitNoArgThrowsQ091VMa	false	invalid_grammar	34	expected identifier literal length	
+$s9OracleLib19MainActorStructQ239V04mainD10MethodQ240yyF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"MainActorStructQ239"}],"function_name":"mainActorMethodQ240","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib19MainActorStructQ239V04mainD10MethodQ240yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib19MainActorStructQ239V04mainD8PropQ241Sivg	false	unsupported_production	53	unsupported grammar operator: v	
+$s9OracleLib19MainActorStructQ239VMa	false	invalid_grammar	34	expected identifier literal length	
+$s9OracleLib19closureEscapingQ201yyyycF	false	closure_type	37	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib19closureNoEscapeQ200yyyyXEF	false	closure_type	37	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib19closureOptionalQ215yyyyKcSgF	false	closure_type	38	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib19closureRethrowsQ204yyyyKXEKF	false	closure_type	38	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib19freeAsyncThrowsQ133yyYaKF	false	async_context	35	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib19freeAsyncThrowsQ133yyYaKFTu	false	async_context	35	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib19freeDiscardableQ169SiyF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeDiscardableQ169","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"},"specialization":null,"symbol":"$s9OracleLib19freeDiscardableQ169SiyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib19freeExistentialQ158yyAA15HelperProtoQ901_pF	false	unsupported_production	56	unsupported grammar operator: p	
+$s9OracleLib19freeNeverThrowsQ154s0D0OyKF	false	unsupported_production	37	unsupported Swift nominal type	
+$s9OracleLib19freeNoncopyableQ379yyxKRi_zlF	false	generic_requirements	38	unsupported generic requirement	
+$s9OracleLib19freeThrowsTupleQ159Si_SityKF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeThrowsTupleQ159","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"},{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"}],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Tuple","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib19freeThrowsTupleQ159Si_SityKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib19freeVariadicAnyQ136yyypd_tF	false	unsupported_production	37	unsupported grammar operator: p	
+$s9OracleLib19freeVariadicIntQ138yySid_tF	false	unsupported_production	38	unsupported grammar operator: d	
+$s9OracleLib19globalGetThrowsQ037Sivg	false	unsupported_production	36	unsupported grammar operator: v	
+$s9OracleLib19typedThrowsFreeQ250yyAA13HelperErrQ900OYKF	false	typed_throws	53	typed throws annotation requires separate qualification	
+$s9OracleLib20GenericClassHostQ340C14genClsPropQ343xSgvg	false	unsupported_production	55	unsupported grammar operator: v	
+$s9OracleLib20GenericClassHostQ340C14genClsPropQ343xSgvgTq	false	unsupported_production	55	unsupported grammar operator: v	
+$s9OracleLib20GenericClassHostQ340C16genClsMethodQ342yyKF	true		0		{"callable_kind":"class_instance_method","context":[{"kind":"class","name":"GenericClassHostQ340"}],"function_name":"genClsMethodQ342","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib20GenericClassHostQ340C16genClsMethodQ342yyKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib20GenericClassHostQ340C16genClsMethodQ342yyKFTq	false	thunk_or_specialization	57	unsupported thunk or specialization production	
+$s9OracleLib20GenericClassHostQ340C4Q341ACyxGx_tcfC	false	unsupported_production	45	unsupported bound generic shape	
+$s9OracleLib20GenericClassHostQ340C4Q341ACyxGx_tcfCTq	false	unsupported_production	45	unsupported bound generic shape	
+$s9OracleLib20GenericClassHostQ340C4Q341ACyxGx_tcfc	false	unsupported_production	45	unsupported bound generic shape	
+$s9OracleLib20GenericClassHostQ340CMa	false	invalid_grammar	35	expected identifier literal length	
+$s9OracleLib20GenericClassHostQ340CfD	false	invalid_grammar	35	expected identifier literal length	
+$s9OracleLib20GenericClassHostQ340Cfd	false	invalid_grammar	35	expected identifier literal length	
+$s9OracleLib20freeAsyncReturnsQ167SiyYaF	false	async_context	37	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib20freeAsyncReturnsQ167SiyYaFTu	false	async_context	37	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib20freeGenericAsyncQ151yyxYas8SendableRzlF	false	async_context	37	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib20freeGenericAsyncQ151yyxYas8SendableRzlFTu	false	async_context	37	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib20freeGenericWhereQ149yyx_q_tSQRz7ElementQy_RszSlR_r0_lF	false	unknown_substitution	42	unknown standard type substitution	
+$s9OracleLib20freeResultReturnQ164s0D0OySiAA13HelperErrQ900OGyF	false	unsupported_production	38	unsupported Swift nominal type	
+$s9OracleLib20freeReturnsTupleQ145Si_SStyF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeReturnsTupleQ145","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"},{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.String","nominal_kind":"struct"}],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Tuple","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib20freeReturnsTupleQ145Si_SStyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib20freeThrowsParamsQ135ySSSiKF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeThrowsParamsQ135","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[null],"parameter_types":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.String","nominal_kind":"struct"},"specialization":null,"symbol":"$s9OracleLib20freeThrowsParamsQ135ySSSiKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib20typedThrowsAsyncQ253yyYaAA13HelperErrQ900OYKF	false	async_context	36	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib20typedThrowsAsyncQ253yyYaAA13HelperErrQ900OYKFTu	false	async_context	36	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib20typedThrowsNeverQ251yyF	true		0		{"callable_kind":"free_function","context":[],"function_name":"typedThrowsNeverQ251","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib20typedThrowsNeverQ251yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib21closureAsyncParamQ207yyyyYaXEYaF	false	async_context	39	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib21closureAsyncParamQ207yyyyYaXEYaFTu	false	async_context	39	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib21freeGenericThrowsQ147yyxKlF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeGenericThrowsQ147","generic_parameter_counts":[1],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[null],"parameter_types":[{"arguments":[],"generic_depth":0,"generic_index":0,"inout":false,"label":null,"name":"GenericParameter","nominal_kind":null}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib21freeGenericThrowsQ147yyxKlF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib21freeIsolatedParamQ163yyAA14ActorPlainQ018CYiF	false	unsupported_production	57	unsupported grammar operator: Y	
+$s9OracleLib21freeSendableParamQ156yyyyYbXEF	false	async_context	39	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib21typedThrowsReturnQ254SiyAA13HelperErrQ900OYKF	false	typed_throws	56	typed throws annotation requires separate qualification	
+$s9OracleLib22closureTwoThrowingQ216yyyyKXE_yyKXEtKF	false	closure_type	41	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib22closureTypedThrowsQ213yyyyAA13HelperErrQ900OYKXEADYKF	false	typed_throws	58	typed throws annotation requires separate qualification	
+$s9OracleLib22freeBorrowingParamQ162yyAA13HelperValQ902VF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeBorrowingParamQ162","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[null],"parameter_types":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"OracleLib.HelperValQ902","nominal_kind":"struct"}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib22freeBorrowingParamQ162yyAA13HelperValQ902VF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib22freeConsumingParamQ161yyAA13HelperValQ902VnF	false	unsupported_production	57	unsupported grammar operator: n	
+$s9OracleLib22freeDefaultClosureQ170yyyyXEF	false	closure_type	40	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib22freeDefaultsThrowsQ141yySiKF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeDefaultsThrowsQ141","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[null],"parameter_types":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib22freeDefaultsThrowsQ141yySiKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib22freeThrowsOptionalQ166SiSgyKF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeThrowsOptionalQ166","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Int","nominal_kind":"struct"}],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Optional","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib22freeThrowsOptionalQ166SiSgyKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib22typedThrowsGenericQ256yyxmxYKs5ErrorRzlF	false	unsupported_production	40	unsupported grammar operator: m	
+$s9OracleLib23closureGenericTypedQ223yyyyxYKXExYKs5ErrorRzlF	false	typed_throws	42	typed throws annotation requires separate qualification	
+$s9OracleLib23closureNestedThrowsQ220yyyyyXEXEKF	false	closure_type	42	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib23freeInlinableThrowsQ168yyKF	true		0		{"callable_kind":"free_function","context":[],"function_name":"freeInlinableThrowsQ168","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib23freeInlinableThrowsQ168yyKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib23typedThrowsAnyErrorQ252yyKF	true		0		{"callable_kind":"free_function","context":[],"function_name":"typedThrowsAnyErrorQ252","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib23typedThrowsAnyErrorQ252yyKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib24InitNoArgThrowsClassQ093CACyKcfC	false	invalid_grammar	39	expected identifier literal length	
+$s9OracleLib24InitNoArgThrowsClassQ093CACyKcfCTq	false	invalid_grammar	39	expected identifier literal length	
+$s9OracleLib24InitNoArgThrowsClassQ093CACyKcfc	false	invalid_grammar	39	expected identifier literal length	
+$s9OracleLib24InitNoArgThrowsClassQ093CMa	false	invalid_grammar	39	expected identifier literal length	
+$s9OracleLib24InitNoArgThrowsClassQ093CfD	false	invalid_grammar	39	expected identifier literal length	
+$s9OracleLib24InitNoArgThrowsClassQ093Cfd	false	invalid_grammar	39	expected identifier literal length	
+$s9OracleLib24closureAsyncRethrowsQ209yyyyYaKXEYaKF	false	async_context	42	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib24closureAsyncRethrowsQ209yyyyYaKXEYaKFTu	false	async_context	42	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib24closureIsolatedParamQ225yyyAA14ActorPlainQ018CYiYaXEF	false	unsupported_production	61	unsupported grammar operator: Y	
+$s9OracleLib24freeGenericReqThrowsQ150yyxKAA15HelperProtoQ901RzSQRzlF	false	invalid_grammar	42	operand after signature annotation	
+$s9OracleLib24globalGetAsyncThrowsQ039Sivg	false	unsupported_production	41	unsupported grammar operator: v	
+$s9OracleLib24globalGetAsyncThrowsQ039SivgTu	false	unsupported_production	41	unsupported grammar operator: v	
+$s9OracleLib25closureMainActorParamQ211yyyyScMYcXEF	false	unknown_substitution	44	unknown standard type substitution	
+$s9OracleLib25closureReturningValueQ212yS3iKXEKF	false	closure_type	44	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib25closureSendableThrowsQ217yyyyYbKcF	false	async_context	43	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib25freeVariadicAnyThrowsQ137yyypd_tKF	false	unsupported_production	43	unsupported grammar operator: p	
+$s9OracleLib26typedThrowsStdlibErrorQ255yyScEYKF	false	unknown_substitution	43	unknown standard type substitution	
+$s9OracleLib27closureAsyncParamSyncFnQ210yyyyYaKcF	false	async_context	45	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib27closureAsyncThrowsParamQ208yyyyYaKXEYaKF	false	async_context	45	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib27closureAsyncThrowsParamQ208yyyyYaKXEYaKFTu	false	async_context	45	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib27closureRethrowsEscapingQ205yyyyKcKF	false	closure_type	46	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib27closureThrowingEscapingQ203yyyyKcF	false	closure_type	46	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib27closureThrowingNoEscapeQ202yyyyKXEF	false	closure_type	46	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib27freeReturnsAsyncClosureQ144yyYacyF	false	async_context	43	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib27freeThrowsVariadicTrailQ1601a_ySi_SidtKF	false	unsupported_production	51	unsupported grammar operator: d	
+$s9OracleLib27typedThrowsGenericAsyncQ383yyxmYaxYKs5ErrorRzlF	false	unsupported_production	45	unsupported grammar operator: m	
+$s9OracleLib27typedThrowsGenericAsyncQ383yyxmYaxYKs5ErrorRzlFTu	false	unsupported_production	45	unsupported grammar operator: m	
+$s9OracleLib28freeDefaultThrowsClosureQ171yyyyKXEKF	false	closure_type	47	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib30closureGenericTypedNoThrowQ224yyyyxYKXEs5ErrorRzlF	false	typed_throws	49	typed throws annotation requires separate qualification	
+$s9OracleLib30closureThrowsTakesThrowingQ206yyyyKXEKF	false	closure_type	49	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib30closureTypedParamUntypedFnQ218yyyyAA13HelperErrQ900OYKXEF	false	typed_throws	66	typed throws annotation requires separate qualification	
+$s9OracleLib30freeReturnsThrowingClosureQ143yyKcyF	false	closure_type	47	function/closure parameter type requires separate qualification; rethrows cannot be inferred	
+$s9OracleLib9OuterQ310V13InnerEnumQ315O21__derived_enum_equalsySbAE_AEtFZ	true		0		{"callable_kind":"static_method","context":[{"kind":"struct","name":"OuterQ310"},{"kind":"enum","name":"InnerEnumQ315"}],"function_name":"__derived_enum_equals","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[null,null],"parameter_types":[{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"OracleLib.OuterQ310.InnerEnumQ315","nominal_kind":"enum"},{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"OracleLib.OuterQ310.InnerEnumQ315","nominal_kind":"enum"}],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Bool","nominal_kind":"struct"},"specialization":null,"symbol":"$s9OracleLib9OuterQ310V13InnerEnumQ315O21__derived_enum_equalsySbAE_AEtFZ","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib9OuterQ310V13InnerEnumQ315O4hash4intoys6HasherVz_tF	false	unsupported_production	58	unsupported Swift nominal type	
+$s9OracleLib9OuterQ310V13InnerEnumQ315O9hashValueSivg	false	unsupported_production	52	unsupported grammar operator: v	
+$s9OracleLib9OuterQ310V13InnerEnumQ315OMa	false	invalid_grammar	39	expected identifier literal length	
+$s9OracleLib9OuterQ310V14InnerClassQ313C14innerClsFnQ314yyF	true		0		{"callable_kind":"class_instance_method","context":[{"kind":"struct","name":"OuterQ310"},{"kind":"class","name":"InnerClassQ313"}],"function_name":"innerClsFnQ314","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib9OuterQ310V14InnerClassQ313C14innerClsFnQ314yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib9OuterQ310V14InnerClassQ313C14innerClsFnQ314yyFTq	false	thunk_or_specialization	59	unsupported thunk or specialization production	
+$s9OracleLib9OuterQ310V14InnerClassQ313CMa	false	invalid_grammar	40	expected identifier literal length	
+$s9OracleLib9OuterQ310V14InnerClassQ313CfD	false	invalid_grammar	40	expected identifier literal length	
+$s9OracleLib9OuterQ310V14InnerClassQ313Cfd	false	invalid_grammar	40	expected identifier literal length	
+$s9OracleLib9OuterQ310V15InnerStructQ311V11innerFnQ312yyKF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"OuterQ310"},{"kind":"struct","name":"InnerStructQ311"}],"function_name":"innerFnQ312","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib9OuterQ310V15InnerStructQ311V11innerFnQ312yyKF","syntax_model":"swift-broad-declaration-syntax-v1","throws":true}
+$s9OracleLib9OuterQ310V15InnerStructQ311V12innerExtQ322yyF	true		0		{"callable_kind":"struct_instance_method","context":[{"kind":"struct","name":"OuterQ310"},{"kind":"struct","name":"InnerStructQ311"}],"function_name":"innerExtQ322","generic_parameter_counts":[],"generic_requirements":[],"module":"OracleLib","original_callable_kind":null,"parameter_labels":[],"parameter_types":[],"result_type":{"arguments":[],"generic_depth":null,"generic_index":null,"inout":false,"label":null,"name":"Swift.Void","nominal_kind":null},"specialization":null,"symbol":"$s9OracleLib9OuterQ310V15InnerStructQ311V12innerExtQ322yyF","syntax_model":"swift-broad-declaration-syntax-v1","throws":false}
+$s9OracleLib9OuterQ310V15InnerStructQ311VMa	false	invalid_grammar	41	expected identifier literal length	
+$s9OracleLib9OuterQ310V16InnerGenericQ316V14innerGenFnQ317yyYaKF	false	async_context	60	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib9OuterQ310V16InnerGenericQ316V14innerGenFnQ317yyYaKFTu	false	async_context	60	async/isolation/sendability annotation requires separate qualification	
+$s9OracleLib9OuterQ310V16InnerGenericQ316VMa	false	invalid_grammar	42	expected identifier literal length	
+$s9OracleLib9OuterQ310VMa	false	invalid_grammar	23	expected identifier literal length	
+$sSS9OracleLibE15extStringFnQ042yyF	false	invalid_grammar	2	expected identifier literal length	
+$sSS9OracleLibE16extStringGetQ040Sivg	false	invalid_grammar	2	expected identifier literal length	
+$sSS9OracleLibE16extStringMutQ044yyF	false	invalid_grammar	2	expected identifier literal length	
+$sSS9OracleLibE18extStringAsyncQ047yyYaF	false	invalid_grammar	2	expected identifier literal length	
+$sSS9OracleLibE18extStringAsyncQ047yyYaFTu	false	invalid_grammar	2	expected identifier literal length	
+$sSS9OracleLibE19extStringStaticQ041SivgZ	false	invalid_grammar	2	expected identifier literal length	
+$sSS9OracleLibE19extStringThrowsQ043yyKF	false	invalid_grammar	2	expected identifier literal length	
+$sSS9OracleLibE21extStringGetAsyncQ046Sivg	false	invalid_grammar	2	expected identifier literal length	
+$sSS9OracleLibE21extStringGetAsyncQ046SivgTu	false	invalid_grammar	2	expected identifier literal length	
+$sSS9OracleLibE22extStringGetThrowsQ045Sivg	false	invalid_grammar	2	expected identifier literal length	
+$sSa9OracleLibE15extArrayGetQ050Sivg	false	invalid_grammar	2	expected identifier literal length	
+$sSa9OracleLibE18extArrayStaticQ052SivgZ	false	invalid_grammar	2	expected identifier literal length	
+$sSa9OracleLibE18extArrayThrowsQ051yyKF	false	invalid_grammar	2	expected identifier literal length	
+$sSa9OracleLibE21extArrayMutThrowsQ053yyKF	false	invalid_grammar	2	expected identifier literal length	
+$sSa9OracleLibSQRzlE21extArrayEquatableQ054yyF	false	invalid_grammar	2	expected identifier literal length	
+$sSa9OracleLibSQRzlE27extArrayEquatableThrowsQ055yyKF	false	invalid_grammar	2	expected identifier literal length	
+$sSi9OracleLibE13extIntGetQ056Sivg	false	invalid_grammar	2	expected identifier literal length	
+$sSi9OracleLibE18extIntRethrowsQ060yyyyKXEKF	false	invalid_grammar	2	expected identifier literal length	
+$sSi9OracleLibE18extIntStaticFnQ057yyFZ	false	invalid_grammar	2	expected identifier literal length	
+$sSi9OracleLibE4Q058SiSS_tKcfC	false	invalid_grammar	2	expected identifier literal length	
+$sSi9OracleLibE4Q059SiSgSd_tcfC	false	invalid_grammar	2	expected identifier literal length	
+$sSq9OracleLibE21extOptionalThrowsQ061yyKF	false	invalid_grammar	2	expected identifier literal length	
+_$s10Foundation11JSONDecoderC6decode_4fromxxm_AA4DataVtKSeRzlFTj	false	unsupported_production	44	unsupported grammar operator: m	
+_$s10Foundation11JSONDecoderCACycfc	false	invalid_grammar	28	expected identifier literal length	
+_$s10Foundation11JSONDecoderCMa	false	invalid_grammar	28	expected identifier literal length	
+_$s10Foundation3URLV15fileURLWithPathACSSh_tcfC	false	unsupported_production	41	unsupported grammar operator: h	
+_$s10Foundation3URLVMa	false	invalid_grammar	19	expected identifier literal length	
+_$s10Foundation4DataV10contentsOf7optionsAcA3URLVh_So20NSDataReadingOptionsVtKcfC	false	unknown_substitution	41	unsupported substitution encoding	
+_$sSS10FoundationE8EncodingV4utf8ACvgZ	false	invalid_grammar	2	expected identifier literal length	
+_$sSS10FoundationE8EncodingVMa	false	invalid_grammar	2	expected identifier literal length	
+_$sSy10FoundationE5write2to10atomically8encodingyAA3URLV_SbSSAAE8EncodingVtKF	false	invalid_grammar	2	expected identifier literal length	
+_$ss11CommandLineO9argumentsSaySSGvgZ	false	invalid_grammar	2	expected identifier literal length	
+_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF	false	invalid_grammar	2	expected identifier literal length	
+_$ss27_stringCompareWithSmolCheck__9expectingSbs11_StringGutsV_ADs01_G16ComparisonResultOtF	false	invalid_grammar	2	expected identifier literal length	
+_$ss5print_9separator10terminatoryypd_S2StF	false	invalid_grammar	2	expected identifier literal length	
+_$ss6HasherV5_seedABSi_tcfC	false	invalid_grammar	2	expected identifier literal length	
+_$ss6HasherV8_combineyySuF	false	invalid_grammar	2	expected identifier literal length	
+_$ss6HasherV9_finalizeSiyF	false	invalid_grammar	2	expected identifier literal length	
+_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj	false	invalid_grammar	2	expected identifier literal length	
+_$ss9CodingKeyPsE11descriptionSSvg	false	invalid_grammar	2	expected identifier literal length	
+_$ss9CodingKeyPsE16debugDescriptionSSvg	false	invalid_grammar	2	expected identifier literal length	

@@ -601,5 +601,83 @@
    "demangled": "_swift_getWitnessTable",
    "demangled_throws": false
   }
- ]
+ ],
+ "import_declaration_expectations": {
+  "_$s10Foundation3URLVMa": {
+   "demangled": "type metadata accessor for Foundation.URL",
+   "outcome": "skip_non_throwing"
+  },
+  "_$ss11CommandLineO9argumentsSaySSGvgZ": {
+   "demangled": "static Swift.CommandLine.arguments.getter : [Swift.String]",
+   "outcome": "syntax_unresolved"
+  },
+  "_$s10Foundation3URLV15fileURLWithPathACSSh_tcfC": {
+   "demangled": "Foundation.URL.init(fileURLWithPath: __shared Swift.String) -> Foundation.URL",
+   "outcome": "skip_non_throwing"
+  },
+  "_$ss5print_9separator10terminatoryypd_S2StF": {
+   "demangled": "Swift.print(_: Any..., separator: Swift.String, terminator: Swift.String) -> ()",
+   "outcome": "skip_non_throwing"
+  },
+  "_$s10Foundation4DataV10contentsOf7optionsAcA3URLVh_So20NSDataReadingOptionsVtKcfC": {
+   "demangled": "Foundation.Data.init(contentsOf: __shared Foundation.URL, options: __C.NSDataReadingOptions) throws -> Foundation.Data",
+   "outcome": "syntax_admitted_throwing"
+  },
+  "_$s10Foundation11JSONDecoderCMa": {
+   "demangled": "type metadata accessor for Foundation.JSONDecoder",
+   "outcome": "skip_non_throwing"
+  },
+  "_$s10Foundation11JSONDecoderCACycfc": {
+   "demangled": "Foundation.JSONDecoder.init() -> Foundation.JSONDecoder",
+   "outcome": "skip_non_throwing"
+  },
+  "_$s10Foundation11JSONDecoderC6decode_4fromxxm_AA4DataVtKSeRzlFTj": {
+   "demangled": "dispatch thunk of Foundation.JSONDecoder.decode<A where A: Swift.Decodable>(_: A.Type, from: Foundation.Data) throws -> A",
+   "outcome": "syntax_unresolved"
+  },
+  "_$sSS10FoundationE8EncodingVMa": {
+   "demangled": "type metadata accessor for (extension in Foundation):Swift.String.Encoding",
+   "outcome": "skip_non_throwing"
+  },
+  "_$sSS10FoundationE8EncodingV4utf8ACvgZ": {
+   "demangled": "static (extension in Foundation):Swift.String.Encoding.utf8.getter : (extension in Foundation):Swift.String.Encoding",
+   "outcome": "syntax_unresolved"
+  },
+  "_$sSy10FoundationE5write2to10atomically8encodingyAA3URLV_SbSSAAE8EncodingVtKF": {
+   "demangled": "(extension in Foundation):Swift.StringProtocol.write(to: Foundation.URL, atomically: Swift.Bool, encoding: (extension in Foundation):Swift.String.Encoding) throws -> ()",
+   "outcome": "syntax_unresolved"
+  },
+  "_$ss6HasherV5_seedABSi_tcfC": {
+   "demangled": "Swift.Hasher.init(_seed: Swift.Int) -> Swift.Hasher",
+   "outcome": "skip_non_throwing"
+  },
+  "_$ss6HasherV8_combineyySuF": {
+   "demangled": "Swift.Hasher._combine(Swift.UInt) -> ()",
+   "outcome": "skip_non_throwing"
+  },
+  "_$ss6HasherV9_finalizeSiyF": {
+   "demangled": "Swift.Hasher._finalize() -> Swift.Int",
+   "outcome": "skip_non_throwing"
+  },
+  "_$ss27_stringCompareWithSmolCheck__9expectingSbs11_StringGutsV_ADs01_G16ComparisonResultOtF": {
+   "demangled": "Swift._stringCompareWithSmolCheck(_: Swift._StringGuts, _: Swift._StringGuts, expecting: Swift._StringComparisonResult) -> Swift.Bool",
+   "outcome": "skip_non_throwing"
+  },
+  "_$ss9CodingKeyPsE16debugDescriptionSSvg": {
+   "demangled": "(extension in Swift):Swift.CodingKey.debugDescription.getter : Swift.String",
+   "outcome": "syntax_unresolved"
+  },
+  "_$ss9CodingKeyPsE11descriptionSSvg": {
+   "demangled": "(extension in Swift):Swift.CodingKey.description.getter : Swift.String",
+   "outcome": "syntax_unresolved"
+  },
+  "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj": {
+   "demangled": "dispatch thunk of Swift.Decoder.container<A where A1: Swift.CodingKey>(keyedBy: A1.Type) throws -> Swift.KeyedDecodingContainer<A1>",
+   "outcome": "syntax_unresolved"
+  },
+  "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF": {
+   "demangled": "Swift.KeyedDecodingContainer.decode(_: Swift.Int.Type, forKey: A) throws -> Swift.Int",
+   "outcome": "syntax_unresolved"
+  }
+ }
 }

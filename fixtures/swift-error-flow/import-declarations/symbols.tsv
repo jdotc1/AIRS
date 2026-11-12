@@ -1,0 +1,495 @@
+mangled	demangled	entity_shape	source_truth_throws	source_truth_async	expected_decision	expected_reason	expected_throws
+$s9OracleLib11EnumRawQ016O8rawValueACSgSi_tcfC	OracleLib.EnumRawQ016.init(rawValue: Swift.Int) -> OracleLib.EnumRawQ016?	synthesized_init	no	no	admit		false
+$s9OracleLib11EnumRawQ016O8rawValueSivg	OracleLib.EnumRawQ016.rawValue.getter : Swift.Int	synthesized_getter	no	no	decline	unsupported_production	
+$s9OracleLib11EnumRawQ016OMa	type metadata accessor for OracleLib.EnumRawQ016	metadata_accessor	no	no	admit		false
+$s9OracleLib11GenInitQ380V4Q381ACx_tKclufC	OracleLib.GenInitQ380.init<A>(Q381: A) throws -> OracleLib.GenInitQ380	init	yes	no	decline	generic_requirements	
+$s9OracleLib11GenInitQ380V4Q382ACx_tYaKcAA15HelperProtoQ901RzlufC	OracleLib.GenInitQ380.init<A where A: OracleLib.HelperProtoQ901>(Q382: A) async throws -> OracleLib.GenInitQ380	init	yes	yes	decline	generic_requirements	
+$s9OracleLib11GenInitQ380V4Q382ACx_tYaKcAA15HelperProtoQ901RzlufCTu	async function pointer to OracleLib.GenInitQ380.init<A where A: OracleLib.HelperProtoQ901>(Q382: A) async throws -> OracleLib.GenInitQ380	async_function_pointer:init	yes	yes	decline	generic_requirements	
+$s9OracleLib11GenInitQ380VMa	type metadata accessor for OracleLib.GenInitQ380	metadata_accessor	no	no	admit		false
+$s9OracleLib12ClassSubQ008CMa	type metadata accessor for OracleLib.ClassSubQ008	metadata_accessor	no	no	admit		false
+$s9OracleLib12ClassSubQ008CfD	OracleLib.ClassSubQ008.__deallocating_deinit	deinit_deallocating	no	no	decline	unsupported_production	
+$s9OracleLib12ClassSubQ008Cfd	OracleLib.ClassSubQ008.deinit	deinit	no	no	decline	unsupported_production	
+$s9OracleLib12InitEnumQ122O21__derived_enum_equalsySbAC_ACtFZ	static OracleLib.InitEnumQ122.__derived_enum_equals(OracleLib.InitEnumQ122, OracleLib.InitEnumQ122) -> Swift.Bool	synthesized_static_function	no	no	decline	unsupported_production	
+$s9OracleLib12InitEnumQ122O4Q123ACSi_tcfC	OracleLib.InitEnumQ122.init(Q123: Swift.Int) -> OracleLib.InitEnumQ122	init	no	no	admit		false
+$s9OracleLib12InitEnumQ122O4Q124ACSS_tKcfC	OracleLib.InitEnumQ122.init(Q124: Swift.String) throws -> OracleLib.InitEnumQ122	init	yes	no	admit		true
+$s9OracleLib12InitEnumQ122O4hash4intoys6HasherVz_tF	OracleLib.InitEnumQ122.hash(into: inout Swift.Hasher) -> ()	synthesized_function	no	no	decline	unsupported_production	
+$s9OracleLib12InitEnumQ122O9hashValueSivg	OracleLib.InitEnumQ122.hashValue.getter : Swift.Int	synthesized_getter	no	no	decline	unsupported_production	
+$s9OracleLib12InitEnumQ122OMa	type metadata accessor for OracleLib.InitEnumQ122	metadata_accessor	no	no	admit		false
+$s9OracleLib12LazyHostQ373C018$__lazy_storage_$_F7VarQ37433_8EB33C0B6A84A68AB098D323AC6324B2LLSiSgvpfi	variable initialization expression of OracleLib.LazyHostQ373.($__lazy_storage_$_lazyVarQ374 in _8EB33C0B6A84A68AB098D323AC6324B2) : Swift.Int?	variable_initializer	no	no	decline	invalid_grammar	
+$s9OracleLib12LazyHostQ373C11lazyVarQ374SivM	OracleLib.LazyHostQ373.lazyVarQ374.modify : Swift.Int	modify	no	no	decline	unsupported_production	
+$s9OracleLib12LazyHostQ373C11lazyVarQ374SivMTq	method descriptor for OracleLib.LazyHostQ373.lazyVarQ374.modify : Swift.Int	method_descriptor:modify	no	no	decline	unsupported_production	
+$s9OracleLib12LazyHostQ373C11lazyVarQ374Sivg	OracleLib.LazyHostQ373.lazyVarQ374.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib12LazyHostQ373C11lazyVarQ374SivgTq	method descriptor for OracleLib.LazyHostQ373.lazyVarQ374.getter : Swift.Int	method_descriptor:getter	no	no	decline	unsupported_production	
+$s9OracleLib12LazyHostQ373C11lazyVarQ374Sivs	OracleLib.LazyHostQ373.lazyVarQ374.setter : Swift.Int	setter	no	no	decline	unsupported_production	
+$s9OracleLib12LazyHostQ373C11lazyVarQ374SivsTq	method descriptor for OracleLib.LazyHostQ373.lazyVarQ374.setter : Swift.Int	method_descriptor:setter	no	no	decline	unsupported_production	
+$s9OracleLib12LazyHostQ373CMa	type metadata accessor for OracleLib.LazyHostQ373	metadata_accessor	no	no	admit		false
+$s9OracleLib12LazyHostQ373CfD	OracleLib.LazyHostQ373.__deallocating_deinit	deinit_deallocating	no	no	decline	unsupported_production	
+$s9OracleLib12LazyHostQ373Cfd	OracleLib.LazyHostQ373.deinit	deinit	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V10getSetQ023SivM	OracleLib.PropHostQ020.getSetQ023.modify : Swift.Int	modify	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V10getSetQ023Sivg	OracleLib.PropHostQ020.getSetQ023.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V10getSetQ023Sivs	OracleLib.PropHostQ020.getSetQ023.setter : Swift.Int	setter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V10modifyQ027SivM	OracleLib.PropHostQ020.modifyQ027.modify : Swift.Int	modify	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V10modifyQ027Sivg	OracleLib.PropHostQ020.modifyQ027.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V10modifyQ027Sivs	OracleLib.PropHostQ020.modifyQ027.setter : Swift.Int	setter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V12observedQ025SivM	OracleLib.PropHostQ020.observedQ025.modify : Swift.Int	modify	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V12observedQ025Sivg	OracleLib.PropHostQ020.observedQ025.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V12observedQ025Sivpfi	variable initialization expression of OracleLib.PropHostQ020.observedQ025 : Swift.Int	variable_initializer	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V12observedQ025Sivs	OracleLib.PropHostQ020.observedQ025.setter : Swift.Int	setter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V13staticGetQ022SivgZ	static OracleLib.PropHostQ020.staticGetQ022.getter : Swift.Int	static_getter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V13staticLetQ033Sivau	OracleLib.PropHostQ020.staticLetQ033.unsafeMutableAddressor : Swift.Int	addressor	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V13staticLetQ033SivgZ	static OracleLib.PropHostQ020.staticLetQ033.getter : Swift.Int	static_getter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V14closureOptQ031SiyKcSgvM	OracleLib.PropHostQ020.closureOptQ031.modify : (() throws -> Swift.Int)?	modify	no	no	decline	closure_type	
+$s9OracleLib12PropHostQ020V14closureOptQ031SiyKcSgvg	OracleLib.PropHostQ020.closureOptQ031.getter : (() throws -> Swift.Int)?	getter	no	no	decline	closure_type	
+$s9OracleLib12PropHostQ020V14closureOptQ031SiyKcSgvpfi	variable initialization expression of OracleLib.PropHostQ020.closureOptQ031 : (() throws -> Swift.Int)?	variable_initializer	no	no	decline	closure_type	
+$s9OracleLib12PropHostQ020V14closureOptQ031SiyKcSgvs	OracleLib.PropHostQ020.closureOptQ031.setter : (() throws -> Swift.Int)?	setter	no	no	decline	closure_type	
+$s9OracleLib12PropHostQ020V14getterOnlyQ021Sivg	OracleLib.PropHostQ020.getterOnlyQ021.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V16closureAsyncQ030yyYacvM	OracleLib.PropHostQ020.closureAsyncQ030.modify : () async -> ()	modify	no	no	decline	async_context	
+$s9OracleLib12PropHostQ020V16closureAsyncQ030yyYacvg	OracleLib.PropHostQ020.closureAsyncQ030.getter : () async -> ()	getter	no	no	decline	async_context	
+$s9OracleLib12PropHostQ020V16closureAsyncQ030yyYacvpfi	variable initialization expression of OracleLib.PropHostQ020.closureAsyncQ030 : () async -> ()	variable_initializer	no	no	decline	async_context	
+$s9OracleLib12PropHostQ020V16closureAsyncQ030yyYacvs	OracleLib.PropHostQ020.closureAsyncQ030.setter : () async -> ()	setter	no	no	decline	async_context	
+$s9OracleLib12PropHostQ020V16staticGetSetQ024SivMZ	static OracleLib.PropHostQ020.staticGetSetQ024.modify : Swift.Int	static_modify	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V16staticGetSetQ024SivgZ	static OracleLib.PropHostQ020.staticGetSetQ024.getter : Swift.Int	static_getter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V16staticGetSetQ024SivsZ	static OracleLib.PropHostQ020.staticGetSetQ024.setter : Swift.Int	static_setter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V16staticStoredQ032SivMZ	static OracleLib.PropHostQ020.staticStoredQ032.modify : Swift.Int	static_modify	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V16staticStoredQ032Sivau	OracleLib.PropHostQ020.staticStoredQ032.unsafeMutableAddressor : Swift.Int	addressor	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V16staticStoredQ032SivgZ	static OracleLib.PropHostQ020.staticStoredQ032.getter : Swift.Int	static_getter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V16staticStoredQ032SivsZ	static OracleLib.PropHostQ020.staticStoredQ032.setter : Swift.Int	static_setter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V16willObservedQ026SivM	OracleLib.PropHostQ020.willObservedQ026.modify : Swift.Int	modify	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V16willObservedQ026Sivg	OracleLib.PropHostQ020.willObservedQ026.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V16willObservedQ026Sivpfi	variable initialization expression of OracleLib.PropHostQ020.willObservedQ026 : Swift.Int	variable_initializer	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V16willObservedQ026Sivs	OracleLib.PropHostQ020.willObservedQ026.setter : Swift.Int	setter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V17closureThrowsQ029yyKcvM	OracleLib.PropHostQ020.closureThrowsQ029.modify : () throws -> ()	modify	no	no	decline	closure_type	
+$s9OracleLib12PropHostQ020V17closureThrowsQ029yyKcvg	OracleLib.PropHostQ020.closureThrowsQ029.getter : () throws -> ()	getter	no	no	decline	closure_type	
+$s9OracleLib12PropHostQ020V17closureThrowsQ029yyKcvpfi	variable initialization expression of OracleLib.PropHostQ020.closureThrowsQ029 : () throws -> ()	variable_initializer	no	no	decline	closure_type	
+$s9OracleLib12PropHostQ020V17closureThrowsQ029yyKcvs	OracleLib.PropHostQ020.closureThrowsQ029.setter : () throws -> ()	setter	no	no	decline	closure_type	
+$s9OracleLib12PropHostQ020V8readQ028Sivg	OracleLib.PropHostQ020.readQ028.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020V8readQ028Sivr	OracleLib.PropHostQ020.readQ028.read : Swift.Int	read	no	no	decline	unsupported_production	
+$s9OracleLib12PropHostQ020VMa	type metadata accessor for OracleLib.PropHostQ020	metadata_accessor	no	no	admit		false
+$s9OracleLib12ProtoReqQ062PAAE12protoExtQ087S2i_tcig	(extension in OracleLib):OracleLib.ProtoReqQ062.subscript.getter : (protoExtQ087: Swift.Int) -> Swift.Int	subscript_getter	no	no	decline	protocol_context	
+$s9OracleLib12ProtoReqQ062PAAE14protoExtFnQ078yyF	(extension in OracleLib):OracleLib.ProtoReqQ062.protoExtFnQ078() -> ()	method	no	no	decline	protocol_context	
+$s9OracleLib12ProtoReqQ062PAAE15protoExtGetQ081Sivg	(extension in OracleLib):OracleLib.ProtoReqQ062.protoExtGetQ081.getter : Swift.Int	getter	no	no	decline	protocol_context	
+$s9OracleLib12ProtoReqQ062PAAE17protoExtAsyncQ080yyYaF	(extension in OracleLib):OracleLib.ProtoReqQ062.protoExtAsyncQ080() async -> ()	method	no	yes	decline	protocol_context	
+$s9OracleLib12ProtoReqQ062PAAE17protoExtAsyncQ080yyYaFTu	async function pointer to (extension in OracleLib):OracleLib.ProtoReqQ062.protoExtAsyncQ080() async -> ()	async_function_pointer:method	no	yes	decline	protocol_context	
+$s9OracleLib12ProtoReqQ062PAAE18protoExtThrowsQ079yyKF	(extension in OracleLib):OracleLib.ProtoReqQ062.protoExtThrowsQ079() throws -> ()	method	yes	no	decline	protocol_context	
+$s9OracleLib12ProtoReqQ062PAAE19protoExtGenericQ086yyqd__KAA06HelperC4Q901Rd__lF	(extension in OracleLib):OracleLib.ProtoReqQ062.protoExtGenericQ086<A where A1: OracleLib.HelperProtoQ901>(A1) throws -> ()	method	yes	no	decline	protocol_context	
+$s9OracleLib12ProtoReqQ062PAAE20protoExtRethrowsQ085yyyyKXEKF	(extension in OracleLib):OracleLib.ProtoReqQ062.protoExtRethrowsQ085(() throws -> ()) throws -> ()	method	rethrows	no	decline	protocol_context	
+$s9OracleLib12ProtoReqQ062PAAE20protoExtStaticFnQ084yyKFZ	static (extension in OracleLib):OracleLib.ProtoReqQ062.protoExtStaticFnQ084() throws -> ()	static_method	yes	no	decline	protocol_context	
+$s9OracleLib12ProtoReqQ062PAAE21protoExtGetThrowsQ082Sivg	(extension in OracleLib):OracleLib.ProtoReqQ062.protoExtGetThrowsQ082.getter : Swift.Int	getter	yes	no	decline	protocol_context	
+$s9OracleLib12ProtoReqQ062PAAE21protoExtStaticGetQ083SivgZ	static (extension in OracleLib):OracleLib.ProtoReqQ062.protoExtStaticGetQ083.getter : Swift.Int	static_getter	no	no	decline	protocol_context	
+$s9OracleLib12freePackQ376yyxxQpRvzlF	OracleLib.freePackQ376<each A>(repeat A) -> ()	free_function	no	no	decline	generic_requirements	
+$s9OracleLib12freeYaKFQ371yyF	OracleLib.freeYaKFQ371() -> ()	free_function	no	no	admit		false
+$s9OracleLib13ActorHostQ230C13actorPropQ236Sivg	OracleLib.ActorHostQ230.actorPropQ236.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib13ActorHostQ230C13actorPropQ236SivgTq	method descriptor for OracleLib.ActorHostQ230.actorPropQ236.getter : Swift.Int	method_descriptor:getter	no	no	decline	unsupported_production	
+$s9OracleLib13ActorHostQ230C14actorAsyncQ234yyYaF	OracleLib.ActorHostQ230.actorAsyncQ234() async -> ()	method	no	yes	decline	async_context	
+$s9OracleLib13ActorHostQ230C14actorAsyncQ234yyYaFTq	method descriptor for OracleLib.ActorHostQ230.actorAsyncQ234() async -> ()	method_descriptor:method	no	yes	decline	async_context	
+$s9OracleLib13ActorHostQ230C14actorAsyncQ234yyYaFTu	async function pointer to OracleLib.ActorHostQ230.actorAsyncQ234() async -> ()	async_function_pointer:method	no	yes	decline	async_context	
+$s9OracleLib13ActorHostQ230C14actorPlainQ232yyF	OracleLib.ActorHostQ230.actorPlainQ232() -> ()	method	no	no	decline	unsupported_production	
+$s9OracleLib13ActorHostQ230C14actorPlainQ232yyFTq	method descriptor for OracleLib.ActorHostQ230.actorPlainQ232() -> ()	method_descriptor:method	no	no	decline	thunk_or_specialization	
+$s9OracleLib13ActorHostQ230C15actorThrowsQ233yyKF	OracleLib.ActorHostQ230.actorThrowsQ233() throws -> ()	method	yes	no	decline	unsupported_production	
+$s9OracleLib13ActorHostQ230C15actorThrowsQ233yyKFTq	method descriptor for OracleLib.ActorHostQ230.actorThrowsQ233() throws -> ()	method_descriptor:method	yes	no	decline	thunk_or_specialization	
+$s9OracleLib13ActorHostQ230C15unownedExecutorScevg	OracleLib.ActorHostQ230.unownedExecutor.getter : Swift.UnownedSerialExecutor	synthesized_getter	no	no	decline	unknown_substitution	
+$s9OracleLib13ActorHostQ230C19actorNonisoPropQ237Sivg	OracleLib.ActorHostQ230.actorNonisoPropQ237.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib13ActorHostQ230C19actorNonisoPropQ237SivgTq	method descriptor for OracleLib.ActorHostQ230.actorNonisoPropQ237.getter : Swift.Int	method_descriptor:getter	no	no	decline	unsupported_production	
+$s9OracleLib13ActorHostQ230C20actorNonisolatedQ235yyF	OracleLib.ActorHostQ230.actorNonisolatedQ235() -> ()	method	no	no	decline	unsupported_production	
+$s9OracleLib13ActorHostQ230C20actorNonisolatedQ235yyFTq	method descriptor for OracleLib.ActorHostQ230.actorNonisolatedQ235() -> ()	method_descriptor:method	no	no	decline	thunk_or_specialization	
+$s9OracleLib13ActorHostQ230C23actorGetAsyncThrowsQ238Sivg	OracleLib.ActorHostQ230.actorGetAsyncThrowsQ238.getter : Swift.Int	getter	yes	yes	decline	unsupported_production	
+$s9OracleLib13ActorHostQ230C23actorGetAsyncThrowsQ238SivgTq	method descriptor for OracleLib.ActorHostQ230.actorGetAsyncThrowsQ238.getter : Swift.Int	method_descriptor:getter	yes	yes	decline	unsupported_production	
+$s9OracleLib13ActorHostQ230C23actorGetAsyncThrowsQ238SivgTu	async function pointer to OracleLib.ActorHostQ230.actorGetAsyncThrowsQ238.getter : Swift.Int	async_function_pointer:getter	yes	yes	decline	unsupported_production	
+$s9OracleLib13ActorHostQ230C4Q231ACSi_tcfC	OracleLib.ActorHostQ230.__allocating_init(Q231: Swift.Int) -> OracleLib.ActorHostQ230	init	no	no	admit		false
+$s9OracleLib13ActorHostQ230C4Q231ACSi_tcfCTq	method descriptor for OracleLib.ActorHostQ230.__allocating_init(Q231: Swift.Int) -> OracleLib.ActorHostQ230	method_descriptor:init	no	no	decline	closure_type	
+$s9OracleLib13ActorHostQ230C4Q231ACSi_tcfc	OracleLib.ActorHostQ230.init(Q231: Swift.Int) -> OracleLib.ActorHostQ230	init_initializing	no	no	admit		false
+$s9OracleLib13ActorHostQ230CMa	type metadata accessor for OracleLib.ActorHostQ230	metadata_accessor	no	no	admit		false
+$s9OracleLib13ActorHostQ230CfD	OracleLib.ActorHostQ230.__deallocating_deinit	deinit_deallocating	no	no	decline	unsupported_production	
+$s9OracleLib13ActorHostQ230Cfd	OracleLib.ActorHostQ230.deinit	deinit	no	no	decline	unsupported_production	
+$s9OracleLib13EnumPlainQ012O21__derived_enum_equalsySbAC_ACtFZ	static OracleLib.EnumPlainQ012.__derived_enum_equals(OracleLib.EnumPlainQ012, OracleLib.EnumPlainQ012) -> Swift.Bool	synthesized_static_function	no	no	decline	unsupported_production	
+$s9OracleLib13EnumPlainQ012O4hash4intoys6HasherVz_tF	OracleLib.EnumPlainQ012.hash(into: inout Swift.Hasher) -> ()	synthesized_function	no	no	decline	unsupported_production	
+$s9OracleLib13EnumPlainQ012O9hashValueSivg	OracleLib.EnumPlainQ012.hashValue.getter : Swift.Int	synthesized_getter	no	no	decline	unsupported_production	
+$s9OracleLib13EnumPlainQ012OMa	type metadata accessor for OracleLib.EnumPlainQ012	metadata_accessor	no	no	admit		false
+$s9OracleLib13HelperErrQ900O21__derived_enum_equalsySbAC_ACtFZ	static OracleLib.HelperErrQ900.__derived_enum_equals(OracleLib.HelperErrQ900, OracleLib.HelperErrQ900) -> Swift.Bool	synthesized_static_function	no	no	decline	unsupported_production	
+$s9OracleLib13HelperErrQ900O4hash4intoys6HasherVz_tF	OracleLib.HelperErrQ900.hash(into: inout Swift.Hasher) -> ()	synthesized_function	no	no	decline	unsupported_production	
+$s9OracleLib13HelperErrQ900O9hashValueSivg	OracleLib.HelperErrQ900.hashValue.getter : Swift.Int	synthesized_getter	no	no	decline	unsupported_production	
+$s9OracleLib13HelperErrQ900OMa	type metadata accessor for OracleLib.HelperErrQ900	metadata_accessor	no	no	admit		false
+$s9OracleLib13HelperObjQ903CMa	type metadata accessor for OracleLib.HelperObjQ903	metadata_accessor	no	no	admit		false
+$s9OracleLib13HelperObjQ903CfD	OracleLib.HelperObjQ903.__deallocating_deinit	deinit_deallocating	no	no	decline	unsupported_production	
+$s9OracleLib13HelperObjQ903Cfd	OracleLib.HelperObjQ903.deinit	deinit	no	no	decline	unsupported_production	
+$s9OracleLib13HelperValQ902VMa	type metadata accessor for OracleLib.HelperValQ902	metadata_accessor	no	no	admit		false
+$s9OracleLib13InitClassQ105C4Q106ACSi_tcfC	OracleLib.InitClassQ105.__allocating_init(Q106: Swift.Int) -> OracleLib.InitClassQ105	init	no	no	admit		false
+$s9OracleLib13InitClassQ105C4Q106ACSi_tcfCTq	method descriptor for OracleLib.InitClassQ105.__allocating_init(Q106: Swift.Int) -> OracleLib.InitClassQ105	method_descriptor:init	no	no	decline	closure_type	
+$s9OracleLib13InitClassQ105C4Q106ACSi_tcfc	OracleLib.InitClassQ105.init(Q106: Swift.Int) -> OracleLib.InitClassQ105	init_initializing	no	no	admit		false
+$s9OracleLib13InitClassQ105C4Q107ACSi_tKcfC	OracleLib.InitClassQ105.__allocating_init(Q107: Swift.Int) throws -> OracleLib.InitClassQ105	init	yes	no	admit		true
+$s9OracleLib13InitClassQ105C4Q107ACSi_tKcfCTq	method descriptor for OracleLib.InitClassQ105.__allocating_init(Q107: Swift.Int) throws -> OracleLib.InitClassQ105	method_descriptor:init	yes	no	decline	closure_type	
+$s9OracleLib13InitClassQ105C4Q107ACSi_tKcfc	OracleLib.InitClassQ105.init(Q107: Swift.Int) throws -> OracleLib.InitClassQ105	init_initializing	yes	no	admit		true
+$s9OracleLib13InitClassQ105C4Q108ACSgSi_tcfC	OracleLib.InitClassQ105.__allocating_init(Q108: Swift.Int) -> OracleLib.InitClassQ105?	init	no	no	admit		false
+$s9OracleLib13InitClassQ105C4Q108ACSgSi_tcfCTq	method descriptor for OracleLib.InitClassQ105.__allocating_init(Q108: Swift.Int) -> OracleLib.InitClassQ105?	method_descriptor:init	no	no	decline	closure_type	
+$s9OracleLib13InitClassQ105C4Q108ACSgSi_tcfc	OracleLib.InitClassQ105.init(Q108: Swift.Int) -> OracleLib.InitClassQ105?	init_initializing	no	no	admit		false
+$s9OracleLib13InitClassQ105C4Q109ACSgSi_tKcfC	OracleLib.InitClassQ105.__allocating_init(Q109: Swift.Int) throws -> OracleLib.InitClassQ105?	init	yes	no	admit		true
+$s9OracleLib13InitClassQ105C4Q109ACSgSi_tKcfCTq	method descriptor for OracleLib.InitClassQ105.__allocating_init(Q109: Swift.Int) throws -> OracleLib.InitClassQ105?	method_descriptor:init	yes	no	decline	closure_type	
+$s9OracleLib13InitClassQ105C4Q109ACSgSi_tKcfc	OracleLib.InitClassQ105.init(Q109: Swift.Int) throws -> OracleLib.InitClassQ105?	init_initializing	yes	no	admit		true
+$s9OracleLib13InitClassQ105C4Q110ACSS_tcfC	OracleLib.InitClassQ105.__allocating_init(Q110: Swift.String) -> OracleLib.InitClassQ105	init	no	no	admit		false
+$s9OracleLib13InitClassQ105C4Q111ACSS_tKcfC	OracleLib.InitClassQ105.__allocating_init(Q111: Swift.String) throws -> OracleLib.InitClassQ105	init	yes	no	admit		true
+$s9OracleLib13InitClassQ105C4Q112ACSgSS_tcfC	OracleLib.InitClassQ105.__allocating_init(Q112: Swift.String) -> OracleLib.InitClassQ105?	init	no	no	admit		false
+$s9OracleLib13InitClassQ105C4Q113ACSd_tcfC	OracleLib.InitClassQ105.__allocating_init(Q113: Swift.Double) -> OracleLib.InitClassQ105	init	no	no	admit		false
+$s9OracleLib13InitClassQ105C4Q113ACSd_tcfCTq	method descriptor for OracleLib.InitClassQ105.__allocating_init(Q113: Swift.Double) -> OracleLib.InitClassQ105	method_descriptor:init	no	no	decline	closure_type	
+$s9OracleLib13InitClassQ105C4Q113ACSd_tcfc	OracleLib.InitClassQ105.init(Q113: Swift.Double) -> OracleLib.InitClassQ105	init_initializing	no	no	admit		false
+$s9OracleLib13InitClassQ105C4Q114ACSf_tKcfC	OracleLib.InitClassQ105.__allocating_init(Q114: Swift.Float) throws -> OracleLib.InitClassQ105	init	yes	no	admit		true
+$s9OracleLib13InitClassQ105C4Q114ACSf_tKcfCTq	method descriptor for OracleLib.InitClassQ105.__allocating_init(Q114: Swift.Float) throws -> OracleLib.InitClassQ105	method_descriptor:init	yes	no	decline	closure_type	
+$s9OracleLib13InitClassQ105C4Q114ACSf_tKcfc	OracleLib.InitClassQ105.init(Q114: Swift.Float) throws -> OracleLib.InitClassQ105	init_initializing	yes	no	admit		true
+$s9OracleLib13InitClassQ105C4Q115ACSi_tYacfC	OracleLib.InitClassQ105.__allocating_init(Q115: Swift.Int) async -> OracleLib.InitClassQ105	init	no	yes	decline	async_context	
+$s9OracleLib13InitClassQ105C4Q115ACSi_tYacfCTq	method descriptor for OracleLib.InitClassQ105.__allocating_init(Q115: Swift.Int) async -> OracleLib.InitClassQ105	method_descriptor:init	no	yes	decline	async_context	
+$s9OracleLib13InitClassQ105C4Q115ACSi_tYacfCTu	async function pointer to OracleLib.InitClassQ105.__allocating_init(Q115: Swift.Int) async -> OracleLib.InitClassQ105	async_function_pointer:init	no	yes	decline	async_context	
+$s9OracleLib13InitClassQ105C4Q115ACSi_tYacfc	OracleLib.InitClassQ105.init(Q115: Swift.Int) async -> OracleLib.InitClassQ105	init_initializing	no	yes	decline	async_context	
+$s9OracleLib13InitClassQ105C4Q115ACSi_tYacfcTu	async function pointer to OracleLib.InitClassQ105.init(Q115: Swift.Int) async -> OracleLib.InitClassQ105	async_function_pointer:init_initializing	no	yes	decline	async_context	
+$s9OracleLib13InitClassQ105C4Q116ACSi_tYaKcfC	OracleLib.InitClassQ105.__allocating_init(Q116: Swift.Int) async throws -> OracleLib.InitClassQ105	init	yes	yes	decline	async_context	
+$s9OracleLib13InitClassQ105C4Q116ACSi_tYaKcfCTq	method descriptor for OracleLib.InitClassQ105.__allocating_init(Q116: Swift.Int) async throws -> OracleLib.InitClassQ105	method_descriptor:init	yes	yes	decline	async_context	
+$s9OracleLib13InitClassQ105C4Q116ACSi_tYaKcfCTu	async function pointer to OracleLib.InitClassQ105.__allocating_init(Q116: Swift.Int) async throws -> OracleLib.InitClassQ105	async_function_pointer:init	yes	yes	decline	async_context	
+$s9OracleLib13InitClassQ105C4Q116ACSi_tYaKcfc	OracleLib.InitClassQ105.init(Q116: Swift.Int) async throws -> OracleLib.InitClassQ105	init_initializing	yes	yes	decline	async_context	
+$s9OracleLib13InitClassQ105C4Q116ACSi_tYaKcfcTu	async function pointer to OracleLib.InitClassQ105.init(Q116: Swift.Int) async throws -> OracleLib.InitClassQ105	async_function_pointer:init_initializing	yes	yes	decline	async_context	
+$s9OracleLib13InitClassQ105C4Q117ACSi_tYaKcfC	OracleLib.InitClassQ105.__allocating_init(Q117: Swift.Int) async throws -> OracleLib.InitClassQ105	init	yes	yes	decline	async_context	
+$s9OracleLib13InitClassQ105C4Q117ACSi_tYaKcfCTu	async function pointer to OracleLib.InitClassQ105.__allocating_init(Q117: Swift.Int) async throws -> OracleLib.InitClassQ105	async_function_pointer:init	yes	yes	decline	async_context	
+$s9OracleLib13InitClassQ105CMa	type metadata accessor for OracleLib.InitClassQ105	metadata_accessor	no	no	admit		false
+$s9OracleLib13InitClassQ105CfD	OracleLib.InitClassQ105.__deallocating_deinit	deinit_deallocating	no	no	decline	unsupported_production	
+$s9OracleLib13InitClassQ105Cfd	OracleLib.InitClassQ105.deinit	deinit	no	no	decline	unsupported_production	
+$s9OracleLib13InitNoArgQ090VACycfC	OracleLib.InitNoArgQ090.init() -> OracleLib.InitNoArgQ090	init	no	no	admit		false
+$s9OracleLib13InitNoArgQ090VMa	type metadata accessor for OracleLib.InitNoArgQ090	metadata_accessor	no	no	admit		false
+$s9OracleLib13OpenClassQ290C04openD7VarQ300SivgZ	static OracleLib.OpenClassQ290.openClassVarQ300.getter : Swift.Int	static_getter	no	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C04openD7VarQ300SivgZTq	method descriptor for static OracleLib.OpenClassQ290.openClassVarQ300.getter : Swift.Int	method_descriptor:static_getter	no	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C04openD8FuncQ295yyFZ	static OracleLib.OpenClassQ290.openClassFuncQ295() -> ()	class_static_method	no	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C04openD8FuncQ295yyFZTq	method descriptor for static OracleLib.OpenClassQ290.openClassFuncQ295() -> ()	method_descriptor:class_static_method	no	no	decline	thunk_or_specialization	
+$s9OracleLib13OpenClassQ290C11openVarQ294Sivg	OracleLib.OpenClassQ290.openVarQ294.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C11openVarQ294SivgTq	method descriptor for OracleLib.OpenClassQ290.openVarQ294.getter : Swift.Int	method_descriptor:getter	no	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C13openAsyncQ297yyYaF	OracleLib.OpenClassQ290.openAsyncQ297() async -> ()	class_method	no	yes	decline	async_context	
+$s9OracleLib13OpenClassQ290C13openAsyncQ297yyYaFTq	method descriptor for OracleLib.OpenClassQ290.openAsyncQ297() async -> ()	method_descriptor:class_method	no	yes	decline	async_context	
+$s9OracleLib13OpenClassQ290C13openAsyncQ297yyYaFTu	async function pointer to OracleLib.OpenClassQ290.openAsyncQ297() async -> ()	async_function_pointer:class_method	no	yes	decline	async_context	
+$s9OracleLib13OpenClassQ290C14openMethodQ292yyF	OracleLib.OpenClassQ290.openMethodQ292() -> ()	class_method	no	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C14openMethodQ292yyFTq	method descriptor for OracleLib.OpenClassQ290.openMethodQ292() -> ()	method_descriptor:class_method	no	no	decline	thunk_or_specialization	
+$s9OracleLib13OpenClassQ290C14openStoredQ298SivM	OracleLib.OpenClassQ290.openStoredQ298.modify : Swift.Int	modify	no	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C14openStoredQ298SivMTq	method descriptor for OracleLib.OpenClassQ290.openStoredQ298.modify : Swift.Int	method_descriptor:modify	no	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C14openStoredQ298Sivg	OracleLib.OpenClassQ290.openStoredQ298.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C14openStoredQ298SivgTq	method descriptor for OracleLib.OpenClassQ290.openStoredQ298.getter : Swift.Int	method_descriptor:getter	no	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C14openStoredQ298Sivpfi	variable initialization expression of OracleLib.OpenClassQ290.openStoredQ298 : Swift.Int	variable_initializer	no	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C14openStoredQ298Sivs	OracleLib.OpenClassQ290.openStoredQ298.setter : Swift.Int	setter	no	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C14openStoredQ298SivsTq	method descriptor for OracleLib.OpenClassQ290.openStoredQ298.setter : Swift.Int	method_descriptor:setter	no	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C14openThrowsQ293yyKF	OracleLib.OpenClassQ290.openThrowsQ293() throws -> ()	class_method	yes	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C14openThrowsQ293yyKFTq	method descriptor for OracleLib.OpenClassQ290.openThrowsQ293() throws -> ()	method_descriptor:class_method	yes	no	decline	thunk_or_specialization	
+$s9OracleLib13OpenClassQ290C15finalMethodQ296yyF	OracleLib.OpenClassQ290.finalMethodQ296() -> ()	final_method	no	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C16openRethrowsQ301yyyyKXEKF	OracleLib.OpenClassQ290.openRethrowsQ301(() throws -> ()) throws -> ()	class_method	rethrows	no	decline	invalid_grammar	
+$s9OracleLib13OpenClassQ290C16openRethrowsQ301yyyyKXEKFTq	method descriptor for OracleLib.OpenClassQ290.openRethrowsQ301(() throws -> ()) throws -> ()	method_descriptor:class_method	rethrows	no	decline	invalid_grammar	
+$s9OracleLib13OpenClassQ290C22openGetAsyncThrowsQ302Sivg	OracleLib.OpenClassQ290.openGetAsyncThrowsQ302.getter : Swift.Int	getter	yes	yes	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C22openGetAsyncThrowsQ302SivgTq	method descriptor for OracleLib.OpenClassQ290.openGetAsyncThrowsQ302.getter : Swift.Int	method_descriptor:getter	yes	yes	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C22openGetAsyncThrowsQ302SivgTu	async function pointer to OracleLib.OpenClassQ290.openGetAsyncThrowsQ302.getter : Swift.Int	async_function_pointer:getter	yes	yes	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290C4Q291ACSi_tcfC	OracleLib.OpenClassQ290.__allocating_init(Q291: Swift.Int) -> OracleLib.OpenClassQ290	init	no	no	admit		false
+$s9OracleLib13OpenClassQ290C4Q291ACSi_tcfCTq	method descriptor for OracleLib.OpenClassQ290.__allocating_init(Q291: Swift.Int) -> OracleLib.OpenClassQ290	method_descriptor:init	no	no	decline	closure_type	
+$s9OracleLib13OpenClassQ290C4Q291ACSi_tcfc	OracleLib.OpenClassQ290.init(Q291: Swift.Int) -> OracleLib.OpenClassQ290	init_initializing	no	no	admit		false
+$s9OracleLib13OpenClassQ290C4Q299S2i_tcig	OracleLib.OpenClassQ290.subscript.getter : (Q299: Swift.Int) -> Swift.Int	subscript_getter	yes	no	decline	closure_type	
+$s9OracleLib13OpenClassQ290C4Q299S2i_tcigTq	method descriptor for OracleLib.OpenClassQ290.subscript.getter : (Q299: Swift.Int) -> Swift.Int	method_descriptor:subscript_getter	yes	no	decline	closure_type	
+$s9OracleLib13OpenClassQ290CMa	type metadata accessor for OracleLib.OpenClassQ290	metadata_accessor	no	no	admit		false
+$s9OracleLib13OpenClassQ290CfD	OracleLib.OpenClassQ290.__deallocating_deinit	deinit_deallocating	no	no	decline	unsupported_production	
+$s9OracleLib13OpenClassQ290Cfd	OracleLib.OpenClassQ290.deinit	deinit	no	no	decline	unsupported_production	
+$s9OracleLib13freeAsyncQ132yyYaF	OracleLib.freeAsyncQ132() async -> ()	free_function	no	yes	decline	async_context	
+$s9OracleLib13freeAsyncQ132yyYaFTu	async function pointer to OracleLib.freeAsyncQ132() async -> ()	async_function_pointer:free_function	no	yes	decline	async_context	
+$s9OracleLib13freeInoutQ142yySizF	OracleLib.freeInoutQ142(inout Swift.Int) -> ()	free_function	no	no	decline	unsupported_production	
+$s9OracleLib13freeNeverQ153s0D0OyF	OracleLib.freeNeverQ153() -> Swift.Never	free_function	no	no	admit		false
+$s9OracleLib13freePlainQ130yyF	OracleLib.freePlainQ130() -> ()	free_function	no	no	admit		false
+$s9OracleLib13globalLetQ035SSvau	OracleLib.globalLetQ035.unsafeMutableAddressor : Swift.String	global_addressor	no	no	decline	unsupported_production	
+$s9OracleLib13globalVarQ034Sivau	OracleLib.globalVarQ034.unsafeMutableAddressor : Swift.Int	global_addressor	no	no	decline	unsupported_production	
+$s9OracleLib14ActorPlainQ018C15unownedExecutorScevg	OracleLib.ActorPlainQ018.unownedExecutor.getter : Swift.UnownedSerialExecutor	synthesized_getter	no	no	decline	unknown_substitution	
+$s9OracleLib14ActorPlainQ018CMa	type metadata accessor for OracleLib.ActorPlainQ018	metadata_accessor	no	no	admit		false
+$s9OracleLib14ActorPlainQ018CfD	OracleLib.ActorPlainQ018.__deallocating_deinit	deinit_deallocating	no	no	decline	unsupported_production	
+$s9OracleLib14ActorPlainQ018Cfd	OracleLib.ActorPlainQ018.deinit	deinit	no	no	decline	unsupported_production	
+$s9OracleLib14ClassFinalQ009C12finalVarQ010SivM	OracleLib.ClassFinalQ009.finalVarQ010.modify : Swift.Int	modify	no	no	decline	unsupported_production	
+$s9OracleLib14ClassFinalQ009C12finalVarQ010Sivg	OracleLib.ClassFinalQ009.finalVarQ010.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib14ClassFinalQ009C12finalVarQ010Sivpfi	variable initialization expression of OracleLib.ClassFinalQ009.finalVarQ010 : Swift.Int	variable_initializer	no	no	decline	unsupported_production	
+$s9OracleLib14ClassFinalQ009C12finalVarQ010Sivs	OracleLib.ClassFinalQ009.finalVarQ010.setter : Swift.Int	setter	no	no	decline	unsupported_production	
+$s9OracleLib14ClassFinalQ009CMa	type metadata accessor for OracleLib.ClassFinalQ009	metadata_accessor	no	no	admit		false
+$s9OracleLib14ClassFinalQ009CfD	OracleLib.ClassFinalQ009.__deallocating_deinit	deinit_deallocating	no	no	decline	unsupported_production	
+$s9OracleLib14ClassFinalQ009Cfd	OracleLib.ClassFinalQ009.deinit	deinit	no	no	decline	unsupported_production	
+$s9OracleLib14ClassPlainQ007CMa	type metadata accessor for OracleLib.ClassPlainQ007	metadata_accessor	no	no	admit		false
+$s9OracleLib14ClassPlainQ007CfD	OracleLib.ClassPlainQ007.__deallocating_deinit	deinit_deallocating	no	no	decline	unsupported_production	
+$s9OracleLib14ClassPlainQ007Cfd	OracleLib.ClassPlainQ007.deinit	deinit	no	no	decline	unsupported_production	
+$s9OracleLib14EnumNoCaseQ017OMa	type metadata accessor for OracleLib.EnumNoCaseQ017	metadata_accessor	no	no	admit		false
+$s9OracleLib14InitStructQ094V4Q095ACSi_tcfC	OracleLib.InitStructQ094.init(Q095: Swift.Int) -> OracleLib.InitStructQ094	init	no	no	admit		false
+$s9OracleLib14InitStructQ094V4Q096ACSi_tKcfC	OracleLib.InitStructQ094.init(Q096: Swift.Int) throws -> OracleLib.InitStructQ094	init	yes	no	admit		true
+$s9OracleLib14InitStructQ094V4Q097ACSgSi_tcfC	OracleLib.InitStructQ094.init(Q097: Swift.Int) -> OracleLib.InitStructQ094?	init	no	no	admit		false
+$s9OracleLib14InitStructQ094V4Q098ACSgSi_tKcfC	OracleLib.InitStructQ094.init(Q098: Swift.Int) throws -> OracleLib.InitStructQ094?	init	yes	no	admit		true
+$s9OracleLib14InitStructQ094V4Q099ACSi_tYacfC	OracleLib.InitStructQ094.init(Q099: Swift.Int) async -> OracleLib.InitStructQ094	init	no	yes	decline	async_context	
+$s9OracleLib14InitStructQ094V4Q099ACSi_tYacfCTu	async function pointer to OracleLib.InitStructQ094.init(Q099: Swift.Int) async -> OracleLib.InitStructQ094	async_function_pointer:init	no	yes	decline	async_context	
+$s9OracleLib14InitStructQ094V4Q100ACSi_tYaKcfC	OracleLib.InitStructQ094.init(Q100: Swift.Int) async throws -> OracleLib.InitStructQ094	init	yes	yes	decline	async_context	
+$s9OracleLib14InitStructQ094V4Q100ACSi_tYaKcfCTu	async function pointer to OracleLib.InitStructQ094.init(Q100: Swift.Int) async throws -> OracleLib.InitStructQ094	async_function_pointer:init	yes	yes	decline	async_context	
+$s9OracleLib14InitStructQ094V4Q101ACx_tclufC	OracleLib.InitStructQ094.init<A>(Q101: A) -> OracleLib.InitStructQ094	init	no	no	decline	generic_requirements	
+$s9OracleLib14InitStructQ094V4Q102ACSi_tAA13HelperErrQ900OYKcfC	OracleLib.InitStructQ094.init(Q102: Swift.Int) throws(OracleLib.HelperErrQ900) -> OracleLib.InitStructQ094	init	yes	no	decline	typed_throws	
+$s9OracleLib14InitStructQ094V4Q1031bACSi_SStcfC	OracleLib.InitStructQ094.init(Q103: Swift.Int, b: Swift.String) -> OracleLib.InitStructQ094	init	no	no	admit		false
+$s9OracleLib14InitStructQ094V4Q104ACSid_tcfC	OracleLib.InitStructQ094.init(Q104: Swift.Int...) -> OracleLib.InitStructQ094	init	no	no	admit		false
+$s9OracleLib14InitStructQ094VMa	type metadata accessor for OracleLib.InitStructQ094	metadata_accessor	no	no	admit		false
+$s9OracleLib14closureTwoQ214yyyyKXE_yyXEtKF	OracleLib.closureTwoQ214(() throws -> (), () -> ()) throws -> ()	free_function	rethrows	no	decline	invalid_grammar	
+$s9OracleLib14freeOpaqueQ157QryF	OracleLib.freeOpaqueQ157() -> some	free_function	no	no	decline	generic_requirements	
+$s9OracleLib14freeParamsQ134yS2i_SStF	OracleLib.freeParamsQ134(Swift.Int, Swift.String) -> Swift.Int	free_function	no	no	admit		false
+$s9OracleLib14freeThrowsQ131yyKF	OracleLib.freeThrowsQ131() throws -> ()	free_function	yes	no	admit		true
+$s9OracleLib15EnumGenericQ015OMa	type metadata accessor for OracleLib.EnumGenericQ015	metadata_accessor	no	no	admit		false
+$s9OracleLib15EnumPayloadQ013OMa	type metadata accessor for OracleLib.EnumPayloadQ013	metadata_accessor	no	no	admit		false
+$s9OracleLib15GenericHostQ330V11genPropQ335Sivg	OracleLib.GenericHostQ330.genPropQ335.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib15GenericHostQ330V13genMethodQ331yyF	OracleLib.GenericHostQ330.genMethodQ331() -> ()	method	no	no	admit		false
+$s9OracleLib15GenericHostQ330V13genStaticQ336yyYaKFZ	static OracleLib.GenericHostQ330.genStaticQ336() async throws -> ()	static_method	yes	yes	decline	async_context	
+$s9OracleLib15GenericHostQ330V13genStaticQ336yyYaKFZTu	async function pointer to static OracleLib.GenericHostQ330.genStaticQ336() async throws -> ()	async_function_pointer:static_method	yes	yes	decline	async_context	
+$s9OracleLib15GenericHostQ330V14genMethodTQ333yxxKF	OracleLib.GenericHostQ330.genMethodTQ333(A) throws -> A	method	yes	no	decline	generic_requirements	
+$s9OracleLib15GenericHostQ330V17genPropThrowsQ338xvg	OracleLib.GenericHostQ330.genPropThrowsQ338.getter : A	getter	yes	no	decline	generic_requirements	
+$s9OracleLib15GenericHostQ330V18genMethodExtraQ334yyqd__AA15HelperProtoQ901Rd__lF	OracleLib.GenericHostQ330.genMethodExtraQ334<A where A1: OracleLib.HelperProtoQ901>(A1) -> ()	method	no	no	decline	generic_requirements	
+$s9OracleLib15GenericHostQ330V19genMethodThrowsQ332yyKF	OracleLib.GenericHostQ330.genMethodThrowsQ332() throws -> ()	method	yes	no	admit		true
+$s9OracleLib15GenericHostQ330V4Q337ACyxGx_tKcfC	OracleLib.GenericHostQ330.init(Q337: A) throws -> OracleLib.GenericHostQ330<A>	init	yes	no	decline	generic_requirements	
+$s9OracleLib15GenericHostQ330VMa	type metadata accessor for OracleLib.GenericHostQ330	metadata_accessor	no	no	admit		false
+$s9OracleLib15NoncopyableQ378VMa	type metadata accessor for OracleLib.NoncopyableQ378	metadata_accessor	no	no	admit		false
+$s9OracleLib15StructPlainQ001VMa	type metadata accessor for OracleLib.StructPlainQ001	metadata_accessor	no	no	admit		false
+$s9OracleLib15freeGenericQ146yyxlF	OracleLib.freeGenericQ146<A>(A) -> ()	free_function	no	no	decline	generic_requirements	
+$s9OracleLib16ClassGenericQ011CMa	type metadata accessor for OracleLib.ClassGenericQ011	metadata_accessor	no	no	admit		false
+$s9OracleLib16ClassGenericQ011CfD	OracleLib.ClassGenericQ011.__deallocating_deinit	deinit_deallocating	no	no	decline	unsupported_production	
+$s9OracleLib16ClassGenericQ011Cfd	OracleLib.ClassGenericQ011.deinit	deinit	no	no	decline	unsupported_production	
+$s9OracleLib16DefaultsHostQ360V18defaultsMethodQ3621a1bySi_SStF	OracleLib.DefaultsHostQ360.defaultsMethodQ362(a: Swift.Int, b: Swift.String) -> ()	method	no	no	admit		false
+$s9OracleLib16DefaultsHostQ360V18defaultsStaticQ3631aySi_tKFZ	static OracleLib.DefaultsHostQ360.defaultsStaticQ363(a: Swift.Int) throws -> ()	static_method	yes	no	admit		true
+$s9OracleLib16DefaultsHostQ360V19defaultsGenericQ3641ayxSg_tlF	OracleLib.DefaultsHostQ360.defaultsGenericQ364<A>(a: A?) -> ()	method	no	no	decline	generic_requirements	
+$s9OracleLib16DefaultsHostQ360V4Q361ACSi_tcfC	OracleLib.DefaultsHostQ360.init(Q361: Swift.Int) -> OracleLib.DefaultsHostQ360	init	no	no	admit		false
+$s9OracleLib16DefaultsHostQ360VMa	type metadata accessor for OracleLib.DefaultsHostQ360	metadata_accessor	no	no	admit		false
+$s9OracleLib16EnumIndirectQ014OMa	type metadata accessor for OracleLib.EnumIndirectQ014	metadata_accessor	no	no	admit		false
+$s9OracleLib16InitSubClassQ118C4Q106ACSi_tcfC	OracleLib.InitSubClassQ118.__allocating_init(Q106: Swift.Int) -> OracleLib.InitSubClassQ118	init	no	no	admit		false
+$s9OracleLib16InitSubClassQ118C4Q106ACSi_tcfc	OracleLib.InitSubClassQ118.init(Q106: Swift.Int) -> OracleLib.InitSubClassQ118	init_initializing	no	no	admit		false
+$s9OracleLib16InitSubClassQ118C4Q107ACSi_tKcfC	OracleLib.InitSubClassQ118.__allocating_init(Q107: Swift.Int) throws -> OracleLib.InitSubClassQ118	init	yes	no	admit		true
+$s9OracleLib16InitSubClassQ118C4Q107ACSi_tKcfc	OracleLib.InitSubClassQ118.init(Q107: Swift.Int) throws -> OracleLib.InitSubClassQ118	init_initializing	yes	no	admit		true
+$s9OracleLib16InitSubClassQ118C4Q108ACSgSi_tcfC	OracleLib.InitSubClassQ118.__allocating_init(Q108: Swift.Int) -> OracleLib.InitSubClassQ118?	init	no	no	admit		false
+$s9OracleLib16InitSubClassQ118C4Q108ACSgSi_tcfc	OracleLib.InitSubClassQ118.init(Q108: Swift.Int) -> OracleLib.InitSubClassQ118?	init_initializing	no	no	admit		false
+$s9OracleLib16InitSubClassQ118C4Q109ACSgSi_tKcfC	OracleLib.InitSubClassQ118.__allocating_init(Q109: Swift.Int) throws -> OracleLib.InitSubClassQ118?	init	yes	no	admit		true
+$s9OracleLib16InitSubClassQ118C4Q109ACSgSi_tKcfc	OracleLib.InitSubClassQ118.init(Q109: Swift.Int) throws -> OracleLib.InitSubClassQ118?	init_initializing	yes	no	admit		true
+$s9OracleLib16InitSubClassQ118C4Q113ACSd_tcfC	OracleLib.InitSubClassQ118.__allocating_init(Q113: Swift.Double) -> OracleLib.InitSubClassQ118	init	no	no	admit		false
+$s9OracleLib16InitSubClassQ118C4Q113ACSd_tcfc	OracleLib.InitSubClassQ118.init(Q113: Swift.Double) -> OracleLib.InitSubClassQ118	init_initializing	no	no	admit		false
+$s9OracleLib16InitSubClassQ118C4Q114ACSf_tKcfC	OracleLib.InitSubClassQ118.__allocating_init(Q114: Swift.Float) throws -> OracleLib.InitSubClassQ118	init	yes	no	admit		true
+$s9OracleLib16InitSubClassQ118C4Q114ACSf_tKcfc	OracleLib.InitSubClassQ118.init(Q114: Swift.Float) throws -> OracleLib.InitSubClassQ118	init_initializing	yes	no	admit		true
+$s9OracleLib16InitSubClassQ118C4Q115ACSi_tYacfC	OracleLib.InitSubClassQ118.__allocating_init(Q115: Swift.Int) async -> OracleLib.InitSubClassQ118	init	no	yes	decline	async_context	
+$s9OracleLib16InitSubClassQ118C4Q115ACSi_tYacfCTu	async function pointer to OracleLib.InitSubClassQ118.__allocating_init(Q115: Swift.Int) async -> OracleLib.InitSubClassQ118	async_function_pointer:init	no	yes	decline	async_context	
+$s9OracleLib16InitSubClassQ118C4Q115ACSi_tYacfc	OracleLib.InitSubClassQ118.init(Q115: Swift.Int) async -> OracleLib.InitSubClassQ118	init_initializing	no	yes	decline	async_context	
+$s9OracleLib16InitSubClassQ118C4Q115ACSi_tYacfcTu	async function pointer to OracleLib.InitSubClassQ118.init(Q115: Swift.Int) async -> OracleLib.InitSubClassQ118	async_function_pointer:init_initializing	no	yes	decline	async_context	
+$s9OracleLib16InitSubClassQ118C4Q116ACSi_tYaKcfC	OracleLib.InitSubClassQ118.__allocating_init(Q116: Swift.Int) async throws -> OracleLib.InitSubClassQ118	init	yes	yes	decline	async_context	
+$s9OracleLib16InitSubClassQ118C4Q116ACSi_tYaKcfCTu	async function pointer to OracleLib.InitSubClassQ118.__allocating_init(Q116: Swift.Int) async throws -> OracleLib.InitSubClassQ118	async_function_pointer:init	yes	yes	decline	async_context	
+$s9OracleLib16InitSubClassQ118C4Q116ACSi_tYaKcfc	OracleLib.InitSubClassQ118.init(Q116: Swift.Int) async throws -> OracleLib.InitSubClassQ118	init_initializing	yes	yes	decline	async_context	
+$s9OracleLib16InitSubClassQ118C4Q116ACSi_tYaKcfcTu	async function pointer to OracleLib.InitSubClassQ118.init(Q116: Swift.Int) async throws -> OracleLib.InitSubClassQ118	async_function_pointer:init_initializing	yes	yes	decline	async_context	
+$s9OracleLib16InitSubClassQ118C4Q119ACSi_tcfC	OracleLib.InitSubClassQ118.__allocating_init(Q119: Swift.Int) -> OracleLib.InitSubClassQ118	init	no	no	admit		false
+$s9OracleLib16InitSubClassQ118CMa	type metadata accessor for OracleLib.InitSubClassQ118	metadata_accessor	no	no	admit		false
+$s9OracleLib16InitSubClassQ118CfD	OracleLib.InitSubClassQ118.__deallocating_deinit	deinit_deallocating	no	no	decline	unsupported_production	
+$s9OracleLib16InitSubClassQ118Cfd	OracleLib.InitSubClassQ118.deinit	deinit	no	no	decline	unsupported_production	
+$s9OracleLib16MethodStructQ180V07genericC4Q192yyxKlF	OracleLib.MethodStructQ180.genericMethodQ192<A>(A) throws -> ()	method	yes	no	decline	generic_requirements	
+$s9OracleLib16MethodStructQ180V09consumingC4Q193yyF	OracleLib.MethodStructQ180.consumingMethodQ193() -> ()	method	no	no	admit		false
+$s9OracleLib16MethodStructQ180V15staticAsyncQ187yyYaFZ	static OracleLib.MethodStructQ180.staticAsyncQ187() async -> ()	static_method	no	yes	decline	async_context	
+$s9OracleLib16MethodStructQ180V15staticAsyncQ187yyYaFZTu	async function pointer to static OracleLib.MethodStructQ180.staticAsyncQ187() async -> ()	async_function_pointer:static_method	no	yes	decline	async_context	
+$s9OracleLib16MethodStructQ180V15staticPlainQ185yyFZ	static OracleLib.MethodStructQ180.staticPlainQ185() -> ()	static_method	no	no	admit		false
+$s9OracleLib16MethodStructQ180V16staticThrowsQ186yyKFZ	static OracleLib.MethodStructQ180.staticThrowsQ186() throws -> ()	static_method	yes	no	admit		true
+$s9OracleLib16MethodStructQ180V17instanceAsyncQ183yyYaF	OracleLib.MethodStructQ180.instanceAsyncQ183() async -> ()	method	no	yes	decline	async_context	
+$s9OracleLib16MethodStructQ180V17instanceAsyncQ183yyYaFTu	async function pointer to OracleLib.MethodStructQ180.instanceAsyncQ183() async -> ()	async_function_pointer:method	no	yes	decline	async_context	
+$s9OracleLib16MethodStructQ180V17instancePlainQ181yyF	OracleLib.MethodStructQ180.instancePlainQ181() -> ()	method	no	no	admit		false
+$s9OracleLib16MethodStructQ180V17methodReturnsQ191SiyF	OracleLib.MethodStructQ180.methodReturnsQ191() -> Swift.Int	method	no	no	admit		false
+$s9OracleLib16MethodStructQ180V17mutatingPlainQ188yyF	OracleLib.MethodStructQ180.mutatingPlainQ188() -> ()	mutating_method	no	no	admit		false
+$s9OracleLib16MethodStructQ180V18instanceThrowsQ182yyKF	OracleLib.MethodStructQ180.instanceThrowsQ182() throws -> ()	method	yes	no	admit		true
+$s9OracleLib16MethodStructQ180V18methodDefaultsQ1951a1bySi_SitKF	OracleLib.MethodStructQ180.methodDefaultsQ195(a: Swift.Int, b: Swift.Int) throws -> ()	method	yes	no	admit		true
+$s9OracleLib16MethodStructQ180V18methodRethrowsQ194yyyyKXEKF	OracleLib.MethodStructQ180.methodRethrowsQ194(() throws -> ()) throws -> ()	method	rethrows	no	decline	invalid_grammar	
+$s9OracleLib16MethodStructQ180V18mutatingThrowsQ189yyKF	OracleLib.MethodStructQ180.mutatingThrowsQ189() throws -> ()	mutating_method	yes	no	admit		true
+$s9OracleLib16MethodStructQ180V18staticRethrowsQ197yyyyKXEKFZ	static OracleLib.MethodStructQ180.staticRethrowsQ197(() throws -> ()) throws -> ()	static_method	rethrows	no	decline	invalid_grammar	
+$s9OracleLib16MethodStructQ180V21methodTypedThrowsQ196yyAA13HelperErrQ900OYKF	OracleLib.MethodStructQ180.methodTypedThrowsQ196() throws(OracleLib.HelperErrQ900) -> ()	method	yes	no	decline	typed_throws	
+$s9OracleLib16MethodStructQ180V23instanceAsyncThrowsQ184yyYaKF	OracleLib.MethodStructQ180.instanceAsyncThrowsQ184() async throws -> ()	method	yes	yes	decline	async_context	
+$s9OracleLib16MethodStructQ180V23instanceAsyncThrowsQ184yyYaKFTu	async function pointer to OracleLib.MethodStructQ180.instanceAsyncThrowsQ184() async throws -> ()	async_function_pointer:method	yes	yes	decline	async_context	
+$s9OracleLib16MethodStructQ180V23mutatingAsyncThrowsQ190yyYaKF	OracleLib.MethodStructQ180.mutatingAsyncThrowsQ190() async throws -> ()	mutating_method	yes	yes	decline	async_context	
+$s9OracleLib16MethodStructQ180V23mutatingAsyncThrowsQ190yyYaKFTu	async function pointer to OracleLib.MethodStructQ180.mutatingAsyncThrowsQ190() async throws -> ()	async_function_pointer:mutating_method	yes	yes	decline	async_context	
+$s9OracleLib16MethodStructQ180VMa	type metadata accessor for OracleLib.MethodStructQ180	metadata_accessor	no	no	admit		false
+$s9OracleLib16OuterGenericQ318V14outerGenFnQ321yyF	OracleLib.OuterGenericQ318.outerGenFnQ321() -> ()	method	no	no	admit		false
+$s9OracleLib16OuterGenericQ318V9InnerQ319V07innerOfD6FnQ320yyKF	OracleLib.OuterGenericQ318.InnerQ319.innerOfGenericFnQ320() throws -> ()	method	yes	no	admit		true
+$s9OracleLib16OuterGenericQ318V9InnerQ319VMa	type metadata accessor for OracleLib.OuterGenericQ318.InnerQ319	metadata_accessor	no	no	admit		false
+$s9OracleLib16OuterGenericQ318VMa	type metadata accessor for OracleLib.OuterGenericQ318	metadata_accessor	no	no	admit		false
+$s9OracleLib16StructStoredQ002V13storedLetQ004Sivg	OracleLib.StructStoredQ002.storedLetQ004.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib16StructStoredQ002V13storedVarQ003SivM	OracleLib.StructStoredQ002.storedVarQ003.modify : Swift.Int	modify	no	no	decline	unsupported_production	
+$s9OracleLib16StructStoredQ002V13storedVarQ003Sivg	OracleLib.StructStoredQ002.storedVarQ003.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib16StructStoredQ002V13storedVarQ003Sivs	OracleLib.StructStoredQ002.storedVarQ003.setter : Swift.Int	setter	no	no	decline	unsupported_production	
+$s9OracleLib16StructStoredQ002VMa	type metadata accessor for OracleLib.StructStoredQ002	metadata_accessor	no	no	admit		false
+$s9OracleLib16closureInoutQ221yyySizKXEKF	OracleLib.closureInoutQ221((inout Swift.Int) throws -> ()) throws -> ()	free_function	rethrows	no	decline	unsupported_production	
+$s9OracleLib16freeDefaultsQ140_1bySi_SStF	OracleLib.freeDefaultsQ140(_: Swift.Int, b: Swift.String) -> ()	free_function	no	no	admit		false
+$s9OracleLib16freeKFThrowsQ372yyKF	OracleLib.freeKFThrowsQ372() throws -> ()	free_function	yes	no	admit		true
+$s9OracleLib16freeKeyKnockQ370yyF	OracleLib.freeKeyKnockQ370() -> ()	free_function	no	no	admit		false
+$s9OracleLib16freeLabelledQ1395first6secondySi_SitF	OracleLib.freeLabelledQ139(first: Swift.Int, second: Swift.Int) -> ()	free_function	no	no	admit		false
+$s9OracleLib16freeOptionalQ152ySiSgACF	OracleLib.freeOptionalQ152(Swift.Int?) -> Swift.Int?	free_function	no	no	admit		false
+$s9OracleLib17EffectfulHostQ260V12getAsyncQ262Sivg	OracleLib.EffectfulHostQ260.getAsyncQ262.getter : Swift.Int	getter	no	yes	decline	unsupported_production	
+$s9OracleLib17EffectfulHostQ260V12getAsyncQ262SivgTu	async function pointer to OracleLib.EffectfulHostQ260.getAsyncQ262.getter : Swift.Int	async_function_pointer:getter	no	yes	decline	unsupported_production	
+$s9OracleLib17EffectfulHostQ260V13getThrowsQ261Sivg	OracleLib.EffectfulHostQ260.getThrowsQ261.getter : Swift.Int	getter	yes	no	decline	unsupported_production	
+$s9OracleLib17EffectfulHostQ260V18getAsyncThrowsQ263Sivg	OracleLib.EffectfulHostQ260.getAsyncThrowsQ263.getter : Swift.Int	getter	yes	yes	decline	unsupported_production	
+$s9OracleLib17EffectfulHostQ260V18getAsyncThrowsQ263SivgTu	async function pointer to OracleLib.EffectfulHostQ260.getAsyncThrowsQ263.getter : Swift.Int	async_function_pointer:getter	yes	yes	decline	unsupported_production	
+$s9OracleLib17EffectfulHostQ260V18getTypedThrowsQ267Sivg	OracleLib.EffectfulHostQ260.getTypedThrowsQ267.getter : Swift.Int	getter	yes	no	decline	unsupported_production	
+$s9OracleLib17EffectfulHostQ260V18staticGetAsyncQ265SivgZ	static OracleLib.EffectfulHostQ260.staticGetAsyncQ265.getter : Swift.Int	static_getter	no	yes	decline	unsupported_production	
+$s9OracleLib17EffectfulHostQ260V18staticGetAsyncQ265SivgZTu	async function pointer to static OracleLib.EffectfulHostQ260.staticGetAsyncQ265.getter : Swift.Int	async_function_pointer:static_getter	no	yes	decline	unsupported_production	
+$s9OracleLib17EffectfulHostQ260V19staticGetThrowsQ264SivgZ	static OracleLib.EffectfulHostQ260.staticGetThrowsQ264.getter : Swift.Int	static_getter	yes	no	decline	unsupported_production	
+$s9OracleLib17EffectfulHostQ260V20getThrowsClosureQ279yyKcvg	OracleLib.EffectfulHostQ260.getThrowsClosureQ279.getter : () throws -> ()	getter	no	no	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V24staticGetAsyncThrowsQ266SivgZ	static OracleLib.EffectfulHostQ260.staticGetAsyncThrowsQ266.getter : Swift.Int	static_getter	yes	yes	decline	unsupported_production	
+$s9OracleLib17EffectfulHostQ260V24staticGetAsyncThrowsQ266SivgZTu	async function pointer to static OracleLib.EffectfulHostQ260.staticGetAsyncThrowsQ266.getter : Swift.Int	async_function_pointer:static_getter	yes	yes	decline	unsupported_production	
+$s9OracleLib17EffectfulHostQ260V4Q268S2i_tcig	OracleLib.EffectfulHostQ260.subscript.getter : (Q268: Swift.Int) -> Swift.Int	subscript_getter	yes	no	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q269S2i_tcig	OracleLib.EffectfulHostQ260.subscript.getter : (Q269: Swift.Int) -> Swift.Int	subscript_getter	no	yes	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q269S2i_tcigTu	async function pointer to OracleLib.EffectfulHostQ260.subscript.getter : (Q269: Swift.Int) -> Swift.Int	async_function_pointer:subscript_getter	no	yes	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q270S2i_tcig	OracleLib.EffectfulHostQ260.subscript.getter : (Q270: Swift.Int) -> Swift.Int	subscript_getter	yes	yes	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q270S2i_tcigTu	async function pointer to OracleLib.EffectfulHostQ260.subscript.getter : (Q270: Swift.Int) -> Swift.Int	async_function_pointer:subscript_getter	yes	yes	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q271S2i_tcig	OracleLib.EffectfulHostQ260.subscript.getter : (Q271: Swift.Int) -> Swift.Int	subscript_getter	no	no	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q272S2i_tciM	OracleLib.EffectfulHostQ260.subscript.modify : (Q272: Swift.Int) -> Swift.Int	subscript_modify	no	no	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q272S2i_tcig	OracleLib.EffectfulHostQ260.subscript.getter : (Q272: Swift.Int) -> Swift.Int	subscript_getter	no	no	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q272S2i_tcis	OracleLib.EffectfulHostQ260.subscript.setter : (Q272: Swift.Int) -> Swift.Int	subscript_setter	no	no	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q273S2i_tciM	OracleLib.EffectfulHostQ260.subscript.modify : (Q273: Swift.Int) -> Swift.Int	subscript_modify	no	no	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q273S2i_tcig	OracleLib.EffectfulHostQ260.subscript.getter : (Q273: Swift.Int) -> Swift.Int	subscript_getter	no	no	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q273S2i_tcis	OracleLib.EffectfulHostQ260.subscript.setter : (Q273: Swift.Int) -> Swift.Int	subscript_setter	no	no	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q274S2i_tcigZ	static OracleLib.EffectfulHostQ260.subscript.getter : (Q274: Swift.Int) -> Swift.Int	static_subscript_getter	yes	no	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q275Six_tcluig	OracleLib.EffectfulHostQ260.subscript.getter : <A>(Q275: A) -> Swift.Int	subscript_getter	yes	no	decline	generic_requirements	
+$s9OracleLib17EffectfulHostQ260V4Q276_S2i_Sitcig	OracleLib.EffectfulHostQ260.subscript.getter : (Q276: Swift.Int, _: Swift.Int) -> Swift.Int	subscript_getter	yes	yes	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q276_S2i_SitcigTu	async function pointer to OracleLib.EffectfulHostQ260.subscript.getter : (Q276: Swift.Int, _: Swift.Int) -> Swift.Int	async_function_pointer:subscript_getter	yes	yes	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q277S2i_tcig	OracleLib.EffectfulHostQ260.subscript.getter : (Q277: Swift.Int) -> Swift.Int	subscript_getter	yes	no	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260V4Q278yyKcSi_tcig	OracleLib.EffectfulHostQ260.subscript.getter : (Q278: Swift.Int) -> () throws -> ()	subscript_getter	no	no	decline	closure_type	
+$s9OracleLib17EffectfulHostQ260VMa	type metadata accessor for OracleLib.EffectfulHostQ260	metadata_accessor	no	no	admit		false
+$s9OracleLib17StructGenericQ005V17genericStoredQ006xvM	OracleLib.StructGenericQ005.genericStoredQ006.modify : A	modify	no	no	decline	generic_requirements	
+$s9OracleLib17StructGenericQ005V17genericStoredQ006xvg	OracleLib.StructGenericQ005.genericStoredQ006.getter : A	getter	no	no	decline	generic_requirements	
+$s9OracleLib17StructGenericQ005V17genericStoredQ006xvs	OracleLib.StructGenericQ005.genericStoredQ006.setter : A	setter	no	no	decline	generic_requirements	
+$s9OracleLib17StructGenericQ005VAASQRzlE03extD4Q323yyKF	(extension in OracleLib):OracleLib.StructGenericQ005<A where A: Swift.Equatable>.extGenericQ323() throws -> ()	method	yes	no	decline	protocol_context	
+$s9OracleLib17StructGenericQ005VMa	type metadata accessor for OracleLib.StructGenericQ005	metadata_accessor	no	no	admit		false
+$s9OracleLib17closureNestedQ219yyyyyKXEKXEF	OracleLib.closureNestedQ219((() throws -> ()) throws -> ()) -> ()	free_function	no	no	decline	invalid_grammar	
+$s9OracleLib17freeMainActorQ155yyF	OracleLib.freeMainActorQ155() -> ()	free_function	no	no	admit		false
+$s9OracleLib18InitNoArgClassQ092CACycfC	OracleLib.InitNoArgClassQ092.__allocating_init() -> OracleLib.InitNoArgClassQ092	init	no	no	admit		false
+$s9OracleLib18InitNoArgClassQ092CACycfCTq	method descriptor for OracleLib.InitNoArgClassQ092.__allocating_init() -> OracleLib.InitNoArgClassQ092	method_descriptor:init	no	no	decline	closure_type	
+$s9OracleLib18InitNoArgClassQ092CACycfc	OracleLib.InitNoArgClassQ092.init() -> OracleLib.InitNoArgClassQ092	init_initializing	no	no	admit		false
+$s9OracleLib18InitNoArgClassQ092CMa	type metadata accessor for OracleLib.InitNoArgClassQ092	metadata_accessor	no	no	admit		false
+$s9OracleLib18InitNoArgClassQ092CfD	OracleLib.InitNoArgClassQ092.__deallocating_deinit	deinit_deallocating	no	no	decline	unsupported_production	
+$s9OracleLib18InitNoArgClassQ092Cfd	OracleLib.InitNoArgClassQ092.deinit	deinit	no	no	decline	unsupported_production	
+$s9OracleLib18closureGenericQ222yxxxKXE_xtKlF	OracleLib.closureGenericQ222<A>((A) throws -> A, A) throws -> A	free_function	rethrows	no	decline	generic_requirements	
+$s9OracleLib18freeConcurrentQ172yyYaF	OracleLib.freeConcurrentQ172() async -> ()	free_function	no	yes	decline	async_context	
+$s9OracleLib18freeConcurrentQ172yyYaFTu	async function pointer to OracleLib.freeConcurrentQ172() async -> ()	async_function_pointer:free_function	no	yes	decline	async_context	
+$s9OracleLib18freeGenericReqQ148yyxAA15HelperProtoQ901RzlF	OracleLib.freeGenericReqQ148<A where A: OracleLib.HelperProtoQ901>(A) -> ()	free_function	no	no	decline	generic_requirements	
+$s9OracleLib18freeNonsendingQ173yyYaF	OracleLib.freeNonsendingQ173() async -> ()	free_function	no	yes	decline	async_context	
+$s9OracleLib18freeNonsendingQ173yyYaFTu	async function pointer to OracleLib.freeNonsendingQ173() async -> ()	async_function_pointer:free_function	no	yes	decline	async_context	
+$s9OracleLib18freePackThrowsQ377yyxxQpKRvzlF	OracleLib.freePackThrowsQ377<each A>(repeat A) throws -> ()	free_function	yes	no	decline	generic_requirements	
+$s9OracleLib18freeTakesErrorQ165yys0E0_pF	OracleLib.freeTakesErrorQ165(Swift.Error) -> ()	free_function	no	no	decline	unsupported_production	
+$s9OracleLib18globalComputedQ036Sivg	OracleLib.globalComputedQ036.getter : Swift.Int	global_getter	no	no	decline	unsupported_production	
+$s9OracleLib18globalGetAsyncQ038Sivg	OracleLib.globalGetAsyncQ038.getter : Swift.Int	global_getter	no	yes	decline	unsupported_production	
+$s9OracleLib18globalGetAsyncQ038SivgTu	async function pointer to OracleLib.globalGetAsyncQ038.getter : Swift.Int	async_function_pointer:global_getter	no	yes	decline	unsupported_production	
+$s9OracleLib19InitNoArgThrowsQ091VACyKcfC	OracleLib.InitNoArgThrowsQ091.init() throws -> OracleLib.InitNoArgThrowsQ091	init	yes	no	admit		true
+$s9OracleLib19InitNoArgThrowsQ091VMa	type metadata accessor for OracleLib.InitNoArgThrowsQ091	metadata_accessor	no	no	admit		false
+$s9OracleLib19MainActorStructQ239V04mainD10MethodQ240yyF	OracleLib.MainActorStructQ239.mainActorMethodQ240() -> ()	method	no	no	admit		false
+$s9OracleLib19MainActorStructQ239V04mainD8PropQ241Sivg	OracleLib.MainActorStructQ239.mainActorPropQ241.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$s9OracleLib19MainActorStructQ239VMa	type metadata accessor for OracleLib.MainActorStructQ239	metadata_accessor	no	no	admit		false
+$s9OracleLib19closureEscapingQ201yyyycF	OracleLib.closureEscapingQ201(() -> ()) -> ()	free_function	no	no	decline	closure_type	
+$s9OracleLib19closureNoEscapeQ200yyyyXEF	OracleLib.closureNoEscapeQ200(() -> ()) -> ()	free_function	no	no	decline	closure_type	
+$s9OracleLib19closureOptionalQ215yyyyKcSgF	OracleLib.closureOptionalQ215((() throws -> ())?) -> ()	free_function	no	no	decline	closure_type	
+$s9OracleLib19closureRethrowsQ204yyyyKXEKF	OracleLib.closureRethrowsQ204(() throws -> ()) throws -> ()	free_function	rethrows	no	decline	invalid_grammar	
+$s9OracleLib19freeAsyncThrowsQ133yyYaKF	OracleLib.freeAsyncThrowsQ133() async throws -> ()	free_function	yes	yes	decline	async_context	
+$s9OracleLib19freeAsyncThrowsQ133yyYaKFTu	async function pointer to OracleLib.freeAsyncThrowsQ133() async throws -> ()	async_function_pointer:free_function	yes	yes	decline	async_context	
+$s9OracleLib19freeDiscardableQ169SiyF	OracleLib.freeDiscardableQ169() -> Swift.Int	free_function	no	no	admit		false
+$s9OracleLib19freeExistentialQ158yyAA15HelperProtoQ901_pF	OracleLib.freeExistentialQ158(OracleLib.HelperProtoQ901) -> ()	free_function	no	no	decline	unsupported_production	
+$s9OracleLib19freeNeverThrowsQ154s0D0OyKF	OracleLib.freeNeverThrowsQ154() throws -> Swift.Never	free_function	yes	no	admit		true
+$s9OracleLib19freeNoncopyableQ379yyxKRi_zlF	OracleLib.freeNoncopyableQ379<A where A: ~Swift.Copyable>(A) throws -> ()	free_function	yes	no	decline	generic_requirements	
+$s9OracleLib19freeThrowsTupleQ159Si_SityKF	OracleLib.freeThrowsTupleQ159() throws -> (Swift.Int, Swift.Int)	free_function	yes	no	decline	unsupported_production	
+$s9OracleLib19freeVariadicAnyQ136yyypd_tF	OracleLib.freeVariadicAnyQ136(Any...) -> ()	free_function	no	no	admit		false
+$s9OracleLib19freeVariadicIntQ138yySid_tF	OracleLib.freeVariadicIntQ138(Swift.Int...) -> ()	free_function	no	no	admit		false
+$s9OracleLib19globalGetThrowsQ037Sivg	OracleLib.globalGetThrowsQ037.getter : Swift.Int	global_getter	yes	no	decline	unsupported_production	
+$s9OracleLib19typedThrowsFreeQ250yyAA13HelperErrQ900OYKF	OracleLib.typedThrowsFreeQ250() throws(OracleLib.HelperErrQ900) -> ()	free_function	yes	no	decline	typed_throws	
+$s9OracleLib20GenericClassHostQ340C14genClsPropQ343xSgvg	OracleLib.GenericClassHostQ340.genClsPropQ343.getter : A?	getter	no	no	decline	generic_requirements	
+$s9OracleLib20GenericClassHostQ340C14genClsPropQ343xSgvgTq	method descriptor for OracleLib.GenericClassHostQ340.genClsPropQ343.getter : A?	method_descriptor:getter	no	no	decline	generic_requirements	
+$s9OracleLib20GenericClassHostQ340C16genClsMethodQ342yyKF	OracleLib.GenericClassHostQ340.genClsMethodQ342() throws -> ()	method	yes	no	decline	unsupported_production	
+$s9OracleLib20GenericClassHostQ340C16genClsMethodQ342yyKFTq	method descriptor for OracleLib.GenericClassHostQ340.genClsMethodQ342() throws -> ()	method_descriptor:method	yes	no	decline	thunk_or_specialization	
+$s9OracleLib20GenericClassHostQ340C4Q341ACyxGx_tcfC	OracleLib.GenericClassHostQ340.__allocating_init(Q341: A) -> OracleLib.GenericClassHostQ340<A>	init	no	no	decline	generic_requirements	
+$s9OracleLib20GenericClassHostQ340C4Q341ACyxGx_tcfCTq	method descriptor for OracleLib.GenericClassHostQ340.__allocating_init(Q341: A) -> OracleLib.GenericClassHostQ340<A>	method_descriptor:init	no	no	decline	generic_requirements	
+$s9OracleLib20GenericClassHostQ340C4Q341ACyxGx_tcfc	OracleLib.GenericClassHostQ340.init(Q341: A) -> OracleLib.GenericClassHostQ340<A>	init_initializing	no	no	decline	generic_requirements	
+$s9OracleLib20GenericClassHostQ340CMa	type metadata accessor for OracleLib.GenericClassHostQ340	metadata_accessor	no	no	admit		false
+$s9OracleLib20GenericClassHostQ340CfD	OracleLib.GenericClassHostQ340.__deallocating_deinit	deinit_deallocating	no	no	decline	unsupported_production	
+$s9OracleLib20GenericClassHostQ340Cfd	OracleLib.GenericClassHostQ340.deinit	deinit	no	no	decline	unsupported_production	
+$s9OracleLib20freeAsyncReturnsQ167SiyYaF	OracleLib.freeAsyncReturnsQ167() async -> Swift.Int	free_function	no	yes	decline	async_context	
+$s9OracleLib20freeAsyncReturnsQ167SiyYaFTu	async function pointer to OracleLib.freeAsyncReturnsQ167() async -> Swift.Int	async_function_pointer:free_function	no	yes	decline	async_context	
+$s9OracleLib20freeGenericAsyncQ151yyxYas8SendableRzlF	OracleLib.freeGenericAsyncQ151<A where A: Swift.Sendable>(A) async -> ()	free_function	no	yes	decline	generic_requirements	
+$s9OracleLib20freeGenericAsyncQ151yyxYas8SendableRzlFTu	async function pointer to OracleLib.freeGenericAsyncQ151<A where A: Swift.Sendable>(A) async -> ()	async_function_pointer:free_function	no	yes	decline	generic_requirements	
+$s9OracleLib20freeGenericWhereQ149yyx_q_tSQRz7ElementQy_RszSlR_r0_lF	OracleLib.freeGenericWhereQ149<A, B where A: Swift.Equatable, A == B.Element, B: Swift.Collection>(A, B) -> ()	free_function	no	no	decline	generic_requirements	
+$s9OracleLib20freeResultReturnQ164s0D0OySiAA13HelperErrQ900OGyF	OracleLib.freeResultReturnQ164() -> Swift.Result<Swift.Int, OracleLib.HelperErrQ900>	free_function	no	no	decline	unsupported_production	
+$s9OracleLib20freeReturnsTupleQ145Si_SStyF	OracleLib.freeReturnsTupleQ145() -> (Swift.Int, Swift.String)	free_function	no	no	decline	unsupported_production	
+$s9OracleLib20freeThrowsParamsQ135ySSSiKF	OracleLib.freeThrowsParamsQ135(Swift.Int) throws -> Swift.String	free_function	yes	no	admit		true
+$s9OracleLib20typedThrowsAsyncQ253yyYaAA13HelperErrQ900OYKF	OracleLib.typedThrowsAsyncQ253() async throws(OracleLib.HelperErrQ900) -> ()	free_function	yes	yes	decline	async_context	
+$s9OracleLib20typedThrowsAsyncQ253yyYaAA13HelperErrQ900OYKFTu	async function pointer to OracleLib.typedThrowsAsyncQ253() async throws(OracleLib.HelperErrQ900) -> ()	async_function_pointer:free_function	yes	yes	decline	async_context	
+$s9OracleLib20typedThrowsNeverQ251yyF	OracleLib.typedThrowsNeverQ251() -> ()	free_function	no	no	admit		false
+$s9OracleLib21closureAsyncParamQ207yyyyYaXEYaF	OracleLib.closureAsyncParamQ207(() async -> ()) async -> ()	free_function	no	yes	decline	async_context	
+$s9OracleLib21closureAsyncParamQ207yyyyYaXEYaFTu	async function pointer to OracleLib.closureAsyncParamQ207(() async -> ()) async -> ()	async_function_pointer:free_function	no	yes	decline	async_context	
+$s9OracleLib21freeGenericThrowsQ147yyxKlF	OracleLib.freeGenericThrowsQ147<A>(A) throws -> ()	free_function	yes	no	decline	generic_requirements	
+$s9OracleLib21freeIsolatedParamQ163yyAA14ActorPlainQ018CYiF	OracleLib.freeIsolatedParamQ163(isolated OracleLib.ActorPlainQ018) -> ()	free_function	no	no	decline	async_context	
+$s9OracleLib21freeSendableParamQ156yyyyYbXEF	OracleLib.freeSendableParamQ156(@Sendable () -> ()) -> ()	free_function	no	no	decline	async_context	
+$s9OracleLib21typedThrowsReturnQ254SiyAA13HelperErrQ900OYKF	OracleLib.typedThrowsReturnQ254() throws(OracleLib.HelperErrQ900) -> Swift.Int	free_function	yes	no	decline	typed_throws	
+$s9OracleLib22closureTwoThrowingQ216yyyyKXE_yyKXEtKF	OracleLib.closureTwoThrowingQ216(() throws -> (), () throws -> ()) throws -> ()	free_function	rethrows	no	decline	invalid_grammar	
+$s9OracleLib22closureTypedThrowsQ213yyyyAA13HelperErrQ900OYKXEADYKF	OracleLib.closureTypedThrowsQ213(() throws(OracleLib.HelperErrQ900) -> ()) throws(OracleLib.HelperErrQ900) -> ()	free_function	yes	no	decline	typed_throws	
+$s9OracleLib22freeBorrowingParamQ162yyAA13HelperValQ902VF	OracleLib.freeBorrowingParamQ162(OracleLib.HelperValQ902) -> ()	free_function	no	no	admit		false
+$s9OracleLib22freeConsumingParamQ161yyAA13HelperValQ902VnF	OracleLib.freeConsumingParamQ161(__owned OracleLib.HelperValQ902) -> ()	free_function	no	no	decline	unsupported_production	
+$s9OracleLib22freeDefaultClosureQ170yyyyXEF	OracleLib.freeDefaultClosureQ170(() -> ()) -> ()	free_function	no	no	decline	closure_type	
+$s9OracleLib22freeDefaultsThrowsQ141yySiKF	OracleLib.freeDefaultsThrowsQ141(Swift.Int) throws -> ()	free_function	yes	no	admit		true
+$s9OracleLib22freeThrowsOptionalQ166SiSgyKF	OracleLib.freeThrowsOptionalQ166() throws -> Swift.Int?	free_function	yes	no	admit		true
+$s9OracleLib22typedThrowsGenericQ256yyxmxYKs5ErrorRzlF	OracleLib.typedThrowsGenericQ256<A where A: Swift.Error>(A.Type) throws(A) -> ()	free_function	yes	no	decline	generic_requirements	
+$s9OracleLib23closureGenericTypedQ223yyyyxYKXExYKs5ErrorRzlF	OracleLib.closureGenericTypedQ223<A where A: Swift.Error>(() throws(A) -> ()) throws(A) -> ()	free_function	yes	no	decline	generic_requirements	
+$s9OracleLib23closureNestedThrowsQ220yyyyyXEXEKF	OracleLib.closureNestedThrowsQ220((() -> ()) -> ()) throws -> ()	free_function	yes	no	decline	closure_type	
+$s9OracleLib23freeInlinableThrowsQ168yyKF	OracleLib.freeInlinableThrowsQ168() throws -> ()	free_function	yes	no	admit		true
+$s9OracleLib23typedThrowsAnyErrorQ252yyKF	OracleLib.typedThrowsAnyErrorQ252() throws -> ()	free_function	yes	no	admit		true
+$s9OracleLib24InitNoArgThrowsClassQ093CACyKcfC	OracleLib.InitNoArgThrowsClassQ093.__allocating_init() throws -> OracleLib.InitNoArgThrowsClassQ093	init	yes	no	admit		true
+$s9OracleLib24InitNoArgThrowsClassQ093CACyKcfCTq	method descriptor for OracleLib.InitNoArgThrowsClassQ093.__allocating_init() throws -> OracleLib.InitNoArgThrowsClassQ093	method_descriptor:init	yes	no	decline	closure_type	
+$s9OracleLib24InitNoArgThrowsClassQ093CACyKcfc	OracleLib.InitNoArgThrowsClassQ093.init() throws -> OracleLib.InitNoArgThrowsClassQ093	init_initializing	yes	no	admit		true
+$s9OracleLib24InitNoArgThrowsClassQ093CMa	type metadata accessor for OracleLib.InitNoArgThrowsClassQ093	metadata_accessor	no	no	admit		false
+$s9OracleLib24InitNoArgThrowsClassQ093CfD	OracleLib.InitNoArgThrowsClassQ093.__deallocating_deinit	deinit_deallocating	no	no	decline	unsupported_production	
+$s9OracleLib24InitNoArgThrowsClassQ093Cfd	OracleLib.InitNoArgThrowsClassQ093.deinit	deinit	no	no	decline	unsupported_production	
+$s9OracleLib24closureAsyncRethrowsQ209yyyyYaKXEYaKF	OracleLib.closureAsyncRethrowsQ209(() async throws -> ()) async throws -> ()	free_function	rethrows	yes	decline	async_context	
+$s9OracleLib24closureAsyncRethrowsQ209yyyyYaKXEYaKFTu	async function pointer to OracleLib.closureAsyncRethrowsQ209(() async throws -> ()) async throws -> ()	async_function_pointer:free_function	rethrows	yes	decline	async_context	
+$s9OracleLib24closureIsolatedParamQ225yyyAA14ActorPlainQ018CYiYaXEF	OracleLib.closureIsolatedParamQ225((isolated OracleLib.ActorPlainQ018) async -> ()) -> ()	free_function	no	no	decline	async_context	
+$s9OracleLib24freeGenericReqThrowsQ150yyxKAA15HelperProtoQ901RzSQRzlF	OracleLib.freeGenericReqThrowsQ150<A where A: OracleLib.HelperProtoQ901, A: Swift.Equatable>(A) throws -> ()	free_function	yes	no	decline	generic_requirements	
+$s9OracleLib24globalGetAsyncThrowsQ039Sivg	OracleLib.globalGetAsyncThrowsQ039.getter : Swift.Int	global_getter	yes	yes	decline	unsupported_production	
+$s9OracleLib24globalGetAsyncThrowsQ039SivgTu	async function pointer to OracleLib.globalGetAsyncThrowsQ039.getter : Swift.Int	async_function_pointer:global_getter	yes	yes	decline	unsupported_production	
+$s9OracleLib25closureMainActorParamQ211yyyyScMYcXEF	OracleLib.closureMainActorParamQ211(@Swift.MainActor () -> ()) -> ()	free_function	no	no	decline	unknown_substitution	
+$s9OracleLib25closureReturningValueQ212yS3iKXEKF	OracleLib.closureReturningValueQ212((Swift.Int) throws -> Swift.Int) throws -> Swift.Int	free_function	rethrows	no	decline	invalid_grammar	
+$s9OracleLib25closureSendableThrowsQ217yyyyYbKcF	OracleLib.closureSendableThrowsQ217(@Sendable () throws -> ()) -> ()	free_function	no	no	decline	async_context	
+$s9OracleLib25freeVariadicAnyThrowsQ137yyypd_tKF	OracleLib.freeVariadicAnyThrowsQ137(Any...) throws -> ()	free_function	yes	no	admit		true
+$s9OracleLib26typedThrowsStdlibErrorQ255yyScEYKF	OracleLib.typedThrowsStdlibErrorQ255() throws(Swift.CancellationError) -> ()	free_function	yes	no	decline	unknown_substitution	
+$s9OracleLib27closureAsyncParamSyncFnQ210yyyyYaKcF	OracleLib.closureAsyncParamSyncFnQ210(() async throws -> ()) -> ()	free_function	no	no	decline	async_context	
+$s9OracleLib27closureAsyncThrowsParamQ208yyyyYaKXEYaKF	OracleLib.closureAsyncThrowsParamQ208(() async throws -> ()) async throws -> ()	free_function	yes	yes	decline	async_context	
+$s9OracleLib27closureAsyncThrowsParamQ208yyyyYaKXEYaKFTu	async function pointer to OracleLib.closureAsyncThrowsParamQ208(() async throws -> ()) async throws -> ()	async_function_pointer:free_function	yes	yes	decline	async_context	
+$s9OracleLib27closureRethrowsEscapingQ205yyyyKcKF	OracleLib.closureRethrowsEscapingQ205(() throws -> ()) throws -> ()	free_function	rethrows	no	decline	closure_type	
+$s9OracleLib27closureThrowingEscapingQ203yyyyKcF	OracleLib.closureThrowingEscapingQ203(() throws -> ()) -> ()	free_function	no	no	decline	closure_type	
+$s9OracleLib27closureThrowingNoEscapeQ202yyyyKXEF	OracleLib.closureThrowingNoEscapeQ202(() throws -> ()) -> ()	free_function	no	no	decline	invalid_grammar	
+$s9OracleLib27freeReturnsAsyncClosureQ144yyYacyF	OracleLib.freeReturnsAsyncClosureQ144() -> () async -> ()	free_function	no	no	decline	async_context	
+$s9OracleLib27freeThrowsVariadicTrailQ1601a_ySi_SidtKF	OracleLib.freeThrowsVariadicTrailQ160(a: Swift.Int, _: Swift.Int...) throws -> ()	free_function	yes	no	admit		true
+$s9OracleLib27typedThrowsGenericAsyncQ383yyxmYaxYKs5ErrorRzlF	OracleLib.typedThrowsGenericAsyncQ383<A where A: Swift.Error>(A.Type) async throws(A) -> ()	free_function	yes	yes	decline	generic_requirements	
+$s9OracleLib27typedThrowsGenericAsyncQ383yyxmYaxYKs5ErrorRzlFTu	async function pointer to OracleLib.typedThrowsGenericAsyncQ383<A where A: Swift.Error>(A.Type) async throws(A) -> ()	async_function_pointer:free_function	yes	yes	decline	generic_requirements	
+$s9OracleLib28freeDefaultThrowsClosureQ171yyyyKXEKF	OracleLib.freeDefaultThrowsClosureQ171(() throws -> ()) throws -> ()	free_function	yes	no	decline	invalid_grammar	
+$s9OracleLib30closureGenericTypedNoThrowQ224yyyyxYKXEs5ErrorRzlF	OracleLib.closureGenericTypedNoThrowQ224<A where A: Swift.Error>(() throws(A) -> ()) -> ()	free_function	no	no	decline	generic_requirements	
+$s9OracleLib30closureThrowsTakesThrowingQ206yyyyKXEKF	OracleLib.closureThrowsTakesThrowingQ206(() throws -> ()) throws -> ()	free_function	yes	no	decline	invalid_grammar	
+$s9OracleLib30closureTypedParamUntypedFnQ218yyyyAA13HelperErrQ900OYKXEF	OracleLib.closureTypedParamUntypedFnQ218(() throws(OracleLib.HelperErrQ900) -> ()) -> ()	free_function	no	no	decline	typed_throws	
+$s9OracleLib30freeReturnsThrowingClosureQ143yyKcyF	OracleLib.freeReturnsThrowingClosureQ143() -> () throws -> ()	free_function	no	no	decline	closure_type	
+$s9OracleLib9OuterQ310V13InnerEnumQ315O21__derived_enum_equalsySbAE_AEtFZ	static OracleLib.OuterQ310.InnerEnumQ315.__derived_enum_equals(OracleLib.OuterQ310.InnerEnumQ315, OracleLib.OuterQ310.InnerEnumQ315) -> Swift.Bool	synthesized_static_function	no	no	decline	unsupported_production	
+$s9OracleLib9OuterQ310V13InnerEnumQ315O4hash4intoys6HasherVz_tF	OracleLib.OuterQ310.InnerEnumQ315.hash(into: inout Swift.Hasher) -> ()	synthesized_function	no	no	decline	unsupported_production	
+$s9OracleLib9OuterQ310V13InnerEnumQ315O9hashValueSivg	OracleLib.OuterQ310.InnerEnumQ315.hashValue.getter : Swift.Int	synthesized_getter	no	no	decline	unsupported_production	
+$s9OracleLib9OuterQ310V13InnerEnumQ315OMa	type metadata accessor for OracleLib.OuterQ310.InnerEnumQ315	metadata_accessor	no	no	admit		false
+$s9OracleLib9OuterQ310V14InnerClassQ313C14innerClsFnQ314yyF	OracleLib.OuterQ310.InnerClassQ313.innerClsFnQ314() -> ()	method	no	no	decline	unsupported_production	
+$s9OracleLib9OuterQ310V14InnerClassQ313C14innerClsFnQ314yyFTq	method descriptor for OracleLib.OuterQ310.InnerClassQ313.innerClsFnQ314() -> ()	method_descriptor:method	no	no	decline	thunk_or_specialization	
+$s9OracleLib9OuterQ310V14InnerClassQ313CMa	type metadata accessor for OracleLib.OuterQ310.InnerClassQ313	metadata_accessor	no	no	admit		false
+$s9OracleLib9OuterQ310V14InnerClassQ313CfD	OracleLib.OuterQ310.InnerClassQ313.__deallocating_deinit	deinit_deallocating	no	no	decline	unsupported_production	
+$s9OracleLib9OuterQ310V14InnerClassQ313Cfd	OracleLib.OuterQ310.InnerClassQ313.deinit	deinit	no	no	decline	unsupported_production	
+$s9OracleLib9OuterQ310V15InnerStructQ311V11innerFnQ312yyKF	OracleLib.OuterQ310.InnerStructQ311.innerFnQ312() throws -> ()	method	yes	no	admit		true
+$s9OracleLib9OuterQ310V15InnerStructQ311V12innerExtQ322yyF	OracleLib.OuterQ310.InnerStructQ311.innerExtQ322() -> ()	method	no	no	admit		false
+$s9OracleLib9OuterQ310V15InnerStructQ311VMa	type metadata accessor for OracleLib.OuterQ310.InnerStructQ311	metadata_accessor	no	no	admit		false
+$s9OracleLib9OuterQ310V16InnerGenericQ316V14innerGenFnQ317yyYaKF	OracleLib.OuterQ310.InnerGenericQ316.innerGenFnQ317() async throws -> ()	method	yes	yes	decline	async_context	
+$s9OracleLib9OuterQ310V16InnerGenericQ316V14innerGenFnQ317yyYaKFTu	async function pointer to OracleLib.OuterQ310.InnerGenericQ316.innerGenFnQ317() async throws -> ()	async_function_pointer:method	yes	yes	decline	async_context	
+$s9OracleLib9OuterQ310V16InnerGenericQ316VMa	type metadata accessor for OracleLib.OuterQ310.InnerGenericQ316	metadata_accessor	no	no	admit		false
+$s9OracleLib9OuterQ310VMa	type metadata accessor for OracleLib.OuterQ310	metadata_accessor	no	no	admit		false
+$sSS9OracleLibE15extStringFnQ042yyF	(extension in OracleLib):Swift.String.extStringFnQ042() -> ()	method	no	no	admit		false
+$sSS9OracleLibE16extStringGetQ040Sivg	(extension in OracleLib):Swift.String.extStringGetQ040.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$sSS9OracleLibE16extStringMutQ044yyF	(extension in OracleLib):Swift.String.extStringMutQ044() -> ()	mutating_method	no	no	admit		false
+$sSS9OracleLibE18extStringAsyncQ047yyYaF	(extension in OracleLib):Swift.String.extStringAsyncQ047() async -> ()	method	no	yes	decline	async_context	
+$sSS9OracleLibE18extStringAsyncQ047yyYaFTu	async function pointer to (extension in OracleLib):Swift.String.extStringAsyncQ047() async -> ()	async_function_pointer:method	no	yes	decline	async_context	
+$sSS9OracleLibE19extStringStaticQ041SivgZ	static (extension in OracleLib):Swift.String.extStringStaticQ041.getter : Swift.Int	static_getter	no	no	decline	unsupported_production	
+$sSS9OracleLibE19extStringThrowsQ043yyKF	(extension in OracleLib):Swift.String.extStringThrowsQ043() throws -> ()	method	yes	no	admit		true
+$sSS9OracleLibE21extStringGetAsyncQ046Sivg	(extension in OracleLib):Swift.String.extStringGetAsyncQ046.getter : Swift.Int	getter	no	yes	decline	unsupported_production	
+$sSS9OracleLibE21extStringGetAsyncQ046SivgTu	async function pointer to (extension in OracleLib):Swift.String.extStringGetAsyncQ046.getter : Swift.Int	async_function_pointer:getter	no	yes	decline	unsupported_production	
+$sSS9OracleLibE22extStringGetThrowsQ045Sivg	(extension in OracleLib):Swift.String.extStringGetThrowsQ045.getter : Swift.Int	getter	yes	no	decline	unsupported_production	
+$sSa9OracleLibE15extArrayGetQ050Sivg	(extension in OracleLib):Swift.Array.extArrayGetQ050.getter : Swift.Int	getter	no	no	decline	invalid_grammar	
+$sSa9OracleLibE18extArrayStaticQ052SivgZ	static (extension in OracleLib):Swift.Array.extArrayStaticQ052.getter : Swift.Int	static_getter	no	no	decline	invalid_grammar	
+$sSa9OracleLibE18extArrayThrowsQ051yyKF	(extension in OracleLib):Swift.Array.extArrayThrowsQ051() throws -> ()	method	yes	no	decline	invalid_grammar	
+$sSa9OracleLibE21extArrayMutThrowsQ053yyKF	(extension in OracleLib):Swift.Array.extArrayMutThrowsQ053() throws -> ()	mutating_method	yes	no	decline	invalid_grammar	
+$sSa9OracleLibSQRzlE21extArrayEquatableQ054yyF	(extension in OracleLib):Swift.Array<A where A: Swift.Equatable>.extArrayEquatableQ054() -> ()	method	no	no	decline	protocol_context	
+$sSa9OracleLibSQRzlE27extArrayEquatableThrowsQ055yyKF	(extension in OracleLib):Swift.Array<A where A: Swift.Equatable>.extArrayEquatableThrowsQ055() throws -> ()	method	yes	no	decline	protocol_context	
+$sSi9OracleLibE13extIntGetQ056Sivg	(extension in OracleLib):Swift.Int.extIntGetQ056.getter : Swift.Int	getter	no	no	decline	unsupported_production	
+$sSi9OracleLibE18extIntRethrowsQ060yyyyKXEKF	(extension in OracleLib):Swift.Int.extIntRethrowsQ060(() throws -> ()) throws -> ()	method	rethrows	no	decline	invalid_grammar	
+$sSi9OracleLibE18extIntStaticFnQ057yyFZ	static (extension in OracleLib):Swift.Int.extIntStaticFnQ057() -> ()	static_method	no	no	admit		false
+$sSi9OracleLibE4Q058SiSS_tKcfC	(extension in OracleLib):Swift.Int.init(Q058: Swift.String) throws -> Swift.Int	init	yes	no	admit		true
+$sSi9OracleLibE4Q059SiSgSd_tcfC	(extension in OracleLib):Swift.Int.init(Q059: Swift.Double) -> Swift.Int?	init	no	no	admit		false
+$sSq9OracleLibE21extOptionalThrowsQ061yyKF	(extension in OracleLib):Swift.Optional.extOptionalThrowsQ061() throws -> ()	method	yes	no	decline	unknown_substitution	
