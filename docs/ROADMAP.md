@@ -87,7 +87,8 @@ instruction kinds the CFG decoder supports, and one in the linear decoder, never
 reach agreement in the vectors, so the run says nothing about them. Each was traced
 to a gap in the vectors and not to a decoder: no vector word reaches the exact form
 the decoder accepts. Eleven added words reach all seven and agree with no blocking
-row, in a local check that no recorded run includes yet. See
+row. Those words are now part of the generated word list that the CI oracle job
+checks on every run (section 4.4). See
 [ARM64_ORACLE_HARNESS.md](ARM64_ORACLE_HARNESS.md).
 
 ### What was already known and not acted on
@@ -226,14 +227,18 @@ reconstruction.
 
 ### 4.4 ARM64 unwind
 
-1. **The oracle in CI.** Generate the vectors on the runner with its own LLVM tools
-   from a deterministic word list, so no third-party vector file is stored. Until
-   then the harness is run locally before any decoder change.
+1. **The oracle in CI.** Done. A job in the source-verification workflow writes a
+   deterministic word list (every supported kind, its near neighbours and a fixed
+   pseudo-random sample), assembles and disassembles it with the runner's own LLVM
+   tools, and runs the harness on the result. No third-party vector file is
+   stored. The job fails on any blocking disagreement and on any supported kind
+   that never reaches agreement. Its result depends on the runner's LLVM version,
+   which each run records.
 2. **Close what the first run left open.** Answered. The kinds that never reached
    agreement are vector gaps (section 2). Valid FEAT_PAuth_LR words were declined as
    invalid encodings; since model v51 they are declined as unsupported instructions,
-   which is accurate. No path was wrongly accepted. What remains is item 1, which
-   puts the missing words under a recorded run.
+   which is accurate. No path was wrongly accepted. Item 1 now puts the missing
+   words under a recorded run.
 3. **Panel audit.** Run the unwind audit over the panel and rank refusal reasons by
    the number of functions each one blocks.
 
