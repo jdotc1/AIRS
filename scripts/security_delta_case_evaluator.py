@@ -296,14 +296,29 @@ def evaluate_expected_changes(report, expected):
     result=[]
     for row in expected:
         if row['disposition']=='unresolved':
-            result.append(dict(row,state='unresolved'));continue
+            result.append(dict(row,state='unresolved',unresolved_basis='expected_row_unresolved'));continue
         related=[o for o in report['observations'] if o['componentPath'].encode('utf-8')==row['component_path'].encode('utf-8') and o['category']==row['category']]
         exact=next((o for o in related if o['subject'].encode('utf-8')==row['subject'].encode('utf-8')),None)
+        context=None
         if exact:
             state='true_positive' if exact['disposition']==row['disposition'] else 'unresolved' if exact['disposition'] in ('unresolved','declined') else 'false_negative'
         else:
             state='unresolved' if not related or any(o['subject'] in ('presence','slice','one-sided-context') and o['disposition'] in ('unresolved','declined') for o in related) else 'false_negative'
-        result.append(dict(row,state=state))
+        detail=dict(row,state=state)
+        if state=='unresolved':
+            if exact:
+                detail['unresolved_basis']='exact_observation_'+exact['disposition']
+            elif not related:
+                detail['unresolved_basis']='no_observation_for_component_category'
+            else:
+                context=next(o for o in related if o['subject'] in ('presence','slice','one-sided-context') and o['disposition'] in ('unresolved','declined'))
+                detail['unresolved_basis']='context_observation_'+context['disposition']
+                detail['unresolved_context_subject']=context['subject']
+            matched=exact or context
+            if matched:
+                codes=sorted(r['code'] for r in (matched.get('limitations') or []) if isinstance(r,dict) and isinstance(r.get('code'),str))
+                if codes:detail['unresolved_observation_codes']=codes
+        result.append(detail)
     return result
 
 
@@ -377,6 +392,8 @@ def evaluate_case(report, facts, inventories=None):
         finding_rows.append({'finding_id':finding['id'],'kind':finding['kind'],**rule})
     expected=evaluate_expected_changes(report,enumerate_changes(facts))
     return {'expected_changes':expected,'expected_change_counts':dict(collections.Counter(r['state'] for r in expected)),'observations':rows,'findings':finding_rows,'observation_counts':dict(collections.Counter(r['state'] for r in rows)),
+            'expected_change_unresolved_basis_counts':dict(collections.Counter(r['unresolved_basis'] for r in expected if r['state']=='unresolved')),
+            'expected_change_unresolved_by_category':dict(collections.Counter(r['category']+'|'+r['unresolved_basis'] for r in expected if r['state']=='unresolved')),
             'finding_counts':dict(collections.Counter(r['state'] for r in finding_rows)),
             'limitations':['Finding support includes constituent raw facts, required evidence and independently checked recorded ancestry/rule triggers. Wording is separately source-reviewed; no causal/runtime claim.',
             'Expected-change enumeration covers exact-location paired Info keys, present privacy keys, captured loader groups and raw byte/signature observations; missing sources, component surface and unsupported DER/minimum-OS are outside this denominator.']}
@@ -525,7 +542,9 @@ def main():
         write_document(args.output/relative,results)
         print(json.dumps({'cases':len(results),'observations':dict(sum((collections.Counter(r['observation_counts']) for r in results),collections.Counter())),
             'findings':dict(sum((collections.Counter(r['finding_counts']) for r in results),collections.Counter())),
-            'expected_changes':dict(sum((collections.Counter(r['expected_change_counts']) for r in results),collections.Counter()))},sort_keys=True))
+            'expected_changes':dict(sum((collections.Counter(r['expected_change_counts']) for r in results),collections.Counter())),
+            'expected_change_unresolved_basis_counts':dict(sum((collections.Counter(r['expected_change_unresolved_basis_counts']) for r in results),collections.Counter())),
+            'expected_change_unresolved_by_category':dict(sum((collections.Counter(r['expected_change_unresolved_by_category']) for r in results),collections.Counter()))},sort_keys=True))
         return 0
     except (Unresolved,CorpusRefusal,OSError,KeyError,TypeError,AttributeError,ValueError) as error:
         print(json.dumps({'state':'refused','reason':getattr(error,'code',str(error) if isinstance(error,Unresolved) else 'invalid_qualification_input')}));return 2

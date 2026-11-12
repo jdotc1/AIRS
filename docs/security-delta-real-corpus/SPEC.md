@@ -83,7 +83,9 @@ No signature trust, runtime library loading or privacy compliance is inferred.
 
 ## Acceptance reporting
 
-Report per-case category TP/FP/FN/unresolved counts, certain-findings denominator,
+Report per-case category TP/FP/FN/unresolved counts, the ground for each unresolved
+expected change (`unresolved_basis`, totalled per case and per category),
+certain-findings denominator,
 evidence-reference resolution, omissions, refusals, archive outcomes and native
 workflow status. Record both numerator and denominator for every target. A
 missing input, license, platform facility or permission is blocked/skipped with
