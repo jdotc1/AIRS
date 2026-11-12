@@ -95,6 +95,10 @@ qualification evidence while removing obsolete build products and worktrees.
 
 ## Build and verification
 
+The engine literal `__version__` in `src/airs/__init__.py` defines the product
+version. Static package metadata and the Swift constant are guarded copies checked
+against it by a source test. Reports from earlier product versions stay admissible.
+
 The current source requires macOS 27 or newer on Apple silicon and Xcode 27 or
 newer. Python source requires 3.11 or newer. Continuous integration builds and
 tests the native package on a hosted macOS 27 runner. Releases up to 0.3.4 build 32

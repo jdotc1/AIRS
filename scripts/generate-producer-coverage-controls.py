@@ -2,6 +2,7 @@
 """Generate bounded synthetic producer/native integration controls; no binary reads."""
 import argparse
 import json
+import re
 from pathlib import Path
 import sys
 
@@ -11,6 +12,14 @@ from airs import ANALYSIS_MODEL_VERSION
 from airs.diff import compare_reports
 from test_exact_body_candidates import annotated_pair
 from test_diff_manual_pairs import second, A, B, C, D
+
+
+def product_version():
+    source = (ROOT / "src/airs/__init__.py").read_text(encoding="utf-8")
+    matches = re.findall(r'^__version__ = "([0-9]+\.[0-9]+\.[0-9]+)"$', source, re.MULTILINE)
+    if len(matches) != 1:
+        raise ValueError("Expected one engine product version literal")
+    return matches[0]
 
 
 def serialized(value):
@@ -23,7 +32,7 @@ def controls():
     def add(name, bases, rows, setting=False, pins=(), prepare=None):
         before, after = annotated_pair()
         for report, label in ((before, "Owned baseline"), (after, "Owned current")):
-            report["generator"].update(version="0.3.3", analysis_model_version=ANALYSIS_MODEL_VERSION)
+            report["generator"].update(version=product_version(), analysis_model_version=ANALYSIS_MODEL_VERSION)
             report["image"]["display_name"] = label
         if prepare:
             prepare(before, after)

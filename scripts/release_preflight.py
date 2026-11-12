@@ -129,12 +129,13 @@ def execute_check(command: list[str]) -> dict:
                     pipe.close()
 
 
-def evaluate(app: Path, commit: str, expected_id: str, expected_build: str) -> dict:
+def evaluate(app: Path, commit: str, expected_id: str, expected_build: str, expected_version: str | None = None) -> dict:
     validate_identity(commit, expected_id, expected_build)
     app = plain_path(app)
     metadata = candidate_metadata(app)
     source = embedded_provenance(app, commit, expected_id, expected_build)
-    identity = metadata['bundle_id'] == expected_id and metadata['build'] == expected_build
+    version_matches = None if expected_version is None else metadata['version'] == expected_version
+    identity = metadata['bundle_id'] == expected_id and metadata['build'] == expected_build and version_matches is not False
     checks = {}
     if identity and source['matches_request'] and sys.platform == 'darwin':
         for name, command in (
@@ -147,6 +148,7 @@ def evaluate(app: Path, commit: str, expected_id: str, expected_build: str) -> d
     return {'schema': 'airs-release-preflight-v1', 'app_name': app.name, 'metadata': metadata,
             'source_provenance': source, 'platform': sys.platform, 'checks': checks,
             'identity_matches_request': identity,
+            'expected_version': expected_version, 'version_matches_request': version_matches,
             'release_gate_passed': bool(identity and source['matches_request'] and len(checks) == 3
                                         and all(item['passed'] for item in checks.values())),
             'limitations': ['Embedded source metadata is a builder claim, not reproducible-build proof.',
@@ -168,12 +170,13 @@ def main(argv=None) -> int:
     parser.add_argument('--expected-source-commit', required=True)
     parser.add_argument('--expected-bundle-id', required=True)
     parser.add_argument('--expected-build', required=True)
+    parser.add_argument('--expected-version')
     parser.add_argument('--json-out', type=Path)
     args = parser.parse_args(argv)
     try:
         if args.json_out:
             receipt_destination(args.json_out, args.app)
-        value = evaluate(args.app, args.expected_source_commit, args.expected_bundle_id, args.expected_build)
+        value = evaluate(args.app, args.expected_source_commit, args.expected_bundle_id, args.expected_build, args.expected_version)
         encoded = json.dumps(value, indent=2, sort_keys=True) + '\n'
         if args.json_out:
             write_exclusive(args.json_out, encoded)

@@ -19,7 +19,7 @@ public struct CodeSignatureEvidenceDocument: Sendable {
     }
 
     public static func capture(unit: BundleImageProvenance, componentID: UUID,
-                               producerVersion: String = "0.3.1") throws -> Self {
+                               producerVersion: String = AIRSProductVersion.current) throws -> Self {
         try .init(evidence: CodeSignatureEvidenceReader().capture(unit: unit, componentID: componentID),
                   capturedAt: Date(), producerVersion: producerVersion)
     }

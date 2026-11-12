@@ -12,7 +12,8 @@ EXTERNAL_PYTHON=0
 SOURCE_COMMIT=""
 ACCEPTED_VENDOR_SOURCE=""
 NATIVE_BUILD_RECEIPT=""
-BUNDLE_VERSION="0.3.3"
+BUNDLE_VERSION=""
+VERSION_GIVEN=0
 BUNDLE_BUILD="12"
 
 usage() {
@@ -47,7 +48,7 @@ while [ "$#" -gt 0 ]; do
         --version|--build|--source-commit|--accepted-vendor-source|--native-build-receipt)
             if [ "$#" -lt 2 ]; then printf 'Missing value for %s\n' "$1" >&2; exit 2; fi
             case "$1" in
-                --version) BUNDLE_VERSION="$2" ;;
+                --version) BUNDLE_VERSION="$2"; VERSION_GIVEN=1 ;;
                 --build) BUNDLE_BUILD="$2" ;;
                 --source-commit) SOURCE_COMMIT="$2" ;;
                 --accepted-vendor-source) ACCEPTED_VENDOR_SOURCE="$2" ;;
@@ -62,6 +63,17 @@ while [ "$#" -gt 0 ]; do
         *) printf 'Unknown option: %s\n' "$1" >&2; usage >&2; exit 2 ;;
     esac
 done
+
+if [ "$VERSION_GIVEN" -eq 0 ]; then
+    BUNDLE_VERSION="$(sed -nE 's/^__version__ = "([0-9]+\.[0-9]+\.[0-9]+)"$/\1/p' "$PROJECT_DIR/src/airs/__init__.py" 2>/dev/null)" || {
+        printf '%s\n' 'Cannot read a valid engine product version literal.' >&2
+        exit 2
+    }
+    if [[ ! "$BUNDLE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        printf '%s\n' 'Cannot read a valid engine product version literal.' >&2
+        exit 2
+    fi
+fi
 
 python3 -B - "$BUNDLE_VERSION" "$BUNDLE_BUILD" "$SOURCE_COMMIT" <<'PYIDENTITY'
 import re, sys
@@ -234,7 +246,7 @@ cat > "$CONTENTS/Info.plist" <<'PLIST'
     <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
     <key>CFBundleName</key><string>AIRS</string>
     <key>CFBundlePackageType</key><string>APPL</string>
-    <key>CFBundleShortVersionString</key><string>0.3.3</string>
+    <key>CFBundleShortVersionString</key><string>VERSION_PLACEHOLDER</string>
     <key>CFBundleVersion</key><string>12</string>
     <key>LSMinimumSystemVersion</key><string>27.0</string>
     <key>NSHighResolutionCapable</key><true/>

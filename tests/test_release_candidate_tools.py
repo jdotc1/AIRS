@@ -138,6 +138,28 @@ class ReleaseCandidateBoundaryTests(unittest.TestCase):
         self.assertTrue(result['release_gate_passed'])
         self.assertTrue(any('Clean-host' in line for line in result['limitations']))
 
+    def test_expected_version_match_mismatch_and_absent(self):
+        import contextlib, io, json
+        from unittest.mock import patch
+        app = self.app()
+        for expected, matches, identity in [('0.3.3', True, True), ('0.4.0', False, False), (None, None, True)]:
+            with self.subTest(expected=expected):
+                arguments = ['--app', str(app), '--expected-source-commit', 'a' * 40,
+                             '--expected-bundle-id', 'dev.airs.app', '--expected-build', '13']
+                if expected is not None:
+                    arguments += ['--expected-version', expected]
+                output = io.StringIO()
+                with patch.object(self.tool.sys, 'platform', 'darwin'), patch.object(
+                        self.tool, 'execute_check', return_value={'passed': True}) as check, contextlib.redirect_stdout(output):
+                    status = self.tool.main(arguments)
+                result = json.loads(output.getvalue())
+                self.assertEqual(result['expected_version'], expected)
+                self.assertIs(result['version_matches_request'], matches)
+                self.assertIs(result['identity_matches_request'], identity)
+                self.assertEqual(status, 0 if identity else 2)
+                self.assertEqual(check.call_count, 3 if identity else 0)
+                self.assertEqual(result['schema'], 'airs-release-preflight-v1')
+
     def test_receipt_is_new_outside_app_and_refuses_symlink_ancestors(self):
         app = self.app()
         for destination in (app / 'receipt.json', app / 'Contents/receipt.json'):
