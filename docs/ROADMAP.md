@@ -83,8 +83,11 @@ The first full run of the oracle harness compared the two ARM64 decoders with 34
 distinct instruction words of independent disassembler output. It found no blocking
 disagreement, and it took less than one second of CPU time. The decoders claim about
 5% of those words (1,875 for the CFG decoder) and decline the rest by scope. Six
-instruction kinds the CFG decoder supports never reach agreement in the vectors, so
-the run says nothing about them yet. See
+instruction kinds the CFG decoder supports, and one in the linear decoder, never
+reach agreement in the vectors, so the run says nothing about them. Each was traced
+to a gap in the vectors and not to a decoder: no vector word reaches the exact form
+the decoder accepts. Eleven added words reach all seven and agree with no blocking
+row, in a local check that no recorded run includes yet. See
 [ARM64_ORACLE_HARNESS.md](ARM64_ORACLE_HARNESS.md).
 
 ### What was already known and not acted on
@@ -135,7 +138,7 @@ merged since build 32.
    and the native CI job runs on the hosted macOS 27 image with Xcode 27.2 (the
    label is `xcode-27`, marked preview on 2026-11-12; if it is renamed the job
    moves with it). The Python jobs are unchanged.
-2. Added, with no completed run yet: a release-acceptance workflow, started by
+2. Done, and run once: a release-acceptance workflow, started by
    hand for a release tag
    ([RELEASE_ACCEPTANCE.md](RELEASE_ACCEPTANCE.md)). On a fresh hosted runner it
    downloads the published archive, checks it against the published checksums,
@@ -144,7 +147,11 @@ merged since build 32.
    interpreter on owned fixtures against an independently installed Python and
    requires identical reports, and starts the application. Its record is the
    clean-machine and minimum-system evidence for that release, with its limits
-   stated: no person, no first-open dialog, no network isolation.
+   stated: no person, no first-open dialog, no network isolation. Its first run,
+   on the published 0.3.4 build 32 archive, passed every step on the macOS 27
+   image. Build 32 declares macOS 14, so that run shows nothing about its declared
+   minimum; 0.4.0 will be the first release whose declared minimum is the system
+   the run uses.
 3. Freeze the source, package, and probe the bundled engine.
 4. Maintainer: sign, notarize, staple, tag and publish.
 5. Run the acceptance workflow on the published archive and record the result in the
@@ -178,9 +185,14 @@ After 0.4.0, each milestone below that changes what a user sees ends in a releas
    from its publisher by recorded digest, never executes it, runs the profiles and
    publishes the counters. Exit: a table like the one in section 2 for all 12
    applications.
-2. **No silent truncation.** Rows beyond the retention limit are summarized by reason
-   in the report. Exit: the Maccy measurement has no omitted row without a reason
-   count.
+2. **No silent truncation.** The retention limit stays at 8,192 rows: raising it to
+   fit one application would fit the limit to the measurement. The successor profile
+   instead reports which limit refused the omitted rows, what the omitted candidates
+   were where that is known without doing the work the limit exists to save, and a
+   call count for every attributed imported function that does not depend on the row
+   limit. These arrive with item 3 under one new identity, not as an interim one.
+   Exit: on the Maccy measurement the omitted count equals the sum of the cause
+   counts, and every attributed imported function has a call count.
 3. **A complete declaration grammar.** Parse every function-entity mangling,
    including substitutions and generic requirements, instead of adding productions one
    at a time. Check it differentially against the toolchain's demangler over every
@@ -217,10 +229,11 @@ reconstruction.
 1. **The oracle in CI.** Generate the vectors on the runner with its own LLVM tools
    from a deterministic word list, so no third-party vector file is stored. Until
    then the harness is run locally before any decoder change.
-2. **Close what the first run left open.** Explain the six kinds that never reach
-   agreement. Correct the refusal reason for valid FEAT_PAuth_LR words, which are
-   declined as invalid encodings where unsupported-instruction is accurate. No path is
-   wrongly accepted today.
+2. **Close what the first run left open.** Answered. The kinds that never reached
+   agreement are vector gaps (section 2). Valid FEAT_PAuth_LR words were declined as
+   invalid encodings; since model v51 they are declined as unsupported instructions,
+   which is accurate. No path was wrongly accepted. What remains is item 1, which
+   puts the missing words under a recorded run.
 3. **Panel audit.** Run the unwind audit over the panel and rank refusal reasons by
    the number of functions each one blocks.
 
@@ -262,9 +275,9 @@ files. Porting notes continue with each released model
    report 0.3.3. First read whether any validator pins the generator version; the
    preferred result is one version source read by the package, the engine and the
    application.
-3. [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) opens on build 12 and
-   [ARCHITECTURE.md](ARCHITECTURE.md) on an earlier model. Each gets a current
-   opening or a pointer here.
+3. Done by disclosure: [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) and
+   [ARCHITECTURE.md](ARCHITECTURE.md) each open with a note that says what the page
+   records and points here. Neither is rewritten.
 4. ANALYSIS_CONTRACT.md cites 79 pages that were never in this repository. Both it
    and ARCHITECTURE.md say so in an opening note. This is closed by disclosure, and no
    page will be restored.

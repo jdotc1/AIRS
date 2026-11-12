@@ -66,5 +66,23 @@ receipt, the minimum-system comparison, the engine comparison, the exit codes an
 report digests, and the launch line. Artifacts are kept for 90 days, so a release
 document that cites a run copies the facts it relies on.
 
-No run had completed when this page was written. The workflow can be started only
-from the default branch, so its first run follows its own merge.
+## First run
+
+Run 43316541840 on 2026-11-12 checked the published 0.3.4 build 32 archive on the
+hosted macOS 27 image (macOS 27.0.1). Every step passed:
+
+- the application archive, the source archive and the qualification record match
+  the published checksums;
+- the signature is valid, Gatekeeper accepts the application as a notarized
+  Developer ID build, and the stapled ticket validates;
+- the 52 engine files in the application are identical to the tagged source;
+- the bundled interpreter and a separately installed Python 3.15.0 wrote identical
+  audit and Swift error-flow reports on the owned fixtures, with empty error output;
+- the application process was running 15 seconds after it was started.
+
+Three limits are specific to this run. Build 32 declares macOS 14, so the
+minimum-system step records only that the host is newer. The separately installed
+interpreter is the same Python release as the bundled one, so the comparison shows
+the bundle is intact and not that the engine agrees across Python versions; the
+source tests cover that. The launch check is that the process stays alive, nothing
+more.
