@@ -95,9 +95,12 @@ qualification evidence while removing obsolete build products and worktrees.
 
 ## Build and verification
 
-macOS 14 or newer, Apple silicon; Swift 6.1 or newer. Python source requires
-3.11 or newer. Older-OS, minimum-toolchain, clean-Mac and Intel-host qualification
-remain separate limits.
+The current source requires macOS 27 or newer on Apple silicon and Xcode 27 or
+newer. Python source requires 3.11 or newer. Continuous integration builds and
+tests the native package on a hosted macOS 27 runner. Releases up to 0.3.4 build 32
+declare macOS 14 as their minimum and were never tested on it; systems older than
+macOS 27 are not supported from the next release. Clean-Mac acceptance of a
+published archive and Intel-host qualification remain separate limits.
 
 ```
 swift build --package-path native --configuration release --product AIRSApp

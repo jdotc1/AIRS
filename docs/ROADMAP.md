@@ -131,10 +131,10 @@ others.
 The next release is 0.4.0: the first with the macOS 27 minimum, carrying everything
 merged since build 32.
 
-1. Raise the deployment target to macOS 27 in the package manifest and the bundle,
-   and move the native CI job to the hosted macOS 27 image (GitHub lists one with
-   Xcode 27 under the label `xcode-27`, marked preview on 2026-11-12). The Python jobs
-   are unchanged.
+1. Done: the deployment target in the package manifest and the bundle is macOS 27,
+   and the native CI job runs on the hosted macOS 27 image with Xcode 27.2 (the
+   label is `xcode-27`, marked preview on 2026-11-12; if it is renamed the job
+   moves with it). The Python jobs are unchanged.
 2. Add a release-acceptance workflow, started by hand for a release tag. On a fresh
    hosted macOS 27 runner it downloads the published archive, checks it against the
    published checksums, checks the signature, the notarization ticket and the

@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "AIRS",
-    platforms: [.macOS(.v14)],
+    platforms: [.macOS("27.0")],
     products: [
         .executable(name: "AIRSApp", targets: ["AIRSApp"]),
         .executable(name: "airs-entitlements", targets: ["AIRSEntitlementCLI"]),

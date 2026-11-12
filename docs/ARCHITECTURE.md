@@ -11,7 +11,7 @@ citations as historical.
 ## 1. Delivered system and verification boundary
 
 The starter separates a Python 3.11+ standard-library analysis engine from a
-macOS 14+ SwiftUI/AppKit front end. Versioned JSON connects the two. The Python
+macOS 27+ SwiftUI/AppKit front end. Versioned JSON connects the two. The Python
 CLI is useful independently; the native app also opens saved audit reports when
 its interpreter or engine cannot be found. Selecting a binary supplies bytes
 for inspection. The target is never loaded as executable code. The product

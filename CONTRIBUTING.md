@@ -24,8 +24,8 @@ and source verification from running. See docs/ANALYSIS_CONTRACT.md and
 docs/CURRENT_SOURCE_RELEASE_GATES.md for the retained product and distribution contracts.
 
 The build scripts and the CI release builds report any Swift expression or function body
-that takes 300 ms or more to type-check as a warning; the CI compiler (Xcode 26.3) is older
-than the usual local one, so local timings are a proxy for CI.
+that takes 300 ms or more to type-check as a warning; the CI compiler (Xcode 27.2) can differ
+from the local one, so local timings are a proxy for CI.
 
 Ordinary development does not authorize a binary release. Public binary releases
 require their own reviewed artifact identity and acceptance. Keep account and

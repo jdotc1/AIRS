@@ -72,7 +72,7 @@ is authoritative for versions, matrices and skip allowances; this summary can la
   It fails on any skipped test except one allowed case,
   test_private_python_reuse.RuntimeMetadataReuseTests.
   test_saved_observed_metadata_pair_without_runtime_access, and uploads the receipt.
-- native job: macOS 15 arm64, Xcode 26.3, Python 3.15.0. It records the host and
+- native job: macOS 27 arm64 (the hosted `xcode-27` image), Xcode 27.2, Python 3.15.0. It records the host and
   toolchain, builds the release AIRSApp and airs-entitlements products, runs
   `swift test --package-path native` with AIRS_PYTHON set, and writes native-scope.json
   with the raw skip lines plus a step summary. Two skips are anticipated:
@@ -108,7 +108,7 @@ swift test --package-path native --filter <TestClass>
   into a failure. build/ is untracked. A single module is selected with `-p`
   (docs/swift/BROAD_DECLARATIONS.md), and `-k` narrows to a class or test
   (docs/swift/BROAD_PACKAGING.md).
-- Native requirements: macOS 14 or newer on Apple silicon, Swift 6.1 or newer, and
+- Native requirements: macOS 27 or newer on Apple silicon, Xcode 27 or newer, and
   Python 3.11 or newer for the engine (README.md). Set AIRS_PYTHON to the absolute path
   of a Python 3.11+ executable before `swift test`, as CI and scripts/verify-macos.sh
   do. A filtered run is described in docs/NATIVE_BROAD_RESULTS.md.

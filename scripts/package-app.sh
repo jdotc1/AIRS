@@ -19,7 +19,7 @@ usage() {
     cat <<'USAGE'
 Usage: scripts/package-app.sh [--output-dir DIRECTORY] [--debug|--release] [--ad-hoc-sign] [--python-runtime DIRECTORY|--external-python] [--version VERSION --build NUMBER --source-commit COMMIT] [--accepted-vendor-source COMMIT] [--native-build-receipt FILE]
 
-Build and package AIRS.app for local use on macOS 14 or newer.
+Build and package AIRS.app for local use on macOS 27 or newer.
 Includes the native airs-entitlements command at Contents/MacOS/airs-entitlements.
 The app includes owned engine source and the prepared private Python 3.15.0 runtime.
 --python-runtime selects a prepared runtime directory with its reusable receipt.
@@ -73,7 +73,7 @@ if (re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+', version) is None
 PYIDENTITY
 
 if [ "$(uname -s)" != "Darwin" ]; then
-    printf '%s\n' 'Packaging requires macOS 14+ and the Apple Swift toolchain.' >&2
+    printf '%s\n' 'Packaging requires macOS 27+ and the Apple Swift toolchain.' >&2
     exit 2
 fi
 if ! command -v swift >/dev/null 2>&1; then
@@ -209,7 +209,7 @@ if [ ! -d "$ICON_SOURCE" ]; then
     exit 3
 fi
 xcrun actool "$ICON_SOURCE" --compile "$CONTENTS/Resources" --platform macosx \
-    --minimum-deployment-target 14.0 --app-icon AIRS \
+    --minimum-deployment-target 27.0 --app-icon AIRS \
     --output-partial-info-plist "$STAGING_DIR/icon-partial.plist" >/dev/null
 
 # Copy only owned Python source, retaining subpackages. Exclude caches/test inputs.
@@ -236,7 +236,7 @@ cat > "$CONTENTS/Info.plist" <<'PLIST'
     <key>CFBundlePackageType</key><string>APPL</string>
     <key>CFBundleShortVersionString</key><string>0.3.3</string>
     <key>CFBundleVersion</key><string>12</string>
-    <key>LSMinimumSystemVersion</key><string>14.0</string>
+    <key>LSMinimumSystemVersion</key><string>27.0</string>
     <key>NSHighResolutionCapable</key><true/>
     <key>CFBundleDocumentTypes</key>
     <array><dict>

@@ -26,10 +26,17 @@ records, signing/notarization and archive facts remain local evidence until the
 specific output has completed its publication checks. No installed application
 replacement is part of candidate preparation.
 
+The minimum system for current source is macOS 27 (deployment target and
+LSMinimumSystemVersion 27.0). Releases up to 0.3.4 build 32 declared macOS 14 and
+were never tested on it. Source verification builds and tests the native package
+on a hosted macOS 27 runner, which is evidence for the minimum system at the
+source level only.
+
 Clean-machine acceptance requires an independently provisioned Apple silicon Mac
-or VM. None is currently available. Local checks cannot close this gate or prove
-minimum-macOS compatibility. No new public release may be described as fully
-qualified while required environment/platform evidence remains unavailable.
+or VM running the published archive. A hosted macOS 27 runner is such a machine;
+a release-acceptance workflow that uses one is planned and does not exist yet.
+Local checks cannot close this gate. No new public release may be described as
+fully qualified while required environment/platform evidence remains unavailable.
 
 ## Reuse and lean runtime staging
 
