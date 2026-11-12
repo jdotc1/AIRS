@@ -105,6 +105,10 @@ fi
 
 # Release executables must not embed this machine's checkout or build paths.
 BUILD_FLAGS=(--configuration "$CONFIGURATION" --jobs 2)
+# Report any expression or function body that takes 300 ms or more to type-check
+# (warnings only, never errors).
+BUILD_FLAGS+=(-Xswiftc -Xfrontend -Xswiftc -warn-long-expression-type-checking=300
+              -Xswiftc -Xfrontend -Xswiftc -warn-long-function-bodies=300)
 if [ "$CONFIGURATION" = "release" ]; then
     if [ -n "$ACCEPTED_VENDOR_SOURCE" ]; then
         # Caller supplies a retained accepted source identity. Compare immutable

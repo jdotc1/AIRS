@@ -97,13 +97,22 @@ struct SidebarReviewLauncher: View {
 
     init(workspace: AuditWorkspace, root: URL) {
         self.workspace = workspace
-        _entitlements = State(initialValue: EntitlementsWorkspace(
-            library: EntitlementReportLibrary(root: root.appendingPathComponent("entitlement-reports")),
-            batchHistory: EntitlementBatchHistory(root: root.appendingPathComponent("entitlement-history")),
-            recovery: EntitlementBatchRecovery(root: root.appendingPathComponent("entitlement-recovery")),
-            inspectionLibrary: InspectionLibrary(root: root.appendingPathComponent("inspection"))))
-        _fileOpen = State(initialValue: AIRSFileOpen(hasModal: { false },
-            projectStore: InspectionProjectStore(root: root.appendingPathComponent("projects"))))
+        // One typed statement per store keeps this initializer inside the type-check budget.
+        let reportsRoot: URL = root.appendingPathComponent("entitlement-reports")
+        let library = EntitlementReportLibrary(root: reportsRoot)
+        let historyRoot: URL = root.appendingPathComponent("entitlement-history")
+        let batchHistory = EntitlementBatchHistory(root: historyRoot)
+        let recoveryRoot: URL = root.appendingPathComponent("entitlement-recovery")
+        let recovery = EntitlementBatchRecovery(root: recoveryRoot)
+        let inspectionRoot: URL = root.appendingPathComponent("inspection")
+        let inspectionLibrary = InspectionLibrary(root: inspectionRoot)
+        let entitlementsWorkspace = EntitlementsWorkspace(library: library, batchHistory: batchHistory,
+            recovery: recovery, inspectionLibrary: inspectionLibrary)
+        _entitlements = State(initialValue: entitlementsWorkspace)
+        let projectsRoot: URL = root.appendingPathComponent("projects")
+        let projectStore = InspectionProjectStore(root: projectsRoot)
+        let opener = AIRSFileOpen(hasModal: { false }, projectStore: projectStore)
+        _fileOpen = State(initialValue: opener)
     }
 
     var body: some View {

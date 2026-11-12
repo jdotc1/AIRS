@@ -8,12 +8,18 @@ struct EntitlementBatchView: View {
     @Bindable var workspace: EntitlementsWorkspace
     @State private var confirmingHistoryDiscard = false
 
+    /// Mirrors the guard in `EntitlementsWorkspace.clearBatch`; kept out of `body` so the
+    /// four-term condition is its own small type-check.
+    private var canStartNewQueue: Bool {
+        !(workspace.isBusy || workspace.hasUnretainedBatchReport || workspace.batchNeedsHistorySave || workspace.batchNeedsCheckpointSave)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             AppPageHeader(title: "Comparison Queue",
                 subtitle: "Ordered Previous → Current pairs, one comparison at a time. The primary comparison stays unchanged until you review and open a result.") {
                 Button("New Queue", action: workspace.clearBatch)
-                    .disabled(workspace.isBusy || workspace.hasUnretainedBatchReport || workspace.batchNeedsHistorySave || workspace.batchNeedsCheckpointSave)
+                    .disabled(!canStartNewQueue)
             }
             HStack {
                 Button("Import Manifest…", action: workspace.chooseBatchManifest).disabled(!workspace.canImportBatchManifest)
