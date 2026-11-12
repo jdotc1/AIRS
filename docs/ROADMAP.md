@@ -1,6 +1,142 @@
 # AIRS bounded development roadmap
 
 This public repository is the single development baseline. Plans describe intended
+work; acceptance records establish completed scope. Source-only increments do not
+replace installed apps. The first section states the current position. The
+checkpoints that led to it follow, unchanged, under History.
+
+## Current state
+
+Written against main at commit 400ac21 (2026-11-12). Where this section and a
+checkpoint under History disagree, this section is current.
+
+### Merged and released
+
+- Published preview: AIRS 0.3.4, build 32 (tag v0.3.4-build32, application source
+  db7347b), signed, notarized and stapled for Apple silicon. It includes Security
+  Changes in Component Review and native Standard and Broad Swift analysis, with the
+  explicitly selected extended scan profile. See
+  [RELEASE_0_3_4_BUILD32.md](RELEASE_0_3_4_BUILD32.md) and
+  [RELEASE_NOTES.md](../RELEASE_NOTES.md).
+- ARM64/CFI model: the source model is `arm64-bounded-test-bit-branch-v50`. Versions
+  42 to 50 added W SDIV and UDIV, REV, REV16, REV32, CLS, MOVK, CBZ/CBNZ and TBZ/TBNZ.
+  Historical identities stay distinct. See [ANALYSIS_CONTRACT.md](ANALYSIS_CONTRACT.md).
+- Saved-report comparison: coverage triage, manual finding pairs, and opt-in exact-body
+  fingerprints and matching, with native codecs and validators. Default output is
+  unchanged.
+- Swift error-flow: the default (edge v37), methods (v38), broad-v1, broad-large-v1 and
+  broad-extended-v1 profiles. Results are structural; none establishes runtime
+  execution or source reconstruction. See [SWIFT_ERROR_FLOW.md](SWIFT_ERROR_FLOW.md),
+  [ADVANCED_SWIFT_ERROR_FLOW.md](ADVANCED_SWIFT_ERROR_FLOW.md) and
+  [SWIFT_BROAD_SCOPE.md](SWIFT_BROAD_SCOPE.md).
+- Verification: the Source verification workflow (`.github/workflows/verify.yml`) runs
+  the Python tests on Python 3.11 and 3.15 and the Swift build and tests on macOS 15
+  arm64. Hosted results are on the repository's Actions page, not recorded here.
+  Publication gates are described in [PUBLICATION_POLICY.md](PUBLICATION_POLICY.md).
+
+### Merged since build 32
+
+None of the following is in a released build.
+
+- `broad-imports-v1`: an opt-in broad profile that attributes `__TEXT,__stubs` entries
+  to undefined external symbols through a double indirect-symbol binding, and reports
+  direct calls to imported `$s` symbols as unresolved `imported_callee_abi_unqualified`
+  rows with declaration syntax only. Earlier profiles are unchanged. See
+  [SWIFT_BROAD_IMPORTS_PROFILE.md](SWIFT_BROAD_IMPORTS_PROFILE.md).
+- A dedicated declaration grammar for imported callees
+  (`swift-import-declaration-syntax-v1`). A call is skipped as non-throwing only when
+  the grammar consumes the whole symbol and the outer function type carries no throws
+  marker. In the one owned real-toolchain case the 19 imported `$s` symbols split into
+  10 admitted non-throwing, 1 admitted throwing and 8 declined, and their 27 call
+  sites give 12 rows and 15 skipped calls. See
+  [SWIFT_IMPORT_DECLARATIONS.md](SWIFT_IMPORT_DECLARATIONS.md).
+- Native admission of the imports profile: the app's report reader accepts exactly the
+  `swift-broad-error-flow-imports-v1` / `broad-imports-v1` pair and presents its rows as
+  unresolved. App launch, real-input acceptance, packaging and distribution of this
+  change are not done. See [NATIVE_BROAD_RESULTS.md](NATIVE_BROAD_RESULTS.md).
+- `broad-imports-got-v1`: an opt-in, engine-only profile that attributes GOT-loaded
+  `BLR` calls when the indirect symbol table and the chained-fixup import agree on the
+  slot's symbol. The native app does not admit it. See
+  [SWIFT_IMPORT_GOT_ATTRIBUTION.md](SWIFT_IMPORT_GOT_ATTRIBUTION.md).
+- A fix for a save race in the native batch history store: a temporary batch save now
+  holds one inventory lease across its batch lease and its write.
+- Native analysis reuse is pinned to the engine's current model, with a symlink
+  containment fix, so a new model identity cannot silently reuse older results.
+- An ARM64 decode-oracle differential harness. It has had a smoke run only; no full
+  run is recorded.
+- The publication gate runs in CI over the commits a change adds. A green run is a
+  backstop, not a publication clearance.
+- Slow Swift type-checks are reported by the local build, and the slowest expressions
+  were shortened.
+- A repair of stale Python source tests and a slow Swift type-check that had failed
+  the first CI run on this tree, and an agent guide (AGENTS.md) that names existing
+  files.
+  Analysis behavior is unchanged.
+
+### In flight
+
+No increment is recorded as in progress in this file. The repository's pull-request
+page lists open pull requests and is the record of work in flight; branches are
+listed on its branches page.
+
+### Open items
+
+- Release gates: independent clean-machine acceptance on a separately provisioned
+  Apple silicon Mac or VM (none is available), plus minimum-macOS, offline and
+  Intel-host qualification. No new release may be described as fully qualified until
+  they close.
+- Release identity: before the next binary release, assign one and reconcile the
+  package and source version constants. The Python package and engine still report
+  0.3.3. See [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md).
+- Imported Swift callees: ABI admission and outcome witnesses. Attribution says which
+  symbol a call site names; it does not say that a callee throws, returns, or which
+  library dyld binds. Native admission of the GOT profile, a measurement on a real
+  third-party input, and the 8 fixture symbols the declaration grammar declines remain
+  open.
+- ARM64 decode: the first full run of the decode-oracle harness has not been made. One
+  known candidate from its smoke run: valid FEAT_PAuth_LR words are declined with an
+  invalid-encoding reason where an unsupported-instruction reason would be accurate.
+  The decoder still declines them, so no path is wrongly accepted.
+- Swift error-flow: Swift-frontend emission and runtime qualification for the CMP-based
+  layouts, wider success arithmetic, and native UI activation of structured
+  presentation. Async continuation reconstruction and full source reconstruction
+  remain separate.
+- Saved-report matching: cross-build review candidates beyond exact-body matching (CFG
+  fingerprints and call-graph propagation are not implemented), structured refusal
+  facts, and native activation of the validated manual-pair and coverage workflows.
+  Structural matches must never replace exact image identity or model checks.
+- Native app: qualify each changed user interaction after pending work settles. Picker
+  suppression and historical-panel GUI acceptance for settled project companions
+  remain incomplete.
+- Documentation: some files name pages that are not in the repository.
+  CONTRIBUTING.md names `docs/RELEASE_VERIFICATION.md`; ARCHITECTURE.md and
+  `scripts/verify-macos.sh` name `docs/NATIVE_BUILD.md`. Each reference should be
+  restored or removed. DEVELOPMENT_STATUS.md still describes build 12 as the current
+  preview.
+- Next candidates, as in the checkpoint of that name under History: use the documented
+  saved-report workflow to find a concrete unresolved behavior worth improving, and
+  choose a semantic extension only from an explicit owned example with an
+  independently derived recovery expectation. Reason frequency in supplied reports is
+  prioritization input, not prevalence or permission to widen support.
+
+## History
+
+Everything below is the record of past checkpoints, kept as written. Headings that
+begin "Current" or "Next" were true when written. Three points for reading it:
+
+- Pull-request numbers come from more than one numbering (for example PR32 to PR41 is
+  followed by public PR2 to PR27) and may not match this repository's pull-request
+  page.
+- A checkpoint that calls a Swift model current (for example `swift-sync-error-edges-v5`)
+  describes the model current when it was written. The identities now in the source
+  are listed in [ADVANCED_SWIFT_ERROR_FLOW.md](ADVANCED_SWIFT_ERROR_FLOW.md) and in
+  `src/airs/swift_broad_profiles.py`.
+- The summary that opens this history names build 13 as the current preview; build 32
+  is current. The newest checkpoint is the last section, not the first.
+
+### Summary written at build 13
+
+This public repository is the single development baseline. Plans describe intended
 work; acceptance records establish completed scope. Build 13 is the current
 published preview, with clean-machine and minimum-macOS acceptance pending.
 Source-only increments do not replace installed apps.
@@ -12,7 +148,7 @@ Source-only increments do not replace installed apps.
 | Saved-report coverage triage | Reason selection, terminal-safe output, bounded detail and literal code ordering implemented | Additional triage tools must preserve full denominators, overlap, duplicate/conflict and exact identity context |
 | Public distribution | Build 13 preview is signed, notarized and stapled; published browser download and local App Translocation are accepted | Independent clean-machine, minimum-macOS and offline qualification remain pending; this preview targets Apple silicon |
 
-## Current bounded increment
+### Current bounded increment
 
 Coverage triage, W SDIV/W UDIV and owned-image qualification are merged through
 PRs #13–20; scalar REV/REV16/REV32 through PRs #21–23. Accepted results are reused.
@@ -47,7 +183,7 @@ PCs; no supported subset or model change is added.
 See [work-budget qualification](CFG_WORK_BUDGET_EVIDENCE.md).
 Installation and release remain unchanged.
 
-## MacScope reuse implementation
+### MacScope reuse implementation
 
 MOVK W/X v48 and CBZ/CBNZ W/X v49 are merged in PR32 with independent review,
 owned-image qualification and native admission. See MOVK_RESULTS.md and
@@ -270,7 +406,7 @@ Next reuse sequence:
 2. Structured refusal facts where they remove duplicated diagnostic handling;
    retain AIRS unknown/discrepancy precedence instead of donor proof precedence.
 
-## Next candidates, one bounded item at a time
+### Next candidates, one bounded item at a time
 
 1. Use the documented saved-report workflow to identify a concrete unresolved
    behavior worth improving; avoid adding filters without a specific review need.
@@ -285,7 +421,7 @@ keep source tests, native GUI acceptance, packaging, signing/notarization, insta
 and release publication distinct. Runtime evidence and user data stay outside source.
 
 
-## Local workspace maintenance
+### Local workspace maintenance
 
 Completed worktrees and merged feature branches can be pruned after preserving
 unique source/evidence. Rebuildable caches and intermediate packaged app copies
@@ -296,7 +432,7 @@ successful real AIRSApp build. See NATIVE_BODY_FINGERPRINT_CODEC.md. Build produ
 are removed after retaining logs. Fingerprint production/matching activation and
 GUI acceptance remain separate; no installed binary or release changes.
 
-## Swift decompilation: synchronous error paths
+### Swift decompilation: synchronous error paths
 
 The first bounded throwing-call return-edge model is implemented and qualified
 against an owned optimized Swift image; see SWIFT_ERROR_FLOW.md. It recovers
@@ -339,7 +475,7 @@ error block's jump past a distinct success entry into the epilogue. That concret
 layout is the next bounded region-recovery candidate; it requires separate join
 and entry analysis rather than treating the success entry as the true join.
 
-## Saved-report coverage GUI integration
+### Saved-report coverage GUI integration
 
 The saved-batch pairing window now exposes strict coverage with a captured
 per-invocation policy. Legacy programmatic behavior remains the default. The real
@@ -347,7 +483,7 @@ app build and a new refusal/export/policy-separation workspace test passed;
 accepted core controls were reused. Isolated native interaction confirmed strict
 refusal, legacy opt-out, busy-state locking and cancellation without stale output. See GUI_SAVED_REPORT_COVERAGE.md for delivered and held scope.
 
-## Published preview qualification
+### Published preview qualification
 
 Strict saved-batch coverage has composed workspace/native interaction
 qualification. Version 0.3.4/build 13 is locally signed, notarized and stapled,
@@ -359,7 +495,7 @@ Independent clean-machine and minimum-macOS acceptance remain open. Build 13 is
 published as a preview; qualification did not replace an installed app. No
 historical release qualification is transferred to build 13.
 
-## Shared Swift error-handler epilogue recovery
+### Shared Swift error-handler epilogue recovery
 
 The next bounded source increment recovers a terminal error-arm jump over a
 separate success arm into a narrowly qualified common restore/return tail.
@@ -403,7 +539,7 @@ eligible handler, with 14 other calls explicitly declined. No old binary checks
 were repeated; native UI, installation and release qualification remain separate.
 MacScope, installed build 13 and production settings/stores are unchanged.
 
-## Bounded parameterless throwing Int recovery
+### Bounded parameterless throwing Int recovery
 
 Edge v4 adds only exact `SiyKF` free-function declarations: no parameters and
 Swift.Int result, ordinary synchronous untyped throws. Prior declaration facts
@@ -418,7 +554,7 @@ test was rerun after correcting its comparison. Existing owned-image results
 are reused for their original signatures; this extension has synthetic source
 and renderer qualification, not a new compiled-image or installed-app claim.
 
-## Bounded success-result evidence
+### Bounded success-result evidence
 
 When structured presentation is requested, `swift-success-result-v1` records
 whether x0 is preserved along the recorded success path of an exact Swift.Int
@@ -452,7 +588,7 @@ passed once. Existing owned-image results are reused only for their original
 scopes; this increment has synthetic analysis/CLI qualification and no new native
 app, compiled-image, installed-app or release qualification.
 
-## Bounded success-result copies
+### Bounded success-result copies
 
 Success-result v2 adds live 64-bit MOV result-copy tracking across existing
 bounded post-call/success paths. Overwritten copies are removed and XZR is
@@ -461,7 +597,7 @@ candidates are distinguished from direct preservation. Other component models,
 24-word maximum and all proof restrictions are unchanged. Eight new and
 25 affected synthetic controls passed. See SWIFT_ERROR_FLOW.md for exact scope.
 
-## Success-entry return-tail recovery
+### Success-entry return-tail recovery
 
 Success-result v3 recognizes the existing bounded return-tail whitelist directly
 at a success entry equal to the recorded error join. Complete caller-local direct
@@ -470,7 +606,7 @@ exemptions. Unsupported or conflicting evidence withholds the result; all runtim
 and source proof flags remain false. Thirteen new and 33 affected synthetic/CLI
 controls passed. See SWIFT_ERROR_FLOW.md for exact limits and evidence scope.
 
-## Bounded success-path constants
+### Bounded success-path constants
 
 A separate success-constant v1 component tracks complete 64-bit literal patterns
 assigned within an eligible bounded success arm and retained through its shared
@@ -480,7 +616,7 @@ Evidence is at most 16 words; runtime, caller-type, exclusive-path and source
 proofs remain false. Twelve new and 46 affected synthetic/CLI controls passed.
 See SWIFT_ERROR_FLOW.md for exact scope and exclusions.
 
-## Bounded error-arm constants
+### Bounded error-arm constants
 
 Error-constant v1 reuses the success constant rules on eligible bounded error
 intervals, clearing all known constants at every opaque call. Known x0 bits must
@@ -489,7 +625,7 @@ Call return and handler/source/runtime meaning remain unproven. Evidence stays
 within 24 words; prior models are unchanged. Thirteen new and 58 affected
 synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md for exact scope.
 
-## Bound return-choice summaries
+### Bound return-choice summaries
 
 Return-choice v1 combines eligible same-call, same-tail success/error evidence
 into a structural summary. It requires an error literal and an unambiguous
@@ -498,7 +634,7 @@ remain unresolved. Literal equality is unknown for a call-result/literal pair;
 all runtime/source proof restrictions and existing models remain unchanged.
 Twelve new and 38 affected synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md.
 
-## Owned return-choice layout coverage
+### Owned return-choice layout coverage
 
 A fresh optimized owned Swift input qualified two Int throwing-call layouts.
 Error-constant v2 and return-choice v2 close the observed success-entry-tail gap
@@ -508,7 +644,7 @@ Eleven new and 50 affected synthetic/CLI controls passed; a seven-word replay
 of retained owned evidence qualified the changed boundary without rebuilding,
 rehashing or readmitting the binary. See SWIFT_ERROR_FLOW.md for evidence scopes.
 
-## Literal outcomes after Void validation calls
+### Literal outcomes after Void validation calls
 
 Existing admitted throwing Void declarations can now supply caller-assigned
 literal outcome evidence through success-constant v2, error-constant v3 and
@@ -518,7 +654,7 @@ restrictions remain unchanged. Eleven new and 61 affected controls passed; a
 nine-word retained owned-example replay qualified the new helper context without
 recompilation, rehashing or readmission. See SWIFT_ERROR_FLOW.md for exact scope.
 
-## Known-seeded MOVK outcome literals
+### Known-seeded MOVK outcome literals
 
 Bounded success/error arms now admit decoded 64-bit MOVK. Complete known values
 receive exact lane replacement; unknown values remain unknown. Result aliases
@@ -527,7 +663,7 @@ return-tail support is added. Region v6 and the updated outcome model identities
 retain existing bounds and proof restrictions. Thirteen new and 171 affected
 synthetic/CLI controls passed with independent review. See SWIFT_ERROR_FLOW.md.
 
-## Zero-extended W move-wide outcomes
+### Zero-extended W move-wide outcomes
 
 A Swift-local adapter admits exact W MOVZ/MOVN seeds using existing move-wide
 field decoding, with reserved shifts rejected and original words retained.
@@ -536,7 +672,7 @@ written destination. Core decoding/admission, post-call windows and return-tail
 whitelists remain unchanged. Twelve new and 218 affected synthetic/CLI controls
 passed. See SWIFT_ERROR_FLOW.md for model identities, bounds and exclusions.
 
-## Known-seeded W MOVK outcome updates
+### Known-seeded W MOVK outcome updates
 
 Bounded arms now admit the existing decoded W MOVK form. Known values receive
 exact lane replacement with zero extension; unknown values stay unknown and
@@ -545,7 +681,7 @@ post-call windows, tail whitelists and evidence limits retain prior scope.
 Twelve new and 196 affected controls passed in composed runs with independent
 review. See SWIFT_ERROR_FLOW.md for model identities and qualification limits.
 
-## Canonical W-register outcome copies
+### Canonical W-register outcome copies
 
 Exact unshifted W MOV copies now propagate known zero-extended literal patterns
 within bounded outcome arms. Unknown sources invalidate constants; W copies do
@@ -554,7 +690,7 @@ is reused through a local canonical-alias adapter. Core decoding, post-call
 windows, return tails and evidence limits retain prior scope. Twelve new and
 208 affected synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md for details.
 
-## Owned W outcome qualification
+### Owned W outcome qualification
 
 One fresh optimized Swift fixture qualified two throwing-Void handler outcomes:
 32-bit literal assembly and W-versus-X all-ones width. The first 205-word scan
@@ -564,7 +700,7 @@ six new regression/CLI methods passed. Analyzer semantics are unchanged and
 prior checks are reused. W-copy compiler coverage remains open because no such
 word was emitted. See SWIFT_ERROR_FLOW.md for exact scope and acceptance limits.
 
-## Scalar SP restore-tail candidates
+### Scalar SP restore-tail candidates
 
 Bounded return tails now admit existing unsigned 64-bit SP-relative LDR into
 x19..x30 at scaled offsets through 4096 bytes. No x0, W-width, FP-base or indexed
@@ -572,7 +708,7 @@ load is added. Tail/prefix/entry bounds remain unchanged and restored-state/fram
 proof stays false. Twelve new and 226 affected synthetic/CLI controls passed
 with independent review. See SWIFT_ERROR_FLOW.md for model scopes and limits.
 
-## Terminal scalar post-index tail candidates
+### Terminal scalar post-index tail candidates
 
 Bounded tails now admit SP post-index 64-bit LDR into x19..x30 with positive
 16-byte-aligned increments through 240, immediately followed by RET x30. Local
@@ -581,7 +717,7 @@ does not establish frame or runtime state. Bounds, source proof restrictions
 and arm/post-call subsets retain prior scope. Twelve new and 272 affected
 synthetic/CLI controls passed. See SWIFT_ERROR_FLOW.md for model identities.
 
-## Exact split FP/LR restore tails
+### Exact split FP/LR restore tails
 
 After an exact FP-to-SP reset, a bounded LDR x30,[sp,#8], post-index LDR
 x29,[sp],#16 and RET x30 sequence is now admitted as a structural tail.
@@ -590,7 +726,7 @@ Existing decoding, entry protection and runtime/source proof restrictions
 remain unchanged. Twelve new and 250 affected synthetic/CLI controls passed.
 See SWIFT_ERROR_FLOW.md for model identities and qualification scope.
 
-## Owned assembler-backed epilogue qualification
+### Owned assembler-backed epilogue qualification
 
 A fresh Swift-provider/assembly-handler input qualified canonical W-copy and
 scalar/post-index/split-tail encodings as data. The first 232-word scan retained
@@ -600,7 +736,7 @@ passed. Analyzer code/models are unchanged. This is assembler-backed evidence;
 Swift-frontend emission and runtime/ABI/CFI/native-release gates remain open.
 See SWIFT_ERROR_FLOW.md for exact scope.
 
-## Adjacent compare-zero return edges
+### Adjacent compare-zero return edges
 
 The current edge model is `swift-sync-error-edges-v5`. In the existing eight-word
 post-call window, exact unshifted `SUBS XZR,Xn,#0` (the 64-bit CMP alias) may test
@@ -621,7 +757,7 @@ Ten new focused methods and 94 affected edge/signature/tail/CLI/rendering method
 passed. Prior owned-image qualification is reused without recompilation,
 disassembly, binary admission or hashing.
 
-## Bounded compare-window flag-entry inspection
+### Bounded compare-window flag-entry inspection
 
 Retained recovered CMP-zero edges now have opt-in caller-local direct-entry
 inspection, reusing the bounded caller scan. Entries into aliases, CMP or B.cond
@@ -631,7 +767,7 @@ new and 121 affected controls passed with independent review. General NZCV and
 indirect/external-entry proof, compiler-emission qualification, comparison-based
 handler regions and structured outcomes remain open. See SWIFT_ERROR_FLOW.md.
 
-## CMP/B.EQ error-fallthrough recovery
+### CMP/B.EQ error-fallthrough recovery
 
 Bounded CMP-zero/B.EQ handler intervals now reuse the existing region decoder,
 with exact call/window binding and complete clear caller-local flag-entry
@@ -640,7 +776,7 @@ visible in JSON/text. Twenty-one new and 208 affected methods passed. CMP-based
 B.NE handlers, shared epilogues and structured presentation/outcomes remain open,
 as do compiler-emission and runtime qualification. See SWIFT_ERROR_FLOW.md.
 
-## CMP structural presentation eligibility
+### CMP structural presentation eligibility
 
 Screened CMP-zero/B.EQ simple handler intervals now have bounded structural
 plans in JSON/text, retaining both instruction PCs, raw words, encoded EQ and
@@ -649,7 +785,7 @@ Twelve new and 206 affected methods passed. Explicit CMP outcome guards remain
 closed; result/constant/choice recovery, B.NE/shared CMP layouts, compiler-emission
 and runtime qualification are still open. See SWIFT_ERROR_FLOW.md.
 
-## CMP selected-path outcome recovery
+### CMP selected-path outcome recovery
 
 Qualified CMP-zero/B.EQ simple handler plans can now pair a preserved/copied call
 result with error literal bits using the existing bounded success-entry return
@@ -658,7 +794,7 @@ Fifteen new and 215 affected methods passed. Success-path literals, B.NE/shared
 CMP layouts, compiler-emission and runtime proof remain open. No native release
 or installed-app qualification is added. See SWIFT_ERROR_FLOW.md.
 
-## CMP success-literal recovery
+### CMP success-literal recovery
 
 Screened simple CMP/B.EQ handlers now support bounded X MOVZ/MOVN success seeds
 and copies, with independent protected-tail validation and literal-versus-literal
@@ -667,7 +803,7 @@ conservative. Twenty-four new and 256 affected methods passed. W/MOVK success
 prefixes, B.NE/shared CMP layouts and compiler/runtime/native qualification remain
 open. See SWIFT_ERROR_FLOW.md.
 
-## CMP MOVK success-literal updates
+### CMP MOVK success-literal updates
 
 Bounded CMP success prefixes now reuse X MOVK known-state updates across all four
 halfwords. Unseeded updates remain unknown, error aliases are invalidated, and
@@ -675,14 +811,14 @@ entry/tail checks remain intact. Fifteen new and 268 affected methods passed.
 W success prefixes, B.NE/shared CMP layouts and compiler/runtime/native acceptance
 remain open. See SWIFT_ERROR_FLOW.md.
 
-## CMP W-register success seeds
+### CMP W-register success seeds
 
 CMP success prefixes now reuse W MOVZ/MOVN zero-extension semantics, preserving
 width distinctions, reserved-encoding refusal and full error-alias invalidation.
 Fifteen new and 271 affected methods passed. W MOVK/copy prefixes, B.NE/shared CMP
 handlers and compiler/runtime/native qualification remain open. See SWIFT_ERROR_FLOW.md.
 
-## CMP W MOVK success updates
+### CMP W MOVK success updates
 
 CMP success prefixes now reuse known-state W MOVK updates with explicit X upper-bit
 clearing, unknown-state refusal and full error-alias invalidation. Fifteen new
@@ -690,7 +826,7 @@ and 286 affected methods passed with independent review. W-copy prefixes,
 B.NE/shared CMP handlers and compiler/runtime/native qualification remain open.
 See SWIFT_ERROR_FLOW.md.
 
-## CMP W-register copy recovery
+### CMP W-register copy recovery
 
 Bounded CMP success prefixes now reuse canonical W MOV constant transfer with
 zero extension, unknown-state invalidation and conservative error-alias handling.
@@ -698,7 +834,7 @@ Fifteen new and 301 affected methods passed with independent review. Narrow call
 results remain unpreserved; B.NE/shared CMP layouts and compiler/runtime/native
 qualification remain open. See SWIFT_ERROR_FLOW.md.
 
-## CMP shared-epilogue regions
+### CMP shared-epilogue regions
 
 Flag-screened CMP/B.EQ error-fallthrough regions now retain bounded success arms,
 shared restore/RET tail words and caller-local entry evidence. The exact recorded
@@ -706,14 +842,14 @@ EQ edge is distinguished from unexpected entries. Thirteen new and 364 affected
 methods passed. Shared CMP presentation/outcomes, NE/forward handlers and
 compiler/runtime/native qualification remain open. See SWIFT_ERROR_FLOW.md.
 
-## CMP shared-epilogue presentation
+### CMP shared-epilogue presentation
 
 Screened CMP/B.EQ shared regions now have structural display plans, with explicit
 error-exit and complete success/tail consistency checks. Eleven new and 330
 affected methods passed. CMP shared outcomes, NE/forward layouts and compiler,
 runtime and native qualification remain open. See SWIFT_ERROR_FLOW.md.
 
-## CMP shared-epilogue outcomes
+### CMP shared-epilogue outcomes
 
 Screened CMP/B.EQ shared regions can now pair a preserved or copied Int call
 result with an error-arm literal while retaining the shared return and condition
@@ -722,7 +858,7 @@ found no blocking issue. Shared CMP success literals and NE/forward layouts
 remain open; compiler, runtime and native qualification retain their existing
 scope. See SWIFT_ERROR_FLOW.md.
 
-## CMP shared success literals
+### CMP shared success literals
 
 Screened CMP/B.EQ shared outcomes now include bounded success literals, with
 ordered prefix and success-arm transfer and exact recorded-arm and tail binding.
@@ -731,7 +867,7 @@ passed after an obsolete refusal expectation was updated. Runtime, compiler and
 native qualification remain within their earlier scope; NE and forward CMP
 handlers remain open. See SWIFT_ERROR_FLOW.md.
 
-## CMP/B.NE forward regions
+### CMP/B.NE forward regions
 
 Screened CMP/B.NE success-fallthrough and forward-error regions can now be
 recorded as bounded structural evidence, with exact instruction and entry
@@ -739,7 +875,7 @@ binding. Eight new methods and affected checks passed, and independent review
 found no blocker. Presentation, outcomes and runtime qualification remain open.
 See SWIFT_ERROR_FLOW.md.
 
-## CMP/B.NE forward presentation
+### CMP/B.NE forward presentation
 
 Screened CMP/B.NE forward-error regions now have structural display plans with
 caller-byte binding and full bounded-region consistency checks. Eleven new and
@@ -747,7 +883,7 @@ caller-byte binding and full bounded-region consistency checks. Eleven new and
 correction. B.NE outcomes and runtime qualification remain open. See
 SWIFT_ERROR_FLOW.md.
 
-## Shifted success arithmetic
+### Shifted success arithmetic
 
 Screened shared success arms can now recover a single ADD or SUB with a 12-bit
 immediate shift, using the effective scaled amount and retaining exact operand
@@ -756,7 +892,7 @@ with no blocking independent-review finding. This is synthetic structural
 evidence; frontend, binary and runtime qualification remain separate. See
 SWIFT_ERROR_FLOW.md.
 
-## CMP/B.NE error literals
+### CMP/B.NE error literals
 
 Screened forward-error arms can now retain structural literal candidates after
 binding caller entries and instructions to the supplied bytes. Nine new and
@@ -764,14 +900,14 @@ binding caller entries and instructions to the supplied bytes. Nine new and
 success outcomes, return choices and runtime qualification remain open. See
 SWIFT_ERROR_FLOW.md.
 
-## CMP/B.NE success result
+### CMP/B.NE success result
 
 Screened B.NE forward handlers can now retain selected-path preserved or copied
 Int call-result evidence. Twelve new and 280 affected methods passed with
 independent semantic review. Success literals, return choices and runtime
 qualification remain open. See SWIFT_ERROR_FLOW.md.
 
-## CMP/B.NE return choices
+### CMP/B.NE return choices
 
 Screened forward B.NE paths can now pair a preserved or copied Int result with
 an error literal as structural evidence. Ten new and 314 affected methods
@@ -779,7 +915,7 @@ passed after updating an older refusal expectation; independent review found no
 blocker. Success literals and runtime qualification remain open. See
 SWIFT_ERROR_FLOW.md.
 
-## CMP/B.NE success literals
+### CMP/B.NE success literals
 
 Screened forward B.NE success arms now retain selected-path literal bits and
 can pair them with error literals as structural choices. Thirteen new and 336
@@ -787,14 +923,14 @@ affected methods passed after updating an older result-clobber expectation;
 independent review found no blocker. Runtime qualification remains open. See
 SWIFT_ERROR_FLOW.md.
 
-## Owned CMP/B.NE qualification
+### Owned CMP/B.NE qualification
 
 A new assembler/linker-produced forward handler qualified the bounded B.NE
 literal choice against retained disassembly and eight regression words. Five
 new methods passed. Swift frontend emission, runtime and native release
 qualification remain open. See SWIFT_ERROR_FLOW.md.
 
-## Swift frontend post-call arithmetic
+### Swift frontend post-call arithmetic
 
 A new Swift-compiled throwing-call example emitted CBZ and a wrapping ADD on
 the success path. AIRS recovered the edge and conservatively withheld the
@@ -803,7 +939,7 @@ captured window; supporting bounded success-path arithmetic is a distinct next
 semantic change. CMP/B.NE frontend emission and runtime qualification remain
 open. See SWIFT_ERROR_FLOW.md.
 
-## Bounded success-path ADD
+### Bounded success-path ADD
 
 The captured Swift-frontend window now has a relocated regression for one
 screened 64-bit X0 add-immediate operation on the call result. AIRS reports a
@@ -812,14 +948,14 @@ result. Fourteen new and 425 affected methods passed; independent review found
 no blocker. The sealed source image was not reanalyzed. Wider arithmetic and
 runtime qualification remain open. See SWIFT_ERROR_FLOW.md.
 
-## ADD result text summary
+### ADD result text summary
 
 Qualified bounded ADD choices now have a readable machine-operation summary in
 structural text output, guarded by producer identity and proof checks. Eight
 focused and 14 affected text/CLI methods passed. Analysis semantics and runtime
 qualification remain unchanged. See SWIFT_ERROR_FLOW.md.
 
-## Bounded success-path SUB
+### Bounded success-path SUB
 
 Screened CBZ shared success arms now admit a single nonflagging 64-bit X0
 subtract-immediate operation, described as structural modulo-64 evidence. New
@@ -827,7 +963,7 @@ and affected checks passed with independent review and evidence-binding and
 output-bound corrections. This synthetic increment does not qualify Swift
 frontend emission or runtime behavior. See SWIFT_ERROR_FLOW.md.
 
-## Copies around bounded success arithmetic
+### Copies around bounded success arithmetic
 
 Screened shared success arms can now retain full-width copies before and after
 one admitted ADD or SUB while distinguishing original and adjusted values.
@@ -835,7 +971,7 @@ Eleven new and 467 affected methods passed with independent semantic review.
 The increment is synthetic structural evidence; frontend and runtime
 qualification remain open. See SWIFT_ERROR_FLOW.md.
 
-## Arithmetic on a tracked result register
+### Arithmetic on a tracked result register
 
 Screened success arms can now adjust a live full-width result copy in x0–x30
 and restore it to x0 before returning. Twelve new and 478 affected methods
@@ -843,7 +979,7 @@ passed with independent semantic review. The increment is synthetic structural
 evidence; frontend and runtime qualification remain open. See
 SWIFT_ERROR_FLOW.md.
 
-## Cross-register success arithmetic
+### Cross-register success arithmetic
 
 Screened success arms can now adjust a tracked full-width result alias into a
 different register and restore the adjusted value to x0. Eleven new and 490
@@ -851,7 +987,7 @@ affected methods passed with independent semantic review. This is synthetic
 structural evidence; compiler and runtime qualification remain open. See
 SWIFT_ERROR_FLOW.md.
 
-## Imported Swift callees through verified stubs
+### Imported Swift callees through verified stubs
 
 The opt-in `broad-imports-v1` profile attributes `__TEXT,__stubs` entries to
 undefined external symbols through a double indirect-symbol binding (the stub's
