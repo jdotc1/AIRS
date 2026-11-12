@@ -1,6 +1,6 @@
 # Imported Swift declaration syntax
 
-`parse_import_declaration` uses syntax model `swift-import-declaration-syntax-v1` for the imports path of `broad-imports-v1`. `parse_broad_declaration` and the `broad-v1`, `broad-large-v1` and `broad-extended-v1` profiles are unchanged.
+`parse_import_declaration` uses syntax model `swift-import-declaration-syntax-v1` for imported callees: the stub path of `broad-imports-v1`, and the stub and GOT paths of `broad-imports-got-v1`. `parse_broad_declaration` and the `broad-v1`, `broad-large-v1` and `broad-extended-v1` profiles are unchanged.
 
 ## Admission
 

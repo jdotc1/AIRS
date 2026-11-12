@@ -701,7 +701,9 @@ class IsolationTests(ImportDeclarationCase):
         self.assertIn('parse_broad_declaration(', source)
         self.assertNotIn('parse_import_declaration', source)
         flow_source = inspect.getsource(swift_broad_flow)
-        self.assertEqual(flow_source.count('parse_import_declaration('), 1)
+        # Two callers, both for imported callees: the stub path and the GOT path.
+        self.assertEqual(flow_source.count('parse_import_declaration('), 2)
+        self.assertIn('parse_import_declaration(', inspect.getsource(swift_broad_flow._got_site))
 
 
 def image_of(data):
