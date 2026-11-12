@@ -2,6 +2,7 @@
 """Generate owned observation-parity controls without binary reads or hashing."""
 import argparse
 import json
+import re
 from pathlib import Path
 import sys
 
@@ -10,6 +11,14 @@ sys.path[:0] = [str(ROOT / "src"), str(ROOT / "tests")]
 from airs import ANALYSIS_MODEL_VERSION
 from airs.diff import compare_reports
 from test_exact_body_candidates import annotated_pair
+
+
+def product_version():
+    source = (ROOT / "src/airs/__init__.py").read_text(encoding="utf-8")
+    matches = re.findall(r'^__version__ = "([0-9]+\.[0-9]+\.[0-9]+)"$', source, re.MULTILINE)
+    if len(matches) != 1:
+        raise ValueError("Expected one engine product version literal")
+    return matches[0]
 
 
 def serialized(value):
@@ -87,7 +96,7 @@ def controls():
     for name, expected, prepare in cases:
         before, after = annotated_pair()
         for report, label in ((before, "Owned observation baseline"), (after, "Owned observation current")):
-            report["generator"].update(version="0.3.3", analysis_model_version=ANALYSIS_MODEL_VERSION)
+            report["generator"].update(version=product_version(), analysis_model_version=ANALYSIS_MODEL_VERSION)
             report["image"]["display_name"] = label
             finding(report)["function"]["name"] = "shared_work"
         prepare(before, after)

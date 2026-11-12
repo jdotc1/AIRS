@@ -280,7 +280,7 @@ final class EntitlementsWorkspace {
         do {
             let context = try await Task.detached(priority: .userInitiated) {
                 let document = try InspectionDocument(snapshot: snapshot, capturedAt: completedAt,
-                    producerVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.1.1-development")
+                    producerVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? AIRSProductVersion.current)
                 return InspectionCaptureContext(document: document, data: try InspectionDocumentCodec.encode(document))
             }.value
             try Task.checkCancellation()

@@ -64,9 +64,10 @@ jobs:
     steps:
       - name: Check the tag name
         run: |
-          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-build[1-9][0-9]{0,9}$ ]]
+          [[ "$RELEASE_TAG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)-build[1-9][0-9]{0,9}$ ]]
           {
             echo "RELEASE_NAME=AIRS-${RELEASE_TAG#v}"
+            echo "RELEASE_VERSION=${BASH_REMATCH[1]}"
             echo "RELEASE_BUILD=${RELEASE_TAG##*-build}"
           } >> "$GITHUB_ENV"
       - name: Check out the checks
@@ -126,6 +127,7 @@ jobs:
             --expected-source-commit "$(git -C release-source rev-parse HEAD)" \
             --expected-bundle-id dev.airs.app \
             --expected-build "$RELEASE_BUILD" \
+            --expected-version "$RELEASE_VERSION" \
             --json-out "$PWD/acceptance/preflight.json"
       - name: Declared minimum system against this host
         env:

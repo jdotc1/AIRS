@@ -8,7 +8,11 @@ claim, not reproducible-build proof. Historical build 12 remains independent.
 scripts/build_provenance.py creates claims exclusively. scripts/release_preflight.py
 checks exact embedded source/repository/bundle/build binding, bounded regular
 files, code seal, Gatekeeper and stapled ticket; it stops on the first failed
-platform check. New receipts must be outside the protected app and cannot replace
+platform check. Optional --expected-version also compares the requested product
+version with the bundle short version and makes identity matching fail on a mismatch;
+the release-acceptance workflow supplies it from the tag. When omitted, the additive
+expected_version and version_matches_request receipt fields are null and existing
+identity checks are unchanged. New receipts must be outside the protected app and cannot replace
 existing files. Fifteen new synthetic controls passed, and independent review
 found no blocking issue in that scope. Synthetic results do not qualify a binary.
 
