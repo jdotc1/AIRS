@@ -630,6 +630,34 @@ class ImageLevelTests(GotTestCase):
         # seg_count is right, but the seg_info_offset array overruns imports_offset (0x20 + 4 + 16 > 0x24).
         self.assertImageDeclined(patch(data, BLOB + CF_IMPORTS, '<I', 0x24), 'chained_starts_layout')
 
+    def test_chained_starts_layout_text_file_offset(self):
+        for shift in (0, 0x100):
+            with self.subTest(text_fileoff=shift):
+                data, layout = build_got_image()
+                text = layout.segment('__TEXT')
+                # Keep VM addresses and function-start deltas unchanged. Move the
+                # section bytes with its file offset so offset - fileoff is stable.
+                code = data[layout.text_off:layout.text_off + layout.text_size]
+                data = patch(data, text['cmd_off'] + 40, '<QQ', shift, text['filesize'] - shift)
+                data = patch(data, text['cmd_off'] + 72 + 48, '<I', layout.text_off + shift)
+                data = patch(data, layout.text_off, f'{layout.text_size}s', bytes(layout.text_size))
+                data = patch(data, layout.text_off + shift, f'{layout.text_size}s', code)
+
+                # Neither earlier starts-layout return can explain the decline.
+                starts = u32(data, BLOB + CF_STARTS)
+                imports = u32(data, BLOB + CF_IMPORTS)
+                seg_count = u32(data, BLOB + starts)
+                self.assertEqual(seg_count, layout.nsegments)
+                self.assertEqual(seg_count, sum(u32(data, s['cmd_off']) == 0x19
+                                                for s in layout.segments))
+                self.assertLessEqual(starts + 4 + 4 * seg_count, imports)
+                image = image_of(data)
+                self.assertEqual(function_at(image, CALLER).start, CALLER)
+                if shift:
+                    self.assertImageDeclined(data, 'chained_starts_layout')
+                else:
+                    self.assertAttributed(data)
+
     def test_binding_library_table_limit(self):
         dylibs = tuple('/usr/lib/libX%03d.dylib' % k for k in range(0xF0))
         data, layout = build_got_image(dylibs=dylibs)
