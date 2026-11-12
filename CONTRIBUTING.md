@@ -17,8 +17,11 @@ Validate changed behavior and retain existing valid receipts for unchanged input
 Native UI fixes require stable interaction acceptance after pending work settles;
 compile-only or immediate selection evidence is insufficient. Source checks, GUI
 acceptance, signing/notarization and release publication remain distinct gates.
-Do not represent a skipped workflow as a passed workflow. See docs/ANALYSIS_CONTRACT.md
-and docs/RELEASE_VERIFICATION.md for the retained product and distribution contracts.
+Do not represent a skipped workflow as a passed workflow. Do not put `[skip ci]` or
+another workflow-skip token in a commit message or pull-request title when the
+change touches source or lands on main, because it can stop the publication gate
+and source verification from running. See docs/ANALYSIS_CONTRACT.md and
+docs/RELEASE_VERIFICATION.md for the retained product and distribution contracts.
 
 The build scripts and the CI release builds report any Swift expression or function body
 that takes 300 ms or more to type-check as a warning; the CI compiler (Xcode 26.3) is older

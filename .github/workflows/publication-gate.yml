@@ -1,0 +1,218 @@
+name: Publication gate
+
+# Runs scripts/publication_gate.py in range mode over the commits a change adds, so author
+# and committer identities, messages and trailers, file names and changed blobs are checked
+# at every commit and not only at the tip. Scope and limits are in
+# docs/PUBLICATION_POLICY.md. A green run is a backstop for main and for merging. It is not
+# a pre-exposure control and it is not a publication clearance.
+#
+# Conditions for running the gate from a clean CI checkout, and how each is met:
+#   1. Full history. The gate walks base..head and diffs each commit against its parent, so
+#      the checkout fetches every commit (fetch-depth 0) and the job fails if the clone is
+#      still shallow.
+#   2. An explicit --base that is an ancestor of --head. The base is the merge base of the
+#      two ends of the range. The pull request base tip is not an ancestor of the head once
+#      main has moved, and the gate rejects a base that is not.
+#   3. Range mode, never --file. File mode applies the private-marker patterns but not the
+#      co-author trailer rule.
+#   4. Gate source from the trusted revision. The script that runs is the copy at the pull
+#      request base commit (for a push, at the previous tip), written outside the checkout,
+#      so a change under review cannot weaken the check that scans it. If the script is
+#      missing at that revision the job fails and never uses the copy under review. The
+#      workflow definition is not protected this way: a pull request can change this file,
+#      so changes under .github/ are policy changes and need review.
+#   5. Skip tokens, described next.
+#
+# What [skip ci] suppresses. GitHub starts no push or pull_request workflow for a pushed
+# head commit, or a pull request head commit, whose message carries [skip ci] or one of the
+# related skip tokens GitHub documents. This job then does not run, nothing reports that it
+# did not, and the commits are not scanned. The job cannot detect or undo that. CONTRIBUTING.md
+# therefore asks contributors not to use those tokens on commits that change source or reach
+# main.
+#
+# Other things it cannot see. A pull request branch is public before this job runs. GitHub
+# composes a squash or merge commit after the pull request job, so the push job on main sees
+# such a commit only after the fact. Commits at or before the base, including history already
+# on main, are not scanned. The gate patterns do not cover arbitrary confidential prose,
+# images or unknown secret formats. A push whose previous tip is all zeros (new branch) or
+# missing from the fetched history (some forced pushes) fails closed instead of being
+# skipped. A forced push whose old tip is still present is scanned from the fork point.
+#
+# Enforcing it needs repository settings this file cannot make: a required status check on
+# this job and restricted ownership of .github/ and scripts/publication_gate.py.
+
+on:
+  pull_request:
+    # edited re-checks the title and body after they change.
+    types: [opened, synchronize, reopened, edited]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A newer run replaces an older one for the same pull request, because every pull request run
+# scans the whole range. Push runs are never cancelled and each has its own group: a push scans
+# only its own range, so a cancelled or replaced push run would leave that range unscanned.
+concurrency:
+  group: "publication-gate-${{ github.event_name == 'pull_request' && github.ref || github.sha }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  publication-gate:
+    name: Commit range scan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      # The default ref is used for both events: the pull request merge ref (which also works
+      # for pull requests from forks) or the pushed commit. The scan reads git objects through
+      # explicit hashes and never the working tree, and the range below excludes the merge
+      # commit GitHub generates for a pull request.
+      - name: Check out the full history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Select Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.11.17'
+
+      # Event fields reach the shell only through env, never through interpolation into run.
+      - name: Resolve the range and take the gate from the trusted revision
+        id: range
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_AFTER: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          case "$EVENT" in
+            pull_request)
+              trusted="$PR_BASE"
+              head="$PR_HEAD"
+              ;;
+            push)
+              trusted="$PUSH_BEFORE"
+              head="$PUSH_AFTER"
+              ;;
+            *)
+              echo "::error::The publication gate does not support this event."
+              exit 1
+              ;;
+          esac
+          if [[ "$(git rev-parse --is-shallow-repository)" != "false" ]]; then
+            echo "::error::The checkout is shallow. The range check needs the full history."
+            exit 1
+          fi
+          hash_pattern='^[0-9a-f]{40,64}$'
+          zero_pattern='^0+$'
+          if [[ "$trusted" =~ $zero_pattern ]]; then
+            echo "::error::No previous tip to compare with (new branch or first push). Run the range check locally against an accepted baseline."
+            exit 1
+          fi
+          if [[ ! "$trusted" =~ $hash_pattern || ! "$head" =~ $hash_pattern ]]; then
+            echo "::error::The event did not supply two commit hashes."
+            exit 1
+          fi
+          if ! git cat-file -e "$trusted^{commit}" 2>/dev/null; then
+            echo "::error::The trusted base revision is not in the fetched history (forced push?). Run the range check locally."
+            exit 1
+          fi
+          if ! git cat-file -e "$head^{commit}" 2>/dev/null; then
+            echo "::error::The head commit is not in the fetched history."
+            exit 1
+          fi
+          # The merge base is an ancestor of the head. For a fast-forward push it equals the previous tip.
+          base=$(git merge-base "$trusted" "$head" || true)
+          if [[ -z "$base" ]]; then
+            echo "::error::The trusted revision and the head commit share no history."
+            exit 1
+          fi
+          gate_dir="$RUNNER_TEMP/trusted-gate"
+          mkdir -p "$gate_dir"
+          if ! git cat-file -e "${trusted}:scripts/publication_gate.py" 2>/dev/null; then
+            echo "::error::scripts/publication_gate.py is missing at the trusted revision. The job will not use the copy under review."
+            exit 1
+          fi
+          git show "${trusted}:scripts/publication_gate.py" > "$gate_dir/publication_gate.py"
+          echo "Gate taken from commit $trusted. Scanning $base..$head."
+          {
+            echo "base=$base"
+            echo "head=$head"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Scan commit identities, messages, file names and changed blobs
+        env:
+          BASE: ${{ steps.range.outputs.base }}
+          HEAD_SHA: ${{ steps.range.outputs.head }}
+        run: |
+          set -euo pipefail
+          gate="$RUNNER_TEMP/trusted-gate/publication_gate.py"
+          if python -I -B "$gate" --root "$GITHUB_WORKSPACE" --base "$BASE" --head "$HEAD_SHA"; then
+            exit 0
+          fi
+          # The gate names no commit and withholds the matching bytes. To make a failure
+          # actionable, scan one more commit at a time, parents first, and report only the
+          # hash of the first commit that fails. The gate needs a base that is an ancestor of
+          # the head, so each commit is scanned from its fork point with the range base. That
+          # is the base itself for a commit that descends from it, and an earlier commit for
+          # one that comes from a merged side branch. The receipt lives in the runner temp
+          # directory and only spares re-reading commits already accepted in this job.
+          mapfile -t commits < <(git rev-list --reverse --topo-order "$BASE..$HEAD_SHA")
+          for commit in "${commits[@]}"; do
+            fork=$(git merge-base "$BASE" "$commit" || true)
+            if [[ -z "$fork" ]]; then
+              continue
+            fi
+            if ! python -I -B "$gate" --root "$GITHUB_WORKSPACE" --base "$fork" --head "$commit" \
+                --receipt "$RUNNER_TEMP/locator-receipt.json" >/dev/null 2>&1; then
+              echo "::error::The publication gate rejects commit $commit (reason withheld). Reproduce it with the local range check."
+              exit 1
+            fi
+          done
+          echo "::error::The gate rejected the range but no single commit could be isolated. Reproduce it with the local range check."
+          exit 1
+
+      # The gate has no flag for text outside the commit range, so this step calls its
+      # message and byte checks directly. File mode would skip the co-author trailer rule.
+      - name: Scan pull request title, body and branch name
+        if: github.event_name == 'pull_request'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          python -I -B - <<'PYCODE'
+          import os
+          import sys
+
+          sys.path.insert(0, os.path.join(os.environ['RUNNER_TEMP'], 'trusted-gate'))
+          import publication_gate as gate
+
+          title = os.environ.get('PR_TITLE', '')
+          body = os.environ.get('PR_BODY', '')
+          branch = os.environ.get('PR_BRANCH', '')
+          checks = (
+              ('title', lambda: gate.inspect_message(title)),
+              ('body', lambda: gate.inspect_message(body)),
+              ('branch name', lambda: gate.inspect_bytes(branch.encode(), 'branch name')),
+          )
+          rejected = []
+          for label, check in checks:
+              try:
+                  check()
+              except gate.GateError as error:
+                  rejected.append(label + ': ' + str(error))
+          if rejected:
+              sys.exit('Publication gate rejected the pull request text. ' + ' | '.join(rejected))
+          print('Pull request title, body and branch name accepted')
+          PYCODE
