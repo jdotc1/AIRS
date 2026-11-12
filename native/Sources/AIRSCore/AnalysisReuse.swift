@@ -86,7 +86,7 @@ public actor AnalysisReuse {
                 retained.provenance.symbolInput == nil,
                 try sameImage(retained.report.image, receipt.image),
                 try config(retained.data) == receipt.analysisConfig,
-                retained.report.generator.analysisModelVersion == "arm64-bounded-sequential-loops-v31",
+                retained.report.generator.analysisModelVersion == AnalysisModels.current,
                 let current = try self.ticket(input: input, configuration: configuration),
                 current.input == ticket.input, current.context == ticket.context else { continue }
             try Task.checkCancellation()
@@ -108,7 +108,7 @@ public actor AnalysisReuse {
               after.input == before.input, after.context == before.context,
               provenance.symbolInput == nil else { return nil }
         let report = try AuditReport.decode(data)
-        guard report.generator.analysisModelVersion == "arm64-bounded-sequential-loops-v31",
+        guard report.generator.analysisModelVersion == AnalysisModels.current,
               report.image.architecture == "arm64",
               report.image.sliceSHA256.count == 64, report.image.containerSHA256.count == 64,
               report.sourceAnnotations == nil else { return nil }

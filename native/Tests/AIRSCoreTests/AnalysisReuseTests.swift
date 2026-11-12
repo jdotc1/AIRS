@@ -25,7 +25,7 @@ private struct ReuseFixture {
         library = ReportLibrary(root: root.appendingPathComponent("library"), maximumEntries: libraryMaximum)
         cache = AnalysisReuse(root: root.appendingPathComponent("reuse"), library: library, maximumEntries: maximumEntries)
         var object = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: project.appendingPathComponent("examples/mixed.audit.json"))) as? [String: Any])
-        object["generator"] = ["name":"AIRS", "version":"0.1.0", "analysis_model_version":"arm64-bounded-sequential-loops-v31"]
+        object["generator"] = ["name":"AIRS", "version":"0.1.0", "analysis_model_version":AnalysisModels.current]
         object["future_unknown"] = ["kept":true]
         raw = try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys]) + Data("\n \n".utf8)
     }
@@ -52,6 +52,21 @@ final class AnalysisReuseTests: XCTestCase {
         let report = try AuditReport.decode(hit.data)
         XCTAssertEqual(report.image.sliceSHA256, try AuditReport.decode(f.raw).image.sliceSHA256)
         XCTAssertEqual(report.summary.unresolvedCount, 4)
+    }
+    func testReusePinFollowsCurrentModelAndRejectsAnyOtherModel() async throws {
+        let f = try ReuseFixture(); defer { try? FileManager.default.removeItem(at: f.root) }
+        XCTAssertTrue(AnalysisModels.cfg.contains(AnalysisModels.current))
+        _ = try await f.enroll()
+        let hit = try await f.lookup(); XCTAssertNotNil(hit)
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: f.raw) as? [String: Any])
+        var generator = try XCTUnwrap(object["generator"] as? [String: Any])
+        XCTAssertEqual(generator["analysis_model_version"] as? String, AnalysisModels.current)
+        generator["analysis_model_version"] = "arm64-bounded-sequential-loops-v31"; object["generator"] = generator
+        let stale = try JSONSerialization.data(withJSONObject: object, options: [.sortedKeys])
+        let ticket = try reuseUnwrap(try await f.cache.ticket(input: f.input, configuration: f.configuration))
+        let id = try await f.cache.enroll(stale, input: f.input, configuration: f.configuration, before: ticket,
+            provenance: LibraryProvenance(sourceLabel: "Owned replay", inspectedInput: f.input))
+        XCTAssertNil(id)
     }
     func testImportedReportAloneNeverEnrolls() async throws {
         let f = try ReuseFixture(); defer { try? FileManager.default.removeItem(at: f.root) }
