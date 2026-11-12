@@ -9,7 +9,7 @@ if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
     cat <<'USAGE'
 Usage: AIRS_PYTHON=/absolute/path/to/python3 scripts/verify-macos.sh
 
-On macOS 14+, verify Python 3.11+, compile and test the native package,
+On macOS 27+, verify Python 3.11+, compile and test the native package,
 run the Python suite, and assemble a temporary local .app to inspect its layout.
 No app or inspected binary is launched. The temporary package is removed on exit.
 USAGE
@@ -20,13 +20,13 @@ if [ "$#" -ne 0 ]; then
     exit 2
 fi
 if [ "$(uname -s)" != "Darwin" ]; then
-    printf '%s\n' 'Native verification requires macOS 14+ and an Apple SDK; it cannot run on Linux.' >&2
+    printf '%s\n' 'Native verification requires macOS 27+ and an Apple SDK; it cannot run on Linux.' >&2
     exit 2
 fi
 
 MACOS_MAJOR="$(/usr/bin/sw_vers -productVersion | cut -d. -f1)"
-if [ "$MACOS_MAJOR" -lt 14 ]; then
-    printf '%s\n' 'Native tests require macOS 14 or newer.' >&2
+if [ "$MACOS_MAJOR" -lt 27 ]; then
+    printf '%s\n' 'Native tests require macOS 27 or newer.' >&2
     exit 2
 fi
 if ! command -v swift >/dev/null 2>&1; then
