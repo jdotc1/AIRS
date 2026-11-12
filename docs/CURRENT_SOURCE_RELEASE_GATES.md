@@ -34,7 +34,10 @@ source level only.
 
 Clean-machine acceptance requires an independently provisioned Apple silicon Mac
 or VM running the published archive. A hosted macOS 27 runner is such a machine;
-a release-acceptance workflow that uses one is planned and does not exist yet.
+the release-acceptance workflow runs the published archive on one, and its record
+is the evidence for that release within the limits it states
+([RELEASE_ACCEPTANCE.md](RELEASE_ACCEPTANCE.md)). It does not exercise the
+first-open dialog of a quarantined download or any user action.
 Local checks cannot close this gate. No new public release may be described as
 fully qualified while required environment/platform evidence remains unavailable.
 

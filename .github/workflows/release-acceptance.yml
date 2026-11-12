@@ -1,0 +1,244 @@
+name: Release acceptance
+
+# Tests one published release on a hosted macOS runner: a machine that was provisioned by
+# someone else, has never held the application, and has none of the builder's files.
+#
+# It is started by hand with a release tag. It downloads that release's assets, checks them
+# against the published checksums, unpacks the application, and then checks:
+#   1. the signature, the Gatekeeper assessment and the stapled notarization ticket, with
+#      scripts/release_preflight.py, which also requires the source commit recorded inside
+#      the application to be the commit the tag names;
+#   2. that the runner's system is not older than the minimum the application declares;
+#   3. that the engine inside the application is the engine in the tagged source, file for file;
+#   4. that the interpreter inside the application runs that engine on owned fixtures and
+#      writes the same reports, byte for byte, as an independently installed Python running
+#      the tagged source;
+#   5. that the application starts and is still running after fifteen seconds.
+#
+# Trust. The checks come from the revision this workflow is started on, checked out under
+# trusted/. The tagged source is checked out under release-source/ and is used only as data:
+# its engine and fixtures are read, and its engine is run by the independent interpreter.
+#
+# What a green run does not show. The file is downloaded by a command-line client and carries
+# no quarantine attribute, so the dialog macOS shows on the first opening of a downloaded
+# application is not exercised; nobody is present to answer it. Nothing is clicked or typed,
+# so no window content or user action is tested. One runner image is one system version.
+# The run reads the release; it does not sign, publish, install into /Applications or change
+# the release.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Published release tag, for example v0.3.4-build32
+        required: true
+        type: string
+      runner:
+        description: Hosted runner image
+        required: true
+        default: xcode-27
+        type: choice
+        options:
+          - xcode-27
+          - macos-26
+          - macos-15
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-acceptance-${{ inputs.tag }}-${{ inputs.runner }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  acceptance:
+    name: Published archive on ${{ inputs.runner }}
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 20
+    env:
+      RELEASE_TAG: ${{ inputs.tag }}
+    steps:
+      - name: Check the tag name
+        run: |
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-build[1-9][0-9]{0,9}$ ]]
+          {
+            echo "RELEASE_NAME=AIRS-${RELEASE_TAG#v}"
+            echo "RELEASE_BUILD=${RELEASE_TAG##*-build}"
+          } >> "$GITHUB_ENV"
+      - name: Check out the checks
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: trusted
+          persist-credentials: false
+      - name: Check out the tagged source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ inputs.tag }}
+          path: release-source
+          persist-credentials: false
+      - name: Install an independent Python interpreter
+        id: python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.15.0'
+          architecture: arm64
+      - name: Record the host
+        run: |
+          mkdir -p acceptance reports
+          test "$(uname -m)" = arm64
+          sw_vers > acceptance/macos.txt
+          printf '%s %s\n' "${ImageOS:-unknown}" "${ImageVersion:-unknown}" > acceptance/runner-image.txt
+          git -C trusted rev-parse HEAD > acceptance/checks-revision.txt
+          git -C release-source rev-parse HEAD > acceptance/tagged-source-revision.txt
+          printf '%s\n' "$RELEASE_TAG" > acceptance/release-tag.txt
+          test ! -e /Applications/AIRS.app
+          test ! -e "$HOME/Applications/AIRS.app"
+      - name: Download the release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir download
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --dir download
+          ls -l download > acceptance/assets.txt
+      - name: Verify the published checksums
+        run: |
+          cd download
+          test -f "$RELEASE_NAME-SHA256SUMS.txt"
+          test -f "$RELEASE_NAME-macOS-arm64.zip"
+          grep -q "  $RELEASE_NAME-macOS-arm64.zip\$" "$RELEASE_NAME-SHA256SUMS.txt"
+          shasum -a 256 -c "$RELEASE_NAME-SHA256SUMS.txt" | tee ../acceptance/checksums.txt
+      - name: Unpack the application
+        run: |
+          mkdir unpacked
+          ditto -x -k "download/$RELEASE_NAME-macOS-arm64.zip" unpacked
+          test -d unpacked/AIRS.app
+          echo "APP=$PWD/unpacked/AIRS.app" >> "$GITHUB_ENV"
+      - name: Signature, Gatekeeper assessment and notarization ticket
+        env:
+          INDEPENDENT_PYTHON: ${{ steps.python.outputs.python-path }}
+        run: |
+          "$INDEPENDENT_PYTHON" -E -s -B trusted/scripts/release_preflight.py \
+            --app "$APP" \
+            --expected-source-commit "$(git -C release-source rev-parse HEAD)" \
+            --expected-bundle-id dev.airs.app \
+            --expected-build "$RELEASE_BUILD" \
+            --json-out "$PWD/acceptance/preflight.json"
+      - name: Declared minimum system against this host
+        env:
+          INDEPENDENT_PYTHON: ${{ steps.python.outputs.python-path }}
+        run: |
+          "$INDEPENDENT_PYTHON" -I -B - "$APP" "$(sw_vers -productVersion)" <<'PY' | tee acceptance/minimum-system.txt
+          import plistlib
+          import sys
+          from pathlib import Path
+
+          app, host = sys.argv[1:]
+          with (Path(app) / 'Contents/Info.plist').open('rb') as handle:
+              info = plistlib.load(handle)
+
+          def parts(text):
+              values = [int(item) for item in text.split('.')]
+              return tuple(values + [0] * (3 - len(values)))
+
+          minimum = info['LSMinimumSystemVersion']
+          print(f"version {info['CFBundleShortVersionString']} build {info['CFBundleVersion']}")
+          print(f'declared minimum system {minimum}')
+          print(f'host system {host}')
+          if parts(host) < parts(minimum):
+              raise SystemExit('The host is older than the declared minimum system.')
+          print('at the declared minimum major version' if parts(host)[0] == parts(minimum)[0]
+                else 'newer than the declared minimum major version')
+          PY
+      - name: Engine inside the application against the tagged source
+        run: |
+          set -o pipefail
+          ENGINE="$APP/Contents/Resources/Engine"
+          cmp "$ENGINE/airs_cli.py" release-source/airs_cli.py
+          diff -r -x __pycache__ "$ENGINE/src/airs" release-source/src/airs | tee acceptance/engine-diff.txt
+          find "$ENGINE/src/airs" -name '*.py' | wc -l | tr -d ' ' > acceptance/engine-file-count.txt
+      - name: Bundled interpreter and engine on owned fixtures
+        env:
+          INDEPENDENT_PYTHON: ${{ steps.python.outputs.python-path }}
+        run: |
+          BUNDLED="$APP/Contents/Frameworks/Python.framework/Versions/3.15/bin/python3.15"
+          test -x "$BUNDLED"
+          REPORTS="$PWD/reports"
+          SCRATCH="$RUNNER_TEMP/airs-acceptance"
+          mkdir -p "$SCRATCH"
+          cd release-source
+          test -f fixtures/generated/after.macho
+          test -f fixtures/swift-error-flow/broad-goldens/edge.macho
+
+          run_pair() {
+            local name="$1"; shift
+            local bundled_exit=0 independent_exit=0
+            env -i HOME="$HOME" PATH=/usr/bin:/bin TMPDIR="$SCRATCH" \
+              "$BUNDLED" -I -B -S "$APP/Contents/Resources/Engine/airs_cli.py" "$@" \
+              --format json --output "$REPORTS/$name.bundled.json" \
+              > "$REPORTS/$name.bundled.stdout" 2> "$REPORTS/$name.bundled.stderr" || bundled_exit=$?
+            env -i HOME="$HOME" PATH=/usr/bin:/bin TMPDIR="$SCRATCH" \
+              "$INDEPENDENT_PYTHON" -I -B -S airs_cli.py "$@" \
+              --format json --output "$REPORTS/$name.independent.json" \
+              > "$REPORTS/$name.independent.stdout" 2> "$REPORTS/$name.independent.stderr" || independent_exit=$?
+            printf '%s bundled exit %s independent exit %s\n' "$name" "$bundled_exit" "$independent_exit" \
+              | tee -a "$REPORTS/exits.txt"
+            test "$bundled_exit" = "$independent_exit"
+            test "$bundled_exit" -le 1
+            test -s "$REPORTS/$name.bundled.json"
+            cmp "$REPORTS/$name.bundled.json" "$REPORTS/$name.independent.json"
+            shasum -a 256 "$REPORTS/$name.bundled.json" | tee -a "$REPORTS/digests.txt"
+          }
+
+          "$BUNDLED" -I -B -S -c 'import sys; print(sys.version)' | tee "$REPORTS/bundled-python.txt"
+          "$INDEPENDENT_PYTHON" -I -B -S -c 'import sys; print(sys.version)' | tee "$REPORTS/independent-python.txt"
+          run_pair audit audit fixtures/generated/after.macho
+          run_pair swift-broad-v1 swift-error-flow fixtures/swift-error-flow/broad-goldens/edge.macho \
+            --swift-profile broad-v1 --include-outcome-witnesses --include-error-regions \
+            --validate-region-entries --include-structured-presentation
+          cp "$REPORTS/exits.txt" "$REPORTS/digests.txt" "$REPORTS/bundled-python.txt" \
+            "$REPORTS/independent-python.txt" "$GITHUB_WORKSPACE/acceptance/"
+      - name: Start the application
+        run: |
+          EXECUTABLE="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP/Contents/Info.plist")"
+          open -n -g "$APP"
+          sleep 15
+          PID="$(pgrep -f "$APP/Contents/MacOS/$EXECUTABLE" | head -n 1 || true)"
+          if [ -z "$PID" ]; then
+            echo 'not running after 15 seconds' | tee acceptance/launch.txt
+            find "$HOME/Library/Logs/DiagnosticReports" -type f 2>/dev/null | tee -a acceptance/launch.txt || true
+            exit 1
+          fi
+          ps -o pid=,etime=,rss=,comm= -p "$PID" | tee acceptance/launch.txt
+          kill "$PID"
+          sleep 2
+          REPORT="$(find "$HOME/Library/Logs/DiagnosticReports" -type f -name "$EXECUTABLE*" 2>/dev/null | head -n 1 || true)"
+          if [ -n "$REPORT" ]; then
+            echo 'a diagnostic report was written' | tee -a acceptance/launch.txt
+            exit 1
+          fi
+      - name: Summarize
+        if: always()
+        run: |
+          {
+            echo '## Release acceptance'
+            echo
+            echo "Release \`$RELEASE_TAG\` on \`$(sw_vers -productVersion)\` ($(sw_vers -buildVersion)), runner image \`${ImageOS:-unknown} ${ImageVersion:-unknown}\`."
+            echo
+            echo 'Each step above is one check; a failed step names the check that failed.'
+            echo
+            echo 'Not exercised: the dialog shown on the first opening of a quarantined download, any window content, and any user action. This run does not publish, sign or install anything.'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Retain the acceptance record
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-acceptance-${{ inputs.tag }}-${{ inputs.runner }}
+          path: |
+            acceptance/
+            reports/
+          if-no-files-found: error
+          retention-days: 90
