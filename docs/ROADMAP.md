@@ -111,8 +111,8 @@ listed on its branches page.
 - Documentation: ANALYSIS_CONTRACT.md cites 137 distinct pages by file name and 79 of
   them are not in the repository; ARCHITECTURE.md cites four absent pages. Both now
   carry a note saying so. Each absent page should be restored or its citation removed.
-  DEVELOPMENT_STATUS.md stops at model v47 and carries a note pointing here; it has
-  not been brought up to date.
+  DEVELOPMENT_STATUS.md records the model chain through v50 and carries a note pointing
+  here for releases after build 12 and for later work outside that chain.
 - Next candidates, as in the checkpoint of that name under History: use the documented
   saved-report workflow to find a concrete unresolved behavior worth improving, and
   choose a semantic extension only from an explicit owned example with an

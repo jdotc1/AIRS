@@ -1,9 +1,11 @@
 # Development scope and retained evidence
 
-Status note: this page records the state at 0.3.3 build 12 and the source
-development that followed it up to model v47. It is not the current status. The
-current release is 0.3.4 build 32 ([release record](RELEASE_0_3_4_BUILD32.md)), and
-the current state and open items are in [ROADMAP.md](ROADMAP.md).
+Status note: this page records the state at 0.3.3 build 12 and the source development
+that followed it. The ARM64/CFI model chain is carried through v50, the current source
+model; after v47 the page records only that chain. It does not record releases after
+build 12. The current release is 0.3.4 build 32 ([release
+record](RELEASE_0_3_4_BUILD32.md)), and the current state and open items are in
+[ROADMAP.md](ROADMAP.md).
 
 The single active source repository is AIRS-app. Current source includes the v41
 engine baseline and the accepted build 12 sidebar corrections. The current preview binary is 0.3.3/build 12, published from its accepted signed
@@ -278,3 +280,70 @@ native fixtures. The real AIRSApp debug target built. Independent read-only revi
 found no actionable issue. See CLS_RESULTS.md for native and exact fresh/reused
 scope. No GUI, packaging, installation, release or installed-app/settings/stores
 operations occurred.
+
+## Post-v47 semantic development: MOVK W/X v48
+
+CLS v47 is merged. The next bounded family adds exact MOVK W/X under
+`arm64-bounded-movk-v48`, adapting the owned MacScope move-wide field mapping. The
+operation reads its old destination, replaces the selected 16-bit lane and masks to the
+destination width. W shifts 32 and 48 are rejected, register 31 is the zero register,
+and NZCV and memory are unchanged. Retained original or unknown bits stay unknown, and
+raw stack addresses refuse before W projection.
+
+Eight new state and recovery methods passed, and three emission methods passed on six
+first-run complete owned Mach-O images that keep correct, missing-recovery and
+unknown-recovery cases distinct. Six emitted reports supply native fixtures, and four
+new native admission methods passed. Independent semantic and fixture review found no
+actionable defect. See MOVK.md and MOVK_RESULTS.md. No accepted image was re-audited or
+rehashed, and target instructions were never executed. Installed app, settings and
+stores are unchanged and no release action is claimed.
+
+## Post-v48 semantic development: CBZ/CBNZ W/X v49
+
+`arm64-bounded-compare-branch-v49` adds exact CBZ/CBNZ W/X using the owned MacScope
+compare-and-branch field mapping. Register 31 is the zero register. A concrete value
+selects one edge after width masking; unknown or original sources fork both edges
+without restoring certainty. A raw stack address refuses before W projection or zero
+inference. No register, NZCV, SP or memory is modified. The shared conditional-edge
+classification carries the family through dispatch, natural-loop handling, shared
+teardown recognition and target validation. TBZ/TBNZ, indirect branches and unsupported
+loop shapes stayed outside this model.
+
+Eleven new Python state and CFG methods passed in composed runs. Two tests were
+corrected, one expectation and one witness input, without a production defect, and only
+failing selectors were rerun. Three
+emission methods passed on six first-run complete owned Mach-O images, which exercise
+CBZ at both widths; CBNZ has unit coverage only. Forty-seven affected existing methods
+passed, and two new synthetic methods qualify exact v48/v49 admission and future-label
+handling. The real AIRSApp debug product built and eight new native methods passed: four
+for MOVK and four for compare-and-branch. Three arithmetic boundary methods adapted from
+owned MacScope cases passed without a production change. Independent read-only review
+found no actionable defect. v48 and v49 are merged in PR32. See COMPARE_BRANCH.md and
+COMPARE_BRANCH_RESULTS.md. No corpus, GUI, packaging, signing, notarization, release or
+installation operation occurred.
+
+## Post-v49 semantic development: TBZ/TBNZ v50
+
+`arm64-bounded-test-bit-branch-v50` adds exact TBZ/TBNZ using the owned MacScope
+test-and-branch mapping. Low-bit forms test W bits 0 to 31 and high-bit forms test X
+bits 32 to 63; register 31 is the zero register. Only a concrete source chooses one
+successor. Original and unknown sources keep both edges, and derived stack addresses
+refuse before projection. The instructions write no register, memory, SP, FP or NZCV.
+Bit-tested teardown evidence has its own code. Indirect branches, unsupported loop
+shapes and asynchronous or all-PC recovery are not added.
+
+Ten new state and CFG methods passed in composed receipts, with unit coverage of all 64
+bit indices. One new budget test named a nonexistent field; it was corrected and only
+that method was rerun. Three emission methods passed on 12 first-run owned Mach-O
+images: TBZ and TBNZ at bits 0 and 63, each with correct recovery, concrete missing
+recovery and unknown-predicate reachability. Complete images cover bits 0 and 63 only.
+Two new synthetic admission methods and eleven affected CBZ/CBNZ methods passed. Twelve
+native fixtures copy the first emitted reports, the real AIRSApp debug product built,
+and four new native admission methods passed. Independent read-only review found no
+actionable defect. v50 is merged in PR33. See TEST_BIT_BRANCH.md and
+TEST_BIT_BRANCH_RESULTS.md. No GUI, corpus, packaging, signing, notarization, release or
+installation action is included, and the clean-machine, minimum-macOS, Intel-app and
+offline release gaps stay open.
+
+v50 is the current source model. Later source work is recorded in
+[ROADMAP.md](ROADMAP.md).
