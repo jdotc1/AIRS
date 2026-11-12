@@ -149,13 +149,43 @@ class GotProfileTestCase(unittest.TestCase):
         self.assertEqual(Counter(report['reason_counts']) + tally(removed, 'reason'),
                          Counter(base['reason_counts']) + tally(added, 'reason'))
 
-    def expected_row(self, data, *, call_pc, caller=CALLER, symbol=THROWING, declaration=None):
-        image = image_of(data)
-        table = attribute_got_bindings(image)
-        function = next(f for f in image.functions if f.start == caller)
-        kind, call = table.classify(function, call_pc)
-        self.assertEqual(kind, 'attributed')
-        binding = call.binding
+    def expected_row(self, data, layout, *, call_pc, caller=CALLER, symbol=THROWING,
+                     declaration=None, imports=(GotImport(THROWING),), slot=0, register=X16):
+        # These callers build adjacent ADRP/LDR/BLR windows in __got.
+        section = '__got'
+        segment_name = layout.pointers[section]['segment']
+        segment = layout.segment(segment_name)
+        slot_address = layout.slot_addr(section, slot)
+        member_offset = layout.slot_off(section, slot)
+        import_index = slot
+        imported = imports[import_index]
+        page_size = 0x4000
+        page = (slot_address - segment['vmaddr']) // page_size
+        members = [(vm, raw) for vm, raw in layout.members[segment_name]
+                   if (vm - segment['vmaddr']) // page_size == page]
+        step = next(i for i, (vm, _) in enumerate(members) if vm == slot_address)
+        raw = members[step][1]
+        chained = dict(
+            model=CHAINED_FIXUPS_MODEL, blob_offset=layout.blob_off,
+            segment_index=layout.segment_index(segment_name),
+            segment_record_offset=layout.seg_record_off(segment_name), pointer_format=6,
+            page_index=page, page_start=members[0][0] - segment['vmaddr'] - page * page_size,
+            chain_step=step, member_slice_file_offset=member_offset,
+            member_container_file_offset=member_offset, raw=f'0x{raw:016x}',
+            import_entry_offset=layout.import_entry_off(import_index),
+            name_offset=layout.pool_name_off(import_index))
+        binding_provenance = dict(
+            indirect_entry_offset=layout.slot_indirect_off(section, slot),
+            nlist_offset=layout.import_nlist_off(import_index), chained=chained)
+        adrp_pc, ldr_pc = call_pc - 8, call_pc - 4
+        words = []
+        for pc, role in ((adrp_pc, 'adrp'), (ldr_pc, 'ldr'), (call_pc, 'blr')):
+            offset = layout.text_off + pc - layout.text_addr
+            word = int.from_bytes(data[offset:offset + 4], 'little')
+            words.append(dict(pc=pc, word=f'0x{word:08x}', slice_file_offset=offset,
+                              container_file_offset=offset, role=role))
+        provenance = dict(model=WINDOW_MODEL, window_words=words,
+                          binding=binding_provenance, got_model=GOT_MODEL)
         if declaration is None:
             declaration = {'status': 'syntax_admitted',
                            'identity': listify(asdict(parse_import_declaration(symbol).identity)), 'reason': None}
@@ -163,14 +193,13 @@ class GotProfileTestCase(unittest.TestCase):
                 'admission': {
                     'model_version': 'swift-broad-got-callsite-v1', 'status': 'unresolved',
                     'reason': 'imported_callee_abi_unqualified', 'call_kind': 'blr_got', 'call_pc': call_pc,
-                    'caller_start': caller, 'register': 'x%d' % call.register, 'adrp_pc': call.adrp_pc,
-                    'ldr_pc': call.ldr_pc, 'slot_address': binding.slot_address,
-                    'slot_section': binding.slot_section, 'symbol': symbol,
-                    'library_ordinal': binding.library_ordinal, 'library_path': binding.library_path,
-                    'weak_import': binding.weak_import, 'import_ordinal': binding.import_ordinal,
+                    'caller_start': caller, 'register': 'x%d' % register, 'adrp_pc': adrp_pc,
+                    'ldr_pc': ldr_pc, 'slot_address': slot_address,
+                    'slot_section': layout.pointers[section]['section'], 'symbol': symbol,
+                    'library_ordinal': imported.ordinal, 'library_path': layout.dylib_paths[imported.ordinal - 1],
+                    'weak_import': imported.weak, 'import_ordinal': import_index,
                     'declaration': declaration,
-                    'got_provenance': listify({**call.record()['provenance'],
-                                               'binding': binding.record()['provenance'], 'got_model': GOT_MODEL}),
+                    'got_provenance': provenance,
                     'details_complete': True, 'call_return_proven': False,
                     'syntactic_call_target_admitted': False, 'import_attribution_admitted': True}}
 
@@ -191,7 +220,7 @@ class ProfileTests(GotProfileTestCase):
         self.assertEqual(PROFILE_LIMITS[PROFILE], PROFILE_LIMITS[BASE_PROFILE])
 
     def test_throwing_swift_got_call_is_selected(self):
-        data, _ = build_got_image()
+        data, layout = build_got_image()
         report, base = self.pair(data)
         self.assertTrue(report['got_bindings_complete'])
         self.assertIsNone(report['got_binding_reason'])
@@ -202,7 +231,7 @@ class ProfileTests(GotProfileTestCase):
         self.assertEqual((report['got_decline_counts'], report['got_slot_decline_counts']), ({}, {}))
         self.assertEqual(report['observed_call_instructions'], base['observed_call_instructions'])
         self.assertTrue(report['call_details_complete'])
-        expected = self.expected_row(data, call_pc=CALLER + 8)
+        expected = self.expected_row(data, layout, call_pc=CALLER + 8)
         self.assertEqual(expected['admission']['slot_section'], '__DATA_CONST,__got')
         self.assertEqual((expected['admission']['register'], expected['admission']['library_path']),
                          ('x16', SWIFT_CORE))
@@ -233,7 +262,7 @@ class ProfileTests(GotProfileTestCase):
 
     def test_unresolved_swift_got_call_is_selected(self):
         self.assertFalse(parse_import_declaration(UNRESOLVED).supported)
-        data, _ = build_got_image(imports=(GotImport(UNRESOLVED),))
+        data, layout = build_got_image(imports=(GotImport(UNRESOLVED),))
         report, base = self.pair(data)
         self.assertEqual(report['got_counts']['selected_got_calls'], 1)
         row = next(r for r in report['calls'] if r['call_pc'] == hex(CALLER + 8))
@@ -241,8 +270,8 @@ class ProfileTests(GotProfileTestCase):
         self.assertEqual((declaration['status'], declaration['identity']), ('syntax_unresolved', None))
         self.assertIs(type(declaration['reason']), str)
         self.assertTrue(declaration['reason'])
-        self.assertRow(row, self.expected_row(data, call_pc=CALLER + 8, symbol=UNRESOLVED,
-                                              declaration=declaration))
+        self.assertRow(row, self.expected_row(data, layout, call_pc=CALLER + 8, symbol=UNRESOLVED,
+                                              declaration=declaration, imports=(GotImport(UNRESOLVED),)))
         self.assertReplaced(report, base, {hex(CALLER + 8): row})
 
     def test_declined_call_keeps_the_base_row(self):
@@ -319,9 +348,10 @@ class ProfileTests(GotProfileTestCase):
         rows = [r for r in report['calls'] if r['call_pc'] in (hex(first + 8), hex(third + 8))]
         self.assertEqual(len(rows), 2)
         self.assertRow(rows[0] if rows[0]['call_pc'] == hex(first + 8) else rows[1],
-                       self.expected_row(data, call_pc=first + 8, caller=first))
+                       self.expected_row(data, layout, call_pc=first + 8, caller=first, imports=imports))
         self.assertRow(rows[1] if rows[1]['call_pc'] == hex(third + 8) else rows[0],
-                       self.expected_row(data, call_pc=third + 8, caller=third, symbol=THROWING2))
+                       self.expected_row(data, layout, call_pc=third + 8, caller=third, symbol=THROWING2,
+                                         imports=imports, slot=1, register=X17))
         by_pc = {r['call_pc']: r for r in rows}
         self.assertReplaced(report, base, {**by_pc, hex(second + 8): None})
 
