@@ -619,13 +619,18 @@ class HarnessTests(unittest.TestCase):
         with mock.patch.object(H, 'PINS', pins):
             self.assertEqual(quiet_main(['--vectors-root', str(vectors), '--out', str(out), '--full', '--no-allow']), 0)
         # Frozen before generated mode was introduced, using the same synthetic pins.
+        # The rows digest is of the uncompressed content: compressed bytes differ
+        # between zlib builds, and the content must not.
         expected = {
             'summary.json': '5186fe9fddd0ae6ac3cc520d7b34caf060e9b50b0aaeb73d5dbf290d018346ec',
             'disagreements.tsv': '2a04057e5624cec91bc79e7d85f5c1b4906f9ca1eda8a1036d9ab9f3c0e0dbd7',
-            'rows.tsv.gz': '4f731c1573f0d52c7896b3e460fbe90ebdf5f1f6712015758d83a4e298724cf5',
+            'rows.tsv.gz': 'a64d19c600eee63fb6e4216af73d0bd327a34f395114b0d57e1c287607229d8a',
         }
         for name, digest in expected.items():
-            self.assertEqual(hashlib.sha256((out / name).read_bytes()).hexdigest(), digest, name)
+            data = (out / name).read_bytes()
+            if name.endswith('.gz'):
+                data = gzip.decompress(data)
+            self.assertEqual(hashlib.sha256(data).hexdigest(), digest, name)
 
     def test_outputs_are_deterministic_and_split(self):
         vectors = self.tree(sample_rows())
