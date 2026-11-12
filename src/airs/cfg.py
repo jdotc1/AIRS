@@ -150,8 +150,8 @@ def decode_instruction(word: int, address: int = 0) -> Instruction:
     if form in (0x1ac02000,0x1ac02400,0x1ac02800,0x1ac02c00,0x9ac02000,0x9ac02400,0x9ac02800,0x9ac02c00):
         operation=('lslv','lsrv','asrv','rorv')[(word>>10)&3]
         return Instruction(address,word,('x' if word&(1<<31) else 'w')+operation,word&31,(word>>5)&31,(word>>16)&31)
-    # Adapt owned MacScope decodeExtract, with exact fixed-bit/width guards.
-    if word & 0x1f800000 == 0x13800000:
+    # Enter only the EXTR class (bits 30:29 = 00), with exact fixed-bit/width guards.
+    if word & 0x7f800000 == 0x13800000:
         form = word & 0xffe00000
         if form not in (0x13800000,0x93c00000):
             raise ModelError('invalid_extract_encoding','Reserved EXTR control bits or N/width combination',address)

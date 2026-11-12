@@ -33,7 +33,7 @@ class TestBitBranchEmissionTests(unittest.TestCase):
         report=audit_path(source)
         with target.open('x',encoding='utf-8') as stream:stream.write(dumps(report))
         self.assertEqual(load_report(target),report)
-        self.assertEqual(report['generator']['analysis_model_version'],'arm64-bounded-test-bit-branch-v50')
+        self.assertEqual(report['generator']['analysis_model_version'],ANALYSIS_MODEL_VERSION)
         self.assertEqual(report['summary']['function_count'],2)
         self.assertEqual(report['findings'][0]['function']['boundary_source'],'lc_function_starts')
         self.assertEqual(report['findings'][1]['verdict'],'agreement')

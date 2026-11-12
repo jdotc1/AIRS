@@ -6,7 +6,7 @@ final class ManualPairCompatibilityTests: XCTestCase {
     private let oldID = "airsf-" + String(repeating: "a", count: 64)
     private let newID = "airsf-" + String(repeating: "b", count: 64)
 
-    private func source(_ name: String, id: String, digest: String, config: Any? = nil, model: String = "arm64-bounded-test-bit-branch-v50") throws -> Data {
+    private func source(_ name: String, id: String, digest: String, config: Any? = nil, model: String = AnalysisModels.current) throws -> Data {
         var value: [String: Any] = [
             "schema_version": 1, "report_kind": "airs.audit",
             "generator": ["name": "AIRS", "version": "0.3.3", "analysis_model_version": model],

@@ -7,6 +7,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT / "tests")]
+from airs import ANALYSIS_MODEL_VERSION
 from airs.diff import compare_reports
 from test_exact_body_candidates import annotated_pair
 
@@ -86,7 +87,7 @@ def controls():
     for name, expected, prepare in cases:
         before, after = annotated_pair()
         for report, label in ((before, "Owned observation baseline"), (after, "Owned observation current")):
-            report["generator"].update(version="0.3.3", analysis_model_version="arm64-bounded-test-bit-branch-v50")
+            report["generator"].update(version="0.3.3", analysis_model_version=ANALYSIS_MODEL_VERSION)
             report["image"]["display_name"] = label
             finding(report)["function"]["name"] = "shared_work"
         prepare(before, after)

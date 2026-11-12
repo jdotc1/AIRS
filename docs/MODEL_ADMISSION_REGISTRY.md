@@ -6,7 +6,11 @@ validation path and accidentally use generic import rules for a recognized model
 Each language now maintains one immutable explicit CFG identity set, with known
 and evaluated-CFI sets derived by adding the exact historical linear identities.
 
-The current CFG label count is asserted by the registry tests (49 at the imports admission change). The count below describes its historical checkpoint.
+The current CFG label count is 50, asserted by the registry tests.
+`arm64-bounded-extract-class-v51` is current; v50 and earlier identities remain
+registered with their historical policies. Unknown labels are not registered CFG
+models; generic saved-report wire validation remains unchanged. The counts below
+describe historical checkpoints.
 
 No prefix, version range or current-engine label determines admission. All 46 CFG
 labels, including the distinct historical CFI-control v36 alias, retain their

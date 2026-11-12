@@ -4,7 +4,7 @@ from airs.analysis_models import CFG_MODELS, KNOWN_MODELS, EVALUATED_CFI_MODELS
 
 class AnalysisModelRegistryTests(unittest.TestCase):
     def test_exact_registry_relationships(self):
-        self.assertEqual(len(CFG_MODELS), 49)
+        self.assertEqual(len(CFG_MODELS), 50)
         self.assertEqual(KNOWN_MODELS - CFG_MODELS, {"arm64-linear-v1", "arm64-linear-dwarf-v2"})
         self.assertEqual(EVALUATED_CFI_MODELS - CFG_MODELS, {"arm64-linear-dwarf-v2"})
         self.assertIsInstance(CFG_MODELS, frozenset)

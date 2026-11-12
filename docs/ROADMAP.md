@@ -10,6 +10,12 @@ checkpoints that led to it follow, unchanged, under History.
 Written against main at commit 400ac21 (2026-11-12). Where this section and a
 checkpoint under History disagree, this section is current.
 
+### Source checkpoint since that commit: extract class v51
+
+`arm64-bounded-extract-class-v51` restricts extract-family entry to the EXTR
+class and corrects the refusal reason for words outside it. It adds no
+instruction support. See EXTRACT_CLASS.md.
+
 ### Merged and released
 
 - Published preview: AIRS 0.3.4, build 32 (tag v0.3.4-build32, application source
@@ -18,7 +24,8 @@ checkpoint under History disagree, this section is current.
   explicitly selected extended scan profile. See
   [RELEASE_0_3_4_BUILD32.md](RELEASE_0_3_4_BUILD32.md) and
   [RELEASE_NOTES.md](../RELEASE_NOTES.md).
-- ARM64/CFI model: the source model is `arm64-bounded-test-bit-branch-v50`. Versions
+- ARM64/CFI model: the source model at that commit is
+  `arm64-bounded-test-bit-branch-v50`; v51 follows it (above). Versions
   42 to 50 added W SDIV and UDIV, REV, REV16, REV32, CLS, MOVK, CBZ/CBNZ and TBZ/TBNZ.
   Historical identities stay distinct. See [ANALYSIS_CONTRACT.md](ANALYSIS_CONTRACT.md).
 - Saved-report comparison: coverage triage, manual finding pairs, and opt-in exact-body
@@ -111,7 +118,7 @@ listed on its branches page.
 - Documentation: ANALYSIS_CONTRACT.md cites 137 distinct pages by file name and 79 of
   them are not in the repository; ARCHITECTURE.md cites four absent pages. Both now
   carry a note saying so. Each absent page should be restored or its citation removed.
-  DEVELOPMENT_STATUS.md records the model chain through v50 and carries a note pointing
+  DEVELOPMENT_STATUS.md records the model chain through v51 and carries a note pointing
   here for releases after build 12 and for later work outside that chain.
 - Next candidates, as in the checkpoint of that name under History: use the documented
   saved-report workflow to find a concrete unresolved behavior worth improving, and

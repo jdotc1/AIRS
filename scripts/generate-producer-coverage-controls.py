@@ -7,6 +7,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT / "tests")]
+from airs import ANALYSIS_MODEL_VERSION
 from airs.diff import compare_reports
 from test_exact_body_candidates import annotated_pair
 from test_diff_manual_pairs import second, A, B, C, D
@@ -22,7 +23,7 @@ def controls():
     def add(name, bases, rows, setting=False, pins=(), prepare=None):
         before, after = annotated_pair()
         for report, label in ((before, "Owned baseline"), (after, "Owned current")):
-            report["generator"].update(version="0.3.3", analysis_model_version="arm64-bounded-test-bit-branch-v50")
+            report["generator"].update(version="0.3.3", analysis_model_version=ANALYSIS_MODEL_VERSION)
             report["image"]["display_name"] = label
         if prepare:
             prepare(before, after)

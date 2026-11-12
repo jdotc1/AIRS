@@ -5,7 +5,7 @@ import XCTest
 final class BodyFingerprintCodecTests: XCTestCase {
     private func object() -> [String: Any] {
         ["schema_version": 1, "report_kind": "airs.audit",
-         "generator": ["name": "AIRS", "version": "0.3.3", "analysis_model_version": "arm64-bounded-test-bit-branch-v50"],
+         "generator": ["name": "AIRS", "version": "0.3.3", "analysis_model_version": AnalysisModels.current],
          "image": ["display_name": "synthetic-native-fingerprint", "architecture": "arm64", "file_type": "dylib",
                    "container_sha256": String(repeating: "1", count: 64), "slice_sha256": String(repeating: "2", count: 64),
                    "cpu_subtype": 0, "slice_offset": 0, "slice_size": 16, "preferred_base": "0x1000"],

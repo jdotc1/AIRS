@@ -2,6 +2,11 @@ Reader's note: this contract cites many result and design pages by name, and mos
 of the pages for earlier models are not in this repository. A cited page that is
 absent is a historical reference and cannot be consulted here.
 
+Current source model: `arm64-bounded-extract-class-v51` restricts extract-family
+entry to the EXTR class. Outside-class words remain unsupported; valid EXTR and
+inside-class refusal behavior are unchanged. The bitfield family is deliberately
+unchanged. See EXTRACT_CLASS.md. Historical checkpoints below retain their meaning.
+
 Current source model: `arm64-bounded-test-bit-branch-v50` adds exact TBZ/TBNZ
 through the existing bounded conditional-edge machinery. Unknown predicates fork
 and raw stack sources refuse. See TEST_BIT_BRANCH.md and TEST_BIT_BRANCH_RESULTS.md.
