@@ -866,9 +866,9 @@ class Parsed:
         self.words: dict[str, str] = {}
 
 
-def parse_file(relpath, data, limit):
+def parse_file(relpath, data, limit, specs=None):
     """Parse one vector file's bytes. Whole-file counts are independent of limit."""
-    label, columns = SPECS[relpath]
+    label, columns = (SPECS if specs is None else specs)[relpath]
     parsed = Parsed()
     seen: dict[tuple[str, int | None], Entry] = {}
     pieces = data.split(b'\n')
@@ -950,13 +950,14 @@ def _clean(text):
 # --------------------------------------------------------------------------
 # Driver.
 # --------------------------------------------------------------------------
-def run_harness(vectors_root, decoders=DECODERS, limit=None, allow_unpinned=False, rowsink=None):
+def run_harness(vectors_root, decoders=DECODERS, limit=None, allow_unpinned=False, rowsink=None, generated=None):
     """Decode every input row; return (summary, blocking_rows)."""
-    root = Path(vectors_root)
+    root = Path(vectors_root) if generated is None else Path(generated).parent
+    specs = SPECS if generated is None else {'generated.tsv': ('generated', ('address', 'word', 'mnemonic', 'operands'))}
     present = {}
     manifest = {}
-    for relpath in sorted(SPECS):
-        path = root / relpath
+    for relpath in sorted(specs):
+        path = root / relpath if generated is None else Path(generated)
         if not path.is_file():
             manifest[relpath] = {'present': False}
             continue
@@ -964,9 +965,9 @@ def run_harness(vectors_root, decoders=DECODERS, limit=None, allow_unpinned=Fals
         if size > MAX_FILE_BYTES:
             raise HarnessRefusal('%s is %d bytes, over the %d byte input limit' % (relpath, size, MAX_FILE_BYTES))
         data = path.read_bytes()
-        parsed = parse_file(relpath, data, limit)
+        parsed = parse_file(relpath, data, limit, specs)
         blob = _git_blob_id(data)
-        pin = PINS.get(relpath)
+        pin = PINS.get(relpath) if generated is None else None
         if pin is None:
             status = 'unpinned'
         else:
@@ -980,7 +981,7 @@ def run_harness(vectors_root, decoders=DECODERS, limit=None, allow_unpinned=Fals
         present[relpath] = parsed
     if not present:
         raise HarnessRefusal('no known vector file found under the vectors root')
-    if not allow_unpinned:
+    if generated is None and not allow_unpinned:
         bad = sorted(r for r in SPECS if manifest[r].get('pin') != 'match')
         if bad:
             raise PinRefusal('input missing or not matching its pin: ' + ', '.join(bad))
@@ -988,7 +989,7 @@ def run_harness(vectors_root, decoders=DECODERS, limit=None, allow_unpinned=Fals
     word_states: dict[str, dict[str, str]] = {}
     for relpath, parsed in present.items():
         for word, state in parsed.words.items():
-            word_states.setdefault(word, {})[SPECS[relpath][0]] = state
+            word_states.setdefault(word, {})[specs[relpath][0]] = state
     names = [name for name, _ in decoders]
     counts = {r: {d: Counter() for d in names + ['-']} for r in present}
     refusals = {kind: {d: Counter() for d in names} for kind in ('SCOPE-DECLINE', 'AGREE-REJECT', 'BOTH-REJECT')}
@@ -1000,7 +1001,7 @@ def run_harness(vectors_root, decoders=DECODERS, limit=None, allow_unpinned=Fals
         return ','.join(parts)
 
     def add_blocking(relpath, entry, decoder, category, level, reason, detail, airs):
-        label = SPECS[relpath][0]
+        label = specs[relpath][0]
         oracle = entry.oracle
         blocking.append({
             'category': category, 'level': level, 'decoder': decoder, 'file': relpath,
@@ -1062,6 +1063,9 @@ def run_harness(vectors_root, decoders=DECODERS, limit=None, allow_unpinned=Fals
             'words_differing': len(differing), 'first_words': differing[:20],
         },
     }
+    if generated is not None:
+        summary['run']['input_mode'] = 'generated'
+        summary['inputs']['generated.tsv']['pin'] = 'not-applicable'
     return summary, blocking
 
 
@@ -1116,7 +1120,10 @@ def write_outputs(out, summary, blocking):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description='Compare AIRS ARM64 decoders with recorded disassembler vectors.')
-    parser.add_argument('--vectors-root', required=True, help='directory laid out like the golden fixtures')
+    inputs = parser.add_mutually_exclusive_group(required=True)
+    inputs.add_argument('--vectors-root', help='directory laid out like the golden fixtures')
+    inputs.add_argument('--generated', help='one generated address/word/mnemonic/operands TSV')
+    parser.add_argument('--require-kind-coverage', action='store_true', help='fail if any derived kind never agrees')
     parser.add_argument('--out', required=True, help='output directory (outside the repository or under an ignored directory)')
     parser.add_argument('--limit', type=int, default=None, help='decode only the first N distinct rows of each file')
     parser.add_argument('--full', action='store_true', help='also write rows.tsv.gz with every classified row')
@@ -1135,17 +1142,20 @@ def main(argv=None):
         errors, stale = check_inventory(inventory, KIND_TABLE, arm64._FP_DESTINATION_KINDS, VALIDITY_CODES, SCOPE_CODES)
         if errors:
             raise HarnessRefusal('kind table check failed: ' + '; '.join(errors))
-        vectors = Path(args.vectors_root)
-        if not vectors.is_dir():
+        vectors = Path(args.vectors_root) if args.vectors_root else None
+        if vectors is not None and not vectors.is_dir():
             raise HarnessRefusal('--vectors-root is not a directory')
         out = Path(args.out)
         ignore = ROOT / '.gitignore'
         lines = ignore.read_text(encoding='utf-8').splitlines() if ignore.is_file() else []
         if not out_dir_allowed(out, ROOT, lines):
             raise HarnessRefusal('--out would write inside the repository outside an ignored directory')
-        real_out, real_vectors = Path(os.path.realpath(out)), Path(os.path.realpath(vectors))
-        if real_out == real_vectors or real_vectors in real_out.parents:
-            raise HarnessRefusal('--out must not be inside --vectors-root')
+        if vectors is not None:
+            real_out, real_vectors = Path(os.path.realpath(out)), Path(os.path.realpath(vectors))
+            if real_out == real_vectors or real_vectors in real_out.parents:
+                raise HarnessRefusal('--out must not be inside --vectors-root')
+        elif Path(args.generated).resolve() in {p.resolve() for p in _output_names(out)}:
+            raise HarnessRefusal('--generated must not be an output file')
         existing = _output_names(out) if out.is_dir() else []
         if existing and not args.overwrite:
             raise HarnessRefusal('refusing to overwrite existing outputs (use --overwrite): ' + ', '.join(p.name for p in existing))
@@ -1164,7 +1174,7 @@ def main(argv=None):
                 fields[3] = '' if fields[3] is None else '%#x' % fields[3]
                 gz.write(('\t'.join(_clean(v) for v in fields) + '\n').encode('utf-8'))
         try:
-            summary, blocking = run_harness(vectors, limit=args.limit, allow_unpinned=args.allow_unpinned, rowsink=sink)
+            summary, blocking = run_harness(vectors, limit=args.limit, allow_unpinned=args.allow_unpinned, rowsink=sink, generated=args.generated)
         finally:
             if gz is not None:
                 gz.close()
@@ -1188,6 +1198,11 @@ def main(argv=None):
         print('arm64-oracle-diff: internal error: %s: %s' % (type(error).__name__, error), file=sys.stderr)
         return 2
     print('blocking rows: %d' % summary['blocking_total'])
+    missing = {d: kinds for d, kinds in summary['kinds_never_agreeing'].items() if kinds}
+    if args.require_kind_coverage and missing:
+        print('arm64-oracle-diff: kinds never agreeing: ' + '; '.join(
+            d + ': ' + ','.join(kinds) for d, kinds in missing.items()), file=sys.stderr)
+        return 1
     return 1 if summary['blocking_total'] else 0
 
 

@@ -9,9 +9,11 @@ on:
 permissions:
   contents: read
 
+# A pull request's newer push replaces its older run. A run on main is never
+# cancelled: each main commit keeps its own completed result.
 concurrency:
-  group: source-verification-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: "source-verification-${{ github.event_name == 'pull_request' && github.ref || github.sha }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 defaults:
   run:
@@ -143,5 +145,58 @@ jobs:
         with:
           name: native-macos-27-arm64-source-verification
           path: build/verification/
+          if-no-files-found: error
+          retention-days: 14
+
+  oracle:
+    name: ARM64 decode oracle on generated vectors
+    runs-on: xcode-27
+    timeout-minutes: 15
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_27.2.app/Contents/Developer
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check system Python
+        id: system_python
+        run: |
+          if python3 -c 'import sys; sys.exit(sys.version_info < (3, 11))'; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+            echo "ORACLE_PYTHON=$(command -v python3)" >> "$GITHUB_ENV"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Select fallback Python
+        id: fallback_python
+        if: steps.system_python.outputs.available != 'true'
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.15.0'
+          architecture: arm64
+      - name: Record fallback interpreter
+        if: steps.system_python.outputs.available != 'true'
+        env:
+          PYTHON_PATH: ${{ steps.fallback_python.outputs.python-path }}
+        run: echo "ORACLE_PYTHON=$PYTHON_PATH" >> "$GITHUB_ENV"
+      - name: Generate instruction words
+        run: |
+          mkdir -p build/oracle
+          "$ORACLE_PYTHON" -I -B scripts/arm64-oracle-words.py --out build/oracle/words.s
+      - name: Assemble and disassemble generated words
+        run: '"$ORACLE_PYTHON" -I -B scripts/arm64-oracle-generate.py --input build/oracle/words.s --out build/oracle'
+      - name: Require agreement for every derived kind
+        run: '"$ORACLE_PYTHON" -I -B scripts/arm64-oracle-diff.py --generated build/oracle/generated.tsv --require-kind-coverage --out build/oracle/results'
+      - name: Retain oracle evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: arm64-generated-oracle
+          path: |
+            build/oracle/results/summary.json
+            build/oracle/results/disagreements*.tsv
+            build/oracle/generated.tsv
+            build/oracle/tools.txt
           if-no-files-found: error
           retention-days: 14

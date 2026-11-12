@@ -8,6 +8,8 @@ and no disassembler runs during the test.
 """
 import contextlib
 import gzip
+import hashlib
+import json
 import importlib.util
 import io
 from pathlib import Path
@@ -582,6 +584,53 @@ class HarnessTests(unittest.TestCase):
         text = (self.base / 'o5' / 'disagreements.tsv').read_text().splitlines()
         self.assertEqual(text[0].split('\t'), list(H.DISAGREEMENT_COLUMNS))
         self.assertEqual(len(text), 3)
+
+    def test_generated_input_and_required_coverage(self):
+        generated = self.base / 'generated.tsv'
+        data = b'# generated\n0x00000000\td503201f\tnop\t\n'
+        generated.write_bytes(data)
+        out = self.base / 'generated-out'
+        self.assertEqual(quiet_main(['--generated', str(generated), '--out', str(out), '--no-allow']), 0)
+        summary = json.loads((out / 'summary.json').read_text())
+        self.assertEqual(summary['run']['input_mode'], 'generated')
+        entry = summary['inputs']['generated.tsv']
+        self.assertEqual((entry['sha256'], entry['rows'], entry['pin']),
+                         (hashlib.sha256(data).hexdigest(), 1, 'not-applicable'))
+        with contextlib.redirect_stderr(io.StringIO()) as error, contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(H.main(['--generated', str(generated), '--out', str(self.base / 'coverage-out'),
+                                     '--require-kind-coverage']), 1)
+        self.assertIn('ret', error.getvalue())
+        self.assertIn('cfg:', error.getvalue())
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as refused:
+            H.main(['--generated', str(generated), '--vectors-root', str(self.base), '--out', str(out)])
+        self.assertEqual(refused.exception.code, 2)
+        with mock.patch.object(H, 'derive_inventory', return_value={'linear': ({'nop'}, set()), 'cfg': ({'nop'}, set())}):
+            self.assertEqual(quiet_main(['--generated', str(generated), '--out', str(self.base / 'complete'),
+                                         '--require-kind-coverage']), 0)
+
+    def test_pinned_mode_frozen_bytes(self):
+        vectors = self.tree(sample_rows(), 'frozen')
+        pins = {}
+        for relpath in H.SPECS:
+            data = (vectors / relpath).read_bytes()
+            parsed = H.parse_file(relpath, data, None)
+            pins[relpath] = (H._git_blob_id(data), len(data), parsed.rows, parsed.unknown)
+        out = self.base / 'frozen-output'
+        with mock.patch.object(H, 'PINS', pins):
+            self.assertEqual(quiet_main(['--vectors-root', str(vectors), '--out', str(out), '--full', '--no-allow']), 0)
+        # Frozen before generated mode was introduced, using the same synthetic pins.
+        # The rows digest is of the uncompressed content: compressed bytes differ
+        # between zlib builds, and the content must not.
+        expected = {
+            'summary.json': '5186fe9fddd0ae6ac3cc520d7b34caf060e9b50b0aaeb73d5dbf290d018346ec',
+            'disagreements.tsv': '2a04057e5624cec91bc79e7d85f5c1b4906f9ca1eda8a1036d9ab9f3c0e0dbd7',
+            'rows.tsv.gz': 'a64d19c600eee63fb6e4216af73d0bd327a34f395114b0d57e1c287607229d8a',
+        }
+        for name, digest in expected.items():
+            data = (out / name).read_bytes()
+            if name.endswith('.gz'):
+                data = gzip.decompress(data)
+            self.assertEqual(hashlib.sha256(data).hexdigest(), digest, name)
 
     def test_outputs_are_deterministic_and_split(self):
         vectors = self.tree(sample_rows())
