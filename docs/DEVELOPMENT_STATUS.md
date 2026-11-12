@@ -1,7 +1,14 @@
 # Development scope and retained evidence
 
+## Extract class v51 source checkpoint
+
+`arm64-bounded-extract-class-v51` narrows the extract entry mask to
+`0x7f800000`. Outside-class words report `unsupported_instruction`; EXTR behavior
+and the bitfield family are unchanged. Python and native registries retain v50.
+See EXTRACT_CLASS.md for evidence and limits. No release qualification is claimed.
+
 Status note: this page records the state at 0.3.3 build 12 and the source development
-that followed it. The ARM64/CFI model chain is carried through v50, the current source
+that followed it. The ARM64/CFI model chain is carried through v51, the current source
 model; after v47 the page records only that chain. It does not record releases after
 build 12. The current release is 0.3.4 build 32 ([release
 record](RELEASE_0_3_4_BUILD32.md)), and the current state and open items are in

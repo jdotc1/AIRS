@@ -68,6 +68,28 @@ final class AnalysisReuseTests: XCTestCase {
             provenance: LibraryProvenance(sourceLabel: "Owned replay", inspectedInput: f.input))
         XCTAssertNil(id)
     }
+    func testExtractClassCurrentAdmissionRejectsUnknownLabel() async throws {
+        XCTAssertEqual(AnalysisModels.current, "arm64-bounded-extract-class-v51")
+        let fixture = try ReuseFixture()
+        defer { try? FileManager.default.removeItem(at: fixture.root) }
+        _ = try await fixture.enroll()
+        let hit = try await fixture.lookup()
+        XCTAssertNotNil(hit)
+        let decoded = try JSONSerialization.jsonObject(with: fixture.raw)
+        var wire = try XCTUnwrap(decoded as? [String: Any])
+        var generator = try XCTUnwrap(wire["generator"] as? [String: Any])
+        generator["analysis_model_version"] = "arm64-bounded-extract-class-v51-future"
+        wire["generator"] = generator
+        let data = try JSONSerialization.data(withJSONObject: wire)
+        // Generic wire import remains available; current-model reuse must refuse.
+        XCTAssertNoThrow(try AuditReport.decode(data))
+        let pending = try await fixture.cache.ticket(input: fixture.input, configuration: fixture.configuration)
+        let ticket = try XCTUnwrap(pending)
+        let provenance = LibraryProvenance(sourceLabel: "Owned control", inspectedInput: fixture.input)
+        let admitted = try await fixture.cache.enroll(data, input: fixture.input,
+            configuration: fixture.configuration, before: ticket, provenance: provenance)
+        XCTAssertNil(admitted)
+    }
     func testImportedReportAloneNeverEnrolls() async throws {
         let f = try ReuseFixture(); defer { try? FileManager.default.removeItem(at: f.root) }
         _ = try await f.library.keep(f.raw, provenance: LibraryProvenance(sourceLabel: "Import", inspectedInput: f.input))

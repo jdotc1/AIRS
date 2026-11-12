@@ -4,10 +4,16 @@ import XCTest
 
 final class AnalysisModelRegistryTests: XCTestCase {
     func testExactHistoricalPolicySets() {
-        XCTAssertEqual(AnalysisModels.cfg.count, 49)
+        XCTAssertEqual(AnalysisModels.cfg.count, 50)
         XCTAssertEqual(AnalysisModels.known.subtracting(AnalysisModels.cfg), ["arm64-linear-v1", "arm64-linear-dwarf-v2"])
         XCTAssertEqual(AnalysisModels.evaluatedCFI.subtracting(AnalysisModels.cfg), ["arm64-linear-dwarf-v2"])
-        for label in ["arm64-bounded-test-bit-branch-v50-future", "arm64-bounded-test-bit-branch-v51", "ARM64-bounded-test-bit-branch-v50"] {
+        let unknownLabels: [String] = [
+            "arm64-bounded-extract-class-v51-future",
+            "arm64-bounded-test-bit-branch-v50-future",
+            "arm64-bounded-test-bit-branch-v51",
+            "ARM64-bounded-test-bit-branch-v50",
+        ]
+        for label in unknownLabels {
             XCTAssertFalse(AnalysisModels.known.contains(label))
         }
     }
