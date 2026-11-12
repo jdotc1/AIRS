@@ -83,4 +83,4 @@ test -x "$APP_PATH/Contents/MacOS/airs-entitlements"
 test -f "$APP_PATH/Contents/Resources/Engine/airs_cli.py"
 test -f "$APP_PATH/Contents/Resources/Engine/src/airs/__init__.py"
 "$PYTHON_EXECUTABLE" -I "$APP_PATH/Contents/Resources/Engine/airs_cli.py" --version
-printf '%s\n' 'Automated macOS verification completed. Run the manual GUI checks in docs/NATIVE_BUILD.md before claiming runtime validation.'
+printf '%s\n' 'Automated macOS verification completed. This is not GUI or runtime validation; docs/CURRENT_SOURCE_RELEASE_GATES.md lists the separate gates.'

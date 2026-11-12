@@ -1,9 +1,12 @@
 # AIRS architecture
 
-Current-status note: first native/C10 builds and the bounded C13 FDE subset
-are now delivered. See C13_RESULTS.md and DWARF_CFI.md; the original architecture
-record below includes historical authoring-environment and v1 descriptions.
-The current model is `arm64-bounded-cfg-v3`; see C12_RESULTS.md and BOUNDED_CFG.md.
+Status note: this is the original architecture record. It includes historical
+authoring-environment and v1 descriptions, written before the first native build,
+and it is not updated as models are added. The current model identity is stated in
+[ANALYSIS_CONTRACT.md](ANALYSIS_CONTRACT.md); the current state and open items are in
+[ROADMAP.md](ROADMAP.md). Four pages cited below are not in this repository
+(DECODER_SCOPE.md, NATIVE_BUILD.md, TEST_STRATEGY.md and UX_SPEC.md); read those
+citations as historical.
 
 ## 1. Delivered system and verification boundary
 

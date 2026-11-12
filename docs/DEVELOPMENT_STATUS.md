@@ -1,5 +1,10 @@
 # Development scope and retained evidence
 
+Status note: this page records the state at 0.3.3 build 12 and the source
+development that followed it up to model v47. It is not the current status. The
+current release is 0.3.4 build 32 ([release record](RELEASE_0_3_4_BUILD32.md)), and
+the current state and open items are in [ROADMAP.md](ROADMAP.md).
+
 The single active source repository is AIRS-app. Current source includes the v41
 engine baseline and the accepted build 12 sidebar corrections. The current preview binary is 0.3.3/build 12, published from its accepted signed
 candidate and retained results. See [release scope](RELEASE_0_3_3_BUILD12.md). See [sidebar acceptance](SIDEBAR_NAVIGATION.md).

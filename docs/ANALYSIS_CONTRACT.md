@@ -1,3 +1,7 @@
+Reader's note: this contract cites many result and design pages by name, and most
+of the pages for earlier models are not in this repository. A cited page that is
+absent is a historical reference and cannot be consulted here.
+
 Current source model: `arm64-bounded-test-bit-branch-v50` adds exact TBZ/TBNZ
 through the existing bounded conditional-edge machinery. Unknown predicates fork
 and raw stack sources refuse. See TEST_BIT_BRANCH.md and TEST_BIT_BRANCH_RESULTS.md.
