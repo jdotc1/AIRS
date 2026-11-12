@@ -25,7 +25,7 @@ from stub_image_helpers import (  # noqa: E402
 )
 from airs.macho import parse_macho  # noqa: E402
 from airs.types import InputError  # noqa: E402
-from airs.swift_declaration_profiles import parse_broad_declaration  # noqa: E402
+from airs.swift_import_declarations import parse_import_declaration  # noqa: E402
 from airs.swift_broad_flow import (  # noqa: E402
     EXTENDED_BROAD_LIMITS, IMPORTS_BROAD_LIMITS, PROFILE_LIMITS, recover_swift_broad_flow,
 )
@@ -552,7 +552,7 @@ class ImportFlowTests(unittest.TestCase):
                            declaration=None):
         if declaration is None:
             declaration = {'status': 'syntax_admitted',
-                           'identity': listify(asdict(parse_broad_declaration(symbol).identity)), 'reason': None}
+                           'identity': listify(asdict(parse_import_declaration(symbol).identity)), 'reason': None}
         return {
             'model_version': 'swift-broad-import-callsite-v1',
             'status': 'unresolved', 'reason': 'imported_callee_abi_unqualified',
@@ -600,6 +600,12 @@ class ImportFlowTests(unittest.TestCase):
         self.assertEqual(report['reason_counts'], {'imported_callee_abi_unqualified': 1})
         self.assertEqual(len(report['calls']), 1)
         self.assertImportRow(report['calls'][0], caller_pc=CALLER, call_pc=CALLER)
+        declaration = json.loads(json.dumps(report['calls'][0]['admission']['declaration']))
+        self.assertEqual(declaration['status'], 'syntax_admitted')
+        self.assertIs(declaration['identity']['throws'], True)
+        self.assertEqual(declaration['identity']['symbol'], '_$s4Test3fooyS2iKF')
+        self.assertEqual(declaration['identity']['entity'], 'function')
+        self.assertEqual(declaration['identity']['syntax_model'], 'swift-import-declaration-syntax-v1')
         from airs.report import dumps
         json.loads(dumps(report))
 
@@ -610,6 +616,13 @@ class ImportFlowTests(unittest.TestCase):
         report = flow(image_of(data))
         self.assertEqual(report['import_stub_counts'], zero_import_counts(attributed_stubs=1, selected_import_calls=1))
         self.assertImportRow(report['calls'][0], caller_pc=CALLER, call_pc=CALLER + 4, call_kind='b')
+
+        declaration = json.loads(json.dumps(report['calls'][0]['admission']['declaration']))
+        self.assertEqual(declaration['status'], 'syntax_admitted')
+        self.assertIs(declaration['identity']['throws'], True)
+        self.assertEqual(declaration['identity']['symbol'], '_$s4Test3fooyS2iKF')
+        self.assertEqual(declaration['identity']['entity'], 'function')
+        self.assertEqual(declaration['identity']['syntax_model'], 'swift-import-declaration-syntax-v1')
 
     def test_second_caller_start(self):
         # caller0 @0x1000: RET; caller1 @0x1004: NOP; BL stub0; RET -> stub @0x1010.
@@ -631,7 +644,7 @@ class ImportFlowTests(unittest.TestCase):
         self.assertEqual(report['calls'], [])
 
     def test_non_throwing_swift_import_not_selected(self):
-        parsed = parse_broad_declaration(NON_THROWING)
+        parsed = parse_import_declaration(NON_THROWING)
         self.assertTrue(parsed.supported)
         self.assertFalse(parsed.identity.throws)
         data, _ = build_stub_image(imports=(Import(NON_THROWING, 2),))
@@ -642,7 +655,7 @@ class ImportFlowTests(unittest.TestCase):
         self.assertEqual(report['calls'], [])
 
     def test_unresolved_swift_import_is_selected(self):
-        self.assertFalse(parse_broad_declaration(UNRESOLVED).supported)
+        self.assertFalse(parse_import_declaration(UNRESOLVED).supported)
         data, _ = build_stub_image(imports=(Import(UNRESOLVED, 2),))
         report = flow(image_of(data))
         self.assertEqual(report['import_stub_counts'], zero_import_counts(attributed_stubs=1, selected_import_calls=1))

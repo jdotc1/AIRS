@@ -1,0 +1,676 @@
+packet	input	demangled	expected_decision	expected_reason	expected_throws
+A-subst-type	$s1M1fyySaF	M.f(Swift.Array) -> ()	decline	unsupported_production	
+A-subst-type	$s1M1fyySbF	M.f(Swift.Bool) -> ()	admit		false
+A-subst-type	$s1M1fyyScF	Mf empty-list  empty-list Swift.Executor	decline	unknown_substitution	
+A-subst-type	$s1M1fyySdF	M.f(Swift.Double) -> ()	admit		false
+A-subst-type	$s1M1fyySeF	M.f(Swift.Decodable) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySfF	M.f(Swift.Float) -> ()	admit		false
+A-subst-type	$s1M1fyySgF	$s1M1fyySgF	decline	invalid_grammar	
+A-subst-type	$s1M1fyyShF	M.f(Swift.Set) -> ()	decline	unknown_substitution	
+A-subst-type	$s1M1fyySiF	M.f(Swift.Int) -> ()	admit		false
+A-subst-type	$s1M1fyySjF	M.f(Swift.Numeric) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySkF	M.f(Swift.RandomAccessCollection) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySlF	M.f(Swift.Collection) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySmF	M.f(Swift.RangeReplaceableCollection) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySnF	M.f(Swift.Range) -> ()	decline	unknown_substitution	
+A-subst-type	$s1M1fyySoF	$s1M1fyySoF	decline	invalid_grammar	
+A-subst-type	$s1M1fyySpF	M.f(Swift.UnsafeMutablePointer) -> ()	decline	unknown_substitution	
+A-subst-type	$s1M1fyySqF	M.f(Swift.Optional) -> ()	decline	unknown_substitution	
+A-subst-type	$s1M1fyySrF	M.f(Swift.UnsafeMutableBufferPointer) -> ()	decline	unknown_substitution	
+A-subst-type	$s1M1fyySsF	M.f(Swift.Substring) -> ()	admit		false
+A-subst-type	$s1M1fyyStF	M.f(Swift.IteratorProtocol) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySuF	M.f(Swift.UInt) -> ()	admit		false
+A-subst-type	$s1M1fyySvF	M.f(Swift.UnsafeMutableRawPointer) -> ()	admit		false
+A-subst-type	$s1M1fyySwF	M.f(Swift.UnsafeMutableRawBufferPointer) -> ()	admit		false
+A-subst-type	$s1M1fyySxF	M.f(Swift.Strideable) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySyF	M.f(Swift.StringProtocol) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySzF	M.f(Swift.BinaryInteger) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySAF	M.f(Swift.AutoreleasingUnsafeMutablePointer) -> ()	decline	unknown_substitution	
+A-subst-type	$s1M1fyySBF	M.f(Swift.BinaryFloatingPoint) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySCF	$s1M1fyySCF	decline	invalid_grammar	
+A-subst-type	$s1M1fyySDF	M.f(Swift.Dictionary) -> ()	decline	unknown_substitution	
+A-subst-type	$s1M1fyySEF	M.f(Swift.Encodable) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySFF	M.f(Swift.FloatingPoint) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySGF	M.f(Swift.RandomNumberGenerator) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySHF	M.f(Swift.Hashable) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySIF	M.f(Swift.DefaultIndices) -> ()	decline	unknown_substitution	
+A-subst-type	$s1M1fyySJF	M.f(Swift.Character) -> ()	admit		false
+A-subst-type	$s1M1fyySKF	M.f(Swift.BidirectionalCollection) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySLF	M.f(Swift.Comparable) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySMF	M.f(Swift.MutableCollection) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySNF	M.f(Swift.ClosedRange) -> ()	decline	unknown_substitution	
+A-subst-type	$s1M1fyySOF	M.f(Swift.ObjectIdentifier) -> ()	admit		false
+A-subst-type	$s1M1fyySPF	M.f(Swift.UnsafePointer) -> ()	decline	unknown_substitution	
+A-subst-type	$s1M1fyySQF	M.f(Swift.Equatable) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySRF	M.f(Swift.UnsafeBufferPointer) -> ()	decline	unknown_substitution	
+A-subst-type	$s1M1fyySSF	M.f(Swift.String) -> ()	admit		false
+A-subst-type	$s1M1fyySTF	M.f(Swift.Sequence) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySUF	M.f(Swift.UnsignedInteger) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySVF	M.f(Swift.UnsafeRawPointer) -> ()	admit		false
+A-subst-type	$s1M1fyySWF	M.f(Swift.UnsafeRawBufferPointer) -> ()	admit		false
+A-subst-type	$s1M1fyySXF	M.f(Swift.RangeExpression) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySYF	M.f(Swift.RawRepresentable) -> ()	decline	protocol_context	
+A-subst-type	$s1M1fyySZF	M.f(Swift.SignedInteger) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySa_pF	$s1M1fyySa_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyySb_pF	$s1M1fyySb_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyySc_pF	$s1M1fyySc_pF	decline	unknown_substitution	
+A-subst-proto	$s1M1fyySd_pF	$s1M1fyySd_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyySe_pF	M.f(Swift.Decodable) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySf_pF	$s1M1fyySf_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyySg_pF	$s1M1fyySg_pF	decline	invalid_grammar	
+A-subst-proto	$s1M1fyySh_pF	$s1M1fyySh_pF	decline	unknown_substitution	
+A-subst-proto	$s1M1fyySi_pF	$s1M1fyySi_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyySj_pF	M.f(Swift.Numeric) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySk_pF	M.f(Swift.RandomAccessCollection) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySl_pF	M.f(Swift.Collection) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySm_pF	M.f(Swift.RangeReplaceableCollection) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySn_pF	$s1M1fyySn_pF	decline	unknown_substitution	
+A-subst-proto	$s1M1fyySo_pF	$s1M1fyySo_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyySp_pF	$s1M1fyySp_pF	decline	unknown_substitution	
+A-subst-proto	$s1M1fyySq_pF	$s1M1fyySq_pF	decline	unknown_substitution	
+A-subst-proto	$s1M1fyySr_pF	$s1M1fyySr_pF	decline	unknown_substitution	
+A-subst-proto	$s1M1fyySs_pF	$s1M1fyySs_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyySt_pF	M.f(Swift.IteratorProtocol) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySu_pF	$s1M1fyySu_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyySv_pF	$s1M1fyySv_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyySw_pF	$s1M1fyySw_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyySx_pF	M.f(Swift.Strideable) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySy_pF	M.f(Swift.StringProtocol) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySz_pF	M.f(Swift.BinaryInteger) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySA_pF	$s1M1fyySA_pF	decline	unknown_substitution	
+A-subst-proto	$s1M1fyySB_pF	M.f(Swift.BinaryFloatingPoint) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySC_pF	$s1M1fyySC_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyySD_pF	$s1M1fyySD_pF	decline	unknown_substitution	
+A-subst-proto	$s1M1fyySE_pF	M.f(Swift.Encodable) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySF_pF	M.f(Swift.FloatingPoint) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySG_pF	M.f(Swift.RandomNumberGenerator) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySH_pF	M.f(Swift.Hashable) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySI_pF	$s1M1fyySI_pF	decline	unknown_substitution	
+A-subst-proto	$s1M1fyySJ_pF	$s1M1fyySJ_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyySK_pF	M.f(Swift.BidirectionalCollection) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySL_pF	M.f(Swift.Comparable) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySM_pF	M.f(Swift.MutableCollection) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySN_pF	$s1M1fyySN_pF	decline	unknown_substitution	
+A-subst-proto	$s1M1fyySO_pF	$s1M1fyySO_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyySP_pF	$s1M1fyySP_pF	decline	unknown_substitution	
+A-subst-proto	$s1M1fyySQ_pF	M.f(Swift.Equatable) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySR_pF	$s1M1fyySR_pF	decline	unknown_substitution	
+A-subst-proto	$s1M1fyySS_pF	$s1M1fyySS_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyyST_pF	M.f(Swift.Sequence) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySU_pF	M.f(Swift.UnsignedInteger) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySV_pF	$s1M1fyySV_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyySW_pF	$s1M1fyySW_pF	decline	unsupported_production	
+A-subst-proto	$s1M1fyySX_pF	M.f(Swift.RangeExpression) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySY_pF	M.f(Swift.RawRepresentable) -> ()	decline	protocol_context	
+A-subst-proto	$s1M1fyySZ_pF	M.f(Swift.SignedInteger) -> ()	decline	protocol_context	
+A-subst-Sc	$s1M1fyyScaF	$s1M1fyyScaF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScbF	$s1M1fyyScbF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyySccF	M.f(Swift.UnsafeContinuation) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScdF	$s1M1fyyScdF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyySceF	M.f(Swift.UnownedSerialExecutor) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScfF	M.f(Swift.SerialExecutor) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScgF	M.f(Swift.ThrowingTaskGroup) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyySchF	M.f(Swift.TaskExecutor) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyySciF	M.f(Swift.AsyncSequence) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScjF	$s1M1fyyScjF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyySckF	$s1M1fyySckF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyySclF	$s1M1fyySclF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScmF	$s1M1fyyScmF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScnF	$s1M1fyyScnF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScoF	$s1M1fyyScoF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScpF	$s1M1fyyScpF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScqF	$s1M1fyyScqF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScrF	$s1M1fyyScrF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScsF	M.f(Swift.AsyncThrowingStream) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyySctF	M.f(Swift.UnsafeCurrentTask) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScuF	$s1M1fyyScuF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScvF	$s1M1fyyScvF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScwF	$s1M1fyyScwF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScxF	$s1M1fyyScxF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScyF	$s1M1fyyScyF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyySczF	$s1M1fyySczF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScAF	M.f(Swift.Actor) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScBF	$s1M1fyyScBF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScCF	M.f(Swift.CheckedContinuation) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScDF	$s1M1fyyScDF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScEF	M.f(Swift.CancellationError) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScFF	M.f(Swift.Executor) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScGF	M.f(Swift.TaskGroup) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScHF	$s1M1fyyScHF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScIF	M.f(Swift.AsyncIteratorProtocol) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScJF	M.f(Swift.UnownedJob) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScKF	$s1M1fyyScKF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScLF	$s1M1fyyScLF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScMF	M.f(Swift.MainActor) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScNF	$s1M1fyyScNF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScOF	$s1M1fyyScOF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScPF	M.f(Swift.TaskPriority) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScQF	$s1M1fyyScQF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScRF	$s1M1fyyScRF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScSF	M.f(Swift.AsyncStream) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScTF	M.f(Swift.Task) -> ()	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScUF	$s1M1fyyScUF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScVF	$s1M1fyyScVF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScWF	$s1M1fyyScWF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScXF	$s1M1fyyScXF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScYF	$s1M1fyyScYF	decline	unknown_substitution	
+A-subst-Sc	$s1M1fyyScZF	$s1M1fyyScZF	decline	unknown_substitution	
+A-module	$ss6HasherVMa	type metadata accessor for Swift.Hasher	admit		false
+A-module	$s1M3FooVMa	type metadata accessor for M.Foo	admit		false
+A-module	$sSo8NSObjectCMa	type metadata accessor for __C.NSObject	admit		false
+A-module	$sSC4FlagVMa	type metadata accessor for __C_Synthesized.Flag	admit		false
+A-module	$sSo20NSDataReadingOptionsVMa	type metadata accessor for __C.NSDataReadingOptions	admit		false
+A-module	$s3Foo3BarOMa	type metadata accessor for Foo.Bar	admit		false
+A-module	$s3Foo3BarCMa	type metadata accessor for Foo.Bar	admit		false
+A-module	$s3Foo3BarPMa	type metadata accessor for Foo.Bar	decline	unsupported_production	
+A-module	$s3Foo3BarP	Foo.Bar	decline	invalid_grammar	
+A-module	$s3Foo3BarV3BazVMa	type metadata accessor for Foo.Bar.Baz	admit		false
+A-module	$s3Foo3BarV3BazOMa	type metadata accessor for Foo.Bar.Baz	admit		false
+A-module	$s3Foo3BarVyxGMa	type metadata accessor for Foo.Bar<A>	decline	generic_requirements	
+A-module	$s3Foo3BarVMa0	$s3Foo3BarVMa0	decline	unsupported_production	
+A-module	$s3Foo3BarVMn	nominal type descriptor for Foo.Bar	decline	unsupported_production	
+A-module	$s3Foo3BarVN	type metadata for Foo.Bar	decline	unsupported_production	
+A-module	$s3Foo3BarVMaTA	partial apply forwarder for type metadata accessor for Foo.Bar	decline	unsupported_production	
+A-module	$s3Foo3BarVMb	canonical specialized generic type metadata accessor for Foo.Bar	decline	unsupported_production	
+A-module	$sSiMa	type metadata accessor for Swift.Int	decline	unsupported_production	
+A-module	$sSSMa	type metadata accessor for Swift.String	decline	unsupported_production	
+A-module	$sSaySiGMa	type metadata accessor for [Swift.Int]	decline	unsupported_production	
+A-module	$sSS10FoundationE8EncodingVMa	type metadata accessor for (extension in Foundation):Swift.String.Encoding	admit		false
+A-module	$sSy10FoundationE8EncodingVMa	type metadata accessor for (extension in Foundation):Swift.StringProtocol.Encoding	decline	protocol_context	
+A-module	$s3Foo3BarV3BazE3QuxVMa	type metadata accessor for (extension in Baz):Foo.Bar.Qux	admit		false
+A-module	$s3Foo3BarVAAE3QuxVMa	type metadata accessor for (extension in Foo):Foo.Bar.Qux	admit		false
+A-module	$s3Foo3BarVAAE3QuxVABMa	$s3Foo3BarVAAE3QuxVABMa	decline	invalid_grammar	
+A-module	$sSS1ME3FooV1fyyAAF	$sSS1ME3FooV1fyyAAF	decline	invalid_grammar	
+A-module	$sSS1ME3FooV1fyyABF	$sSS1ME3FooV1fyyABF	decline	invalid_grammar	
+A-module	$sSS1ME3FooV1fyyACF	(extension in M):Swift.String.Foo.f((extension in M):Swift.String.Foo) -> ()	admit		false
+A-module	$sSS1ME3FooV1fyyADF	$sSS1ME3FooV1fyyADF	decline	invalid_grammar	
+A-module	$sSo3FooV1fyyAAF	$sSo3FooV1fyyAAF	decline	invalid_grammar	
+A-module	$sSo3FooV1fyyABF	__C.Foo.f(__C.Foo) -> ()	admit		false
+A-module	$sSo3FooV1fyyACF	$sSo3FooV1fyyACF	decline	invalid_grammar	
+A-module	$ss3FooV1fyyAAF	$ss3FooV1fyyAAF	decline	invalid_grammar	
+A-module	$ss3FooV1fyyABF	Swift.Foo.f(Swift.Foo) -> ()	admit		false
+A-module	$ss3FooV1fyyACF	$ss3FooV1fyyACF	decline	invalid_grammar	
+A-module	$s1M1fyySiSgF	M.f(Swift.Int?) -> ()	admit		false
+A-module	$s1M1fyySiSgABF	$s1M1fyySiSgABF	decline	invalid_grammar	
+A-module	$s1M1fyySiSgACF	$s1M1fyySiSgACF	decline	invalid_grammar	
+A-module	$s1M1fyySaySiGF	M.f([Swift.Int]) -> ()	admit		false
+A-module	$s1M1fyySaySiGACF	$s1M1fyySaySiGACF	decline	invalid_grammar	
+A-module	$s1M1fyySiACF	$s1M1fyySiACF	decline	unknown_substitution	
+A-module	$s1M3FooP	M.Foo	decline	invalid_grammar	
+A-module	$s1M3FooPAAE1fyyF	(extension in M):M.Foo.f() -> ()	decline	protocol_context	
+A-module	$s1M3FooPAAE1fyyABF	$s1M3FooPAAE1fyyABF	decline	protocol_context	
+A-module	$s1M3FooPAAE1fyyACF	(extension in M):M.Foo.f(M.Foo) -> ()	decline	protocol_context	
+A-module	$s1M3FooPAAE1fyyADF	$s1M3FooPAAE1fyyADF	decline	protocol_context	
+A-module	$s1M3FooP1fyyF	M.Foo.f() -> ()	decline	protocol_context	
+A-module	$s1M3FooP1fyyFTj	dispatch thunk of M.Foo.f() -> ()	decline	thunk_or_specialization	
+A-module	$s1M3FooP1fyyFTq	method descriptor for M.Foo.f() -> ()	decline	thunk_or_specialization	
+A-module	$s1M3FooC1fyyFTj	dispatch thunk of M.Foo.f() -> ()	decline	thunk_or_specialization	
+A-module	$s1M3FooC1fyyF	M.Foo.f() -> ()	decline	unsupported_production	
+A-module	$s1M3FooC1fyyFZ	static M.Foo.f() -> ()	decline	unsupported_production	
+A-module	$s1M01_A0VMa	$s1M01_A0VMa	decline	unknown_substitution	
+A-module	$s3Foo04_BarAVMa	$s3Foo04_BarAVMa	decline	invalid_grammar	
+A-module	$s3Foo04_BarAV1fyyF	$s3Foo04_BarAV1fyyF	decline	invalid_grammar	
+A-module	$s3Foo04_BarA0V1fyyF	Foo._BarFoo.f() -> ()	admit		false
+A-module	$s3Foo0a4_Bar0VMa	type metadata accessor for Foo.Foo_Bar	admit		false
+A-module	$s3Foo0a4_BarVMa	$s3Foo0a4_BarVMa	decline	unknown_substitution	
+A-module	$s3Foo00BarVMa	$s3Foo00BarVMa	decline	unicode_identifier	
+A-module	$s6FooBar0bAVMa	$s6FooBar0bAVMa	decline	invalid_grammar	
+A-module	$s3Foo3BarVSgMa	type metadata accessor for Foo.Bar?	decline	unsupported_production	
+A-module	$s3Foo3BarV_MaXX	$s3Foo3BarV_MaXX	decline	unsupported_production	
+A-module	$s3Foo3BarXVMa	$s3Foo3BarXVMa	decline	unsupported_production	
+A-module	$s03FooVMa	$s03FooVMa	decline	unknown_substitution	
+A-module	$s3FooSi3BarVMa	Footype metadata accessor for Swift.Int.Bar	decline	invalid_grammar	
+A-module	$sSi3FooVMa	type metadata accessor for Swift.Int.Foo	admit		false
+A-module	$sSi3FooEMa	$sSi3FooEMa	decline	unsupported_production	
+A-module	$sSi3FooE3BarVMa	type metadata accessor for (extension in Foo):Swift.Int.Bar	admit		false
+A-subst	$s1M1fyySiSg_ABtF	$s1M1fyySiSg_ABtF	decline	invalid_grammar	
+A-subst	$s1M1fyySiSg_ACtF	M.f(Swift.Int?, Swift.Int?) -> ()	admit		false
+A-subst	$s1M1fyySaySiG_ACtF	M.f([Swift.Int], [Swift.Int]) -> ()	admit		false
+A-subst	$s1M1fyySi_ACtF	$s1M1fyySi_ACtF	decline	unknown_substitution	
+A-subst	$s1M1fyySS_ACtF	$s1M1fyySS_ACtF	decline	unknown_substitution	
+A-subst	$s1M1fyyAAF	$s1M1fyyAAF	decline	invalid_grammar	
+A-subst	$s1M3FooV1fyyAAF	$s1M3FooV1fyyAAF	decline	invalid_grammar	
+A-subst	$s1M3FooV1fyyACF	M.Foo.f(M.Foo) -> ()	admit		false
+A-subst	$s1M3FooV1fyyA0_F	$s1M3FooV1fyyA0_F	decline	unknown_substitution	
+A-subst	$s1M3FooV1fyyA1_F	$s1M3FooV1fyyA1_F	decline	unknown_substitution	
+A-subst	$s1M3FooV1fyyA_F	$s1M3FooV1fyyA_F	decline	unknown_substitution	
+A-subst	$s1M3FooV1fyyAcF	$s1M3FooV1fyyAcF	decline	unknown_substitution	
+A-subst	$s1M3FooV1fyyAcACtF	$s1M3FooV1fyyAcACtF	decline	invalid_grammar	
+A-subst	$s1M3FooV1fyyAC_ACtF	M.Foo.f(M.Foo, M.Foo) -> ()	admit		false
+A-subst	$s1M3FooV1fyyA2CtF	$s1M3FooV1fyyA2CtF	decline	invalid_grammar	
+A-subst	$s1M3FooV1fyyAC_A2CtF	M.Foo.f(M.Foo, M.Foo, M.Foo) -> ()	admit		false
+A-subst	$s1M3FooV1fyyS2i_SitF	$s1M3FooV1fyyS2i_SitF	decline	invalid_grammar	
+A-subst	$s1M3FooV1fyySi_S2itF	M.Foo.f(Swift.Int, Swift.Int, Swift.Int) -> ()	admit		false
+A-subst	$s1M3FooV1fyyS3itF	$s1M3FooV1fyyS3itF	decline	invalid_grammar	
+D-free	$s1M1fyyyF	M.f() -> ()	decline	invalid_grammar	
+D-free	$s1M1fyyF	M.f() -> ()	admit		false
+D-free	$s1M1fyyKF	M.f() throws -> ()	admit		true
+D-free	$s1M1fyyKKF	$s1M1fyyKKF	decline	invalid_grammar	
+D-free	$s1M1fyyYaKF	M.f() async throws -> ()	decline	async_context	
+D-free	$s1M1fyyKYaF	$s1M1fyyKYaF	decline	invalid_grammar	
+D-free	$s1M1fyyYKF	$s1M1fyyYKF	decline	typed_throws	
+D-free	$s1M1fyys5ErrorPYKF	M.f() throws(Swift.Error) -> ()	decline	typed_throws	
+D-free	$s1M1fyyF1gL_yyF	g #1 () -> () in M.f() -> ()	decline	unconsumed_suffix	
+D-free	$s1M1fyyFyycfU_	closure #1 () -> () in M.f() -> ()	decline	unconsumed_suffix	
+D-free	$s1M1fyyFZ	static M.f() -> ()	decline	invalid_grammar	
+D-free	$s1M1fyySidF	$s1M1fyySidF	decline	invalid_grammar	
+D-free	$s1M1fyySid_tF	M.f(Swift.Int...) -> ()	admit		false
+D-free	$s1M1fyySi_SidtF	M.f(Swift.Int, Swift.Int...) -> ()	admit		false
+D-free	$s1M1fyySid_SidtF	M.f(Swift.Int..., Swift.Int...) -> ()	admit		false
+D-free	$s1M1fyyypF	M.f(Any) -> ()	admit		false
+D-free	$s1M1fyypyF	M.f() -> Any	decline	invalid_grammar	
+D-free	$s1M1fyyyXlF	M.f(Swift.AnyObject) -> ()	decline	unsupported_production	
+D-free	$s1M1fyySiSgF	M.f(Swift.Int?) -> ()	admit		false
+D-free	$s1M1fySiSgyF	M.f() -> Swift.Int?	decline	invalid_grammar	
+D-free	$s1M1fyySShF	M.f(__shared Swift.String) -> ()	admit		false
+D-free	$s1M1fySShyF	M.f() -> __shared Swift.String	decline	invalid_grammar	
+D-free	$s1M1fyySSh_SStF	M.f(__shared Swift.String, Swift.String) -> ()	admit		false
+D-free	$s1M1fyySS_SShtF	M.f(Swift.String, __shared Swift.String) -> ()	admit		false
+D-free	$s1M1fyySShd_tF	M.f(__shared Swift.String...) -> ()	admit		false
+D-free	$s1M1fyySSdh_tF	$s1M1fyySSdh_tF	decline	invalid_grammar	
+D-free	$s1M1fyySSnF	M.f(__owned Swift.String) -> ()	decline	unsupported_production	
+D-free	$s1M1fyySizF	M.f(inout Swift.Int) -> ()	decline	unsupported_production	
+D-free	$s1M1fyySiYiF	M.f(isolated Swift.Int) -> ()	decline	async_context	
+D-free	$s1M1fyySSYuF	M.f(sending Swift.String) -> ()	decline	async_context	
+D-free	$s1M1fyySiYtF	M.f(_const Swift.Int) -> ()	decline	unsupported_production	
+D-free	$s1M1fyyYbF	M.f@Sendable () -> ()	decline	async_context	
+D-free	$s1M1fyyYcF	$s1M1fyyYcF	decline	async_context	
+D-free	$s1M1fyyScMYcF	M.f@Swift.MainActor () -> ()	decline	unknown_substitution	
+D-free	$s1M1fyyYAF	M.f@isolated(any) () -> ()	decline	async_context	
+D-free	$s1M1fyyYCF	M.fnonisolated(nonsending) () -> ()	decline	async_context	
+D-free	$s1M1fyyYTF	M.f() -> sending ()	decline	async_context	
+D-free	$s1M1fyyKXEF	$s1M1fyyKXEF	decline	invalid_grammar	
+D-free	$s1M1fyyyyKXEF	M.f(() throws -> ()) -> ()	decline	invalid_grammar	
+D-free	$s1M1fyyyycF	M.f(() -> ()) -> ()	decline	closure_type	
+D-free	$s1M1fyyyyXfF	M.f(@convention(thin) () -> ()) -> ()	decline	closure_type	
+D-free	$s1M1fyyyyXBF	M.f(@convention(block) () -> ()) -> ()	decline	closure_type	
+D-free	$s1M1fyyyyXCF	M.f(@convention(c) () -> ()) -> ()	decline	closure_type	
+D-free	$s1M1fyyxlF	M.f<A>(A) -> ()	decline	generic_requirements	
+D-free	$s1M1fyyQrF	M.f(some) -> ()	decline	generic_requirements	
+D-free	$s1M1fQryF	M.f() -> some	decline	generic_requirements	
+D-free	$s1M1fyyFTj	dispatch thunk of M.f() -> ()	decline	thunk_or_specialization	
+D-free	$s1M1fyyFTq	method descriptor for M.f() -> ()	decline	thunk_or_specialization	
+D-free	$s1M1fyyFTA	partial apply forwarder for M.f() -> ()	decline	thunk_or_specialization	
+D-free	$s1M1fyyFTm	merged M.f() -> ()	decline	thunk_or_specialization	
+D-free	$s1M1fyyFTf4n_n	function signature specialization <> of M.f() -> ()	decline	thunk_or_specialization	
+D-free	$s1M1fyySiFTo	@objc M.f(Swift.Int) -> ()	decline	thunk_or_specialization	
+D-free	$s1M1fyyFTR	M.f() -> ()reabstraction thunk helper from <null node pointer> to <null node pointer>	decline	thunk_or_specialization	
+D-free	$s1M1fyyFTX	dynamically replaceable variable for M.f() -> ()	decline	thunk_or_specialization	
+D-free	$s1M1fyyFTu	async function pointer to M.f() -> ()	decline	thunk_or_specialization	
+D-free	$s1M1fyyF0	$s1M1fyyF0	decline	unconsumed_suffix	
+D-free	$s1M1fyySbSi_SitF	$s1M1fyySbSi_SitF	decline	invalid_grammar	
+D-free	$s1M1fyS2i_SitF	M.f(Swift.Int, Swift.Int) -> Swift.Int	admit		false
+D-free	$s1M1f1aySi_tF	M.f(a: Swift.Int) -> ()	admit		false
+D-free	$s1M1f1ayySiF	Mf.a(Swift.Int) -> ()	decline	invalid_grammar	
+D-free	$s1M1f1a1bySi_SitF	M.f(a: Swift.Int, b: Swift.Int) -> ()	admit		false
+D-free	$s1M1f1a1bySiF	Mf.a(Swift.Int) -> ()	decline	invalid_grammar	
+D-free	$s1M1f_ySi_tF	M.f(Swift.Int) -> ()	decline	invalid_grammar	
+D-free	$s1M1fSaySSGyF	M.f() -> [Swift.String]	admit		false
+D-free	$s1M1fyySaySSGF	M.f([Swift.String]) -> ()	admit		false
+D-free	$s1M1fyySDySSSiGF	M.f([Swift.String : Swift.Int]) -> ()	decline	unknown_substitution	
+D-free	$s1M1fyySayxGF	M.f([A]) -> ()	decline	generic_requirements	
+D-free	$s1M1fyySiSgSgF	M.f(Swift.Int??) -> ()	admit		false
+D-free	$s1M1fyySiXSqF	M.f(Swift.Int?) -> ()	decline	unsupported_production	
+D-free	$s1M1fyySiXSaF	M.f([Swift.Int]) -> ()	decline	unsupported_production	
+D-free	$s1M1fyySimF	M.f(Swift.Int.Type) -> ()	decline	unsupported_production	
+D-free	$s1M1fyySiXMtF	M.f(@thin Swift.Int.Type) -> ()	decline	unsupported_production	
+D-free	$s1M1fyyypmF	M.f(Any.Protocol) -> ()	decline	unsupported_production	
+D-free	$s1M1fyys6HasherVzF	M.f(inout Swift.Hasher) -> ()	decline	unsupported_production	
+D-free	$s1M1fyys5Int64VF	M.f(Swift.Int64) -> ()	admit		false
+D-free	$s1M1fyys6HasherVF	M.f(Swift.Hasher) -> ()	admit		false
+D-free	$s1M1fyySo8NSStringCF	M.f(__C.NSString) -> ()	admit		false
+D-free	$s1M1fyySo8NSStringCSgF	M.f(__C.NSString?) -> ()	admit		false
+D-free	$s1M1fyyBoF	M.f(Builtin.NativeObject) -> ()	decline	unsupported_production	
+D-free	$s1M1fyySiSiF	$s1M1fyySiSiF	decline	invalid_grammar	
+D-free	$s1M1fySiF	$s1M1fySiF	decline	invalid_grammar	
+D-free	$sSi1ME1fyyF	(extension in M):Swift.Int.f() -> ()	admit		false
+D-free	$s1M1fyyKcF	$s1M1fyyKcF	decline	closure_type	
+C-init	$s1M1SVACycfC	M.S.init() -> M.S	admit		false
+C-init	$s1M1SVACycfc	M.S.init() -> M.S	admit		false
+C-init	$s1M1SVACyKcfC	M.S.init() throws -> M.S	admit		true
+C-init	$s1M1SVACyYacfC	M.S.init() async -> M.S	decline	async_context	
+C-init	$s1M1SVACyYaKcfC	M.S.init() async throws -> M.S	decline	async_context	
+C-init	$s1M1SVACyKYacfC	$s1M1SVACyKYacfC	decline	invalid_grammar	
+C-init	$s1M1SV1xACSi_tcfC	M.S.init(x: Swift.Int) -> M.S	admit		false
+C-init	$s1M1SV1xACSi_tKcfC	M.S.init(x: Swift.Int) throws -> M.S	admit		true
+C-init	$s1M1SV1xACSiKcfC	M.S.init(Swift.Int) throws -> M.S	decline	invalid_grammar	
+C-init	$s1M1SV1xACSicfC	M.S.init(Swift.Int) -> M.S	decline	invalid_grammar	
+C-init	$s1M1SVyACSicfC	M.S.init(Swift.Int) -> M.S	admit		false
+C-init	$s1M1SV1xACSSh_tcfC	M.S.init(x: __shared Swift.String) -> M.S	admit		false
+C-init	$s1M1SV1xACSi_tcfCTj	dispatch thunk of M.S.init(x: Swift.Int) -> M.S	decline	closure_type	
+C-init	$s1M1SV1xACSi_tcfCTq	method descriptor for M.S.init(x: Swift.Int) -> M.S	decline	closure_type	
+C-init	$s1M1SV1xACSi_tcfc0	$s1M1SV1xACSi_tcfc0	decline	closure_type	
+C-init	$s1M1SV1xACSi_tcfD	$s1M1SV1xACSi_tcfD	decline	closure_type	
+C-init	$s1M1SV1xACSi_tcfE	$s1M1SV1xACSi_tcfE	decline	closure_type	
+C-init	$s1M1SVACycfCZ	static M.S.init() -> M.S	decline	closure_type	
+C-init	$s1M1SVACycF	$s1M1SVACycF	decline	closure_type	
+C-init	$s1M1SVACyF	$s1M1SVACyF	decline	invalid_grammar	
+C-init	$s1M1SVACyfC	$s1M1SVACyfC	decline	unsupported_production	
+C-init	$s1M1SVACycfc_	M.S.init() -> M.S first-element-marker	decline	closure_type	
+C-init	$s1M1SV1xACSi_tcfC1	$s1M1SV1xACSi_tcfC1	decline	closure_type	
+C-init	$s1M1SVACSgycfC	M.S.init() -> M.S?	admit		false
+C-init	$s1M1SVACxcluycfC	M.S.init() -> <A>(A) -> M.S	decline	generic_requirements	
+C-init	$s1M1SV1gACx_tclufC	M.S.init<A>(g: A) -> M.S	decline	generic_requirements	
+C-init	$s1MACycfC	$s1MACycfC	decline	unknown_substitution	
+C-init	$s1M1SV1xACSi_tAA1EVYKcfC	M.S.init(x: Swift.Int) throws(M.E) -> M.S	decline	typed_throws	
+C-init	$s1M1SVSiycfC	M.S.init() -> Swift.Int	decline	invalid_grammar	
+C-init	$s1M1SVACycfCTf4n_g	function signature specialization <Return = Owned To Guaranteed> of M.S.init() -> M.S	decline	closure_type	
+C-init	$s1M1SVACyYbcfC	M.S.init@Sendable () -> M.S	decline	async_context	
+E-meth	$s1M1SV1myyF	M.S.m() -> ()	admit		false
+E-meth	$s1M1SV1myyFZ	static M.S.m() -> ()	admit		false
+E-meth	$s1M1SV1myyKF	M.S.m() throws -> ()	admit		true
+E-meth	$s1M1SV1myyKFZ	static M.S.m() throws -> ()	admit		true
+E-meth	$s1M1SV1myyFZZ	static static M.S.m() -> ()	decline	unconsumed_suffix	
+E-meth	$s1M1SV1myyZF	$s1M1SV1myyZF	decline	unsupported_production	
+E-meth	$s1M1SV1myyFTj	dispatch thunk of M.S.m() -> ()	decline	thunk_or_specialization	
+E-meth	$s1M1SV1mSiyF	M.S.m() -> Swift.Int	admit		false
+E-meth	$s1M1SV1myyACzF	M.S.m(inout M.S) -> ()	decline	unsupported_production	
+E-meth	$s1M1SV1mSbAC_ACtF	$s1M1SV1mSbAC_ACtF	decline	invalid_grammar	
+E-meth	$s1M1SV1M1SV1myyF	M.SM.S.m() -> ()	decline	invalid_grammar	
+E-meth	$s1M1SV1TV1myyF	M.S.T.m() -> ()	admit		false
+E-meth	$s1M1OO1myyF	M.O.m() -> ()	decline	unsupported_production	
+E-meth	$s1M1CC1myyF	M.C.m() -> ()	decline	unsupported_production	
+E-meth	$sSS1ME1myyF	(extension in M):Swift.String.m() -> ()	admit		false
+E-meth	$sSS1ME1myyFZ	static (extension in M):Swift.String.m() -> ()	admit		false
+E-meth	$sSa1ME1myyF	(extension in M):Swift.Array.m() -> ()	decline	invalid_grammar	
+E-meth	$s1M1SV1myyxlF	M.S.m<A>(A) -> ()	decline	generic_requirements	
+E-meth	$s1M1SV1myyqd__luF	M.S.m(<A> A1) -> ()	decline	generic_requirements	
+E-meth	$s1M1PPAAE1myyF	(extension in M):M.P.m() -> ()	decline	protocol_context	
+E-meth	$s1M1PP1myyF	M.P.m() -> ()	decline	protocol_context	
+E-meth	$s1M1SV1mACyF	M.S.m() -> M.S	admit		false
+E-meth	$s1M1SV4hash4intoys6HasherVz_tF	M.S.hash(into: inout Swift.Hasher) -> ()	decline	unsupported_production	
+FIX	$s10Foundation11JSONDecoderC6decode_4fromxxm_AA4DataVtKSeRzlFTj	dispatch thunk of Foundation.JSONDecoder.decode<A where A: Swift.Decodable>(_: A.Type, from: Foundation.Data) throws -> A	decline	generic_requirements	
+FIX	$s10Foundation11JSONDecoderCACycfc	Foundation.JSONDecoder.init() -> Foundation.JSONDecoder	admit		false
+FIX	$s10Foundation11JSONDecoderCMa	type metadata accessor for Foundation.JSONDecoder	admit		false
+FIX	$s10Foundation3URLV15fileURLWithPathACSSh_tcfC	Foundation.URL.init(fileURLWithPath: __shared Swift.String) -> Foundation.URL	admit		false
+FIX	$s10Foundation3URLVMa	type metadata accessor for Foundation.URL	admit		false
+FIX	$s10Foundation4DataV10contentsOf7optionsAcA3URLVh_So20NSDataReadingOptionsVtKcfC	Foundation.Data.init(contentsOf: __shared Foundation.URL, options: __C.NSDataReadingOptions) throws -> Foundation.Data	admit		true
+FIX	$sSS10FoundationE8EncodingV4utf8ACvgZ	static (extension in Foundation):Swift.String.Encoding.utf8.getter : (extension in Foundation):Swift.String.Encoding	decline	unsupported_production	
+FIX	$sSS10FoundationE8EncodingVMa	type metadata accessor for (extension in Foundation):Swift.String.Encoding	admit		false
+FIX	$sSy10FoundationE5write2to10atomically8encodingyAA3URLV_SbSSAAE8EncodingVtKF	(extension in Foundation):Swift.StringProtocol.write(to: Foundation.URL, atomically: Swift.Bool, encoding: (extension in Foundation):Swift.String.Encoding) throws -> ()	decline	protocol_context	
+FIX	$ss11CommandLineO9argumentsSaySSGvgZ	static Swift.CommandLine.arguments.getter : [Swift.String]	decline	unsupported_production	
+FIX	$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF	Swift.KeyedDecodingContainer.decode(_: Swift.Int.Type, forKey: A) throws -> Swift.Int	decline	unsupported_production	
+FIX	$ss27_stringCompareWithSmolCheck__9expectingSbs11_StringGutsV_ADs01_G16ComparisonResultOtF	Swift._stringCompareWithSmolCheck(_: Swift._StringGuts, _: Swift._StringGuts, expecting: Swift._StringComparisonResult) -> Swift.Bool	admit		false
+FIX	$ss5print_9separator10terminatoryypd_S2StF	Swift.print(_: Any..., separator: Swift.String, terminator: Swift.String) -> ()	admit		false
+FIX	$ss6HasherV5_seedABSi_tcfC	Swift.Hasher.init(_seed: Swift.Int) -> Swift.Hasher	admit		false
+FIX	$ss6HasherV8_combineyySuF	Swift.Hasher._combine(Swift.UInt) -> ()	admit		false
+FIX	$ss6HasherV9_finalizeSiyF	Swift.Hasher._finalize() -> Swift.Int	admit		false
+FIX	$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj	dispatch thunk of Swift.Decoder.container<A where A1: Swift.CodingKey>(keyedBy: A1.Type) throws -> Swift.KeyedDecodingContainer<A1>	decline	generic_requirements	
+FIX	$ss9CodingKeyPsE11descriptionSSvg	(extension in Swift):Swift.CodingKey.description.getter : Swift.String	decline	protocol_context	
+FIX	$ss9CodingKeyPsE16debugDescriptionSSvg	(extension in Swift):Swift.CodingKey.debugDescription.getter : Swift.String	decline	protocol_context	
+A-subst	$s1M1fyyyp_ACtF	$s1M1fyyyp_ACtF	decline	unknown_substitution	
+A-subst	$s1M1fyySi_Sit_ACtF	$s1M1fyySi_Sit_ACtF	decline	unknown_substitution	
+A-subst	$s1M1fyySSh_ACtF	$s1M1fyySSh_ACtF	decline	unknown_substitution	
+A-subst	$s1M1fyySid_ACtF	$s1M1fyySid_ACtF	decline	unknown_substitution	
+A-subst	$s1M1fyySiSg_ADtF	$s1M1fyySiSg_ADtF	decline	unknown_substitution	
+A-subst	$s1M1f1a1bySi_ABtF	$s1M1f1a1bySi_ABtF	decline	invalid_grammar	
+A-subst	$s1M1f1aAB_ySitF	$s1M1f1aAB_ySitF	decline	invalid_grammar	
+A-subst	$s1M1f1aACySi_SitF	M.f(a: Swift.Int, a: Swift.Int) -> ()	admit		false
+A-subst	$s1M1fAAySiF	M.f(Swift.Int) -> ()	decline	invalid_grammar	
+A-subst	$sSS10FoundationE8EncodingVMaMa	$sSS10FoundationE8EncodingVMaMa	decline	unsupported_production	
+A-subst	$s10Foundation3URLVAAE1xVMa	type metadata accessor for (extension in Foundation):Foundation.URL.x	admit		false
+A-subst	$s10Foundation3URLVAAEAAEMa	$s10Foundation3URLVAAEAAEMa	decline	invalid_grammar	
+A-subst	$sSS10FoundationE8EncodingV4utf8ACvg	(extension in Foundation):Swift.String.Encoding.utf8.getter : (extension in Foundation):Swift.String.Encoding	decline	unsupported_production	
+A-subst	$s1M1SVMa	type metadata accessor for M.S	admit		false
+A-subst	$s1M1SVACMa	M.Stype metadata accessor for M.S	decline	invalid_grammar	
+B-getter	$s1M1SV1xSivg	M.S.x.getter : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1SV1xSivgZ	static M.S.x.getter : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1SV1xSivgTj	dispatch thunk of M.S.x.getter : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1SV1xSivgKF	$s1M1SV1xSivgKF	decline	unsupported_production	
+B-getter	$s1M1SV1xSiKvg	$s1M1SV1xSiKvg	decline	invalid_grammar	
+B-getter	$s1M1SV1xSiYavg	$s1M1SV1xSiYavg	decline	async_context	
+B-getter	$s1M1SV1xSivs	M.S.x.setter : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1SV1xSivM	M.S.x.modify : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1SV1xSivr	M.S.x.read : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1SV1xSivx	M.S.x.yielding_mutate : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1SV1xSivy	M.S.x.yielding_borrow : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1SV1xSivlu	M.S.x.unsafeAddressor : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1SV1xSivau	M.S.x.unsafeMutableAddressor : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1SV1xSivw	M.S.x.willset : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1SV1xSivW	M.S.x.didset : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1SV1xSivi	M.S.x.init : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1SV1xSivpfi	variable initialization expression of M.S.x : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1SVyS2icig	M.S.subscript.getter : (Swift.Int) -> Swift.Int	decline	closure_type	
+B-getter	$s1M1SVyS2iKcig	M.S.subscript.getter : (Swift.Int) throws -> Swift.Int	decline	closure_type	
+B-getter	$s1M1SVyS2iYacig	M.S.subscript.getter : (Swift.Int) async -> Swift.Int	decline	async_context	
+B-getter	$s1M1SV1xQrvg	M.S.x.getter : some	decline	generic_requirements	
+B-getter	$s1M1SV1xSivgyycfU_	closure #1 () -> () in M.S.x.getter : Swift.Int	decline	unsupported_production	
+B-getter	$s1M9globalGetSivg	M.globalGet.getter : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1PPAAE1xSivg	(extension in M):M.P.x.getter : Swift.Int	decline	protocol_context	
+B-getter	$s1M1PP1xSivgTj	dispatch thunk of M.P.x.getter : Swift.Int	decline	unsupported_production	
+B-getter	$s1M1PP1xSivgTq	method descriptor for M.P.x.getter : Swift.Int	decline	unsupported_production	
+B-spec	$s1M1fyyxlFSi_Tg5	generic specialization <Swift.Int> of M.f<A>(A) -> ()	decline	generic_requirements	
+B-spec	$s1M1fyyxlFSi_TG5	generic not re-abstracted specialization <Swift.Int> of M.f<A>(A) -> ()	decline	generic_requirements	
+B-spec	$s1M1fyyFTf4n_g	function signature specialization <Return = Owned To Guaranteed> of M.f() -> ()	decline	thunk_or_specialization	
+B-spec	$s1M1fyyFTf0_n	function signature specialization <> of M.f() -> ()	decline	thunk_or_specialization	
+B-spec	$s1M1SV1myyFTW	$s1M1SV1myyFTW	decline	thunk_or_specialization	
+B-spec	$s1M1SV1myyFTd	super M.S.m() -> ()	decline	thunk_or_specialization	
+B-spec	$s1M1SV1myyFTD	dynamic M.S.m() -> ()	decline	thunk_or_specialization	
+B-spec	$s1M1SV1myyFTI	dynamically replaceable thunk for M.S.m() -> ()	decline	thunk_or_specialization	
+B-spec	$s1M1SV1myyFTE	distributed thunk M.S.m() -> ()	decline	thunk_or_specialization	
+B-spec	$s1M1SV1myyFTwb	back deployment thunk for M.S.m() -> ()	decline	thunk_or_specialization	
+B-spec	$s1M1SV1myyFTwB	back deployment fallback for M.S.m() -> ()	decline	thunk_or_specialization	
+COMPILED	$s1M10freeAnyObjyyyXlF	M.freeAnyObj(Swift.AnyObject) -> ()	decline	unsupported_production	
+COMPILED	$s1M10globalGetTSivg	M.globalGetT.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M12freeSendableyyyyYbXEF	M.freeSendable(@Sendable () -> ()) -> ()	decline	async_context	
+COMPILED	$s1M1EVACs5ErrorAAWl	lazy protocol witness table accessor for type M.E and conformance M.E : Swift.Error in M	decline	unsupported_production	
+COMPILED	$s1M1EVACycfC	M.E.init() -> M.E	admit		false
+COMPILED	$s1M1EVMa	type metadata accessor for M.E	admit		false
+COMPILED	$s1M1EVs5ErrorAAsADP19_getEmbeddedNSErroryXlSgyFTW	protocol witness for Swift.Error._getEmbeddedNSError() -> Swift.AnyObject? in conformance M.E : Swift.Error in M	decline	unsupported_production	
+COMPILED	$s1M1EVs5ErrorAAsADP5_codeSivgTW	protocol witness for Swift.Error._code.getter : Swift.Int in conformance M.E : Swift.Error in M	decline	unsupported_production	
+COMPILED	$s1M1EVs5ErrorAAsADP7_domainSSvgTW	protocol witness for Swift.Error._domain.getter : Swift.String in conformance M.E : Swift.Error in M	decline	unsupported_production	
+COMPILED	$s1M1EVs5ErrorAAsADP9_userInfoyXlSgvgTW	protocol witness for Swift.Error._userInfo.getter : Swift.AnyObject? in conformance M.E : Swift.Error in M	decline	unsupported_production	
+COMPILED	$s1M1KC1xACSi_tKcfC	M.K.__allocating_init(x: Swift.Int) throws -> M.K	admit		true
+COMPILED	$s1M1KC1xACSi_tKcfc	M.K.init(x: Swift.Int) throws -> M.K	admit		true
+COMPILED	$s1M1KC2cmyyF	M.K.cm() -> ()	decline	unsupported_production	
+COMPILED	$s1M1KC3clsSivgZ	static M.K.cls.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1KC3cmFyyF	M.K.cmF() -> ()	decline	unsupported_production	
+COMPILED	$s1M1KC3staSivgZ	static M.K.sta.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1KC4cGetSivg	M.K.cGet.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1KC5cGetFSivg	M.K.cGetF.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1KCACycfC	M.K.__allocating_init() -> M.K	admit		false
+COMPILED	$s1M1KCACycfc	M.K.init() -> M.K	admit		false
+COMPILED	$s1M1KCMa	type metadata accessor for M.K	admit		false
+COMPILED	$s1M1KCfD	M.K.__deallocating_deinit	decline	unsupported_production	
+COMPILED	$s1M1KCfd	M.K.deinit	decline	unsupported_production	
+COMPILED	$s1M1PPAAE5pextMyyF	(extension in M):M.P.pextM() -> ()	decline	protocol_context	
+COMPILED	$s1M1PPAAE5pextSSivgZ	static (extension in M):M.P.pextS.getter : Swift.Int	decline	protocol_context	
+COMPILED	$s1M1PPAAE6pextMTyyKF	(extension in M):M.P.pextMT() throws -> ()	decline	protocol_context	
+COMPILED	$s1M1PPAAE7pextGetSivg	(extension in M):M.P.pextGet.getter : Swift.Int	decline	protocol_context	
+COMPILED	$s1M1PPAAE8pextGetTSivg	(extension in M):M.P.pextGetT.getter : Swift.Int	decline	protocol_context	
+COMPILED	$s1M1SV14getAsyncThrowsSivg	M.S.getAsyncThrows.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV1aACSi_tYacfC	M.S.init(a: Swift.Int) async -> M.S	decline	async_context	
+COMPILED	$s1M1SV1aS2i_tcig	M.S.subscript.getter : (a: Swift.Int) -> Swift.Int	decline	closure_type	
+COMPILED	$s1M1SV1cACSS_tcfC	M.S.init(c: Swift.String) -> M.S	admit		false
+COMPILED	$s1M1SV1fACSgSi_tcfC	M.S.init(f: Swift.Int) -> M.S?	admit		false
+COMPILED	$s1M1SV1gACx_tclufC	M.S.init<A>(g: A) -> M.S	decline	generic_requirements	
+COMPILED	$s1M1SV1myyF	M.S.m() -> ()	admit		false
+COMPILED	$s1M1SV1oACSSn_tcfC	M.S.init(o: __owned Swift.String) -> M.S	decline	unsupported_production	
+COMPILED	$s1M1SV1rACyyKXE_tKcfC	M.S.init(r: () throws -> ()) throws -> M.S	decline	invalid_grammar	
+COMPILED	$s1M1SV1sACSS_tcfC	M.S.init(s: Swift.String) -> M.S	admit		false
+COMPILED	$s1M1SV1tACSi_tKcfC	M.S.init(t: Swift.Int) throws -> M.S	admit		true
+COMPILED	$s1M1SV1tS2i_tcig	M.S.subscript.getter : (t: Swift.Int) -> Swift.Int	decline	closure_type	
+COMPILED	$s1M1SV1xACSi_tcfC	M.S.init(x: Swift.Int) -> M.S	admit		false
+COMPILED	$s1M1SV2atACSi_tYaKcfC	M.S.init(at: Swift.Int) async throws -> M.S	decline	async_context	
+COMPILED	$s1M1SV2clACyyXE_tcfC	M.S.init(cl: () -> ()) -> M.S	decline	closure_type	
+COMPILED	$s1M1SV2mAyyYaF	M.S.mA() async -> ()	decline	async_context	
+COMPILED	$s1M1SV2mCyyyyXEF	M.S.mC(() -> ()) -> ()	decline	closure_type	
+COMPILED	$s1M1SV2mEyyyycF	M.S.mE(() -> ()) -> ()	decline	closure_type	
+COMPILED	$s1M1SV2mGyyxlF	M.S.mG<A>(A) -> ()	decline	generic_requirements	
+COMPILED	$s1M1SV2mL1a1bSbSi_SStF	M.S.mL(a: Swift.Int, b: Swift.String) -> Swift.Bool	admit		false
+COMPILED	$s1M1SV2mOQryF	M.S.mO() -> some	decline	generic_requirements	
+COMPILED	$s1M1SV2mRyyyyKXEKF	M.S.mR(() throws -> ()) throws -> ()	decline	invalid_grammar	
+COMPILED	$s1M1SV2mTyyKF	M.S.mT() throws -> ()	admit		true
+COMPILED	$s1M1SV2mVyySid_tF	M.S.mV(Swift.Int...) -> ()	admit		false
+COMPILED	$s1M1SV2mmyyF	M.S.mm() -> ()	admit		false
+COMPILED	$s1M1SV2styyFZ	static M.S.st() -> ()	admit		false
+COMPILED	$s1M1SV2tyACSi_tAA1EVYKcfC	M.S.init(ty: Swift.Int) throws(M.E) -> M.S	decline	typed_throws	
+COMPILED	$s1M1SV3mInyySizF	M.S.mIn(inout Swift.Int) -> ()	decline	unsupported_production	
+COMPILED	$s1M1SV3mTyyyAA1EVYKF	M.S.mTy() throws(M.E) -> ()	decline	typed_throws	
+COMPILED	$s1M1SV3mmTyyKF	M.S.mmT() throws -> ()	admit		true
+COMPILED	$s1M1SV3stTyyKFZ	static M.S.stT() throws -> ()	admit		true
+COMPILED	$s1M1SV4addrSivg	M.S.addr.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV4addrSivlu	M.S.addr.unsafeAddressor : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV4extMyyF	M.S.extM() -> ()	admit		false
+COMPILED	$s1M1SV4mAnyyyypF	M.S.mAny(Any) -> ()	admit		false
+COMPILED	$s1M1SV4mArrySaySSGSaySiGF	M.S.mArr([Swift.Int]) -> [Swift.String]	admit		false
+COMPILED	$s1M1SV4mNonyyF	M.S.mNon() -> ()	admit		false
+COMPILED	$s1M1SV4mOptySSSgSiSgF	M.S.mOpt(Swift.Int?) -> Swift.String?	admit		false
+COMPILED	$s1M1SV4mTupyySi_Sit_tF	M.S.mTup((Swift.Int, Swift.Int)) -> ()	decline	unsupported_production	
+COMPILED	$s1M1SV4sLetSivau	M.S.sLet.unsafeMutableAddressor : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV4sLetSivgZ	static M.S.sLet.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV5mAnyVyyypd_tF	M.S.mAnyV(Any...) -> ()	admit		false
+COMPILED	$s1M1SV5mConsyyF	M.S.mCons() -> ()	admit		false
+COMPILED	$s1M1SV5mDiscSiyF	M.S.mDisc() -> Swift.Int	admit		false
+COMPILED	$s1M1SV5mMetayySimF	M.S.mMeta(Swift.Int.Type) -> ()	decline	unsupported_production	
+COMPILED	$s1M1SV5mSendyySSnF	M.S.mSend(__owned Swift.String) -> ()	decline	unsupported_production	
+COMPILED	$s1M1SV5plainSivg	M.S.plain.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV6extGetSivg	M.S.extGet.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV6getSetSivM	M.S.getSet.modify : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV6getSetSivg	M.S.getSet.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV6getSetSivs	M.S.getSet.setter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV6mCons2yyF	M.S.mCons2() -> ()	admit		false
+COMPILED	$s1M1SV6opaqueQrvg	M.S.opaque.getter : some	decline	generic_requirements	
+COMPILED	$s1M1SV6sAsyncSivgZ	static M.S.sAsync.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV6sPlainSivgZ	static M.S.sPlain.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV6storedSivM	M.S.stored.modify : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV6storedSivg	M.S.stored.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV6storedSivpfi	variable initialization expression of M.S.stored : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV6storedSivs	M.S.stored.setter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV7extSGetSivgZ	static M.S.extSGet.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV7mBorrowyySSF	M.S.mBorrow(Swift.String) -> ()	admit		false
+COMPILED	$s1M1SV7sThrowsSivgZ	static M.S.sThrows.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV8getAsyncSivg	M.S.getAsync.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV8readOnlySivg	M.S.readOnly.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV8readOnlySivr	M.S.readOnly.read : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV8tyThrowsSivg	M.S.tyThrows.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SV9getThrowsSivg	M.S.getThrows.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SVACycfC	M.S.init() -> M.S	admit		false
+COMPILED	$s1M1SVMa	type metadata accessor for M.S	admit		false
+COMPILED	$s1M1SVyS2icig	M.S.subscript.getter : (Swift.Int) -> Swift.Int	decline	closure_type	
+COMPILED	$s1M2EnO1gSivg	M.En.g.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M2EnO1myyF	M.En.m() -> ()	decline	unsupported_production	
+COMPILED	$s1M2EnO1xACSi_tcfC	M.En.init(x: Swift.Int) -> M.En	admit		false
+COMPILED	$s1M2EnO21__derived_enum_equalsySbAC_ACtFZ	static M.En.__derived_enum_equals(M.En, M.En) -> Swift.Bool	decline	unsupported_production	
+COMPILED	$s1M2EnO2sgSivgZ	static M.En.sg.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M2EnO4hash4intoys6HasherVz_tF	M.En.hash(into: inout Swift.Hasher) -> ()	decline	unsupported_production	
+COMPILED	$s1M2EnO9hashValueSivg	M.En.hashValue.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M2EnOACSQAAWl	lazy protocol witness table accessor for type M.En and conformance M.En : Swift.Equatable in M	decline	protocol_context	
+COMPILED	$s1M2EnOMa	type metadata accessor for M.En	admit		false
+COMPILED	$s1M2EnOSHAASH13_rawHashValue4seedS2i_tFTW	protocol witness for Swift.Hashable._rawHashValue(seed: Swift.Int) -> Swift.Int in conformance M.En : Swift.Hashable in M	decline	protocol_context	
+COMPILED	$s1M2EnOSHAASH4hash4intoys6HasherVz_tFTW	protocol witness for Swift.Hashable.hash(into: inout Swift.Hasher) -> () in conformance M.En : Swift.Hashable in M	decline	protocol_context	
+COMPILED	$s1M2EnOSHAASH9hashValueSivgTW	protocol witness for Swift.Hashable.hashValue.getter : Swift.Int in conformance M.En : Swift.Hashable in M	decline	protocol_context	
+COMPILED	$s1M2EnOSQAASQ2eeoiySbx_xtFZTW	protocol witness for static Swift.Equatable.== infix(A, A) -> Swift.Bool in conformance M.En : Swift.Equatable in M	decline	protocol_context	
+COMPILED	$s1M2OKC2ogSivg	M.OK.og.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M2OKC2omyyF	M.OK.om() -> ()	decline	unsupported_production	
+COMPILED	$s1M2OKCACycfC	M.OK.__allocating_init() -> M.OK	admit		false
+COMPILED	$s1M2OKCACycfc	M.OK.init() -> M.OK	admit		false
+COMPILED	$s1M2OKCMa	type metadata accessor for M.OK	admit		false
+COMPILED	$s1M2OKCfD	M.OK.__deallocating_deinit	decline	unsupported_production	
+COMPILED	$s1M2OKCfd	M.OK.deinit	decline	unsupported_production	
+COMPILED	$s1M4freeyyF	M.free() -> ()	admit		false
+COMPILED	$s1M5freeAyyYaF	M.freeA() async -> ()	decline	async_context	
+COMPILED	$s1M5freeGyyxlF	M.freeG<A>(A) -> ()	decline	generic_requirements	
+COMPILED	$s1M5freeL1aS2i_tF	M.freeL(a: Swift.Int) -> Swift.Int	admit		false
+COMPILED	$s1M5freeRyyyyKXEKF	M.freeR(() throws -> ()) throws -> ()	decline	invalid_grammar	
+COMPILED	$s1M5freeTyyKF	M.freeT() throws -> ()	admit		true
+COMPILED	$s1M5freeVyyypd_tF	M.freeV(Any...) -> ()	admit		false
+COMPILED	$s1M6freeATyyYaKF	M.freeAT() async throws -> ()	decline	async_context	
+COMPILED	$s1M6freeL2yS2i_SitF	M.freeL2(Swift.Int, Swift.Int) -> Swift.Int	admit		false
+COMPILED	$s1M6freeTyyyAA1EVYKF	M.freeTy() throws(M.E) -> ()	decline	typed_throws	
+COMPILED	$s1M6freeV2_1yySid_SStF	M.freeV2(_: Swift.Int..., y: Swift.String) -> ()	admit		false
+COMPILED	$s1M7freeAnyyyypF	M.freeAny(Any) -> ()	admit		false
+COMPILED	$s1M7freeIsoyyScA_pYiYaF	M.freeIso(isolated Swift.Actor) async -> ()	decline	unknown_substitution	
+COMPILED	$s1M8freeMainyyF	M.freeMain() -> ()	admit		false
+COMPILED	$s1M9freeNevers0B0OyF	M.freeNever() -> Swift.Never	admit		false
+COMPILED	$s1M9globalGetSivg	M.globalGet.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M9globalLetSivau	M.globalLet.unsafeMutableAddressor : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M11fOneLabeled1xySi_tF	M.fOneLabeled(x: Swift.Int) -> ()	admit		false
+COMPILED	$s1M11fOptClosureyyyycSgF	M.fOptClosure((() -> ())?) -> ()	decline	closure_type	
+COMPILED	$s1M13fTwoUnlabeledyySi_SStF	M.fTwoUnlabeled(Swift.Int, Swift.String) -> ()	admit		false
+COMPILED	$s1M1CC1rACSi_tcfC	M.C.__allocating_init(r: Swift.Int) -> M.C	admit		false
+COMPILED	$s1M1CC1rACSi_tcfc	M.C.init(r: Swift.Int) -> M.C	admit		false
+COMPILED	$s1M1CC1xACSi_tcfC	M.C.__allocating_init(x: Swift.Int) -> M.C	admit		false
+COMPILED	$s1M1CCACycfC	M.C.__allocating_init() -> M.C	admit		false
+COMPILED	$s1M1CCACycfc	M.C.init() -> M.C	admit		false
+COMPILED	$s1M1CCMa	type metadata accessor for M.C	admit		false
+COMPILED	$s1M1CCfD	M.C.__deallocating_deinit	decline	unsupported_production	
+COMPILED	$s1M1CCfd	M.C.deinit	decline	unsupported_production	
+COMPILED	$s1M1EVACycfC	M.E.init() -> M.E	admit		false
+COMPILED	$s1M1EVMa	type metadata accessor for M.E	admit		false
+COMPILED	$s1M1EVs5ErrorAAsADP19_getEmbeddedNSErroryXlSgyFTW	protocol witness for Swift.Error._getEmbeddedNSError() -> Swift.AnyObject? in conformance M.E : Swift.Error in M	decline	unsupported_production	
+COMPILED	$s1M1EVs5ErrorAAsADP5_codeSivgTW	protocol witness for Swift.Error._code.getter : Swift.Int in conformance M.E : Swift.Error in M	decline	unsupported_production	
+COMPILED	$s1M1EVs5ErrorAAsADP7_domainSSvgTW	protocol witness for Swift.Error._domain.getter : Swift.String in conformance M.E : Swift.Error in M	decline	unsupported_production	
+COMPILED	$s1M1EVs5ErrorAAsADP9_userInfoyXlSgvgTW	protocol witness for Swift.Error._userInfo.getter : Swift.AnyObject? in conformance M.E : Swift.Error in M	decline	unsupported_production	
+COMPILED	$s1M1GV1gSivg	M.G.g.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1GV1myyF	M.G.m() -> ()	admit		false
+COMPILED	$s1M1GV1syyFZ	static M.G.s() -> ()	admit		false
+COMPILED	$s1M1GV2mtyyxF	M.G.mt(A) -> ()	decline	generic_requirements	
+COMPILED	$s1M1GVACyxGycfC	M.G.init() -> M.G<A>	decline	generic_requirements	
+COMPILED	$s1M1GVMa	type metadata accessor for M.G	admit		false
+COMPILED	$s1M1SV14callAsFunctionyyF	M.S.callAsFunction() -> ()	admit		false
+COMPILED	$s1M1SV1vACSid_tcfC	M.S.init(v: Swift.Int...) -> M.S	admit		false
+COMPILED	$s1M1SV2boACSSh_tcfC	M.S.init(bo: __shared Swift.String) -> M.S	admit		false
+COMPILED	$s1M1SV2clACyyc_tcfC	M.S.init(cl: () -> ()) -> M.S	decline	closure_type	
+COMPILED	$s1M1SV2foACSgSi_tcfC	M.S.init(fo: Swift.Int) -> M.S?	admit		false
+COMPILED	$s1M1SV2shACSSh_tcfC	M.S.init(sh: __shared Swift.String) -> M.S	admit		false
+COMPILED	$s1M1SV3iuoACSgSi_tcfC	M.S.init(iuo: Swift.Int) -> M.S?	admit		false
+COMPILED	$s1M1SV3mutyySiF	M.S.mut(Swift.Int) -> ()	admit		false
+COMPILED	$s1M1SV3two1bACSi_SitcfC	M.S.init(two: Swift.Int, b: Swift.Int) -> M.S	admit		false
+COMPILED	$s1M1SV4makeACyFZ	static M.S.make() -> M.S	admit		false
+COMPILED	$s1M1SV4sMutyyACzFZ	static M.S.sMut(inout M.S) -> ()	decline	unsupported_production	
+COMPILED	$s1M1SVMa	type metadata accessor for M.S	admit		false
+COMPILED	$s1M1SVyACSi_SitcfC	M.S.init(Swift.Int, Swift.Int) -> M.S	admit		false
+COMPILED	$s1M1SVyACSicfC	M.S.init(Swift.Int) -> M.S	admit		false
+COMPILED	$s1M1poiyAA1SVAD_ADtF	M.+ infix(M.S, M.S) -> M.S	decline	unsupported_production	
+COMPILED	$s1M2fsyyYbF	M.fs@Sendable () -> ()	decline	async_context	
+COMPILED	$s1M3fOpyS2iF	M.fOp(Swift.Int) -> Swift.Int	admit		false
+COMPILED	$s1M3fnnyyYaF	M.fnn() async -> ()	decline	async_context	
+COMPILED	$s1M3xxxopyS2iF	M.^^^ prefix(Swift.Int) -> Swift.Int	decline	unsupported_production	
+COMPILED	$s1M4fResyyKcyF	M.fRes() -> () throws -> ()	decline	closure_type	
+COMPILED	$s1M5fAutoyySiyXKF	M.fAuto(@autoclosure () -> Swift.Int) -> ()	decline	closure_type	
+COMPILED	$s1M5fCharySsSJF	M.fChar(Swift.Character) -> Swift.Substring	admit		false
+COMPILED	$s1M5fDictyySDySSSiGF	M.fDict([Swift.String : Swift.Int]) -> ()	decline	unknown_substitution	
+COMPILED	$s1M5fInt8yys0A0V_s6UInt64VtF	M.fInt8(Swift.Int8, Swift.UInt64) -> ()	admit		false
+COMPILED	$s1M5fSendyySSnF	M.fSend(__owned Swift.String) -> ()	decline	unsupported_production	
+COMPILED	$s1M5fUIntyS2uF	M.fUInt(Swift.UInt) -> Swift.UInt	admit		false
+COMPILED	$s1M5fconcyyYaF	M.fconc() async -> ()	decline	async_context	
+COMPILED	$s1M6fOwnedyySSnF	M.fOwned(__owned Swift.String) -> ()	decline	unsupported_production	
+COMPILED	$s1M7fAnyErryyKF	M.fAnyErr() throws -> ()	admit		true
+COMPILED	$s1M7fBorrowyySSF	M.fBorrow(Swift.String) -> ()	admit		false
+COMPILED	$s1M7fDoubleySbSd_SftF	M.fDouble(Swift.Double, Swift.Float) -> Swift.Bool	admit		false
+COMPILED	$s1M7fNestedyySaySaySiGGF	M.fNested([[Swift.Int]]) -> ()	admit		false
+COMPILED	$s1M7fNeverTyyF	M.fNeverT() -> ()	admit		false
+COMPILED	$s1M7fOptAnyyyypSgF	M.fOptAny(Any?) -> ()	admit		false
+COMPILED	$s1M7fRawPtryySVF	M.fRawPtr(Swift.UnsafeRawPointer) -> ()	admit		false
+COMPILED	$s1M7fSharedyySShF	M.fShared(__shared Swift.String) -> ()	admit		false
+COMPILED	$s1M8fConsumeyySSnF	M.fConsume(__owned Swift.String) -> ()	decline	unsupported_production	
+COMPILED	$s1M8fSendResSSyF	M.fSendRes() -> Swift.String	admit		false
+COMPILED	$s1M9fInoutArryySaySiGzF	M.fInoutArr(inout [Swift.Int]) -> ()	decline	unsupported_production	
+COMPILED	$s1M9fTupleResSi_SityF	M.fTupleRes() -> (Swift.Int, Swift.Int)	decline	unsupported_production	
+COMPILED	$sSS1ME11extOnStringyyF	(extension in M):Swift.String.extOnString() -> ()	admit		false
+COMPILED	$sSS1ME12sExtOnStringyyFZ	static (extension in M):Swift.String.sExtOnString() -> ()	admit		false
+COMPILED	$sSS1ME6myInitSSSi_tcfC	(extension in M):Swift.String.init(myInit: Swift.Int) -> Swift.String	admit		false
+COMPILED	$sSa1ME13unconstrainedyyF	(extension in M):Swift.Array.unconstrained() -> ()	decline	invalid_grammar	
+COMPILED	$sSa1MSiRszlE11constrainedyyF	(extension in M):Swift.Array<A where A == Swift.Int>.constrained() -> ()	decline	generic_requirements	
+COMPILED	$s1M12typedGenericyyxxYKs5ErrorRzlF	M.typedGeneric<A where A: Swift.Error>(A) throws(A) -> ()	decline	generic_requirements	
+COMPILED	$s1M1EVACs5ErrorAAWl	lazy protocol witness table accessor for type M.E and conformance M.E : Swift.Error in M	decline	unsupported_production	
+COMPILED	$s1M1EVACycfC	M.E.init() -> M.E	admit		false
+COMPILED	$s1M1EVMa	type metadata accessor for M.E	admit		false
+COMPILED	$s1M1EVs5ErrorAAsADP19_getEmbeddedNSErroryXlSgyFTW	protocol witness for Swift.Error._getEmbeddedNSError() -> Swift.AnyObject? in conformance M.E : Swift.Error in M	decline	unsupported_production	
+COMPILED	$s1M1EVs5ErrorAAsADP5_codeSivgTW	protocol witness for Swift.Error._code.getter : Swift.Int in conformance M.E : Swift.Error in M	decline	unsupported_production	
+COMPILED	$s1M1EVs5ErrorAAsADP7_domainSSvgTW	protocol witness for Swift.Error._domain.getter : Swift.String in conformance M.E : Swift.Error in M	decline	unsupported_production	
+COMPILED	$s1M1EVs5ErrorAAsADP9_userInfoyXlSgvgTW	protocol witness for Swift.Error._userInfo.getter : Swift.AnyObject? in conformance M.E : Swift.Error in M	decline	unsupported_production	
+COMPILED	$s1M1SV1xSivg	M.S.x.getter : Swift.Int	decline	unsupported_production	
+COMPILED	$s1M1SVACycfC	M.S.init() -> M.S	admit		false
+COMPILED	$s1M1SVMa	type metadata accessor for M.S	admit		false
+COMPILED	$s1M4fakeyyF	M.fake() -> ()	admit		false
+COMPILED	$s1M5fakeAyyF	M.fakeA() -> ()	admit		false
+COMPILED	$s1M1SV6encodeAdBySi_SitF	M.S.encode(encode: Swift.Int, S: Swift.Int) -> ()	admit		false
+COMPILED	$s1M1SVACycfC	M.S.init() -> M.S	admit		false
+COMPILED	$s1M1SVMa	type metadata accessor for M.S	admit		false
+COMPILED	$s1M1f1x2x2ySi_SitF	M.f(x: Swift.Int, x2: Swift.Int) -> ()	admit		false
+COMPILED	$s1M1h3ValyAaCV_tF	M.h(Val: M.Val) -> ()	admit		false
+COMPILED	$s1M3ValVACycfC	M.Val.init() -> M.Val	admit		false
+COMPILED	$s1M3ValVMa	type metadata accessor for M.Val	admit		false
+COMPILED	$s1M5valueABySi_tF	M.value(value: Swift.Int) -> ()	admit		false

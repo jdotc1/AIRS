@@ -862,3 +862,10 @@ profiles are unchanged. Independent synthetic tests and one owned Swift 6.4.2
 binary, checked against Apple-tool output, cover the increment. ABI admission,
 witnesses, chained-fixup binding, native app admission and GOT-loaded `BLR`
 sites remain open. See SWIFT_BROAD_IMPORTS_PROFILE.md.
+
+Declaration-coverage checkpoint: `parse_import_declaration` uses
+`swift-import-declaration-syntax-v1`. The 19 owned fixture symbols split into
+10 admitted non-throwing, 1 admitted throwing and 8 declined. The 27 Swift stub
+call sites now yield 12 rows and 15 skipped calls. Earlier declaration parsing
+and profiles are unchanged. The unreleased imports profile retains its outer
+identity pending native admission. See SWIFT_IMPORT_DECLARATIONS.md.

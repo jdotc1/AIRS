@@ -12,6 +12,7 @@ from .macho_stubs import STUB_MODEL, attribute_import_stubs
 from .swift_callsite_admission import (CallsiteLimits, CallsiteSessionError,
     create_callsite_session, admit_callsite_capability)
 from .swift_declaration_profiles import parse_broad_declaration
+from .swift_import_declarations import parse_import_declaration
 from .swift_abi_profiles import (admit_swift_abi, ABICallsiteQualification,
     STABLE_ARM64_SWIFT6)
 from .swift_outcome_witness_v2 import build_broad_swift_witness
@@ -164,7 +165,7 @@ def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
                     if not stub.symbol.lstrip('_').startswith('$s'):
                         import_counts['non_swift_import_calls']+=1;continue
                     if stub.address not in declarations:
-                        declarations[stub.address]=parse_broad_declaration(stub.symbol)
+                        declarations[stub.address]=parse_import_declaration(stub.symbol)
                     parsed=declarations[stub.address]
                     if parsed.supported and not parsed.identity.throws:
                         import_counts['non_throwing_swift_import_calls']+=1;continue

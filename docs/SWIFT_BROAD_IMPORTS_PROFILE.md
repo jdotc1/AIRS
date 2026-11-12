@@ -4,7 +4,7 @@
 
 ## Why
 
-Earlier broad profiles select a direct `BL` only when it targets an image function start whose symbol begins with `$s`. In a stripped app the local names are gone. Calls to imported Swift APIs also target `__TEXT,__stubs` entries, which are not function starts. As a result those profiles never selected direct calls to imported Swift functions, and in the build 32 real-input check every selected candidate was an indirect `BLR`/`BR`. This profile makes direct calls to imported Swift symbols visible. It records them as attributed, unresolved rows.
+Earlier broad profiles select a direct `BL` only when it targets an image function start whose symbol begins with `$s`. In a stripped app the local names are gone. Calls to imported Swift APIs also target `__TEXT,__stubs` entries, which are not function starts. As a result those profiles never selected direct calls to imported Swift functions, and in the build 32 real-input check every selected candidate was an indirect `BLR`/`BR`. This profile makes direct calls to imported Swift symbols visible. It records retained calls as attributed, unresolved rows. Admitted non-throwing imports are skipped.
 
 ## Stub attribution model
 
@@ -27,7 +27,7 @@ For a direct `BL`, or a `B` that leaves its function, whose target is not a func
 - A target outside every stub section is skipped, as in the earlier profiles.
 - A declined entry is counted in `declined_stub_calls` and is not selected.
 - A non-Swift symbol such as `_objc_msgSend` is counted in `non_swift_import_calls` and is not selected.
-- A `$s` symbol that the bounded declaration parser admits as non-throwing is counted in `non_throwing_swift_import_calls` and is not selected.
+- A `$s` symbol that `parse_import_declaration` admits as non-throwing is counted in `non_throwing_swift_import_calls` and is not selected.
 - Any other `$s` symbol is selected. That covers symbols admitted as throwing and symbols outside the parser's subset.
 
 Selected import calls use the same omission rules as every other selected call: the aggregate work reservation, the per-function and total row caps, and the encoded-output budget. A retained row is `unresolved` with reason `imported_callee_abi_unqualified`. Its admission records:
@@ -59,4 +59,6 @@ The new synthetic tests are in `tests/test_swift_broad_imports.py`, 48 methods i
 
 `tests/test_swift_broad_imports_fixture.py` checks an owned real-toolchain case. `fixtures/swift-error-flow/broad-imports/OwnedImports.swift` was compiled with Apple Swift 6.4.2 (`-O -target arm64-apple-macos13`, then `strip -x`). The binary has chained fixups and 29 stubs whose pointer slots are in `__DATA_CONST,__got`. The expected stubs and stub calls were derived with Apple tools only (`otool -Iv`, `objdump -d`, `swift-demangle`), independently of AIRS. All 29 stubs attribute to the `otool` symbol and slot.
 
-The 54 calls to stubs split into 27 `$s` calls and 27 Swift-runtime calls. The 27 `$s` calls are exactly the selected rows, and the 27 runtime calls are counted as non-Swift. All 27 `$s` symbols in this binary fall outside the declaration parser's subset, so all 27 rows are `syntax_unresolved`. The 7 calls whose demangled name contains `throws` are among them. The binary is never executed. This is one owned case, not real-app or runtime qualification.
+The 54 calls to stubs split into 27 `$s` calls and 27 Swift-runtime calls. The 27 runtime calls are counted as non-Swift. The 19 distinct `$s` symbols split into 10 admitted non-throwing, 1 admitted throwing and 8 declined. Their 27 call sites produce 12 selected rows and 15 skipped non-throwing calls, replacing the previous 27 rows and 0 skipped calls. All 7 calls whose demangled name contains `throws` remain rows. The Data initializer row is `syntax_admitted` with `throws: true`; declined declarations are `syntax_unresolved`. The binary is never executed. This is one owned case, not real-app or runtime qualification.
+
+See [Imported Swift declaration syntax](SWIFT_IMPORT_DECLARATIONS.md) for the closed grammar, decline reasons, evidence and residual symbol-override hazard. The syntax model is `swift-import-declaration-syntax-v1`. The outer profile and model identities are unchanged because they are unreleased and not yet admitted by the native app; a change after native admission would need a new identity.

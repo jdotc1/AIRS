@@ -52,10 +52,17 @@ class OwnedImportsFixtureTests(unittest.TestCase):
         report = recover_swift_broad_flow(self.image(IMPORTS_BROAD_LIMITS), profile='broad-imports-v1')
         calls = self.expected['stub_calls']
         swift = [c for c in calls if c['symbol'].lstrip('_').startswith('$s')]
+        expectations = self.expected['import_declaration_expectations']
+        skipped = [c for c in swift if expectations[c['symbol']]['outcome'] == 'skip_non_throwing']
+        retained = [c for c in swift if expectations[c['symbol']]['outcome'] != 'skip_non_throwing']
+        self.assertEqual(len({c['symbol'] for c in swift}), 19)
+        self.assertEqual(set(expectations), {c['symbol'] for c in swift})
+        self.assertEqual(sum(e['outcome'] == 'skip_non_throwing' for e in expectations.values()), 10)
+        self.assertEqual((len(swift), len(skipped), len(retained)), (27, 15, 12))
         rows = [c['admission'] for c in report['calls']
                 if c['admission'].get('model_version') == 'swift-broad-import-callsite-v1']
         self.assertEqual(sorted((r['call_pc'], r['call_kind'], r['callee_stub_pc'], r['symbol']) for r in rows),
-                         sorted((c['call_pc'], c['kind'], c['stub_address'], c['symbol']) for c in swift))
+                         sorted((c['call_pc'], c['kind'], c['stub_address'], c['symbol']) for c in retained))
         self.assertTrue({c['call_pc'] for c in swift if c['demangled_throws']} <= {r['call_pc'] for r in rows})
         counts = report['import_stub_counts']
         self.assertEqual(counts['attributed_stubs'], len(self.expected['stubs']))
@@ -64,6 +71,7 @@ class OwnedImportsFixtureTests(unittest.TestCase):
         self.assertEqual(counts['non_swift_import_calls'], len(calls) - len(swift))
         self.assertEqual(counts['selected_import_calls'] + counts['non_throwing_swift_import_calls'], len(swift))
         self.assertEqual(counts['selected_import_calls'], len(rows))
+        self.assertEqual(counts['non_throwing_swift_import_calls'], len(skipped))
         self.assertTrue(report['import_stubs_complete'])
         self.assertEqual(report['limitations'][-1], 'imported_callees_attribution_only')
         self.assertEqual(report['reason_counts'].get('imported_callee_abi_unqualified'), len(rows))
@@ -72,8 +80,12 @@ class OwnedImportsFixtureTests(unittest.TestCase):
             self.assertFalse(row['call_return_proven'])
             self.assertTrue(row['import_attribution_admitted'])
             self.assertEqual(row['import_provenance']['stub_model'], STUB_MODEL)
-            # Every $s symbol in this binary is outside the declaration parser's subset.
-            self.assertEqual(row['declaration']['status'], 'syntax_unresolved')
+            # Throwing admissions and declined declarations remain attributed rows.
+            outcome = expectations[row['symbol']]['outcome']
+            self.assertEqual(row['declaration']['status'],
+                             'syntax_admitted' if outcome == 'syntax_admitted_throwing' else 'syntax_unresolved')
+            if outcome == 'syntax_admitted_throwing':
+                self.assertIs(row['declaration']['identity']['throws'], True)
         self.assertTrue(all(c['candidate'] is None and c['validation'] is None for c in report['calls']
                             if c['admission'].get('model_version') == 'swift-broad-import-callsite-v1'))
 
