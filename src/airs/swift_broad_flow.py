@@ -6,7 +6,9 @@ from .engine import resolve_input
 from .macho import parse_macho
 from .types import InputError, Limits, MachOImage
 from .swift_broad_profiles import (BROAD_MODEL, BROAD_PROFILE, BROAD_LARGE_PROFILE, BROAD_LARGE_MODEL,
-                                   BROAD_EXTENDED_PROFILE, BROAD_EXTENDED_MODEL)
+                                   BROAD_EXTENDED_PROFILE, BROAD_EXTENDED_MODEL,
+                                   BROAD_IMPORTS_PROFILE, BROAD_IMPORTS_MODEL)
+from .macho_stubs import STUB_MODEL, attribute_import_stubs
 from .swift_callsite_admission import (CallsiteLimits, CallsiteSessionError,
     create_callsite_session, admit_callsite_capability)
 from .swift_declaration_profiles import parse_broad_declaration
@@ -20,15 +22,20 @@ from .swift_outcome_witness_v2_models import BroadWitnessLimits
 BROAD_LIMITS=Limits(max_file_bytes=8*1024*1024,max_functions=8192,
     max_instructions_per_function=4096,max_total_instructions=262144,
     max_observations_per_function=256,max_total_evidence=4096)
-from dataclasses import replace
+from dataclasses import replace, asdict
 from types import MappingProxyType
 LARGE_BROAD_LIMITS=replace(BROAD_LIMITS,max_functions=9216)
 EXTENDED_BROAD_LIMITS=replace(LARGE_BROAD_LIMITS,max_total_instructions=2097152,
                               max_instructions_per_function=262144,max_total_evidence=8192)
+IMPORTS_BROAD_LIMITS=EXTENDED_BROAD_LIMITS
 PROFILE_LIMITS=MappingProxyType({BROAD_PROFILE:BROAD_LIMITS, BROAD_LARGE_PROFILE:LARGE_BROAD_LIMITS,
-                                BROAD_EXTENDED_PROFILE:EXTENDED_BROAD_LIMITS})
+                                BROAD_EXTENDED_PROFILE:EXTENDED_BROAD_LIMITS,
+                                BROAD_IMPORTS_PROFILE:IMPORTS_BROAD_LIMITS})
 PROFILE_MODELS=MappingProxyType({BROAD_PROFILE:BROAD_MODEL, BROAD_LARGE_PROFILE:BROAD_LARGE_MODEL,
-                                BROAD_EXTENDED_PROFILE:BROAD_EXTENDED_MODEL})
+                                BROAD_EXTENDED_PROFILE:BROAD_EXTENDED_MODEL,
+                                BROAD_IMPORTS_PROFILE:BROAD_IMPORTS_MODEL})
+IMPORT_CALLSITE_MODEL='swift-broad-import-callsite-v1'
+IMPORT_REASON='imported_callee_abi_unqualified'
 REPORT_BYTES=16*1024*1024
 AGGREGATE_WORK=512*1024*1024
 CALLSITE_WORK_RESERVATION=2_000_000
@@ -55,6 +62,23 @@ def _abi(image,record,caller_start,capability):
     request=ABICallsiteQualification(STABLE_ARM64_SWIFT6.identifier,record['call_pc'],
         caller_start,record['callee_pc'],callsite_capability=capability)
     return admit_swift_abi(image,parsed.identity,qualification=request)
+
+
+def _import_admission(function,pc,word,stub,parsed):
+    # Attribution and declaration syntax only: no ABI, witness or runtime claim.
+    provenance=stub.record()['provenance']
+    provenance.update(stub_model=STUB_MODEL,stub_section=stub.section,stub_index=stub.stub_index,
+                      symbol_index=stub.symbol_index,pointer_address=stub.pointer_address,
+                      pointer_section=stub.pointer_section)
+    return dict(model_version=IMPORT_CALLSITE_MODEL,status='unresolved',reason=IMPORT_REASON,
+        call_kind='bl' if word&0x80000000 else 'b',call_pc=pc,caller_start=function.start,
+        callee_stub_pc=stub.address,symbol=stub.symbol,library_ordinal=stub.library_ordinal,
+        declaration=dict(status='syntax_admitted' if parsed.supported else 'syntax_unresolved',
+            identity=asdict(parsed.identity) if parsed.supported else None,
+            reason=None if parsed.supported else parsed.unsupported_reason.value),
+        import_provenance=provenance,details_complete=True,call_return_proven=False,
+        syntactic_call_target_admitted=False,import_attribution_admitted=True,
+        work_steps=16+len(stub.symbol))
 
 
 def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
@@ -96,6 +120,17 @@ def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
     report['analysis_work']+=validation_ledger.initial_work_steps
     if validation_ledger.status!='ready':
         raise InputError('swift_broad_independent_metadata',validation_ledger.reason or 'Independent metadata admission incomplete')
+    stubs=None
+    if profile==BROAD_IMPORTS_PROFILE:
+        stubs=attribute_import_stubs(image)
+        report['analysis_work']+=stubs.work
+        report['limitations'].append('imported_callees_attribution_only')
+        import_counts=dict(stubs.counts(),selected_import_calls=0,non_throwing_swift_import_calls=0,
+                           non_swift_import_calls=0,declined_stub_calls=0)
+        report.update(import_stub_model=STUB_MODEL,import_stubs_complete=stubs.complete,
+                      import_stub_reason=stubs.reason,import_stub_counts=import_counts)
+        if not stubs.complete:report['call_details_complete']=False
+        declarations={}
     remaining=limits.max_total_instructions;budget=max(0,min(REPORT_BYTES,witness_limits.max_aggregate_bytes)-65536)
     statuses=Counter();reasons=Counter()
     for function in image.functions:
@@ -119,9 +154,25 @@ def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
                 if not word&0x80000000 and function.start<=target<function.end:continue
             report['observed_call_instructions']+=1
             callee=functions.get(target)
+            imported=None
+            if stubs is not None and direct and callee is None:
+                found=stubs.lookup(target)
+                if found is not None:
+                    kind,stub=found
+                    if kind=='declined':
+                        import_counts['declined_stub_calls']+=1;continue
+                    if not stub.symbol.lstrip('_').startswith('$s'):
+                        import_counts['non_swift_import_calls']+=1;continue
+                    if stub.address not in declarations:
+                        declarations[stub.address]=parse_broad_declaration(stub.symbol)
+                    parsed=declarations[stub.address]
+                    if parsed.supported and not parsed.identity.throws:
+                        import_counts['non_throwing_swift_import_calls']+=1;continue
+                    imported=(stub,parsed)
             # Name is only a work selector; raw admission proves attribution.
-            if direct and (callee is None or not (callee.name or '').lstrip('_').startswith('$s')):continue
+            if imported is None and direct and (callee is None or not (callee.name or '').lstrip('_').startswith('$s')):continue
             report['selected_call_candidates']+=1
+            if imported is not None:import_counts['selected_import_calls']+=1
             # Reserve the maximum cost before another independently bounded
             # admission/build/replay unit. This is algorithmic work, not RSS.
             if report['analysis_work']+CALLSITE_WORK_RESERVATION+ABI_WORK_RESERVATION+3*witness_limits.max_work>AGGREGATE_WORK:
@@ -130,13 +181,16 @@ def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
             if retained>=limits.max_observations_per_function or len(report['calls'])>=limits.max_total_evidence:
                 report['omitted_calls']+=1;report['call_details_complete']=False
                 report['outcome_witnesses_complete']=False;continue
-            try:
-                capability=admit_callsite_capability(image,function,pc,limits=call_limits,session=session)
-                admitted=capability.record()
-            except CallsiteSessionError as error:
-                capability=None
-                admitted=dict(status='unresolved',reason=error.reason,details_complete=False,
-                              work_steps=error.work_steps,call_return_proven=False)
+            if imported is not None:
+                capability=None;admitted=_import_admission(function,pc,word,*imported)
+            else:
+                try:
+                    capability=admit_callsite_capability(image,function,pc,limits=call_limits,session=session)
+                    admitted=capability.record()
+                except CallsiteSessionError as error:
+                    capability=None
+                    admitted=dict(status='unresolved',reason=error.reason,details_complete=False,
+                                  work_steps=error.work_steps,call_return_proven=False)
             report['analysis_work']+=admitted['work_steps']
             row=dict(caller_pc=hex(function.start),call_pc=hex(pc),admission=None,candidate=None,validation=None)
             if admitted['status']=='admitted_callsite':

@@ -1,0 +1,605 @@
+{
+ "source": "OwnedImports.swift",
+ "binary": "OwnedImports.macho",
+ "compiler": "swift-driver version: 1.168.6 Apple Swift version 6.4.2 (swiftlang-6.4.2.1.9 clang-2100.4.1.1)",
+ "flags": "-O -target arm64-apple-macos13; strip -x",
+ "binary_sha256": "ef13dd492b9ff8eda4843564fa03535789496eeaf31d089add3868f1980dbfb1",
+ "chained_fixups": true,
+ "derivation": "otool -Iv / objdump -d (Apple toolchain); independent of AIRS",
+ "stub_section": {
+  "addr": 4294972996,
+  "size": 348,
+  "reserved1": 0,
+  "reserved2": 12
+ },
+ "pointer_sections": [
+  {
+   "segment": "__DATA_CONST",
+   "section": "__got",
+   "addr": 4294984088,
+   "size": 280,
+   "reserved1": 29
+  }
+ ],
+ "stubs": [
+  {
+   "address": 4294972996,
+   "symbol": "_$s10Foundation11JSONDecoderC6decode_4fromxxm_AA4DataVtKSeRzlFTj",
+   "pointer_address": 4294984096
+  },
+  {
+   "address": 4294973008,
+   "symbol": "_$s10Foundation11JSONDecoderCACycfc",
+   "pointer_address": 4294984104
+  },
+  {
+   "address": 4294973020,
+   "symbol": "_$s10Foundation11JSONDecoderCMa",
+   "pointer_address": 4294984112
+  },
+  {
+   "address": 4294973032,
+   "symbol": "_$s10Foundation3URLV15fileURLWithPathACSSh_tcfC",
+   "pointer_address": 4294984120
+  },
+  {
+   "address": 4294973044,
+   "symbol": "_$s10Foundation3URLVMa",
+   "pointer_address": 4294984128
+  },
+  {
+   "address": 4294973056,
+   "symbol": "_$s10Foundation4DataV10contentsOf7optionsAcA3URLVh_So20NSDataReadingOptionsVtKcfC",
+   "pointer_address": 4294984136
+  },
+  {
+   "address": 4294973068,
+   "symbol": "_$sSS10FoundationE8EncodingV4utf8ACvgZ",
+   "pointer_address": 4294984144
+  },
+  {
+   "address": 4294973080,
+   "symbol": "_$sSS10FoundationE8EncodingVMa",
+   "pointer_address": 4294984152
+  },
+  {
+   "address": 4294973092,
+   "symbol": "_$sSy10FoundationE5write2to10atomically8encodingyAA3URLV_SbSSAAE8EncodingVtKF",
+   "pointer_address": 4294984160
+  },
+  {
+   "address": 4294973104,
+   "symbol": "_$ss11CommandLineO9argumentsSaySSGvgZ",
+   "pointer_address": 4294984192
+  },
+  {
+   "address": 4294973116,
+   "symbol": "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF",
+   "pointer_address": 4294984200
+  },
+  {
+   "address": 4294973128,
+   "symbol": "_$ss27_stringCompareWithSmolCheck__9expectingSbs11_StringGutsV_ADs01_G16ComparisonResultOtF",
+   "pointer_address": 4294984224
+  },
+  {
+   "address": 4294973140,
+   "symbol": "_$ss5print_9separator10terminatoryypd_S2StF",
+   "pointer_address": 4294984232
+  },
+  {
+   "address": 4294973152,
+   "symbol": "_$ss6HasherV5_seedABSi_tcfC",
+   "pointer_address": 4294984240
+  },
+  {
+   "address": 4294973164,
+   "symbol": "_$ss6HasherV8_combineyySuF",
+   "pointer_address": 4294984248
+  },
+  {
+   "address": 4294973176,
+   "symbol": "_$ss6HasherV9_finalizeSiyF",
+   "pointer_address": 4294984256
+  },
+  {
+   "address": 4294973188,
+   "symbol": "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj",
+   "pointer_address": 4294984264
+  },
+  {
+   "address": 4294973200,
+   "symbol": "_$ss9CodingKeyPsE11descriptionSSvg",
+   "pointer_address": 4294984272
+  },
+  {
+   "address": 4294973212,
+   "symbol": "_$ss9CodingKeyPsE16debugDescriptionSSvg",
+   "pointer_address": 4294984280
+  },
+  {
+   "address": 4294973224,
+   "symbol": "_swift_allocBox",
+   "pointer_address": 4294984288
+  },
+  {
+   "address": 4294973236,
+   "symbol": "_swift_allocObject",
+   "pointer_address": 4294984296
+  },
+  {
+   "address": 4294973248,
+   "symbol": "_swift_bridgeObjectRelease",
+   "pointer_address": 4294984304
+  },
+  {
+   "address": 4294973260,
+   "symbol": "_swift_bridgeObjectRetain",
+   "pointer_address": 4294984312
+  },
+  {
+   "address": 4294973272,
+   "symbol": "_swift_errorRelease",
+   "pointer_address": 4294984320
+  },
+  {
+   "address": 4294973284,
+   "symbol": "_swift_getErrorValue",
+   "pointer_address": 4294984328
+  },
+  {
+   "address": 4294973296,
+   "symbol": "_swift_getTypeByMangledNameInContext",
+   "pointer_address": 4294984336
+  },
+  {
+   "address": 4294973308,
+   "symbol": "_swift_getWitnessTable",
+   "pointer_address": 4294984344
+  },
+  {
+   "address": 4294973320,
+   "symbol": "_swift_release",
+   "pointer_address": 4294984352
+  },
+  {
+   "address": 4294973332,
+   "symbol": "_swift_slowAlloc",
+   "pointer_address": 4294984360
+  }
+ ],
+ "stub_calls": [
+  {
+   "call_pc": 4294970164,
+   "kind": "bl",
+   "stub_address": 4294973044,
+   "symbol": "_$s10Foundation3URLVMa",
+   "demangled": "type metadata accessor for Foundation.URL",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970204,
+   "kind": "bl",
+   "stub_address": 4294973104,
+   "symbol": "_$ss11CommandLineO9argumentsSaySSGvgZ",
+   "demangled": "static Swift.CommandLine.arguments.getter : [Swift.String]",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970212,
+   "kind": "bl",
+   "stub_address": 4294973248,
+   "symbol": "_swift_bridgeObjectRelease",
+   "demangled": "_swift_bridgeObjectRelease",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970224,
+   "kind": "bl",
+   "stub_address": 4294973104,
+   "symbol": "_$ss11CommandLineO9argumentsSaySSGvgZ",
+   "demangled": "static Swift.CommandLine.arguments.getter : [Swift.String]",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970252,
+   "kind": "bl",
+   "stub_address": 4294973260,
+   "symbol": "_swift_bridgeObjectRetain",
+   "demangled": "_swift_bridgeObjectRetain",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970260,
+   "kind": "bl",
+   "stub_address": 4294973248,
+   "symbol": "_swift_bridgeObjectRelease",
+   "demangled": "_swift_bridgeObjectRelease",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970288,
+   "kind": "bl",
+   "stub_address": 4294973032,
+   "symbol": "_$s10Foundation3URLV15fileURLWithPathACSSh_tcfC",
+   "demangled": "Foundation.URL.init(fileURLWithPath: __shared Swift.String) -> Foundation.URL",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970296,
+   "kind": "bl",
+   "stub_address": 4294973248,
+   "symbol": "_swift_bridgeObjectRelease",
+   "demangled": "_swift_bridgeObjectRelease",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970356,
+   "kind": "bl",
+   "stub_address": 4294973236,
+   "symbol": "_swift_allocObject",
+   "demangled": "_swift_allocObject",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970408,
+   "kind": "bl",
+   "stub_address": 4294973320,
+   "symbol": "_swift_release",
+   "demangled": "_swift_release",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970452,
+   "kind": "bl",
+   "stub_address": 4294973140,
+   "symbol": "_$ss5print_9separator10terminatoryypd_S2StF",
+   "demangled": "Swift.print(_: Any..., separator: Swift.String, terminator: Swift.String) -> ()",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970460,
+   "kind": "bl",
+   "stub_address": 4294973320,
+   "symbol": "_swift_release",
+   "demangled": "_swift_release",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970524,
+   "kind": "bl",
+   "stub_address": 4294973236,
+   "symbol": "_swift_allocObject",
+   "demangled": "_swift_allocObject",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970552,
+   "kind": "bl",
+   "stub_address": 4294973284,
+   "symbol": "_swift_getErrorValue",
+   "demangled": "_swift_getErrorValue",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970612,
+   "kind": "bl",
+   "stub_address": 4294973140,
+   "symbol": "_$ss5print_9separator10terminatoryypd_S2StF",
+   "demangled": "Swift.print(_: Any..., separator: Swift.String, terminator: Swift.String) -> ()",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970620,
+   "kind": "bl",
+   "stub_address": 4294973320,
+   "symbol": "_swift_release",
+   "demangled": "_swift_release",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970628,
+   "kind": "bl",
+   "stub_address": 4294973272,
+   "symbol": "_swift_errorRelease",
+   "demangled": "_swift_errorRelease",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970700,
+   "kind": "bl",
+   "stub_address": 4294973332,
+   "symbol": "_swift_slowAlloc",
+   "demangled": "_swift_slowAlloc",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970764,
+   "kind": "bl",
+   "stub_address": 4294973056,
+   "symbol": "_$s10Foundation4DataV10contentsOf7optionsAcA3URLVh_So20NSDataReadingOptionsVtKcfC",
+   "demangled": "Foundation.Data.init(contentsOf: __shared Foundation.URL, options: __C.NSDataReadingOptions) throws -> Foundation.Data",
+   "demangled_throws": true
+  },
+  {
+   "call_pc": 4294970836,
+   "kind": "bl",
+   "stub_address": 4294973296,
+   "symbol": "_swift_getTypeByMangledNameInContext",
+   "demangled": "_swift_getTypeByMangledNameInContext",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970892,
+   "kind": "bl",
+   "stub_address": 4294973224,
+   "symbol": "_swift_allocBox",
+   "demangled": "_swift_allocBox",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970952,
+   "kind": "bl",
+   "stub_address": 4294973020,
+   "symbol": "_$s10Foundation11JSONDecoderCMa",
+   "demangled": "type metadata accessor for Foundation.JSONDecoder",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970964,
+   "kind": "bl",
+   "stub_address": 4294973236,
+   "symbol": "_swift_allocObject",
+   "demangled": "_swift_allocObject",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294970972,
+   "kind": "bl",
+   "stub_address": 4294973008,
+   "symbol": "_$s10Foundation11JSONDecoderCACycfc",
+   "demangled": "Foundation.JSONDecoder.init() -> Foundation.JSONDecoder",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971016,
+   "kind": "bl",
+   "stub_address": 4294972996,
+   "symbol": "_$s10Foundation11JSONDecoderC6decode_4fromxxm_AA4DataVtKSeRzlFTj",
+   "demangled": "dispatch thunk of Foundation.JSONDecoder.decode<A where A: Swift.Decodable>(_: A.Type, from: Foundation.Data) throws -> A",
+   "demangled_throws": true
+  },
+  {
+   "call_pc": 4294971028,
+   "kind": "bl",
+   "stub_address": 4294973320,
+   "symbol": "_swift_release",
+   "demangled": "_swift_release",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971096,
+   "kind": "bl",
+   "stub_address": 4294973320,
+   "symbol": "_swift_release",
+   "demangled": "_swift_release",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971116,
+   "kind": "b",
+   "stub_address": 4294973320,
+   "symbol": "_swift_release",
+   "demangled": "_swift_release",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971172,
+   "kind": "bl",
+   "stub_address": 4294973080,
+   "symbol": "_$sSS10FoundationE8EncodingVMa",
+   "demangled": "type metadata accessor for (extension in Foundation):Swift.String.Encoding",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971232,
+   "kind": "bl",
+   "stub_address": 4294973068,
+   "symbol": "_$sSS10FoundationE8EncodingV4utf8ACvgZ",
+   "demangled": "static (extension in Foundation):Swift.String.Encoding.utf8.getter : (extension in Foundation):Swift.String.Encoding",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971272,
+   "kind": "bl",
+   "stub_address": 4294973092,
+   "symbol": "_$sSy10FoundationE5write2to10atomically8encodingyAA3URLV_SbSSAAE8EncodingVtKF",
+   "demangled": "(extension in Foundation):Swift.StringProtocol.write(to: Foundation.URL, atomically: Swift.Bool, encoding: (extension in Foundation):Swift.String.Encoding) throws -> ()",
+   "demangled_throws": true
+  },
+  {
+   "call_pc": 4294971368,
+   "kind": "bl",
+   "stub_address": 4294973308,
+   "symbol": "_swift_getWitnessTable",
+   "demangled": "_swift_getWitnessTable",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971432,
+   "kind": "bl",
+   "stub_address": 4294973308,
+   "symbol": "_swift_getWitnessTable",
+   "demangled": "_swift_getWitnessTable",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971492,
+   "kind": "bl",
+   "stub_address": 4294973152,
+   "symbol": "_$ss6HasherV5_seedABSi_tcfC",
+   "demangled": "Swift.Hasher.init(_seed: Swift.Int) -> Swift.Hasher",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971504,
+   "kind": "bl",
+   "stub_address": 4294973164,
+   "symbol": "_$ss6HasherV8_combineyySuF",
+   "demangled": "Swift.Hasher._combine(Swift.UInt) -> ()",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971512,
+   "kind": "bl",
+   "stub_address": 4294973176,
+   "symbol": "_$ss6HasherV9_finalizeSiyF",
+   "demangled": "Swift.Hasher._finalize() -> Swift.Int",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971552,
+   "kind": "bl",
+   "stub_address": 4294973164,
+   "symbol": "_$ss6HasherV8_combineyySuF",
+   "demangled": "Swift.Hasher._combine(Swift.UInt) -> ()",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971588,
+   "kind": "bl",
+   "stub_address": 4294973152,
+   "symbol": "_$ss6HasherV5_seedABSi_tcfC",
+   "demangled": "Swift.Hasher.init(_seed: Swift.Int) -> Swift.Hasher",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971600,
+   "kind": "bl",
+   "stub_address": 4294973164,
+   "symbol": "_$ss6HasherV8_combineyySuF",
+   "demangled": "Swift.Hasher._combine(Swift.UInt) -> ()",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971608,
+   "kind": "bl",
+   "stub_address": 4294973176,
+   "symbol": "_$ss6HasherV9_finalizeSiyF",
+   "demangled": "Swift.Hasher._finalize() -> Swift.Int",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971704,
+   "kind": "bl",
+   "stub_address": 4294973128,
+   "symbol": "_$ss27_stringCompareWithSmolCheck__9expectingSbs11_StringGutsV_ADs01_G16ComparisonResultOtF",
+   "demangled": "Swift._stringCompareWithSmolCheck(_: Swift._StringGuts, _: Swift._StringGuts, expecting: Swift._StringComparisonResult) -> Swift.Bool",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971716,
+   "kind": "bl",
+   "stub_address": 4294973248,
+   "symbol": "_swift_bridgeObjectRelease",
+   "demangled": "_swift_bridgeObjectRelease",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971736,
+   "kind": "bl",
+   "stub_address": 4294973248,
+   "symbol": "_swift_bridgeObjectRelease",
+   "demangled": "_swift_bridgeObjectRelease",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971824,
+   "kind": "b",
+   "stub_address": 4294973212,
+   "symbol": "_$ss9CodingKeyPsE16debugDescriptionSSvg",
+   "demangled": "(extension in Swift):Swift.CodingKey.debugDescription.getter : Swift.String",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294971864,
+   "kind": "b",
+   "stub_address": 4294973200,
+   "symbol": "_$ss9CodingKeyPsE11descriptionSSvg",
+   "demangled": "(extension in Swift):Swift.CodingKey.description.getter : Swift.String",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294972020,
+   "kind": "bl",
+   "stub_address": 4294973188,
+   "symbol": "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj",
+   "demangled": "dispatch thunk of Swift.Decoder.container<A where A1: Swift.CodingKey>(keyedBy: A1.Type) throws -> Swift.KeyedDecodingContainer<A1>",
+   "demangled_throws": true
+  },
+  {
+   "call_pc": 4294972044,
+   "kind": "bl",
+   "stub_address": 4294973116,
+   "symbol": "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF",
+   "demangled": "Swift.KeyedDecodingContainer.decode(_: Swift.Int.Type, forKey: A) throws -> Swift.Int",
+   "demangled_throws": true
+  },
+  {
+   "call_pc": 4294972208,
+   "kind": "bl",
+   "stub_address": 4294973308,
+   "symbol": "_swift_getWitnessTable",
+   "demangled": "_swift_getWitnessTable",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294972260,
+   "kind": "b",
+   "stub_address": 4294973320,
+   "symbol": "_swift_release",
+   "demangled": "_swift_release",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294972424,
+   "kind": "bl",
+   "stub_address": 4294973188,
+   "symbol": "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj",
+   "demangled": "dispatch thunk of Swift.Decoder.container<A where A1: Swift.CodingKey>(keyedBy: A1.Type) throws -> Swift.KeyedDecodingContainer<A1>",
+   "demangled_throws": true
+  },
+  {
+   "call_pc": 4294972448,
+   "kind": "bl",
+   "stub_address": 4294973116,
+   "symbol": "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF",
+   "demangled": "Swift.KeyedDecodingContainer.decode(_: Swift.Int.Type, forKey: A) throws -> Swift.Int",
+   "demangled_throws": true
+  },
+  {
+   "call_pc": 4294972836,
+   "kind": "bl",
+   "stub_address": 4294973308,
+   "symbol": "_swift_getWitnessTable",
+   "demangled": "_swift_getWitnessTable",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294972904,
+   "kind": "bl",
+   "stub_address": 4294973308,
+   "symbol": "_swift_getWitnessTable",
+   "demangled": "_swift_getWitnessTable",
+   "demangled_throws": false
+  },
+  {
+   "call_pc": 4294972972,
+   "kind": "bl",
+   "stub_address": 4294973308,
+   "symbol": "_swift_getWitnessTable",
+   "demangled": "_swift_getWitnessTable",
+   "demangled_throws": false
+  }
+ ]
+}

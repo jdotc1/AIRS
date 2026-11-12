@@ -10,7 +10,9 @@ def render_swift_broad_text(report):
             or (report.get('model_version')=='swift-broad-error-flow-large-v1'
                 and report.get('profile')=='broad-large-v1')
             or (report.get('model_version')=='swift-broad-error-flow-extended-v1'
-                and report.get('profile')=='broad-extended-v1'))):
+                and report.get('profile')=='broad-extended-v1')
+            or (report.get('model_version')=='swift-broad-error-flow-imports-v1'
+                and report.get('profile')=='broad-imports-v1'))):
         raise InputError('swift_broad_text_model','Unsupported broad report model')
     # JSON quoting escapes terminal control characters; it does not authenticate
     # imported reports or promote recorded validator outcomes to fresh checks.
@@ -30,6 +32,17 @@ def render_swift_broad_text(report):
     for name in ('word_scan_complete','call_details_complete','outcome_witnesses_complete',
                  'scanned_words','selected_call_candidates','omitted_calls'):
         lines.append(name+': '+safe(report.get(name)))
+    imports=report.get('profile')=='broad-imports-v1'
+    if imports:
+        # Imported callees are attribution and declaration syntax only.
+        lines.append('Imported stub calls: attribution and declaration syntax only; no ABI, witness or runtime binding.')
+        for name in ('import_stub_model','import_stubs_complete','import_stub_reason'):
+            lines.append(name+': '+safe(report.get(name)))
+        counts=report.get('import_stub_counts') or {}
+        if type(counts) is not dict:raise InputError('swift_broad_text_shape','Import stub counts must be an object')
+        for name in ('attributed_stubs','declined_stubs','invalid_stub_sections','selected_import_calls',
+                     'non_throwing_swift_import_calls','non_swift_import_calls','declined_stub_calls'):
+            lines.append('import_stub_counts.'+name+': '+safe(counts.get(name)))
     calls=report.get('calls',[])
     if type(calls) is not list:raise InputError('swift_broad_text_shape','Calls must be an array')
     size=sum(len(line)+1 for line in lines);shown=0
@@ -42,8 +55,15 @@ def render_swift_broad_text(report):
         if type(candidate) is not dict:raise InputError('swift_broad_text_shape','Candidate must be an object')
         post=candidate.get('post_call') or {}
         if type(post) is not dict:raise InputError('swift_broad_text_shape','Post-call must be an object')
-        detail.append('  test '+safe(post.get('test_pc'))+'; success '+safe(post.get('success_successor_pc'))+
-                     '; error '+safe(post.get('error_successor_pc')))
+        admission=row.get('admission') or {}
+        if imports and type(admission) is dict and admission.get('model_version')=='swift-broad-import-callsite-v1':
+            declaration=admission.get('declaration') or {}
+            if type(declaration) is not dict:raise InputError('swift_broad_text_shape','Declaration must be an object')
+            detail.append('  import '+safe(admission.get('symbol'))+'; stub '+safe(admission.get('callee_stub_pc'))+
+                         '; '+safe(admission.get('call_kind'))+'; declaration '+safe(declaration.get('status')))
+        else:
+            detail.append('  test '+safe(post.get('test_pc'))+'; success '+safe(post.get('success_successor_pc'))+
+                         '; error '+safe(post.get('error_successor_pc')))
         cost=sum(len(line)+1 for line in detail)
         if size+cost>MAX_TEXT_BYTES-128:break
         lines.extend(detail);size+=cost;shown+=1
