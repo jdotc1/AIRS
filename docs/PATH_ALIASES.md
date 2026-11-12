@@ -64,13 +64,12 @@ changed, and no release qualification is claimed.
 
 Tests build one temporary folder and address it through both spellings. They
 cover the comparison rule itself, the store, companion, re-export,
-reconstruction and bundle-export guards in both directions with a destination
-outside still accepted, the four spelling combinations of a relative manifest
-and its round trip, and bundle image validation for an unchanged and a changed
-image. In each guard test the direction that names the protected folder by its
+reconstruction, bundle-export and Swift error-flow export guards in both
+directions with a destination outside still accepted, the four spelling
+combinations of a relative manifest and its round trip, and bundle image
+validation for an unchanged and a changed image. In each guard test the direction that names the protected folder by its
 longer spelling was already refused before this change; the other direction is
-the one that fails without it. The Swift error-flow export guard uses the same
-rule and has no test of its own.
+the one that fails without it.
 
 The local native run for this change executed 1,193 tests with 6 skipped and
 no failure, from a checkout below a symbolically linked folder, where six
