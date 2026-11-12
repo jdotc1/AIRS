@@ -187,4 +187,36 @@ final class BatchHistoryTests: XCTestCase {
         let entries = try await a.entries()
         XCTAssertEqual(entries.count, 1)
     }
+
+    func testRefusedSaveLeavesNoEntryWhileOtherStoresCycleTheInventoryLease() async throws {
+        // Other stores take and drop the inventory lease the whole time. A save may be refused as busy,
+        // but a refused save must not leave its entry folder behind, and a successful one must be readable.
+        let (root, inputs, raw) = try fixture(); defer { try? FileManager.default.removeItem(at: root) }
+        let snapshot = try await ImageBatchRunner().run(inputs: inputs, audit: { _ in raw }, retain: { _, _ in UUID() })
+        for round in 0..<200 {
+            let url = root.appendingPathComponent("contended-\(round)")
+            let others = (0..<3).map { _ in
+                Task.detached {
+                    let store = BatchHistory(root: url)
+                    let id = UUID()
+                    while !Task.isCancelled {
+                        try? await store.acquire(id)
+                        await store.release(id)
+                    }
+                }
+            }
+            await Task.yield()
+            var saved = false
+            do { _ = try await BatchHistory(root: url).save(snapshot); saved = true } catch {}
+            for other in others { other.cancel() }
+            for other in others { await other.value }
+            let folder = url.appendingPathComponent(snapshot.id.uuidString)
+            if saved {
+                let stored = try await BatchHistory(root: url).metadata(snapshot.id)
+                XCTAssertEqual(stored.id, snapshot.id, "round \(round)")
+            } else {
+                XCTAssertFalse(FileManager.default.fileExists(atPath: folder.path), "round \(round): a refused save left its entry folder")
+            }
+        }
+    }
 }
