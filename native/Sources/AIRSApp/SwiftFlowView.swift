@@ -4,6 +4,22 @@ import AIRSCore
 struct SwiftFlowView: View {
     @Bindable var workspace: SwiftFlowWorkspace
     @ObservedObject var audit: AuditWorkspace
+    private var profileCaption: String {
+        guard workspace.profile != .standard else {
+            return "Methods: qualified synchronous Int → Int struct calls only. Witnesses include required region, entry and presentation evidence. ARM64 only; other forms decline or remain unresolved."
+        }
+        let extendedLimits: Bool = workspace.profile == .broadExtended || workspace.profile == .broadImports
+        let functionLimit: String = workspace.profile == .broad ? "8,192" : "9,216"
+        let scanLimit: String = extendedLimits ? "2,097,152" : "262,144"
+        let retainedCalls: String = extendedLimits ? "8,192" : "4,096"
+        var caption: String = "Broad: recorded declaration, ABI, callsite, control-flow, value and independent witness checks. ARM64 only."
+        caption += " Function limit: \(functionLimit); scan limit: \(scanLimit) words; retained calls: \(retainedCalls); image 8 MiB, report 16 MiB."
+        caption += " Call, metadata, per-function and work limits can still make results incomplete. Structural eligibility is not runtime or source proof."
+        if workspace.profile == .broadImports {
+            caption += " Direct calls to imported `$s` symbols are attributed through verified stubs and remain unresolved: no ABI, witness, return or dyld-binding claim."
+        }
+        return caption
+    }
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Swift Error Flow").font(.title2.bold())
@@ -34,9 +50,7 @@ struct SwiftFlowView: View {
                 Button("Export JSON…", action: workspace.chooseExport).disabled(workspace.report == nil || workspace.isBusy)
             }
             .toggleStyle(.checkbox)
-            Text(workspace.profile != .standard
-                 ? "Broad: recorded declaration, ABI, callsite, control-flow, value and independent witness checks. ARM64 only. Function limit: \(workspace.profile == .broad ? "8,192" : "9,216"); scan limit: \(workspace.profile == .broadExtended ? "2,097,152" : "262,144") words; retained calls: \(workspace.profile == .broadExtended ? "8,192" : "4,096"); image 8 MiB, report 16 MiB. Call, metadata, per-function and work limits can still make results incomplete. Structural eligibility is not runtime or source proof."
-                 : "Methods: qualified synchronous Int → Int struct calls only. Witnesses include required region, entry and presentation evidence. ARM64 only; other forms decline or remain unresolved.")
+            Text(profileCaption)
                 .font(.caption).foregroundStyle(.secondary)
             if let report = workspace.report {
                 Text(workspace.isHistorical ? "Historical evidence · recorded validation only" : "Current analysis · bounded recorded evidence")
