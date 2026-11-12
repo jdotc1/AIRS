@@ -138,14 +138,22 @@ private struct SecurityDeltaReferenceDetail: View {
             Text("Inventory \(reference.inventoryID.uuidString) · Component \(reference.componentID?.uuidString ?? "scope")")
             Text("Locator: \(DisplayText.escaped(reference.evidenceKey ?? "source")) · Slice: \(reference.architecture ?? "not selected")")
             if let slice = reference.slice {
-                Text("CPU " + String(format: "0x%08X", slice.cpuType) + ", subtype " + String(format: "0x%08X", slice.cpuSubtype) +
-                     ", magic " + String(format: "0x%08X", slice.headerMagic) + ", index \(slice.index), offset \(slice.offset), size \(slice.size)")
+                Text(Self.sliceSummary(slice))
                 if let digest = slice.recordedSHA256 { Text("Recorded slice digest: " + digest) }
             }
             if expanded { SecurityDeltaSourceInspector(reference: reference, session: session) }
         } label: {
             Text("\(reference.side.rawValue) · \(reference.category.rawValue) · \(DisplayText.escaped(reference.relativeSource))")
         }.textSelection(.enabled)
+    }
+
+    // Kept out of the view builder: the concatenated form exceeded the
+    // Xcode 26.3 type-checker's time limit.
+    private static func sliceSummary(_ slice: SecurityDeltaSliceIdentity) -> String {
+        let cpu: String = String(format: "0x%08X", slice.cpuType)
+        let subtype: String = String(format: "0x%08X", slice.cpuSubtype)
+        let magic: String = String(format: "0x%08X", slice.headerMagic)
+        return "CPU \(cpu), subtype \(subtype), magic \(magic), index \(slice.index), offset \(slice.offset), size \(slice.size)"
     }
 }
 

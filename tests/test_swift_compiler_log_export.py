@@ -12,6 +12,7 @@ SPEC.loader.exec_module(PACKAGER)
 
 class CompilerLogExportTests(unittest.TestCase):
     def test_owned_compiler_log_is_retained_as_a_relocated_evidence_view(self):
+        (ROOT / 'local-evidence/swift-broad').mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(dir=ROOT / 'local-evidence/swift-broad') as directory:
             capture = Path(directory)
             for name in ('source-manifest.json', 'compiler-index.json'):
