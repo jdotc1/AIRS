@@ -132,9 +132,10 @@ class AdditionalCompilerPrimitiveTests(unittest.TestCase):
             self.assertFalse(i.changes_fp or i.changes_sp)
 
     def test_new_primitive_exact_bounds(self):
-        # Shifted arithmetic other than LSL#0, extended arithmetic, unscaled Q,
-        # X writeback, MOVI .4s/other shifts/opcodes, and HLT are out of scope.
-        for word in (0x8b080660, 0x8b480260, 0x8b280260,
+        # Shifted arithmetic other than LSL#0, extended arithmetic with a reserved
+        # shift above 4, unscaled Q, X writeback, MOVI .4s/other shifts/opcodes,
+        # and HLT are out of scope. Extended ADD/SUB with shift 0-4 is modeled.
+        for word in (0x8b080660, 0x8b480260, 0x8b281660,
                      0x3cc00000, 0xf8400400, 0xf8000c00,
                      0x4f0267e1, 0x0f0247e1, 0x2f0267e1, 0xd4400020):
             with self.subTest(word=hex(word)):
