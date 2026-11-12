@@ -99,6 +99,7 @@ final class AnalysisReuseTests: XCTestCase {
         try Data("a".utf8).write(to: a); try Data("b".utf8).write(to: b)
         try FileManager.default.createSymbolicLink(atPath: link.path, withDestinationPath: "a.py")
         _ = try await f.enroll()
+        let initialHit = try await f.lookup(); XCTAssertNotNil(initialHit)
         try FileManager.default.removeItem(at: link)
         try FileManager.default.createSymbolicLink(atPath: link.path, withDestinationPath: "b.py")
         let hit = try await f.lookup(); XCTAssertNil(hit)

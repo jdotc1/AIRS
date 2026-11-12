@@ -54,6 +54,11 @@ public actor BatchCheckpointStore<Payload: BatchCheckpointPayload> {
         try requireDirectory(root)
         let inventoryLease = try lockRoot()
         defer { unlock(inventoryLease) }
+        try acquireHoldingInventory(id, expecting: generations, revision: revision)
+    }
+
+    /// Takes the batch lease. The caller already holds the inventory lease.
+    private func acquireHoldingInventory(_ id: UUID, expecting generations: Set<UUID>?, revision: UUID?) throws {
         let target = folder(id)
         let count = try FileManager.default.contentsOfDirectory(at: root, includingPropertiesForKeys: nil)
             .filter { UUID(uuidString: $0.lastPathComponent) != nil }.count
@@ -89,10 +94,16 @@ public actor BatchCheckpointStore<Payload: BatchCheckpointPayload> {
     public func save(_ snapshot: Payload) throws -> UUID {
         try snapshot.validateCheckpoint(pendingIDs: Set(snapshot.recoveryReports.keys))
         let temporaryLease = leases[snapshot.id] == nil
-        if temporaryLease { try acquire(snapshot.id, expecting: Set([snapshot.executionID] + [snapshot.previousExecutionID].compactMap { $0 }), revision: snapshot.checkpointRevision) }
-        defer { if temporaryLease { release(snapshot.id) } }
+        if temporaryLease {
+            try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
+            try requireDirectory(root)
+        }
+        // One inventory lease covers the temporary batch lease and the write. Taking it twice let a
+        // competing store hold it in between, so this save failed after its entry folder existed.
         let inventoryLease = try lockRoot()
         defer { unlock(inventoryLease) }
+        if temporaryLease { try acquireHoldingInventory(snapshot.id, expecting: Set([snapshot.executionID] + [snapshot.previousExecutionID].compactMap { $0 }), revision: snapshot.checkpointRevision) }
+        defer { if temporaryLease { release(snapshot.id) } }
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
         try requireDirectory(root)
         let target = folder(snapshot.id)
