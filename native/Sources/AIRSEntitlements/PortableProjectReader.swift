@@ -68,7 +68,8 @@ public enum PortableProjectReader {
     }
     public static func reconstruct(_ admitted: PortableProjectAdmission, to target: URL,
         beforePublish: @Sendable () throws -> Void = {}) async throws -> InspectionProjectStore {
-        guard !target.standardizedFileURL.path.hasPrefix(admitted.packageURL.standardizedFileURL.path+"/") else { throw InspectionArchiveError.invalid }
+        guard !target.standardizedFileURL.path.hasPrefix(admitted.packageURL.standardizedFileURL.path+"/"),
+              !PathContainment.isInside(target, admitted.packageURL) else { throw InspectionArchiveError.invalid }
         try Task.checkCancellation();try validateCurrent(admitted)
         let stage=try PortableProjectFiles.freshStage(for:target)
         defer {try? FileManager.default.removeItem(at:stage)}

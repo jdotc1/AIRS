@@ -123,8 +123,10 @@ final class PortableEntitlementManifestTests: XCTestCase {
         XCTAssertEqual(result.exitStatus, 1)
         XCTAssertEqual(result.summary.rows.map(\.architecture), [.x86_64])
         let paths = await reader.paths
-        XCTAssertEqual(paths, [moved.appendingPathComponent("Previous e\u{301} %20.app").path,
-                               moved.appendingPathComponent("nested/Current.app").path])
+        // The command standardizes the manifest path, so the folder carries Foundation's spelling.
+        let folder = moved.standardizedFileURL
+        XCTAssertEqual(paths, [folder.appendingPathComponent("Previous e\u{301} %20.app").path,
+                               folder.appendingPathComponent("nested/Current.app").path])
         let report = try SavedReport.read(at: command.outputDirectory.appendingPathComponent(XCTUnwrap(result.summary.rows[0].reportFile)))
         XCTAssertEqual(report.previous.architecture, .x86_64)
         XCTAssertFalse(FileManager.default.fileExists(atPath: original.path))

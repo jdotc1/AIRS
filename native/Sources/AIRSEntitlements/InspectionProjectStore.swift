@@ -121,7 +121,8 @@ public actor InspectionProjectStore {
     }
     /// Freeze one coherent project revision; reuse validated retained bytes/witnesses.
     public func exportPortableProject(_ id: UUID, to destination: URL, expectedRevision: Int? = nil) async throws {
-        guard !destination.standardizedFileURL.path.hasPrefix(storageRoot.standardizedFileURL.path+"/"),destination.standardizedFileURL != storageRoot.standardizedFileURL else { throw invalid("Export outside the source project store.") }
+        guard !destination.standardizedFileURL.path.hasPrefix(storageRoot.standardizedFileURL.path+"/"),destination.standardizedFileURL != storageRoot.standardizedFileURL,
+              !PathContainment.isSameOrInside(destination, storageRoot) else { throw invalid("Export outside the source project store.") }
         let lease = try lock(); defer { unlock(lease) }
         let snapshot = try manifestSnapshot(id)
         let project = snapshot.project

@@ -114,13 +114,28 @@ public struct EntitlementBatchManifest: Encodable, Sendable {
     }
     private static func base(_ directory: URL) throws -> URL {
         try local(directory)
-        return directory.standardizedFileURL
+        // Lexical only, so the caller's spelling survives a round trip. A
+        // file-system standardization drops a leading /private only when the
+        // folder exists, which made the stored base depend on timing.
+        return directory.standardized
     }
     private static func relative(_ path: String, to base: URL) throws -> String {
-        let prefix = base.path == "/" ? "/" : base.path + "/"
-        // File names use exact UTF-8 bytes, not canonical-equivalence comparisons.
-        guard path.utf8.starts(with: prefix.utf8) else { throw EntitlementBatchManifestError.base }
-        return String(decoding: path.utf8.dropFirst(prefix.utf8.count), as: UTF8.self)
+        // The manifest folder can be spelled through a system alias that the
+        // app paths do not use. Every candidate names the manifest folder
+        // itself; app paths are still matched as exact UTF-8 bytes and are
+        // never opened, tested for existence or resolved.
+        var spellings = [base.path]
+        let others: [String?] = [base.standardizedFileURL.path, PathContainment.comparisonKey(base)]
+        for other in others {
+            if let other, !spellings.contains(other) { spellings.append(other) }
+        }
+        for spelling in spellings {
+            let prefix = spelling == "/" ? "/" : spelling + "/"
+            if path.utf8.starts(with: prefix.utf8) {
+                return String(decoding: path.utf8.dropFirst(prefix.utf8.count), as: UTF8.self)
+            }
+        }
+        throw EntitlementBatchManifestError.base
     }
     private static func validate(path: String, relative: Bool = false) throws {
         guard path.utf8.count <= maximumPathBytes else { throw EntitlementBatchManifestError.limit }
@@ -136,7 +151,8 @@ public struct EntitlementBatchManifest: Encodable, Sendable {
     public func write(to url: URL, excluding inputs: [URL]) throws {
         if let baseDirectory {
             let destinationBase = try Self.base(url.deletingLastPathComponent())
-            guard baseDirectory.path.utf8.elementsEqual(destinationBase.path.utf8) else { throw EntitlementBatchManifestError.base }
+            guard baseDirectory.path.utf8.elementsEqual(destinationBase.path.utf8)
+                    || PathContainment.sameLocation(baseDirectory, destinationBase) else { throw EntitlementBatchManifestError.base }
         }
         let bytes = try data()
         let selected = makePairs().flatMap { [$0.previous, $0.current] }

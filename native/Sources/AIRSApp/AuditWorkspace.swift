@@ -863,8 +863,8 @@ final class AuditWorkspace: ObservableObject {
             let protectedPath = input.resolvingSymlinksInPath().standardizedFileURL.path
             let destinationPath = url.resolvingSymlinksInPath().standardizedFileURL.path
             let isInsideBundle = ["app", "dsym"].contains(input.pathExtension.lowercased())
-                && destinationPath.hasPrefix(protectedPath + "/")
-            if destinationPath == protectedPath || isInsideBundle {
+                && (destinationPath.hasPrefix(protectedPath + "/") || PathContainment.isInside(url, input))
+            if destinationPath == protectedPath || PathContainment.sameLocation(url, input) || isInsideBundle {
                 throw ReportError.invalidContents("Choose a JSON destination outside the inspected images and attached debug artifacts.")
             }
         }

@@ -236,7 +236,12 @@ public struct BundleDiscovery: Sendable {
         guard UInt64(UInt32(bitPattern: rootStat.st_dev)) == provenance.rootDevice, rootStat.st_ino == provenance.rootInode else { throw scanner.failure("Bundle root changed since discovery.") }
         let file = try scanner.openRelative(root, components: components, directory: false); defer { Darwin.close(file) }
         let info = try scanner.metadata(file), expected = provenance.fileIdentity
-        guard (info.st_mode & S_IFMT) == S_IFREG, input.path == expected.path,
+        // The descriptor above was opened below the recorded root, and device,
+        // inode, size and times bind the file. The path check only has to show
+        // that the caller means that file, whichever alias spells it.
+        let samePath = input.path == expected.path
+            || PathContainment.sameLocation(input, URL(fileURLWithPath: expected.path))
+        guard (info.st_mode & S_IFMT) == S_IFREG, samePath,
               UInt64(UInt32(bitPattern: info.st_dev)) == expected.device, info.st_ino == expected.inode,
               info.st_size == expected.size, Int64(info.st_mtimespec.tv_sec) == expected.modifiedSeconds,
               Int64(info.st_mtimespec.tv_nsec) == expected.modifiedNanos,

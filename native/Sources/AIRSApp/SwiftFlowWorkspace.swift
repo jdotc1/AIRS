@@ -146,7 +146,8 @@ final class SwiftFlowWorkspace {
             let sourceAttributes = try? FileManager.default.attributesOfItem(atPath: src.path)
             let destAttributes = try? FileManager.default.attributesOfItem(atPath: dest.path)
             let sameInode = sourceAttributes?[.systemFileNumber] as? NSNumber == destAttributes?[.systemFileNumber] as? NSNumber && sourceAttributes?[.systemNumber] as? NSNumber == destAttributes?[.systemNumber] as? NSNumber && sourceAttributes != nil && destAttributes != nil
-            if dest == src || dest.path.hasPrefix(src.path + "/") || sameInode {
+            let aliased = PathContainment.isSameOrInside(url, source)
+            if dest == src || dest.path.hasPrefix(src.path + "/") || sameInode || aliased {
                 throw EngineError.configuration("Export cannot replace an input or write inside the selected app.")
             }
         }
