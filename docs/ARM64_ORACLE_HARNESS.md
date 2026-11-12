@@ -93,3 +93,39 @@ What the run leaves open:
   they block nothing.
 
 The vectors and the run's output are not stored in this repository.
+
+## Generated vectors
+
+The `oracle` CI job generates one seed for every source-derived decoder kind,
+its 32 single-bit neighbours, and register-field substitutions 0, 1, 29, 30 and
+31 at bit offsets 0, 5, 10 and 16. It adds 16,384 words from a 32-bit linear
+congruential generator (initial state `0x41524d36`, multiplier 1664525,
+increment 1013904223, modulo 2^32), then de-duplicates and sorts the words.
+The explicit seed inventory refuses missing or unknown kinds. The output is
+independent of Python's random module and version.
+
+    python3 -I -B scripts/arm64-oracle-words.py --out build/words.s
+    python3 -I -B scripts/arm64-oracle-generate.py --input build/words.s --out build/oracle
+    python3 -I -B scripts/arm64-oracle-diff.py --generated build/oracle/generated.tsv --require-kind-coverage --out build/oracle/results
+
+Create the parent output directory before running the words command. The generator
+uses clang targeting `arm64-apple-macos` and llvm-objdump; it locates them with
+`xcrun --find` on macOS and PATH elsewhere. `--clang` and `--objdump` override
+those choices. It accepts only `.inst` rows, never executes the assembled object,
+and refuses any unparsed disassembly line, address/word mismatch or missing row.
+Unknown instructions remain rows. Both tools' version output is retained in
+`tools.txt`. Existing generator outputs require `--overwrite`.
+
+`--generated` and `--vectors-root` are mutually exclusive. Generated input has no
+pin check; its summary identifies the mode and records SHA-256 and row count.
+`--require-kind-coverage` makes any derived kind with no AGREE result a failure
+(exit 1, with missing kinds on stderr), independently of blocking rows. Without
+these options, the recorded-vector output format is unchanged.
+
+CI asserts that there are no blocking comparisons and that every derived kind
+agrees at least once for each decoder. It retains the summary, all disagreement
+parts, generated vectors and tool versions, including when the comparison fails.
+This uses the same disassembler family as the recorded vectors, so it is not a
+second independent oracle. Coverage is of derived kinds, not of the instruction
+set, all encodings of a kind, execution semantics or unwind recovery. A nonzero
+blocking count must be investigated; generation does not establish decoder correctness.
