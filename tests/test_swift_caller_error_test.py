@@ -86,6 +86,11 @@ class PrecallWindowTests(unittest.TestCase):
     def test_missing_entry_scan_is_explicit(self):
         self.check([NOP, ZERO, NOP, NOP], 'precall_entries_unchecked', entries=None)
 
+    def test_missing_entry_scan_without_a_zero_is_not_zeroed(self):
+        self.check([NOP, NOP, NOP, NOP, NOP], 'x21_not_zeroed', entries=None)
+        self.check([ZERO, 0xaa0003f5, NOP, NOP], 'x21_not_zeroed', entries=None)
+        self.check([ZERO, NOP, NOP, NOP, NOP], 'x21_not_zeroed', entries=None)
+
     def test_window_cannot_borrow_zero_from_previous_caller(self):
         self.check([ZERO, NOP, NOP, NOP], 'precall_window_outside_caller', start=2)
 

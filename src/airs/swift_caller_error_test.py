@@ -64,8 +64,7 @@ def precall_x21_zero(words, call_index, caller_start_index, entry_indices):
     without finding one, the short window is reported explicitly.
     """
     window = []
-    result = dict(status='precall_entries_unchecked' if entry_indices is None else 'x21_not_zeroed',
-                  window=window)
+    result = dict(status='x21_not_zeroed', window=window)
 
     def at(index):
         item = words[index]
