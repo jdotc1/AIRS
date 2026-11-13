@@ -16,6 +16,12 @@ identity checks are unchanged. New receipts must be outside the protected app an
 existing files. Fifteen new synthetic controls passed, and independent review
 found no blocking issue in that scope. Synthetic results do not qualify a binary.
 
+The record also carries the semantic version, read from the one `__version__`
+literal in `src/airs/__init__.py`. Preflight then requires it to equal the bundle
+short version, so the engine, the bundle and the record carry one version.
+Records made before the field existed (0.4.0 build 33 and earlier) stay valid;
+the receipt reports them with `version_recorded` false and no `embedded_version`.
+
 --accepted-vendor-source takes an exact retained accepted source commit, compares
 immutable Lumen tree identity and rejects tracked, untracked or ignored source
 input changes. It reuses accepted source inspection rather than rescanning the

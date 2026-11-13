@@ -14,6 +14,8 @@ import subprocess
 
 COMMIT = re.compile(r'[0-9a-f]{40}')
 BUNDLE = re.compile(r'[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)+')
+VERSION = re.compile(r'(?:0|[1-9][0-9]{0,5})(?:\.(?:0|[1-9][0-9]{0,5})){2}')
+VERSION_LINE = re.compile(r'^__version__ = "([^"\n]*)"$', re.MULTILINE)
 
 
 def plain_path(path: Path, *, exists: bool = True) -> Path:
@@ -45,6 +47,15 @@ def git_output(root: Path, *args: str) -> str:
     return result.stdout.strip()
 
 
+def engine_version(root: Path) -> str:
+    """Read the one version literal in src/airs/__init__.py, the version authority."""
+    source = plain_path(root / 'src' / 'airs' / '__init__.py').read_text(encoding='utf-8')
+    matches = VERSION_LINE.findall(source)
+    if len(matches) != 1 or VERSION.fullmatch(matches[0]) is None:
+        raise ValueError('The engine must declare exactly one semantic version')
+    return matches[0]
+
+
 def build_claim(root: Path, expected_commit: str, bundle_id: str, build: str) -> dict:
     validate_identity(expected_commit, bundle_id, build)
     root = plain_path(root)
@@ -53,8 +64,9 @@ def build_claim(root: Path, expected_commit: str, bundle_id: str, build: str) ->
         raise ValueError('Source HEAD does not match the requested candidate')
     if git_output(root, 'status', '--porcelain', '--untracked-files=normal'):
         raise ValueError('Freeze clean source before creating a build claim')
+    version = engine_version(root)
     return {'schema': 'airs-source-build-record-v1', 'source_repository': 'jdotc1/AIRS',
-            'source_commit': actual, 'bundle_id': bundle_id, 'build': build,
+            'source_commit': actual, 'bundle_id': bundle_id, 'build': build, 'version': version,
             'provenance_strength': 'builder_recorded_not_reproducibly_attested',
             'generated_utc': dt.datetime.now(dt.timezone.utc).isoformat()}
 

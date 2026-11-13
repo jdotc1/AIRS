@@ -281,9 +281,10 @@ files. Porting notes continue with each released model
    is the authority. `pyproject.toml` and a Swift constant are literal copies, and
    a test fails when any of the three differs. No validator pins the generator
    version, so stored reports keep the version that produced them. Release
-   preflight checks the bundle version against the version in the tag. Deferred:
-   the build provenance record does not carry the semantic version yet; it is
-   added with the next change to that record.
+   preflight checks the bundle version against the version in the tag. The build
+   provenance record now carries the semantic version too, and preflight requires
+   it to equal the bundle version; records made before the field (0.4.0 build 33
+   and earlier) stay valid.
 3. Done by disclosure: [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) and
    [ARCHITECTURE.md](ARCHITECTURE.md) each open with a note that says what the page
    records and points here. Neither is rewritten.
