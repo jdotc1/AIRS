@@ -87,6 +87,12 @@
       "model": "swift-broad-error-flow-imports-got-v1",
       "profile": "broad-imports-got-v1",
       "native_admitted": false
+    },
+    {
+      "model": "swift-broad-error-flow-extended-v2",
+      "profile": "broad-extended-v2",
+      "native_admitted": true
     }
-  ]
+  ],
+  "swift_caller_error_test_model": "swift-caller-error-test-v1"
 }

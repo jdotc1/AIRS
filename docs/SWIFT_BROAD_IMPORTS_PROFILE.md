@@ -46,6 +46,35 @@ An imported row is attribution plus declaration syntax only. It carries no Swift
 
 The native app admits the exact `swift-broad-error-flow-imports-v1` / `broad-imports-v1` pair, validates its recorded import envelope and stub arithmetic, and presents import rows as unresolved attribution only. Mismatched pairs remain unsupported raw evidence. The importer never rereads source bytes; section bounds are not recorded, so native section containment cannot be checked.
 
+## Caller-side error tests: broad-extended-v2
+
+`broad-extended-v2` uses the same extended scan limits and adds the existing stub
+and GOT imported-call attribution paths. Its report model is
+`swift-broad-error-flow-extended-v2`. Each retained imported-call row includes a
+`caller_error_test` record under `swift-caller-error-test-v1`: whether the caller
+zeroed x21 within four preceding instructions without an intervening write or
+observed direct entry, and whether the unchanged eight-instruction post-call
+model recognized a test of x21 or a copy. Incomplete entry scans remain unchecked.
+Together these observations form a `swifterror_idiom`; either half alone, or
+neither half, is recorded separately. Shape counts (`caller_error_test_counts`) and post-call decline counts
+(`caller_error_test_decline_counts`) describe retained rows; ordinary omission counters still describe unretained candidates.
+
+This is evidence about the caller at that site. It does not establish that the
+callee throws: ordinary non-Swift code can use x21 as a saved register. Absence of
+the idiom proves nothing about throwing behavior; the bounded window and recognized
+forms can miss a test. A non-throwing declaration paired with the full caller idiom
+is retained as unresolved `declaration_caller_disagreement` for review. No other
+combination changes declaration-based skipping or grants ABI admission. Earlier
+profiles and the `swift-sync-error-edges-v37` model retain their historical behavior.
+
+On the owned example `OwnedImports.macho` (27 imported Swift call sites, 7 of them
+to throwing functions), an independent derivation from disassembly text and the
+implementation agree: 2 sites are `postcall_test_only` and 25 are `none`. No site
+has `mov x21, xzr` within four instructions before the call; the throwing callers
+there restore x21 from a saved register or pass the incoming x21 on. So the full
+idiom, and with it `declaration_caller_disagreement`, does not occur on that
+example. The recognized shapes were not widened to fit it.
+
 ## Evidence
 
 The new synthetic tests are in `tests/test_swift_broad_imports.py`, 48 methods in total. 46 were written independently of the implementation, from the model description and from hand-built Mach-O bytes. The implementer added two more: one for the section-relocation refusal, and one, after review, for the section-metadata mismatch. They cover:

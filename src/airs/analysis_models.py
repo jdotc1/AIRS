@@ -60,11 +60,13 @@ CFG_MODELS = frozenset((
 KNOWN_MODELS = CFG_MODELS | frozenset(('arm64-linear-v1', 'arm64-linear-dwarf-v2'))
 EVALUATED_CFI_MODELS = CFG_MODELS | frozenset(('arm64-linear-dwarf-v2',))
 CURRENT_MODEL = 'arm64-bounded-extract-class-v51'
+SWIFT_CALLER_ERROR_TEST_MODEL = 'swift-caller-error-test-v1'
 SWIFT_BROAD_PAIRS = (
     ('swift-broad-error-flow-v1', 'broad-v1'),
     ('swift-broad-error-flow-large-v1', 'broad-large-v1'),
     ('swift-broad-error-flow-extended-v1', 'broad-extended-v1'),
     ('swift-broad-error-flow-imports-v1', 'broad-imports-v1'),
     ('swift-broad-error-flow-imports-got-v1', 'broad-imports-got-v1'),
+    ('swift-broad-error-flow-extended-v2', 'broad-extended-v2'),
 )
 SWIFT_BROAD_ENGINE_ONLY_PROFILES = frozenset(('broad-imports-got-v1',))

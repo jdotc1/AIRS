@@ -99,9 +99,9 @@ public struct SwiftFlowReport: Sendable {
         try SwiftBroadFlowReport.validateJSON(data)
         let raw = try JSONSerialization.jsonObject(with: data)
         if let object = raw as? [String: Any],
-           SwiftFlowProfile.allCases.contains(where: { profile in
-               (profile.broadModel.map { $0 == object["model_version"] as? String } ?? false)
-               || (profile.broadArgument.map { $0 == object["profile"] as? String } ?? false)
+           AnalysisModels.swiftBroadNativePairs.contains(where: { pair in
+               pair.model == object["model_version"] as? String
+               || pair.profile == object["profile"] as? String
            }) {
             return try SwiftBroadFlowReport.decode(object, data: data, jsonPreflighted: true)
         }
