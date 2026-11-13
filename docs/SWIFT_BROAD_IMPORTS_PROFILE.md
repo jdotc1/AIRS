@@ -176,3 +176,5 @@ Because rows were omitted, both imports runs report incomplete call details and 
 Declaration syntax of the retained imported-callee rows (imports profile / GOT profile): admitted 4 / 4; unresolved 5,119 / 5,805. The unresolved reasons are generic requirements 1,742 / 1,984, unknown substitution 1,679 / 1,971, unsupported production 1,129 / 1,240, protocol context 438 / 471, unconsumed suffix 71 / 71, invalid grammar 27 / 31, thunk or specialization 17 / 17 and closure type 16 / 20.
 
 What this shows: stub attribution and the non-throwing skip work on a real application. The declaration grammar admits almost none of the symbols that remain, the retention limit is exceeded, and every retained row is still unresolved. [ROADMAP.md](ROADMAP.md) section 4.3 is the plan that follows from it.
+
+See also: the second-generation profile that licenses imported callees by declaration and accounts for every candidate, [broad-extended-v4](SWIFT_BROAD_EXTENDED_V4_PROFILE.md).

@@ -83,14 +83,15 @@ def _lookup(symbol_lookup, address):
     return (symbol, kind), None
 
 
-def _is_metadata_accessor(symbol):
-    decision = parse_declaration(symbol)
+def _is_metadata_accessor(symbol, parse=None):
+    # `parse` lets one run share a declaration cache with this check; the default is the grammar itself.
+    decision = (parse_declaration if parse is None else parse)(symbol)
     identity = decision.identity
     ok = identity is not None and identity.entity == 'TypeMetadataAccessFunction' and not decision.reason
     return ok, decision.reason
 
 
-def _provenance(metadata, symbol_lookup):
+def _provenance(metadata, symbol_lookup, parse=None):
     """(provenance kind, reason, symbol, admitted) for the definition of the metadata register."""
     n = metadata
     while n['kind'] == 'copy':
@@ -120,11 +121,11 @@ def _provenance(metadata, symbol_lookup):
             return 'runtime_metadata_call', _OK, symbol, True
         if canonical == OBJC_CLASS_METADATA:
             return 'objc_class_metadata', 'objc_class_metadata_not_admitted', symbol, False
-        ok, reason = _is_metadata_accessor(symbol)
+        ok, reason = _is_metadata_accessor(symbol, parse)
         if ok:
             return 'imported_metadata_accessor_call', _OK, symbol, True
         return 'unknown', 'runtime_symbol_not_allowlisted', symbol, False
-    ok, reason = _is_metadata_accessor(symbol)
+    ok, reason = _is_metadata_accessor(symbol, parse)
     if ok:
         return 'metadata_accessor_call', _OK, symbol, True
     return 'unknown', 'grammar_' + (reason or 'not_metadata_accessor'), symbol, False
@@ -139,7 +140,8 @@ def _result(tier1, *, admitted=False, kind='unknown', failing=None, reason='', m
                 abi_basis='value_witness_function_slots_cannot_throw' if admitted else None)
 
 
-def admit_value_witness(words, function_start, site_pc, symbol_lookup, *, branch_targets=None, sections=()):
+def admit_value_witness(words, function_start, site_pc, symbol_lookup, *, branch_targets=None, sections=(),
+                        parse=None):
     """Decide tier 2 admission for one indirect branch site. Never raises; returns a dict.
 
     Keys: model, admitted, provenance_kind (one of PROVENANCE_KINDS), first_failing_condition
@@ -152,12 +154,12 @@ def admit_value_witness(words, function_start, site_pc, symbol_lookup, *, branch
                                        sections=sections)
     tier1 = analysis.record
     try:
-        return _admit(analysis, symbol_lookup)
+        return _admit(analysis, symbol_lookup, parse)
     except Exception:  # totality: refuse, never raise
         return _result(tier1, failing=1, reason='analysis_failed')
 
 
-def _admit(analysis, symbol_lookup):
+def _admit(analysis, symbol_lookup, parse=None):
     tier1 = analysis.record
     if tier1['class'] != 'value_witness' or analysis.function is None:
         reason = tier1['unknown_reason'] if tier1['class'] == 'unknown' and tier1['unknown_reason'] \
@@ -174,7 +176,7 @@ def _admit(analysis, symbol_lookup):
             return _result(tier1, kind='unknown', failing=2, reason='join_in_slice')
     table = _leaf(target['base'])
     metadata_register = 'x%d' % table['rn']
-    kind, reason, symbol, ok = _provenance(table['base'], symbol_lookup)
+    kind, reason, symbol, ok = _provenance(table['base'], symbol_lookup, parse)
     if not ok:
         return _result(tier1, kind=kind, failing=2, reason=reason, metadata=metadata_register, symbol=symbol)
     # Condition 3. The backward slice already stops at the nearest definition, so a clobber on

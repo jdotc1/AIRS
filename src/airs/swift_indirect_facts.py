@@ -84,7 +84,7 @@ def _failed(site_pc):
     return shape, witness
 
 
-def indirect_target_facts(image, function, site_pc, symbol_lookup):
+def indirect_target_facts(image, function, site_pc, symbol_lookup, parse=None):
     """(shape record, admission record, work) for one indirect branch site; never raises.
 
     The two models decode the whole containing function once for this site, so the work charge is
@@ -96,7 +96,7 @@ def indirect_target_facts(image, function, site_pc, symbol_lookup):
             words = image.bytes_at(function.start, function.size)
         except Exception:
             words = b''
-        result = admit_value_witness(words, function.start, site_pc, symbol_lookup, sections=image.sections)
+        result = admit_value_witness(words, function.start, site_pc, symbol_lookup, sections=image.sections, parse=parse)
         return _shape(result['tier1']), _witness(result), work
     except Exception:
         return (*_failed(site_pc), work)

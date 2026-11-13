@@ -101,7 +101,6 @@ import contextlib
 import dataclasses
 import functools
 import hashlib
-import importlib.util
 import json
 import re
 import struct
@@ -117,7 +116,7 @@ import indirect_v3_image_helpers as helpers  # noqa: E402
 from airs import swift_value_witness_admission as witness_module  # noqa: E402
 from airs import swift_import_effect_admission as effect  # noqa: E402
 from airs.macho import parse_macho  # noqa: E402
-from airs.swift_broad_flow import PROFILE_LIMITS, PROFILE_MODELS, recover_swift_broad_flow  # noqa: E402
+from airs.swift_broad_flow import PROFILE_LIMITS, recover_swift_broad_flow  # noqa: E402
 from airs.swift_caller_error_test import caller_error_test  # noqa: E402
 from airs.swift_declaration_grammar import REASONS as GRAMMAR_REASONS  # noqa: E402
 from airs.swift_declaration_grammar import parse_declaration as real_parse  # noqa: E402
@@ -125,9 +124,7 @@ from got_image_helpers import GotImport, build_got_image, got_call  # noqa: E402
 from stub_image_helpers import Import, build_stub_image  # noqa: E402
 
 PROFILE = 'broad-extended-v4'
-ENGINE_READY = PROFILE in PROFILE_MODELS and PROFILE in PROFILE_LIMITS
-ENGINE_SKIP = 'packet P4 has not registered profile broad-extended-v4 yet'
-ACCOUNTING_READY = importlib.util.find_spec('airs.swift_broad_accounting') is not None
+V3_PROFILE = 'broad-extended-v3'
 
 SYNTAX_MODEL = 'swift-declaration-syntax-v2'
 FIRST_GENERATION_MODEL = 'swift-import-declaration-syntax-v1'
@@ -708,7 +705,6 @@ class ResolverTests(unittest.TestCase):
         self.assertEqual(resolver.work_steps, twice)
 
 
-@unittest.skipUnless(ENGINE_READY, ENGINE_SKIP)
 class SiteOnSyntheticImageTests(unittest.TestCase):
     """A6 to A10: one call site per synthetic image. Synthetic corroboration, not compiled examples."""
 
@@ -865,7 +861,6 @@ def only(rep):
     return row
 
 
-@unittest.skipUnless(ENGINE_READY, ENGINE_SKIP)
 class RecordsOnRowsTests(unittest.TestCase):
     """A12, A13, A14: the compact declaration carried by each import row."""
 
@@ -946,7 +941,6 @@ def patch_second_caller_to_stub_zero(data):
     return data
 
 
-@unittest.skipUnless(ENGINE_READY, ENGINE_SKIP)
 class NonSwiftTests(unittest.TestCase):
     def test_a15_non_swift_stubs_make_no_row_and_no_parse(self):
         spy = ParseSpy()
@@ -966,7 +960,6 @@ class NonSwiftTests(unittest.TestCase):
         self.assertEqual(grid_total(rep), 0)
 
 
-@unittest.skipUnless(ENGINE_READY, ENGINE_SKIP)
 class OneParsePerSymbolOnImagesTests(unittest.TestCase):
     """A11 on synthetic images, with parse_declaration replaced by a counting spy."""
 
@@ -1011,18 +1004,22 @@ class OneParsePerSymbolOnImagesTests(unittest.TestCase):
         self.assertEqual(max(many.counts().values()), 1)
 
     def test_a11_the_resolver_charges_the_work_once(self):
-        # Work is analysis_work; a symbol called many times must cost no more parse work than one called once.
-        once = flow(many_symbols_image([SYM_A]))['analysis_work']
-        for calls in (4, 8):
+        # Integration fix. The first version bounded the growth of analysis_work in the call count, which also counted
+        # the caller-fact work that v3 already charges at every attributed Swift site, skipped calls included (the owned
+        # fixture shows v4 minus v3 equal to the parse charges alone, C20). What the contract fixes (4.1) is that the
+        # resolver's parse is charged once per distinct symbol: the v4 total exceeds the v3 total for the same image by
+        # exactly one parse charge, 16 plus the symbol length, however many calls the symbol has.
+        for calls in (1, 4, 8):
             first = tuple(('bl', ('stub', 0)) for _ in range(calls)) + (RET,)
             data = build_stub_image(callers=(first,), imports=(Import(SYM_A),))[0]
             rep = flow(data)
+            older = recover_swift_broad_flow(parse_macho(data, limits=PROFILE_LIMITS[V3_PROFILE]), profile=V3_PROFILE)
             self.assertEqual(table_entry(rep, SYM_A)['calls'], calls)
-            # Calls skipped as non-throwing add no row work, so the totals differ only by the scanned words.
-            self.assertLessEqual(rep['analysis_work'] - once, 4 * calls, calls)
+            self.assertEqual(rep['analysis_work'] - older['analysis_work'],
+                             16 + len(table_entry(rep, SYM_A)['symbol']), calls)
 
 
-@unittest.skipUnless(ENGINE_READY and ACCOUNTING_READY, ENGINE_SKIP + ' or packet P3 (swift_broad_accounting) is absent')
+
 class ValueWitnessRuleTests(unittest.TestCase):
     """A16: a symbol the value-witness admission accepts as a metadata accessor must be non_throwing in the table (C7)."""
 
@@ -1036,24 +1033,15 @@ class ValueWitnessRuleTests(unittest.TestCase):
                     if row.get('value_witness_admission', {}).get('admitted')]
         self.assertEqual([w['symbol'] for w in accepted], [helpers.IMPORTED_ACCESSOR])
         self.assertEqual(table_entry(rep, helpers.IMPORTED_ACCESSOR)['decision'], 'non_throwing')
-        self.assertEqual(self.checker()(rep), [])
+        self.assertIsNone(self.checker()(rep))
 
     def test_a16_a_throwing_decision_for_that_symbol_fails_rule_c7(self):
+        from airs.swift_broad_accounting import BroadV4ReportError
         spy = ParseSpy(force={norm(helpers.IMPORTED_ACCESSOR): 'throwing'})
-        with patched(spy):
-            try:
-                rep = flow(helpers.imported_metadata(helpers.IMPORTED_ACCESSOR))
-            except Exception as error:        # the engine fails closed on a report its own checker rejects (6.1)
-                self.assertIn('C7', str(error))
-                return
-        failures = self.checker()(rep)
-        self.assertTrue(failures)
-        for failure in failures:
-            self.assertTrue(failure.startswith('C7'), failure)
+        # The engine fails closed on a report its own checker rejects (contract 6.1).
+        with patched(spy), self.assertRaisesRegex(BroadV4ReportError, r'^C7'):
+            flow(helpers.imported_metadata(helpers.IMPORTED_ACCESSOR))
 
-
-if __name__ == '__main__':
-    unittest.main()
 
 
 class StaticAccessorRecordTests(unittest.TestCase):
@@ -1067,3 +1055,7 @@ class StaticAccessorRecordTests(unittest.TestCase):
         for key in ('entity', 'throws', 'is_async', 'typed_throws', 'identity_sha256'):
             self.assertIsNone(record[key], key)
         self.assertEqual(licence_of_record(record), 'none')
+
+
+if __name__ == '__main__':
+    unittest.main()

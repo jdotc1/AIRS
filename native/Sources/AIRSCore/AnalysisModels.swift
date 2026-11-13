@@ -59,6 +59,7 @@ enum AnalysisModels {
     static let known = cfg.union(["arm64-linear-v1", "arm64-linear-dwarf-v2"])
     static let evaluatedCFI = cfg.union(["arm64-linear-dwarf-v2"])
     static let swiftCallerErrorTest = "swift-caller-error-test-v1"
+    static let swiftImportEffectAdmission = "swift-import-effect-admission-v1"
     static let swiftIndirectTargetShape = "swift-indirect-target-shape-v1"
     static let swiftValueWitnessAdmission = "swift-value-witness-admission-v1"
     static let swiftBroadNativePairs: [(model: String, profile: String)] = [

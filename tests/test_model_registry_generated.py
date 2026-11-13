@@ -93,6 +93,15 @@ class ModelRegistryGeneratedTests(unittest.TestCase):
         for path in (('linear_models', 0, 'evaluated_cfi'), ('swift_broad_pairs', 0, 'native_admitted')):
             for wrong in (0, 1, 'true', None, [], {}):
                 change(f'boolean-{path}-{wrong}', path, wrong)
+        fact_keys = ('swift_caller_error_test_model', 'swift_import_effect_admission_model',
+                     'swift_indirect_target_shape_model', 'swift_value_witness_admission_model')
+        for key in fact_keys:
+            for wrong in ('', 'Upper', 'white space', 'under_score', 'trailing\n', 'é',
+                          1, True, None, [], {}):
+                change(f'string-{key}-{wrong}', (key,), wrong)
+        change('duplicate-fact-model', ('swift_import_effect_admission_model',), source['swift_caller_error_test_model'])
+        change('duplicate-fact-cross-model', ('swift_import_effect_admission_model',),
+               source['swift_broad_pairs'][0]['model'])
         change('duplicate-cfg', ('cfg_models', 1), source['cfg_models'][0])
         change('duplicate-linear', ('linear_models', 1, 'label'), source['linear_models'][0]['label'])
         change('duplicate-cross-label', ('linear_models', 0, 'label'), source['cfg_models'][0])
@@ -115,6 +124,12 @@ class ModelRegistryGeneratedTests(unittest.TestCase):
     def test_engine_tables_match_registry(self):
         self.assertEqual({(PROFILE_MODELS[p], p) for p in PROFILE_LIMITS}, set(SWIFT_BROAD_PAIRS))
         self.assertEqual(ANALYSIS_MODEL_VERSION, CURRENT_MODEL)
+
+    def test_import_effect_admission_model_is_bound(self):
+        from airs.analysis_models import SWIFT_IMPORT_EFFECT_ADMISSION_MODEL
+        from airs.swift_import_effect_admission import MODEL
+        self.assertEqual(SWIFT_IMPORT_EFFECT_ADMISSION_MODEL, MODEL)
+        self.assertIn(('swift-broad-error-flow-extended-v4', 'broad-extended-v4'), SWIFT_BROAD_PAIRS)
 
 
 if __name__ == '__main__':
