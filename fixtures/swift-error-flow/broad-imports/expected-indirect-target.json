@@ -1,0 +1,187 @@
+{
+  "fixture": "OwnedImports.macho",
+  "design": "DESIGN-VALUE-WITNESS sections 2 and 5 (including the amendment)",
+  "method": "hand derivation from xcrun objdump -d --macho, xcrun otool -Iv, xcrun nm -n; no src/, tests/ or notes read",
+  "blr_site_count": 7,
+  "sites": [
+    {
+      "pc": "0x100000cdc",
+      "function": "_main (0x100000b18)",
+      "tier1_class": "value_witness",
+      "slot_offset": "0x10",
+      "slot_is_function_slot": true,
+      "tier2_admitted": false,
+      "tier2_failed_condition": 2,
+      "tier2_reason": "metadata_register_from_stack_transport",
+      "tier2_explanation": "Xm is x22. It is defined by ldp x20,x22,[sp,#8] at 0x100000cbc, a stack load of the out-parameter that swift_getErrorValue (stub call at 0x100000cb8, x2=sp+8) wrote through a pointer. It is not the x0 result of a decided metadata accessor or of a listed runtime function, and it is not a mov copy of one. Stack transport stays refused.",
+      "instructions": [
+        "100000cb8 bl stub _swift_getErrorValue (x1=sp+0x20, x2=sp+0x8)",
+        "100000cbc ldp x20, x22, [sp, #0x8]",
+        "100000ccc ldur x8, [x22, #-0x8]",
+        "100000cd0 ldr x8, [x8, #0x10]",
+        "100000cdc blr x8"
+      ],
+      "site_kind": "blr",
+      "in_report": true
+    },
+    {
+      "pc": "0x100000f40",
+      "function": "unnamed local function at 0x100000ef4",
+      "tier1_class": "got_or_global_fnptr",
+      "slot_offset": null,
+      "got_entry": "0x100004198 (__got, ___chkstk_darwin per otool -Iv index 48)",
+      "tier2_admitted": false,
+      "tier2_failed_condition": 1,
+      "tier2_reason": "tier1_class_not_value_witness",
+      "instructions": [
+        "100000f38 adrp x16, 4 (0x100004000)",
+        "100000f3c ldr x16, [x16, #0x198]",
+        "100000f40 blr x16"
+      ],
+      "site_kind": "blr",
+      "in_report": false
+    },
+    {
+      "pc": "0x100000f9c",
+      "function": "unnamed local function at 0x100000ef4",
+      "tier1_class": "value_witness",
+      "slot_offset": "0x8",
+      "slot_is_function_slot": true,
+      "tier2_admitted": true,
+      "tier2_failed_condition": null,
+      "tier2_reason": "admitted_only_by_section_5_amendment (strict v1 would refuse: import stub symbol not on the five-name runtime list)",
+      "tier2_explanation": "Xm is x24, a mov copy (0xf28) of x0 returned by bl to the import stub for _$sSS10FoundationE8EncodingVMa (0xf24), an attributed import stub whose symbol is a metadata accessor entity. Table register x26 = ldur [x0,#-8] at 0xf2c, taken straight from that x0. Straight-line code from 0xf24 to 0xf9c with no branch or join. x24 and x26 are not written between definition and use (callee-saved across the bl/blr in between; no explicit write). Condition 1 and 3 hold.",
+      "instructions": [
+        "100000f24 bl stub _$sSS10FoundationE8EncodingVMa (x0 = #0 request at 0xf20)",
+        "100000f28 mov x24, x0",
+        "100000f2c ldur x26, [x0, #-0x8]",
+        "100000f90 ldr x8, [x26, #0x8]",
+        "100000f94 mov x0, x25",
+        "100000f98 mov x1, x24",
+        "100000f9c blr x8"
+      ],
+      "site_kind": "blr",
+      "in_report": true
+    },
+    {
+      "pc": "0x10000122c",
+      "function": "unnamed local function at 0x1000011dc",
+      "tier1_class": "got_or_global_fnptr",
+      "slot_offset": null,
+      "got_entry": "0x100004198 (__got, ___chkstk_darwin)",
+      "tier2_admitted": false,
+      "tier2_failed_condition": 1,
+      "tier2_reason": "tier1_class_not_value_witness",
+      "instructions": [
+        "100001224 adrp x16, 3 (0x100004000)",
+        "100001228 ldr x16, [x16, #0x198]",
+        "10000122c blr x16"
+      ],
+      "site_kind": "blr",
+      "in_report": false
+    },
+    {
+      "pc": "0x1000012a4",
+      "function": "unnamed local function at 0x1000011dc",
+      "tier1_class": "value_witness",
+      "slot_offset": "0x8",
+      "slot_is_function_slot": true,
+      "tier2_admitted": false,
+      "tier2_failed_condition": 2,
+      "tier2_reason": "direct_target_symbol_missing",
+      "tier2_explanation": "Xm is x22 = mov of x0 (0x100001210) after bl 0x100000d98. That target is a local function with no symbol (nm shows only _main and __mh_execute_header as defined). It is a generic lazy-metadata-cache helper taking x0=cache address, x1=mangled-name reference (calls swift_getTypeByMangledNameInContext), not a $s...Ma accessor, and it cannot be decided by the declaration grammar. Not an import stub and not a listed runtime function. Condition 3 would hold (x22 and x27 unwritten, no join into 0x12a4) but condition 2 fails first.",
+      "instructions": [
+        "10000120c bl 0x100000d98",
+        "100001210 mov x22, x0",
+        "100001214 ldur x27, [x0, #-0x8]",
+        "100001298 ldr x8, [x27, #0x8]",
+        "1000012a0 mov x1, x22",
+        "1000012a4 blr x8"
+      ],
+      "site_kind": "blr",
+      "in_report": true
+    },
+    {
+      "pc": "0x10000135c",
+      "function": "unnamed local function at 0x100001340",
+      "site_kind": "br",
+      "in_report": true,
+      "tier1_class": "value_witness",
+      "slot_offset": "0x8",
+      "slot_is_function_slot": true,
+      "tier2_admitted": false,
+      "tier2_failed_condition": 2,
+      "tier2_reason": "metadata_register_from_entry_register_object",
+      "tier2_explanation": "Prior hint is not a blr. It is 'br x2', an indirect tail branch, so it is not in the blr census of __text. If an engine counts indirect br as a call row it would classify as value_witness slot +0x8 (ldur x8,[x1,#-8]; ldrb w9,[x8,#0x52]; tbnz; ldr x2,[x8,#0x8]; br x2) and tier 2 would refuse it at condition 2: Xm is x1 = ldr [x0,#0x18], a load from an entry-register object, not a metadata-accessor result.",
+      "instructions": [
+        "100001348 ldr x1, [x0, #0x18]",
+        "10000134c ldur x8, [x1, #-0x8]",
+        "100001358 ldr x2, [x8, #0x8]",
+        "10000135c br x2"
+      ]
+    },
+    {
+      "pc": "0x1000013c0",
+      "function": "unnamed local function at 0x100001368",
+      "tier1_class": "got_or_global_fnptr",
+      "slot_offset": null,
+      "got_entry": "0x100004198 (__got, ___chkstk_darwin)",
+      "tier2_admitted": false,
+      "tier2_failed_condition": 1,
+      "tier2_reason": "tier1_class_not_value_witness",
+      "instructions": [
+        "1000013b8 adrp x16, 3 (0x100004000)",
+        "1000013bc ldr x16, [x16, #0x198]",
+        "1000013c0 blr x16"
+      ],
+      "site_kind": "blr",
+      "in_report": false
+    },
+    {
+      "pc": "0x100001438",
+      "function": "unnamed local function at 0x100001368",
+      "tier1_class": "value_witness",
+      "slot_offset": "0x8",
+      "slot_is_function_slot": true,
+      "tier2_admitted": false,
+      "tier2_failed_condition": 2,
+      "tier2_reason": "direct_target_symbol_missing",
+      "tier2_explanation": "Xm is x23 = mov of x0 (0x1000013a4) after bl 0x100000d98, the same symbol-less local cache helper as site 0x1000012a4. Table register x28 = ldur [x0,#-8] (0x1000013a8). Condition 2 fails; condition 3 would hold.",
+      "instructions": [
+        "1000013a0 bl 0x100000d98",
+        "1000013a4 mov x23, x0",
+        "1000013a8 ldur x28, [x0, #-0x8]",
+        "10000142c ldr x8, [x28, #0x8]",
+        "100001434 mov x1, x23",
+        "100001438 blr x8"
+      ],
+      "site_kind": "blr",
+      "in_report": true
+    }
+  ],
+  "summary": {
+    "in_report_sites": 5,
+    "value_witness": 5,
+    "admitted": [
+      "0x100000f9c"
+    ],
+    "not_admitted_in_report": [
+      "0x100000cdc",
+      "0x1000012a4",
+      "0x10000135c",
+      "0x100001438"
+    ],
+    "out_of_report_got_sites": [
+      "0x100000f40",
+      "0x10000122c",
+      "0x1000013c0"
+    ],
+    "non_swift_got_calls": 3
+  },
+  "derivation": [
+    "Original hand derivation kept unchanged for every site it listed; the oracle was not adapted to the code on any class, slot, condition or admission.",
+    "Correction 1 (oracle incomplete): site 0x10000135c is an indirect tail branch (br). The implementation's scan counts br and blr alike as indirect-call instructions, and the design says every indirect-call row gets a tier 1 record. The oracle's own hint check already derived its result (value_witness, slot 0x8, refused at condition 2); it is promoted to a site with site_kind br.",
+    "Correction 2 (scope): the three got_or_global_fnptr sites (0x100000f40, 0x10000122c, 0x1000013c0) are GOT calls that the existing GOT model attributes to a non-Swift import (___chkstk_darwin). They are not indirect-call rows and not got_base_not_adrp declines, so design section 2 gives them no tier 1 record. Their class is kept as the oracle's hand classification and marked in_report false; the report must carry no shape or admission record for them and must count them as non_swift_got_calls."
+  ],
+  "indirect_instruction_site_count": 8
+}

@@ -92,7 +92,14 @@
       "model": "swift-broad-error-flow-extended-v2",
       "profile": "broad-extended-v2",
       "native_admitted": true
+    },
+    {
+      "model": "swift-broad-error-flow-extended-v3",
+      "profile": "broad-extended-v3",
+      "native_admitted": true
     }
   ],
-  "swift_caller_error_test_model": "swift-caller-error-test-v1"
+  "swift_caller_error_test_model": "swift-caller-error-test-v1",
+  "swift_indirect_target_shape_model": "swift-indirect-target-shape-v1",
+  "swift_value_witness_admission_model": "swift-value-witness-admission-v1"
 }

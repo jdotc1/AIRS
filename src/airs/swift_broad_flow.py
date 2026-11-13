@@ -8,9 +8,12 @@ from .types import InputError, Limits, MachOImage
 from .swift_broad_profiles import (BROAD_MODEL, BROAD_PROFILE, BROAD_LARGE_PROFILE, BROAD_LARGE_MODEL,
                                    BROAD_EXTENDED_PROFILE, BROAD_EXTENDED_MODEL,
                                    BROAD_EXTENDED_V2_PROFILE, BROAD_EXTENDED_V2_MODEL,
+                                   BROAD_EXTENDED_V3_PROFILE, BROAD_EXTENDED_V3_MODEL,
                                    BROAD_IMPORTS_PROFILE, BROAD_IMPORTS_MODEL)
 from .swift_broad_profiles import BROAD_IMPORTS_GOT_PROFILE, BROAD_IMPORTS_GOT_MODEL
 from .swift_caller_error_test import caller_error_test_from_bytes, _direct_entry_indices
+from .swift_indirect_facts import indirect_target_facts, make_symbol_lookup, ADMITTED_REASON, SITE_WORK
+from .analysis_models import SWIFT_INDIRECT_TARGET_SHAPE_MODEL, SWIFT_VALUE_WITNESS_ADMISSION_MODEL
 from .macho_stubs import STUB_MODEL, attribute_import_stubs
 from .macho_got import attribute_got_bindings, got_report_fields, got_callsite_admission
 from .swift_callsite_admission import (CallsiteLimits, CallsiteSessionError,
@@ -36,13 +39,16 @@ IMPORTS_BROAD_LIMITS=EXTENDED_BROAD_LIMITS
 PROFILE_LIMITS=MappingProxyType({BROAD_PROFILE:BROAD_LIMITS, BROAD_LARGE_PROFILE:LARGE_BROAD_LIMITS,
                                 BROAD_EXTENDED_PROFILE:EXTENDED_BROAD_LIMITS,
                                 BROAD_EXTENDED_V2_PROFILE:EXTENDED_BROAD_LIMITS,
+                                BROAD_EXTENDED_V3_PROFILE:EXTENDED_BROAD_LIMITS,
                                 BROAD_IMPORTS_PROFILE:IMPORTS_BROAD_LIMITS,
                                 BROAD_IMPORTS_GOT_PROFILE:IMPORTS_BROAD_LIMITS})
 PROFILE_MODELS=MappingProxyType({BROAD_PROFILE:BROAD_MODEL, BROAD_LARGE_PROFILE:BROAD_LARGE_MODEL,
                                 BROAD_EXTENDED_PROFILE:BROAD_EXTENDED_MODEL,
                                 BROAD_EXTENDED_V2_PROFILE:BROAD_EXTENDED_V2_MODEL,
+                                BROAD_EXTENDED_V3_PROFILE:BROAD_EXTENDED_V3_MODEL,
                                 BROAD_IMPORTS_PROFILE:BROAD_IMPORTS_MODEL,
                                 BROAD_IMPORTS_GOT_PROFILE:BROAD_IMPORTS_GOT_MODEL})
+CALLER_FACT_PROFILES=(BROAD_EXTENDED_V2_PROFILE,BROAD_EXTENDED_V3_PROFILE)
 IMPORT_CALLSITE_MODEL='swift-broad-import-callsite-v1'
 IMPORT_REASON='imported_callee_abi_unqualified'
 REPORT_BYTES=16*1024*1024
@@ -90,7 +96,7 @@ def _import_admission(function,pc,word,stub,parsed):
         work_steps=16+len(stub.symbol))
 
 
-def _got_site(got,function,pc,report,declarations,*,keep_nonthrowing=False):
+def _got_site(got,function,pc,report,declarations,*,keep_nonthrowing=False,declines=None):
     # None keeps the existing path; 'skip' leaves calls[]; a tuple is a selected GOT call.
     counts=report['got_counts'];counts['blr_instructions']+=1
     found=got.classify(function,pc)
@@ -98,7 +104,9 @@ def _got_site(got,function,pc,report,declarations,*,keep_nonthrowing=False):
     counts['got_candidates']+=1;kind,call=found
     if kind=='declined':
         counts['declined_got_calls']+=1;reasons=report['got_decline_counts']
-        reasons[call]=reasons.get(call,0)+1;return None
+        reasons[call]=reasons.get(call,0)+1
+        if declines is not None:declines.append(call)
+        return None
     counts['attributed_got_calls']+=1;symbol=call.binding.symbol
     if not symbol.lstrip('_').startswith('$s'):
         counts['non_swift_got_calls']+=1;return 'skip'
@@ -157,7 +165,8 @@ def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
     report['analysis_work']+=validation_ledger.initial_work_steps
     if validation_ledger.status!='ready':
         raise InputError('swift_broad_independent_metadata',validation_ledger.reason or 'Independent metadata admission incomplete')
-    caller_facts=profile==BROAD_EXTENDED_V2_PROFILE
+    caller_facts=profile in CALLER_FACT_PROFILES
+    indirect_facts=profile==BROAD_EXTENDED_V3_PROFILE
     shapes=Counter();caller_declines=Counter()
     # Reserve one direct-target pass plus at most twelve fact words per scanned
     # site before ordinary candidate work can consume the aggregate ceiling.
@@ -165,8 +174,16 @@ def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
     if caller_facts:
         report.update(caller_error_test_counts={},caller_error_test_decline_counts={})
         report['limitations']+=['caller_error_test_does_not_claim_callee_behaviour']
+    shape_counts=Counter();admission_counts=Counter(admitted=0,refused=0);refusal_conditions=Counter()
+    if indirect_facts:
+        report.update(indirect_target_shape_model=SWIFT_INDIRECT_TARGET_SHAPE_MODEL,
+                      value_witness_admission_model=SWIFT_VALUE_WITNESS_ADMISSION_MODEL,
+                      indirect_target_shape_counts={},value_witness_admission_counts={},
+                      value_witness_refusal_condition_counts={})
+        report['limitations']+=['indirect_target_shape_does_not_claim_callee_behaviour',
+                                'value_witness_admission_by_abi_with_recorded_provenance']
     stubs=None
-    if profile in (BROAD_IMPORTS_PROFILE,BROAD_IMPORTS_GOT_PROFILE,BROAD_EXTENDED_V2_PROFILE):
+    if profile in (BROAD_IMPORTS_PROFILE,BROAD_IMPORTS_GOT_PROFILE)+CALLER_FACT_PROFILES:
         stubs=attribute_import_stubs(image)
         report['analysis_work']+=stubs.work
         report['limitations'].append('imported_callees_attribution_only')
@@ -177,11 +194,12 @@ def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
         if not stubs.complete:report['call_details_complete']=False
         declarations={}
     got=None
-    if profile in (BROAD_IMPORTS_GOT_PROFILE,BROAD_EXTENDED_V2_PROFILE):
+    if profile in (BROAD_IMPORTS_GOT_PROFILE,)+CALLER_FACT_PROFILES:
         got=attribute_got_bindings(image);got_declarations={}
         report['analysis_work']+=got.work;report.update(got_report_fields(got))
         report['limitations']+=['got_callees_attribution_only','got_window_entry_screen_syntactic']
         if not got.complete:report['call_details_complete']=False
+    symbol_lookup=make_symbol_lookup(functions,stubs) if indirect_facts else None
     remaining=limits.max_total_instructions;budget=max(0,min(REPORT_BYTES,witness_limits.max_aggregate_bytes)-65536)
     statuses=Counter();reasons=Counter()
     for function in image.functions:
@@ -217,9 +235,11 @@ def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
                 target=pc+d*4
                 if not word&0x80000000 and function.start<=target<function.end:continue
             report['observed_call_instructions']+=1
-            got_selected=None;fact=None;disagreement=False
+            got_selected=None;fact=None;disagreement=False;base_declined=False
             if got is not None and word&0xfffffc1f==0xd63f0000:
-                got_selected=_got_site(got,function,pc,report,got_declarations,keep_nonthrowing=caller_facts)
+                declines=[]
+                got_selected=_got_site(got,function,pc,report,got_declarations,keep_nonthrowing=caller_facts,declines=declines)
+                base_declined='got_base_not_adrp' in declines
                 if got_selected=='skip':continue
                 if caller_facts and got_selected is not None:
                     fact=caller_fact(index)
@@ -255,7 +275,9 @@ def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
             if got_selected is not None:report['got_counts']['selected_got_calls']+=1
             # Reserve the maximum cost before another independently bounded
             # admission/build/replay unit. This is algorithmic work, not RSS.
-            if report['analysis_work']+caller_work_remaining+CALLSITE_WORK_RESERVATION+ABI_WORK_RESERVATION+3*witness_limits.max_work>AGGREGATE_WORK:
+            # Each indirect site of a v3 report decodes its function once more for the two target models.
+            indirect_reserve=function.size//4+SITE_WORK if indirect_facts and indirect and got_selected is None else 0
+            if report['analysis_work']+caller_work_remaining+indirect_reserve+CALLSITE_WORK_RESERVATION+ABI_WORK_RESERVATION+3*witness_limits.max_work>AGGREGATE_WORK:
                 report['omitted_calls']+=1;report['call_details_complete']=False
                 report['outcome_witnesses_complete']=False;continue
             if retained>=limits.max_observations_per_function or len(report['calls'])>=limits.max_total_evidence:
@@ -275,6 +297,13 @@ def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
                                   work_steps=error.work_steps,call_return_proven=False)
             if disagreement:admitted['reason']='declaration_caller_disagreement'
             report['analysis_work']+=admitted['work_steps']
+            shape=witness=None
+            if indirect_reserve and (base_declined or admitted.get('reason')=='indirect_target_unresolved'):
+                shape,witness,work=indirect_target_facts(image,function,pc,symbol_lookup)
+                report['analysis_work']+=work
+                # Admission changes only a row that was unresolved; shape and admission records stay on the row.
+                if witness['admitted'] and admitted.get('status')=='unresolved':
+                    admitted['status']='declined';admitted['reason']=ADMITTED_REASON
             row=dict(caller_pc=hex(function.start),call_pc=hex(pc),admission=None,candidate=None,validation=None)
             if admitted['status']=='admitted_callsite':
                 abi=_abi(image,admitted,function.start,capability)
@@ -286,6 +315,7 @@ def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
                 report['analysis_work']+=sum(x.get('accounting',{}).get('work',0)
                     for x in (row['candidate'],row['validation']))
             if fact is not None:row['caller_error_test']=fact
+            if shape is not None:row['indirect_target_shape']=shape;row['value_witness_admission']=witness
             row['admission']=_public(admitted)
             verdict=row['validation'] or admitted;status=verdict.get('status','unresolved');reason=verdict.get('reason','unknown')
             row=_public(row)
@@ -302,6 +332,10 @@ def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
             if fact is not None:
                 shapes[fact['shape']]+=1
                 if 'reason' in fact['postcall']:caller_declines[fact['postcall']['reason']]+=1
+            if shape is not None:
+                shape_counts[shape['class']]+=1
+                admission_counts['admitted' if witness['admitted'] else 'refused']+=1
+                if not witness['admitted']:refusal_conditions[str(witness['first_failing_condition'])]+=1
             if not admitted.get('details_complete',True):report['outcome_witnesses_complete']=False
             candidate=row['candidate'] or {}
             cfg=candidate.get('cfg') or {}
@@ -314,6 +348,10 @@ def recover_swift_broad_flow(image: MachOImage, limits: Limits|None=None,
     if caller_facts:
         report['caller_error_test_counts']=dict(sorted(shapes.items()))
         report['caller_error_test_decline_counts']=dict(sorted(caller_declines.items()))
+    if indirect_facts:
+        report['indirect_target_shape_counts']=dict(sorted(shape_counts.items()))
+        report['value_witness_admission_counts']=dict(sorted(admission_counts.items()))
+        report['value_witness_refusal_condition_counts']=dict(sorted(refusal_conditions.items()))
     report['status_counts']=dict(sorted(statuses.items()));report['reason_counts']=dict(sorted(reasons.items()))
     # The final profile ceiling applies to the actual public JSON representation,
     # including envelope and counters, before the coordinator returns a report.
