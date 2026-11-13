@@ -309,6 +309,8 @@ def _decode_stub(image, limits, charge, section, index, address, offset, words, 
         stub_words=tuple(MappingProxyType(dict(
             pc=address + 4 * k, word=f'0x{words[k]:08x}', slice_file_offset=offset + 4 * k,
             container_file_offset=offset + 4 * k + image.slice_offset)) for k in range(3)),
+        stub_indirect_index=section.reserved1 + index,
+        pointer_indirect_index=target.reserved1 + slot,
         stub_indirect_entry_offset=stub_entry_offset,
         pointer_indirect_entry_offset=pointer_entry_offset,
         nlist_offset=nlist_offset))
