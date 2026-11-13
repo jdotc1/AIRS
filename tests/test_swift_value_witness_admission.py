@@ -99,7 +99,7 @@ class AcceptedProvenanceTests(unittest.TestCase):
         self.assertEqual(r['symbol'], '_$sSS10FoundationE8EncodingVMa')
 
     def test_every_runtime_name_with_and_without_underscore(self):
-        self.assertEqual(len(RUNTIME_METADATA_FUNCTIONS), 6)
+        self.assertEqual(len(RUNTIME_METADATA_FUNCTIONS), 8)
         for name, address in RUNTIME_ADDRESSES.items():
             for symbol in ('_' + name, name):
                 with self.subTest(symbol=symbol):
@@ -231,10 +231,33 @@ class Condition2Tests(unittest.TestCase):
     def test_runtime_list_is_exact_not_prefix(self):
         for symbol in ('_swift_getGenericMetadataX', '_swift_getGenericMetadat', '__swift_getGenericMetadata',
                        '_swift_getGenericMetadata ', '_Swift_getGenericMetadata', '_swift_getTypeByMangledName',
-                       '_swift_getTypeByMangledNameInContext'):
+                       '_swift_getTypeByMangledNameInContextX'):
             with self.subTest(symbol=symbol):
                 r = admit(vw(), lambda a, s=symbol: (s, 'import_stub'))
                 self.assertEqual(verdict(r)[:3], (False, 'unknown', 2))
+
+    def test_real_mangled_name_in_context_stubs_are_admitted(self):
+        for symbol in ('_swift_getTypeByMangledNameInContext', '_swift_getTypeByMangledNameInContextInMetadataState'):
+            with self.subTest(symbol=symbol):
+                r = admit(vw(), lambda a, s=symbol: (s, 'import_stub'))
+                self.assertEqual(verdict(r), (True, 'runtime_metadata_call', None, 'meets_tier2_conditions'))
+
+    def test_single_writer_callee_saved_register_with_skipping_branch_is_refused(self):
+        # cbz x1 skips the accessor call and lands between the x19 definition and its use.
+        f = Fn()
+        f.add(cbz(1, f.pc, f.at(3)))
+        f.bl(LOCAL_ACCESSOR).add(mov(19, 0), ldur(8, 19, -8), ldr(8, 8, 0x10), blr(8))
+        r = admit(f)
+        self.assertEqual(verdict(r), (False, 'unknown', 2, 'join_in_slice'))
+        # Without the skipping branch the same shape is admitted.
+        g = Fn().bl(LOCAL_ACCESSOR).add(mov(19, 0), ldur(8, 19, -8), ldr(8, 8, 0x10), blr(8))
+        self.assertTrue(admit(g)['admitted'])
+
+    def test_casp_overwriting_the_metadata_register_is_refused(self):
+        casp = 0x48207c82  # casp x0, x1, x2, x3, [x4]: writes x0 and x1
+        f = Fn().bl(LOCAL_ACCESSOR).add(mov(1, 0), casp, ldur(8, 1, -8), ldr(8, 8, 0x10), blr(8))
+        r = admit(f)
+        self.assertFalse(r['admitted'])
 
     def test_local_non_accessor_symbol_is_refused(self):
         r = admit(vw(OTHER_FUNCTION))

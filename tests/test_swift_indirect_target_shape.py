@@ -307,6 +307,25 @@ class JoinTests(unittest.TestCase):
         r = classify(build(True), site=BASE + 4 * 5)
         self.assertEqual((r['class'], r['unknown_reason']), ('unknown', 'join_in_slice'))
 
+    def test_bc_cond_target_counts_as_a_join(self):
+        f = Fn().bl(0x100000800).add(mov(9, 0))
+        f.add(bcond(f.pc, f.at(3), 0) | 0x10)  # bc.cond: bit 4 set
+        f.add(ldur(8, 9, -8), ldr(8, 8, 8), blr(8))
+        r = classify(f, site=f.at(5))
+        self.assertEqual((r['class'], r['unknown_reason']), ('unknown', 'join_in_slice'))
+
+    def test_compare_and_branch_target_counts_as_a_join(self):
+        f = Fn().bl(0x100000800).add(mov(9, 0))
+        f.add(0x74000000 | (1 << 5))  # cb<cc> with imm9 = 1: target is the next word after itself
+        f.add(ldur(8, 9, -8), ldr(8, 8, 8), blr(8))
+        r = classify(f, site=f.at(5))
+        self.assertEqual((r['class'], r['unknown_reason']), ('unknown', 'join_in_slice'))
+
+    def test_casp_and_ld64b_write_the_following_registers(self):
+        from airs.swift_indirect_target_shape import _decode
+        self.assertTrue({0, 1} <= _decode(0x48207c82, BASE)['writes'])
+        self.assertTrue(set(range(4, 12)) <= _decode(0xf83fd004, BASE)['writes'])  # ld64b x4
+
     def test_join_demotes_other_classes_too(self):
         f = Fn().adrp(8, 0x100002000)
         f.add(cbz(5, f.pc, f.pc + 4), blr(8))

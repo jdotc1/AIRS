@@ -35,6 +35,8 @@ MODEL = 'swift-value-witness-admission-v1'
 # metadata) in x0. This list is an ABI premise of the design, not a runtime verification.
 RUNTIME_METADATA_FUNCTIONS = frozenset((
     'swift_getGenericMetadata',
+    'swift_getTypeByMangledNameInContext',
+    'swift_getTypeByMangledNameInContextInMetadataState',
     'swift_getTypeByMangledNameInContext2',
     'swift_getTypeByMangledNameInContextInMetadataState2',
     'swift_checkMetadataState',
@@ -162,6 +164,14 @@ def _admit(analysis, symbol_lookup):
             else 'tier1_class_' + tier1['class']
         return _result(tier1, failing=1, reason=reason)
     F, root, target = analysis.function, analysis.root, analysis.target
+    # Condition 2 needs the definition to reach the use on every path. The tier 1 census
+    # exemption for a single-writer callee-saved register does not prove that (the writer need
+    # not dominate the use), so tier 2 checks every definition-to-use interval for a join itself.
+    for node in _walk(root):
+        if node.get('pc') is None or node.get('consumer') is None or node['kind'] in ('entry_live', 'unknown'):
+            continue
+        if F.join_between(node['pc'], node['consumer']):
+            return _result(tier1, kind='unknown', failing=2, reason='join_in_slice')
     table = _leaf(target['base'])
     metadata_register = 'x%d' % table['rn']
     kind, reason, symbol, ok = _provenance(table['base'], symbol_lookup)

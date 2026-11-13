@@ -75,9 +75,12 @@ def _decode(word, pc):
                 return make('blr', 'blr %s' % X(rn), {30}, rn=rn)
             return make('blra', 'authenticated blr', {30}, rn=rn)
         return make('ret', 'ret/eret')
-    if w & 0xff000010 == 0x54000000:
+    if w & 0xff000000 == 0x54000000:  # b.cond and bc.cond (bit 4 set)
         target = pc + _sx((w >> 5) & 0x7ffff, 19) * 4
         return make('bcond', 'b.cond %#x' % target, target=target)
+    if w & 0x7e000000 == 0x74000000:  # compare-and-branch (FEAT_CMPBR): imm9 at bits 13..5
+        target = pc + _sx((w >> 5) & 0x1ff, 9) * 4
+        return make('cbz', 'cb<cc> %#x' % target, target=target)
     if w & 0x7e000000 == 0x34000000:
         target = pc + _sx((w >> 5) & 0x7ffff, 19) * 4
         return make('cbz', 'cbz/cbnz %#x' % target, target=target)
@@ -132,7 +135,9 @@ def _decode_load_store(w, pc, make, X, XS):
     vector = (w >> 26) & 1
     size = (w >> 30) & 3
     opc = (w >> 22) & 3
-    everything = {rt, rn, rt2, rs}
+    # Pair and multi-register forms (casp writes Rs+1, ld64b writes Xt..Xt+7) write registers
+    # beyond the named fields, so the over-approximation adds the following registers too.
+    everything = {rt, rn, rt2, rs, rs + 1} | set(range(rt, rt + 8))
     if group == 7 and (w >> 24) & 3 == 1:  # unsigned immediate
         off = ((w >> 10) & 0xfff) << size
         if vector == 0 and opc == 1 and size == 3:
