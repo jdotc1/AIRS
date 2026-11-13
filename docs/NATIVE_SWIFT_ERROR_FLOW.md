@@ -50,6 +50,28 @@ sets of 200 across all 4,096 retained rows; evidence pages expose every retained
 JSON character in 16,000-character segments. Export retains the original report
 bytes. Pagination is presentation only, not output truncation.
 
+The analysis-profile picker offers these profiles, each mapped to one engine argument and
+report model:
+
+| Picker entry | Engine argument | Report model |
+| --- | --- | --- |
+| Standard Swift · v37/v38 | none | `swift-sync-error-edges-v37`/`v38` |
+| Broad Swift · broad-v1 | `broad-v1` | `swift-broad-error-flow-v1` |
+| Broad Swift · larger function inventory | `broad-large-v1` | `swift-broad-error-flow-large-v1` |
+| Broad Swift · extended scan | `broad-extended-v1` | `swift-broad-error-flow-extended-v1` |
+| Broad Swift · extended + caller error tests (v2) | `broad-extended-v2` | `swift-broad-error-flow-extended-v2` |
+| Broad Swift · v2 + indirect targets and value witnesses (v3) | `broad-extended-v3` | `swift-broad-error-flow-extended-v3` |
+| Broad Swift · imported callees (attribution only) | `broad-imports-v1` | `swift-broad-error-flow-imports-v1` |
+
+The v2 and v3 entries use the extended limits (9,216 functions, 2,097,152 scanned words, 8,192
+retained calls). v2 records, for each retained imported-call row, what the caller did around the
+call; that is a fact about the caller and says nothing about whether the callee throws. v3 adds
+indirect-target shape and value-witness admission records; an admitted value-witness call stays
+declined as `value_witness_abi_nonthrowing`, with no claim about callee behavior. See
+[the imported-callee profile](SWIFT_BROAD_IMPORTS_PROFILE.md). A run whose engine response names a
+different model than the selected profile is refused, and a saved report reopens under the entry
+that matches its model.
+
 The engine's existing 8 MiB image, 16 MiB report and other work ceilings remain
 unchanged. Native shape admission also bounds depth, nodes, strings, row payloads,
 model combinations, duplicate keys and exact identity links. Saved validator
