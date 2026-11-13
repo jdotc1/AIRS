@@ -18,6 +18,14 @@ public struct RetainedReport: Sendable {
     public let data: Data
     public let report: AuditReport
     public let provenance: LibraryProvenance
+    public let reportURL: URL?
+
+    public init(data: Data, report: AuditReport, provenance: LibraryProvenance, reportURL: URL? = nil) {
+        self.data = data
+        self.report = report
+        self.provenance = provenance
+        self.reportURL = reportURL
+    }
 }
 
 public struct ReportLibraryEntry: Identifiable, Sendable {
@@ -60,7 +68,8 @@ public struct ReportLibrary: Sendable {
     public func storedIDs() async throws -> Set<UUID> { try await store.storedIDs() }
     public func load(_ id: UUID) async throws -> RetainedReport {
         let retained = try await store.load(id)
-        return RetainedReport(data: retained.data, report: retained.report, provenance: retained.provenance)
+        return RetainedReport(data: retained.data, report: retained.report, provenance: retained.provenance,
+                              reportURL: retained.reportURL)
     }
     public func keep(_ data: Data, provenance: LibraryProvenance) async throws -> UUID {
         try await store.keep(data, provenance: provenance)
