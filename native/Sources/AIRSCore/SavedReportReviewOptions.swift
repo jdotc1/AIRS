@@ -79,3 +79,107 @@ enum ReviewArgumentBudget: Sendable {
         }
     }
 }
+
+/// CLI presentation options; absence is distinct from an explicit zero/empty selection.
+public struct CoverageOptions: Sendable, Equatable {
+    public enum Order: String, Sendable { case count, reason }
+    public let reasons: [String]?
+    public let minimumCount: Int?
+    public let order: Order
+    public let limit: Int?
+
+    public init(reasons: [String]? = nil, minimumCount: Int? = nil, order: Order = .count, limit: Int? = nil) throws {
+        self.reasons = try SavedReportOptionValidation.reasons(reasons)
+        guard minimumCount.map({ $0 > 0 }) ?? true else {
+            throw ReportError.invalidContents("Minimum reason count must be a positive integer that fits this Mac's integer range.")
+        }
+        try SavedReportOptionValidation.limit(limit)
+        self.minimumCount = minimumCount; self.order = order; self.limit = limit
+    }
+    var arguments: [String] {
+        var result = (reasons ?? []).flatMap { ["--reason", $0] }
+        if let minimumCount { result += ["--minimum-count", String(minimumCount)] }
+        if order == .reason { result += ["--sort", order.rawValue] }
+        if let limit { result += ["--limit", String(limit)] }
+        return result
+    }
+}
+
+public struct SummaryOptions: Sendable, Equatable {
+    public enum Order: String, Sendable { case source, verdict }
+    public let verdicts: [AuditVerdict]?
+    public let reasons: [String]?
+    public let nameContains: String?
+    public let order: Order
+    public let limit: Int?
+
+    public init(verdicts: [AuditVerdict]? = nil, reasons: [String]? = nil, nameContains: String? = nil,
+                order: Order = .source, limit: Int? = nil) throws {
+        guard verdicts?.isEmpty != true else { throw ReportError.invalidContents("Select at least one finding verdict.") }
+        self.verdicts = verdicts.map { values in AuditVerdict.allCases.filter { values.contains($0) } }
+        self.reasons = try SavedReportOptionValidation.reasons(reasons)
+        if let nameContains {
+            guard !nameContains.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                  nameContains.utf8.count <= 256,
+                  !nameContains.utf8.contains(where: { $0 < 32 || $0 == 127 }) else {
+                throw ReportError.invalidContents("Name query must be nonblank literal UTF-8 text of 1–256 bytes without ASCII controls.")
+            }
+        }
+        try SavedReportOptionValidation.limit(limit)
+        self.nameContains = nameContains; self.order = order; self.limit = limit
+    }
+    var arguments: [String] {
+        var result = (verdicts ?? []).flatMap { ["--verdict", $0.rawValue] }
+        result += (reasons ?? []).flatMap { ["--reason", $0] }
+        if let nameContains { // One token: argparse would read a separate value that starts with "-" as an option.
+            result += ["--name-contains=" + nameContains] }
+        if order == .verdict { result += ["--sort", order.rawValue] }
+        if let limit { result += ["--limit", String(limit)] }
+        return result
+    }
+}
+
+public enum SavedReportOptionValidation {
+    public static func reasons(_ values: [String]?) throws -> [String]? {
+        guard let values else { return nil }
+        guard values.count <= 32 else { throw ReportError.invalidContents("Select at most 32 reason codes, including duplicate entries.") }
+        // An empty list has no CLI spelling. Refuse instead of silently selecting all reasons.
+        guard !values.isEmpty else { throw ReportError.invalidContents("Select at least one reason code, or clear the reason filter.") }
+        guard values.allSatisfy({ value in
+            let bytes = Array(value.utf8)
+            return (1...128).contains(bytes.count) && (97...122).contains(bytes[0]) &&
+                bytes.dropFirst().allSatisfy { (97...122).contains($0) || (48...57).contains($0) || $0 == 95 }
+        }) else { throw ReportError.invalidContents("Reason codes must match ASCII [a-z][a-z0-9_]{0,127}.") }
+        return Array(Set(values)).sorted()
+    }
+    public static func limit(_ value: Int?) throws {
+        guard value.map({ (0...200_000).contains($0) }) ?? true else {
+            throw ReportError.invalidContents("Detail limit must be an integer from 0 to 200,000; leave it blank for all details.")
+        }
+    }
+}
+
+/// Input budgets count duplicates. Decode one source at a time before staging or launch.
+public enum SavedReportInputBudget {
+    public static let maximumReports = 128
+    public static let maximumBytes = 128 * 1_048_576
+    public static let maximumFindings = 200_000
+    public static func validateCounts(reportCount: Int, byteCount: Int, findingCount: Int) throws {
+        guard (1...maximumReports).contains(reportCount) else { throw ReportError.invalidContents("Choose 1–128 saved reports; duplicate inputs count toward the 128-report limit.") }
+        guard (0...maximumBytes).contains(byteCount) else { throw ReportError.invalidContents("Saved report inputs exceed the 128 MiB total size limit. Remove reports before applying.") }
+        guard (0...maximumFindings).contains(findingCount) else { throw ReportError.invalidContents("Saved report inputs exceed the 200,000-finding limit, including duplicates. Remove reports before applying.") }
+    }
+    public static func validate(_ reports: [Data]) throws {
+        try validateCounts(reportCount: reports.count, byteCount: 0, findingCount: 0)
+        var bytes = 0, findings = 0
+        for data in reports {
+            guard data.count <= 64 * 1_048_576 else { throw ReportError.invalidContents("A saved report exceeds the 64 MiB per-report size limit.") }
+            bytes += data.count
+            try validateCounts(reportCount: reports.count, byteCount: bytes, findingCount: findings)
+            let report = try AuditReport.decode(data)
+            guard report.findings.count <= 50_000 else { throw ReportError.invalidContents("A saved report exceeds the 50,000-finding per-report limit.") }
+            findings += report.findings.count
+            try validateCounts(reportCount: reports.count, byteCount: bytes, findingCount: findings)
+        }
+    }
+}

@@ -269,3 +269,88 @@ private struct TestEngine: Sendable {
         try? FileManager.default.removeItem(at: directory)
     }
 }
+
+extension EngineRunnerTests {
+    func testTriageCoverageArgumentsPreserveInputOrderAndDuplicateSnapshots() async throws {
+        let fixture = try TestEngine(script: """
+        import json, pathlib, sys
+        args = sys.argv[1:]
+        reports = [pathlib.Path(args[i+1]).read_text() for i, arg in enumerate(args) if arg == '--report']
+        pathlib.Path(args[args.index('--output')+1]).write_text(json.dumps({'args': args, 'reports': reports}))
+        """)
+        defer { fixture.remove() }
+        let a = try ManualPairRequestFixtures.source(current: false), b = try ManualPairRequestFixtures.source(current: true)
+        let options = try CoverageOptions(reasons: ["z", "a"], minimumCount: 2, order: .reason, limit: 0)
+        let artifact = try await EngineRunner().run(.coverage(reports: [a, b, a], options: options), configuration: fixture.configuration)
+        let object = try XCTUnwrap(JSONSerialization.jsonObject(with: artifact.data) as? [String: Any])
+        let args = try XCTUnwrap(object["args"] as? [String])
+        XCTAssertEqual(object["reports"] as? [String], [a, b, a].map { String(decoding: $0, as: UTF8.self) })
+        XCTAssertEqual(args.filter { $0 == "--report" }.count, 3)
+        XCTAssertEqual(Array(args[7..<17]), options.arguments)
+        XCTAssertEqual((1...3).map { URL(fileURLWithPath: args[$0 * 2]).lastPathComponent }, ["report-0.json", "report-1.json", "report-2.json"])
+    }
+    func testTriageCoverageAndSummaryAbsentFlagsAndLiteralNameAreCaptured() async throws {
+        let fixture = try TestEngine(script: """
+        import json, pathlib, sys
+        args = sys.argv[1:]
+        pathlib.Path(args[args.index('--output')+1]).write_text(json.dumps(args))
+        """)
+        defer { fixture.remove() }
+        let report = try ManualPairRequestFixtures.source(current: false), runner = EngineRunner()
+        for command in [EngineCommand.coverage(reports: [report], options: try CoverageOptions()),
+                        EngineCommand.summary(report: report, options: try SummaryOptions())] {
+            let output = try await runner.run(command, configuration: fixture.configuration)
+            let args = try JSONDecoder().decode([String].self, from: output.data)
+            XCTAssertEqual(args.count, 7)
+            XCTAssertEqual(args[1], "--report")
+            XCTAssertEqual(Array(args[3...5]), ["--format", "json", "--output"])
+            for flag in ["--reason", "--verdict", "--minimum-count", "--sort", "--limit", "--name-contains"] { XCTAssertFalse(args.contains(flag)) }
+        }
+        let options = try SummaryOptions(verdicts: [.unresolved], reasons: ["unknown"], nameContains: "é space ' literal", order: .verdict, limit: 0)
+        let output = try await runner.run(.summary(report: report, options: options), configuration: fixture.configuration)
+        let args = try JSONDecoder().decode([String].self, from: output.data)
+        XCTAssertEqual(Array(args[3..<(3 + options.arguments.count)]), options.arguments)
+    }
+    func testTriageRunnerRefusesInputCountBeforeLaunchingOwnedChild() async throws {
+        let fixture = try TestEngine(script: """
+        import pathlib
+        pathlib.Path(__file__).with_suffix('.started').write_text('unexpected launch')
+        """)
+        defer { fixture.remove() }
+        do {
+            _ = try await EngineRunner().run(.coverage(reports: Array(repeating: Data(), count: 129), options: try CoverageOptions()), configuration: fixture.configuration)
+            XCTFail("Report count must be refused before launch")
+        } catch { XCTAssertTrue(error.localizedDescription.contains("128")) }
+        XCTAssertFalse(FileManager.default.fileExists(atPath: fixture.scriptURL.deletingPathExtension().appendingPathExtension("started").path))
+    }
+}
+
+extension EngineRunnerTests {
+    func testTriageCommandsRetainStructuredFailureDiagnosticsAndRejectPartialExit() async throws {
+        let failure = try TestEngine(script: """
+        import sys
+        sys.stderr.write('{"error":{"code":"invalid_report","message":"Owned invalid source"}}')
+        raise SystemExit(2)
+        """)
+        let partial = try TestEngine(script: """
+        import pathlib, sys
+        args = sys.argv[1:]
+        pathlib.Path(args[args.index('--output')+1]).write_text('{}')
+        raise SystemExit(1)
+        """)
+        defer { failure.remove(); partial.remove() }
+        let report = try ManualPairRequestFixtures.source(current: false)
+        for command in [EngineCommand.coverage(reports: [report], options: try CoverageOptions()), .summary(report: report, options: try SummaryOptions())] {
+            for fixture in [failure, partial] {
+                do {
+                    _ = try await EngineRunner().run(command, configuration: fixture.configuration)
+                    XCTFail("Saved-report commands must refuse nonzero exit status")
+                } catch EngineError.failed(let status, let diagnostic) {
+                    if fixture.scriptURL == failure.scriptURL {
+                        XCTAssertEqual(status, 2); XCTAssertTrue(diagnostic.contains("invalid_report")); XCTAssertTrue(diagnostic.contains("Owned invalid source"))
+                    } else { XCTAssertEqual(status, 1) }
+                }
+            }
+        }
+    }
+}

@@ -1,4 +1,5 @@
 import Foundation
+import AIRSCore
 
 /// Adapted from owned EntitlementDiff BoundedJSON: retain exact UTF-8 object keys
 /// and strings, and Python integer-vs-float configuration semantics. This is a
@@ -7,12 +8,17 @@ indirect enum CoverageJSONIdentity:Equatable,Sendable {
     case object([Data:CoverageJSONIdentity]),array([CoverageJSONIdentity]),string(Data),number(String),boolean(Bool),null
     subscript(_ key:String)->Self? {guard case .object(let fields)=self else {return nil};return fields[Data(key.utf8)]}
     var array:[Self]? {guard case .array(let values)=self else {return nil};return values}
-    static func parse(_ bytes:Data) throws -> Self {var parser=CoverageIdentityParser(bytes);return try parser.parse()}
+    static func parse(_ bytes:Data, detailedLimits:Bool = false) throws -> Self {var parser=CoverageIdentityParser(bytes, detailedLimits:detailedLimits);return try parser.parse()}
 }
 private struct CoverageIdentityParser {
     let bytes:[UInt8]
     var position=0,nodes=0
-    init(_ data:Data) {bytes=Array(data)}
+    let detailedLimits:Bool
+    init(_ data:Data, detailedLimits:Bool) {bytes=Array(data);self.detailedLimits=detailedLimits}
+    func limit(_ message:String) throws -> Never {
+        if detailedLimits { throw AIRSCore.ReportError.invalidContents(message) }
+        throw InspectionArchiveError.limit
+    }
     mutating func whitespace() {while position < bytes.count && [9,10,13,32].contains(bytes[position]) {position += 1}}
     mutating func take(_ byte:UInt8)->Bool {whitespace();if position < bytes.count && bytes[position] == byte {position += 1;return true};return false}
     mutating func parse() throws -> CoverageJSONIdentity {let value=try node(0);whitespace();guard position == bytes.count else {throw InspectionArchiveError.invalid};return value}
@@ -23,14 +29,15 @@ private struct CoverageIdentityParser {
             if byte == 92 {guard position < bytes.count else {throw InspectionArchiveError.invalid};position += 1}
             else if byte == 34 {
                 let value=Data(try JSONDecoder().decode(String.self,from:Data(bytes[start..<position])).utf8)
-                guard value.count <= 1_048_576 else {throw InspectionArchiveError.limit};return value
+                guard value.count <= 1_048_576 else {try limit("Native saved-result JSON admission limits each string to 1 MiB.")};return value
             }
         }
         throw InspectionArchiveError.invalid
     }
     mutating func node(_ depth:Int) throws -> CoverageJSONIdentity {
         whitespace();nodes += 1
-        guard depth <= 96,nodes <= 100_000 else {throw InspectionArchiveError.limit}
+        guard depth <= 96 else {try limit("Native saved-result JSON admission limits nesting to 96 levels.")}
+        guard nodes <= 100_000 else {try limit("Native saved-report JSON admission is limited to 100,000 JSON nodes. Reduce generated details or choose a smaller saved source.")}
         guard position < bytes.count else {throw InspectionArchiveError.invalid}
         if take(123) {
             var fields:[Data:CoverageJSONIdentity]=[:]
