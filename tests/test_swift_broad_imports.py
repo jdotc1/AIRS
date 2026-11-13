@@ -64,11 +64,14 @@ def flow(image, limits=None, profile=PROFILE):
 
 
 def provenance(stub=STUB, slice_file=0x1008, words=(0xF0000010, 0xF9400210, 0xD61F0200),
-               stub_entry=INDIRECT, pointer_entry=INDIRECT + 4, nlist=NLIST + 16, container_delta=0):
+               stub_entry=INDIRECT, pointer_entry=INDIRECT + 4, nlist=NLIST + 16, container_delta=0,
+               stub_indirect_index=0, pointer_indirect_index=1):
     return {
         'stub_words': [{'pc': stub + 4 * k, 'word': '0x%08x' % words[k],
                         'slice_file_offset': slice_file + 4 * k,
                         'container_file_offset': slice_file + 4 * k + container_delta} for k in range(3)],
+        'stub_indirect_index': stub_indirect_index,
+        'pointer_indirect_index': pointer_indirect_index,
         'stub_indirect_entry_offset': stub_entry,
         'pointer_indirect_entry_offset': pointer_entry,
         'nlist_offset': nlist,
@@ -167,7 +170,8 @@ class StubTableTests(unittest.TestCase):
                           stub1['pointer_address']), (1, '_objc_msgSend', 2, 3, 0x100004008))
         self.assertEqual(stub1['provenance'], provenance(
             stub=0x100001014, slice_file=0x1014, words=(0xF0000010, 0xF9400610, 0xD61F0200),
-            stub_entry=0x8038 + 4, pointer_entry=0x8038 + 12, nlist=NLIST + 32))
+            stub_entry=0x8038 + 4, pointer_entry=0x8038 + 12, nlist=NLIST + 32,
+            stub_indirect_index=1, pointer_indirect_index=3))
         lazy, _ = build_stub_image(
             pointer_sections=(PointerSection('__la_symbol_ptr', (0,), kind=7, segment='__DATA'),),
             stubs=((0, '__la_symbol_ptr', 0),))
@@ -203,6 +207,9 @@ class StubTableTests(unittest.TestCase):
         table = attribute_import_stubs(image_of(data))
         self.assertEqual(tuple(table.invalid_sections), ())
         record = table.attributed[STUB].record()
+        # Stub reserved1 1 + stub index 0; pointer reserved1 1 + slot 0.
+        self.assertEqual(record['provenance']['stub_indirect_index'], 1)
+        self.assertEqual(record['provenance']['pointer_indirect_index'], 1)
         self.assertEqual(record['provenance']['stub_indirect_entry_offset'], INDIRECT + 4)
         self.assertEqual(record['provenance']['pointer_indirect_entry_offset'], INDIRECT + 4)
 

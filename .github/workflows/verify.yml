@@ -49,6 +49,14 @@ jobs:
           allowed = {
               ('test_private_python_reuse.RuntimeMetadataReuseTests.test_saved_observed_metadata_pair_without_runtime_access',
                'Saved diagnostic fixture not selected'),
+              ('test_facts_export_contract.ExternalContractTests.test_exported_record_ids',
+               'AIRS_NAVIGATOR_CONTRACT_DIR is unset; external contract unavailable'),
+              ('test_facts_export_contract.ExternalContractTests.test_import_examples',
+               'AIRS_NAVIGATOR_CONTRACT_DIR is unset; external contract unavailable'),
+              ('test_facts_export_contract.ExternalContractTests.test_schema_exported_results',
+               'AIRS_NAVIGATOR_CONTRACT_DIR is unset; external contract unavailable'),
+              ('test_facts_export_contract.ExternalContractTests.test_vocabulary',
+               'AIRS_NAVIGATOR_CONTRACT_DIR is unset; external contract unavailable'),
           }
           unexpected = [(item['test'], item['reason']) for item in receipt['skipped']
                         if (item['test'], item['reason']) not in allowed]
