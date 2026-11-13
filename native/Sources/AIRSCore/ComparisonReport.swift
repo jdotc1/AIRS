@@ -95,6 +95,18 @@ public struct ComparisonManualPair: Codable, Equatable, Sendable {
     public let baselineID: String
     public let currentID: String
 
+    public init(baselineID: String, currentID: String) throws {
+        for id in [baselineID, currentID] {
+            let suffix = id.dropFirst("airsf-".count)
+            guard id.hasPrefix("airsf-"), suffix.utf8.count == 64,
+                  suffix.utf8.allSatisfy({ (48...57).contains($0) || (97...102).contains($0) }) else {
+                throw ReportError.invalidContents("Manual comparison endpoints must be airsf- followed by 64 lowercase hexadecimal digits.")
+            }
+        }
+        self.baselineID = baselineID
+        self.currentID = currentID
+    }
+
     enum CodingKeys: String, CodingKey {
         case baselineID = "baseline_id"
         case currentID = "current_id"
