@@ -199,7 +199,8 @@ After 0.4.0, each milestone below that changes what a user sees ends in a releas
    at a time. Check it differentially against the toolchain's demangler over every
    imported Swift symbol name in the panel. Exit: no symbol the grammar admits as
    non-throwing that the demangler shows as throwing or async, and the admitted share
-   reported (today 4 of 5,123 on Maccy).
+   reported (today 4 of 5,123 on Maccy). Contract:
+   [swift/DECLARATION_GRAMMAR_CONTRACT.md](swift/DECLARATION_GRAMMAR_CONTRACT.md).
 4. **GOT candidate screen.** Explain `got_base_not_adrp`. In the owned fixture the
    four declines with this reason are value-witness calls. If the same holds on the
    panel, which nobody has checked, these are table calls and not GOT loads, and they
