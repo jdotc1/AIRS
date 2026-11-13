@@ -11,6 +11,8 @@ def render_swift_broad_text(report):
                 and report.get('profile')=='broad-large-v1')
             or (report.get('model_version')=='swift-broad-error-flow-extended-v1'
                 and report.get('profile')=='broad-extended-v1')
+            or (report.get('model_version')=='swift-broad-error-flow-extended-v2'
+                and report.get('profile')=='broad-extended-v2')
             or (report.get('model_version')=='swift-broad-error-flow-imports-v1'
                 and report.get('profile')=='broad-imports-v1')
             or (report.get('model_version')=='swift-broad-error-flow-imports-got-v1'
@@ -34,8 +36,8 @@ def render_swift_broad_text(report):
     for name in ('word_scan_complete','call_details_complete','outcome_witnesses_complete',
                  'scanned_words','selected_call_candidates','omitted_calls'):
         lines.append(name+': '+safe(report.get(name)))
-    imports=report.get('profile') in ('broad-imports-v1','broad-imports-got-v1')
-    got=report.get('profile')=='broad-imports-got-v1'
+    imports=report.get('profile') in ('broad-imports-v1','broad-imports-got-v1','broad-extended-v2')
+    got=report.get('profile') in ('broad-imports-got-v1','broad-extended-v2')
     if imports:
         # Imported callees are attribution and declaration syntax only.
         lines.append('Imported stub calls: attribution and declaration syntax only; no ABI, witness or runtime binding.')
@@ -89,6 +91,10 @@ def render_swift_broad_text(report):
         else:
             detail.append('  test '+safe(post.get('test_pc'))+'; success '+safe(post.get('success_successor_pc'))+
                          '; error '+safe(post.get('error_successor_pc')))
+        if report.get('profile')=='broad-extended-v2' and 'caller_error_test' in row:
+            fact=row['caller_error_test']
+            if type(fact) is not dict:raise InputError('swift_broad_text_shape','Caller error test must be an object')
+            detail.append('  caller x21 shape '+safe(fact.get('shape'))+'; no callee behaviour claim')
         cost=sum(len(line)+1 for line in detail)
         if size+cost>MAX_TEXT_BYTES-128:break
         lines.extend(detail);size+=cost;shown+=1
