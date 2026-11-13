@@ -86,14 +86,14 @@ jobs:
       - name: Select Xcode 27 from the runner
         run: |
           developer_dir="$(xcode-select -p)"
-          version="$(DEVELOPER_DIR="$developer_dir" xcodebuild -version | head -n 1)"
+          version="$(DEVELOPER_DIR="$developer_dir" xcodebuild -version)"; version="${version%%$'\n'*}"
           case "$version" in
             "Xcode 27."*) ;;
             *)
               candidate="$(ls -d /Applications/Xcode_27*.app 2>/dev/null | sort -V | tail -n 1)"
               if [ -n "$candidate" ]; then
                 developer_dir="$candidate/Contents/Developer"
-                version="$(DEVELOPER_DIR="$developer_dir" xcodebuild -version | head -n 1)"
+                version="$(DEVELOPER_DIR="$developer_dir" xcodebuild -version)"; version="${version%%$'\n'*}"
               fi
               ;;
           esac
@@ -188,14 +188,14 @@ jobs:
       - name: Select Xcode 27 from the runner
         run: |
           developer_dir="$(xcode-select -p)"
-          version="$(DEVELOPER_DIR="$developer_dir" xcodebuild -version | head -n 1)"
+          version="$(DEVELOPER_DIR="$developer_dir" xcodebuild -version)"; version="${version%%$'\n'*}"
           case "$version" in
             "Xcode 27."*) ;;
             *)
               candidate="$(ls -d /Applications/Xcode_27*.app 2>/dev/null | sort -V | tail -n 1)"
               if [ -n "$candidate" ]; then
                 developer_dir="$candidate/Contents/Developer"
-                version="$(DEVELOPER_DIR="$developer_dir" xcodebuild -version | head -n 1)"
+                version="$(DEVELOPER_DIR="$developer_dir" xcodebuild -version)"; version="${version%%$'\n'*}"
               fi
               ;;
           esac
@@ -259,14 +259,14 @@ jobs:
       - name: Select Xcode 27 from the runner
         run: |
           developer_dir="$(xcode-select -p)"
-          version="$(DEVELOPER_DIR="$developer_dir" xcodebuild -version | head -n 1)"
+          version="$(DEVELOPER_DIR="$developer_dir" xcodebuild -version)"; version="${version%%$'\n'*}"
           case "$version" in
             "Xcode 27."*) ;;
             *)
               candidate="$(ls -d /Applications/Xcode_27*.app 2>/dev/null | sort -V | tail -n 1)"
               if [ -n "$candidate" ]; then
                 developer_dir="$candidate/Contents/Developer"
-                version="$(DEVELOPER_DIR="$developer_dir" xcodebuild -version | head -n 1)"
+                version="$(DEVELOPER_DIR="$developer_dir" xcodebuild -version)"; version="${version%%$'\n'*}"
               fi
               ;;
           esac
