@@ -238,8 +238,9 @@ def input_sets():
 
 
 class DeclarationGrammarOracleTests(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
+    def setUp(self):
+        # Skip from setUp, not setUpClass, so the skip is recorded under the
+        # test method's id that the CI allow-list names.
         try:
             found = subprocess.run(['xcrun', '--find', 'swift-demangle'],
                                    capture_output=True, text=True, timeout=30)
