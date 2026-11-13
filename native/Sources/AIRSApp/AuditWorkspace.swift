@@ -29,6 +29,9 @@ struct ComparisonDocument: Identifiable, Sendable {
     let data: Data
     let formattedJSON: String
     var protectedInputs: [URL] = []
+    var sources: SavedComparisonSources? = nil
+
+    var manualChanges: [ComparisonChange] { report.changes.filter { $0.matchBasis == "manual_review" } }
 }
 
 private struct OpenedAudit: Sendable {
@@ -45,7 +48,8 @@ private enum WorkspaceResult: Sendable {
     case boundReceipts([BoundReviewReceiptEntry])
     case exported(String)
     case library([ReportLibraryEntry], message: String)
-    case retained(OpenedAudit, provenance: LibraryProvenance)
+    case retained(OpenedAudit, provenance: LibraryProvenance, sourceURL: URL? = nil)
+    case manualComparison(ComparisonDocument, ManualPairSubmission)
     case batch(ImageBatchSnapshot)
     case batchHistory([BatchHistoryEntry])
     case removedBatch(UUID, [BatchHistoryEntry])
@@ -80,6 +84,8 @@ private actor DocumentWorker {
     func acknowledgments() async throws -> [BoundReviewReceiptEntry] { try await boundLedger.entries() }
 
     func load(_ url: URL) throws -> OpenedAudit {
+        let access = url.startAccessingSecurityScopedResource()
+        defer { if access { url.stopAccessingSecurityScopedResource() } }
         let data = try ReportFiles.readBounded(url)
         return OpenedAudit(report: try AuditReport.decode(data), data: data)
     }
@@ -97,6 +103,13 @@ private actor DocumentWorker {
                            formattedJSON: try ReportFiles.prettyJSON(data))
     }
 
+    func comparison(_ data: Data, sources: SavedComparisonSources,
+                    selection: ManualPairSelection = .empty) throws -> ComparisonDocument {
+        let report = try selection.decodeComparison(data, baselineData: sources.baseline.data, currentData: sources.current.data)
+        return ComparisonDocument(report: report, data: data, formattedJSON: try ReportFiles.prettyJSON(data),
+                                  protectedInputs: sources.urls, sources: sources)
+    }
+
     func batchExport(_ result: BatchComparisonResult) throws -> Data { try result.exportData() }
 
     func validateHandoff(_ data: Data) throws {
@@ -108,9 +121,8 @@ private actor DocumentWorker {
         }
     }
 
-    func write(_ data: Data, to url: URL) throws {
-        try Task.checkCancellation()
-        try data.write(to: url, options: .atomic)
+    func write(_ data: Data, to url: URL, protectedInputs: [URL]) throws {
+        try ComparisonExportProtection.write(data, to: url, sources: protectedInputs)
     }
 }
 
@@ -133,6 +145,8 @@ final class AuditWorkspace: ObservableObject {
     @Published var batchComparisonPlan: BatchComparisonPlan?
     @Published private(set) var batchComparisonResult: BatchComparisonResult?
     @Published var comparisonDocument: ComparisonDocument?
+    @Published private(set) var manualPairSession: ManualPairReviewSession?
+    private(set) var savedReportURL: URL?
     @Published var showingLibrary = false
     @Published var showingBatch = false
     @Published var showingBatchHistory = false
@@ -167,6 +181,7 @@ final class AuditWorkspace: ObservableObject {
     private let batches = ImageBatchRunner()
     private let history: BatchHistory
     private let batchCompare: (@Sendable (Data, Data) async throws -> Data)?
+    private let compareSavedReports: (@Sendable (Data, Data, ManualPairSelection) async throws -> Data)?
     private let batchAudit: (@Sendable (URL) async throws -> Data)?
     private var batchID: UUID?
     private var rawReport: Data?
@@ -176,12 +191,14 @@ final class AuditWorkspace: ObservableObject {
     private var attachedSymbolInput: URL?
     private var activeTask: Task<Void, Never>?
     private var operationID = UUID()
+    private var manualComparisonSessionID: UUID?
     private var terminationRequested = false
     private var exportFailedDuringQuit = false
 
     init(library: ReportLibrary? = nil, recents: (any WorkspaceRecentsRecording)? = nil,
          batchAudit: (@Sendable (URL) async throws -> Data)? = nil, batchHistory: BatchHistory? = nil,
          batchCompare: (@Sendable (Data, Data) async throws -> Data)? = nil,
+         compareSavedReports: (@Sendable (Data, Data, ManualPairSelection) async throws -> Data)? = nil,
          boundReviewLedger: BoundReviewLedger? = nil,
          supportRoot: URL? = nil, preferences: UserDefaults = .standard) {
         self.preferences = preferences
@@ -194,6 +211,7 @@ final class AuditWorkspace: ObservableObject {
         self.analysisReuse = AnalysisReuse(root: locations.analysisReuse, library: self.library)
         self.recents = recents ?? SystemDocumentRecents()
         self.batchCompare = batchCompare
+        self.compareSavedReports = compareSavedReports
         self.batchAudit = batchAudit
         self.history = batchHistory ?? BatchHistory(root: locations.batchHistory)
         usesExternalPython = preferences.bool(forKey: "usesExternalPython")
@@ -595,7 +613,7 @@ final class AuditWorkspace: ObservableObject {
         guard !isBusy else { return }
         perform("Opening \(url.lastPathComponent)…") { [documents] in
             let document = try await documents.load(url)
-            return .retained(document, provenance: LibraryProvenance(sourceLabel: "Imported \(url.path)"))
+            return .retained(document, provenance: LibraryProvenance(sourceLabel: "Imported \(url.path)"), sourceURL: url)
         }
         // Record only after successful import, not when the open operation begins.
         pendingRecentReport = url
@@ -608,7 +626,7 @@ final class AuditWorkspace: ObservableObject {
         guard !blocksFileOpen else { return }
         pendingRecentReport = url
         apply(.retained(OpenedAudit(report: report, data: data),
-                        provenance: LibraryProvenance(sourceLabel: "Imported \(url.path)")))
+                        provenance: LibraryProvenance(sourceLabel: "Imported \(url.path)"), sourceURL: url))
     }
 
     func clearRecentReports() {
@@ -644,20 +662,25 @@ final class AuditWorkspace: ObservableObject {
     func openRetainedReport(_ id: UUID) {
         perform("Opening retained report…") { [library] in
             let retained = try await library.load(id)
-            return .retained(OpenedAudit(report: retained.report, data: retained.data), provenance: retained.provenance)
+            return .retained(OpenedAudit(report: retained.report, data: retained.data), provenance: retained.provenance,
+                             sourceURL: retained.reportURL)
         }
     }
 
     func compareRetainedReport(_ id: UUID) {
-        guard !isBusy, let currentData = rawReport else { return }
+        guard !isBusy, let currentData = rawReport, let currentReport = report else { return }
+        let current = SavedComparisonSource(report: currentReport, data: currentData, url: savedReportURL)
+        let revision = reportRevision
         do {
-            let configuration = try EngineConfiguration.resolve(pythonSetting: pythonPath, useExternalPython: usesExternalPython)
-            perform("Comparing retained baseline…") { [library, runner, documents] in
+            let compare = try savedComparisonOperation()
+            perform("Comparing retained baseline…") { [library, documents] in
                 let baseline = try await library.load(id)
                 try Task.checkCancellation()
-                let artifact = try await runner.run(.diff(baseline: baseline.data, current: currentData), configuration: configuration)
-                var document = try await documents.comparison(artifact.data)
-                document.protectedInputs = [baseline.provenance.inspectedInput, baseline.provenance.symbolInput, baseline.provenance.bundleImage?.bundle].compactMap { $0 }
+                let data = try await compare(baseline.data, currentData, .empty)
+                let sources = SavedComparisonSources(baseline: SavedComparisonSource(report: baseline.report, data: baseline.data,
+                    url: baseline.reportURL), current: current, workspaceRevision: revision)
+                var document = try await documents.comparison(data, sources: sources)
+                document.protectedInputs += [baseline.provenance.inspectedInput, baseline.provenance.symbolInput, baseline.provenance.bundleImage?.bundle].compactMap { $0 }
                 return .comparison(document)
             }
         } catch { present(error) }
@@ -671,20 +694,60 @@ final class AuditWorkspace: ObservableObject {
     }
 
     func chooseBaseline() {
-        guard !isBusy, let currentData = rawReport,
+        guard !isBusy, rawReport != nil,
               let url = chooseJSON(title: "Choose Baseline Audit Report", prompt: "Compare") else { return }
+        compareBaseline(url)
+    }
+
+    func compareBaseline(_ url: URL) {
+        guard !isBusy, let currentData = rawReport, let currentReport = report else { return }
+        let current = SavedComparisonSource(report: currentReport, data: currentData, url: savedReportURL)
+        let revision = reportRevision
         do {
-            let configuration = try EngineConfiguration.resolve(pythonSetting: pythonPath, useExternalPython: usesExternalPython)
-            perform("Comparing with \(url.lastPathComponent)…") { [runner, documents] in
+            let compare = try savedComparisonOperation()
+            perform("Comparing with \(url.lastPathComponent)…") { [documents] in
                 let baseline = try await documents.load(url)
                 try Task.checkCancellation()
-                let artifact = try await runner.run(
-                    .diff(baseline: baseline.data, current: currentData),
-                    configuration: configuration
-                )
-                return .comparison(try await documents.comparison(artifact.data))
+                let data = try await compare(baseline.data, currentData, .empty)
+                let sources = SavedComparisonSources(baseline: SavedComparisonSource(report: baseline.report, data: baseline.data, url: url),
+                    current: current, workspaceRevision: revision)
+                return .comparison(try await documents.comparison(data, sources: sources))
             }
         } catch { present(error) }
+    }
+
+    func compareManualPairs() {
+        guard !isBusy, !terminationRequested, let session = manualPairSession, !session.isClosed,
+              session.sources.workspaceRevision == reportRevision else { return }
+        do {
+            let submitted = try session.submission()
+            let protectedInputs = session.acceptedDocument.protectedInputs
+            let compare = try savedComparisonOperation()
+            perform("Comparing user-selected review pairs…") { [documents] in
+                let data = try await compare(submitted.sources.baseline.data, submitted.sources.current.data, submitted.selection)
+                var document = try await documents.comparison(data, sources: submitted.sources, selection: submitted.selection)
+                document.protectedInputs = protectedInputs
+                return .manualComparison(document, submitted)
+            }
+            manualComparisonSessionID = session.id
+        } catch { present(error) }
+    }
+
+    private func savedComparisonOperation() throws -> @Sendable (Data, Data, ManualPairSelection) async throws -> Data {
+        if let compareSavedReports { return compareSavedReports }
+        let configuration = try EngineConfiguration.resolve(pythonSetting: pythonPath, useExternalPython: usesExternalPython)
+        return { [runner] baseline, current, selection in
+            try await runner.run(.diff(baseline: baseline, current: current, manualPairs: selection), configuration: configuration).data
+        }
+    }
+
+    func closeComparison(documentID: UUID? = nil) {
+        if let documentID, let current = comparisonDocument, current.id != documentID { return }
+        let closingSessionID = manualPairSession?.id
+        manualPairSession?.close()
+        if let closingSessionID, manualComparisonSessionID == closingSessionID, isBusy && canCancel { cancel() }
+        manualPairSession = nil
+        comparisonDocument = nil
     }
 
     func chooseDSYM() {
@@ -718,7 +781,8 @@ final class AuditWorkspace: ObservableObject {
     }
 
     func exportComparison(_ document: ComparisonDocument) {
-        saveJSON(document.data, suggestedFilename: "airs-comparison.json", protectedInputs: document.protectedInputs)
+        saveJSON(document.data, suggestedFilename: "airs-comparison.json",
+                 protectedInputs: document.protectedInputs + (document.sources?.urls ?? []))
     }
 
     func exportHandoff(_ finding: Finding) {
@@ -795,6 +859,7 @@ final class AuditWorkspace: ObservableObject {
 
     func cancel() {
         guard isBusy, canCancel else { return }
+        manualPairSession?.invalidatePendingResult()
         status = "Cancelling…"
         activeTask?.cancel()
         // The runner's cancellation handler owns termination and cleanup.
@@ -802,6 +867,7 @@ final class AuditWorkspace: ObservableObject {
 
     func finishBeforeQuit() async -> Bool {
         terminationRequested = true
+        manualPairSession?.invalidatePendingResult()
         let pendingTask = activeTask
         if canCancel { pendingTask?.cancel() }
         await pendingTask?.value
@@ -854,10 +920,11 @@ final class AuditWorkspace: ObservableObject {
         do { try validateExportDestination(url, protectedInputs: protectedInputs) }
         catch { present(error); return }
 
-        exportJSON(data, to: url)
+        exportJSON(data, to: url, protectedInputs: protectedInputs)
     }
 
     func validateExportDestination(_ url: URL, protectedInputs: [URL]) throws {
+        try ComparisonExportProtection.validate(url, sources: [savedReportURL].compactMap { $0 } + protectedInputs)
         if !projectProtectedInputs.isEmpty {try ReportDestination.validate(url,excluding:projectProtectedInputs)}
         for input in [inspectedInput, attachedSymbolInput, discoveredBundleInput].compactMap({ $0 }) + protectedInputs {
             let protectedPath = input.resolvingSymlinksInPath().standardizedFileURL.path
@@ -871,10 +938,12 @@ final class AuditWorkspace: ObservableObject {
     }
 
     // Shared by the save panel and native lifecycle tests.
-    func exportJSON(_ data: Data, to url: URL) {
+    func exportJSON(_ data: Data, to url: URL, protectedInputs: [URL] = []) {
+        let inputs = [savedReportURL, inspectedInput, attachedSymbolInput, discoveredBundleInput].compactMap { $0 }
+            + protectedInputs + projectProtectedInputs
         // Once the user chooses a destination, the atomic commit reports its real result.
         perform("Exporting \(url.lastPathComponent)…", cancellable: false) { [documents] in
-            try await documents.write(data, to: url)
+            try await documents.write(data, to: url, protectedInputs: inputs)
             return .exported(url.lastPathComponent)
         }
     }
@@ -888,6 +957,7 @@ final class AuditWorkspace: ObservableObject {
         guard !isBusy, !terminationRequested else { return }
         let token = UUID()
         operationID = token
+        manualComparisonSessionID = nil
         isBusy = true
         canCancel = cancellable
         status = label
@@ -899,6 +969,7 @@ final class AuditWorkspace: ObservableObject {
                 self.isBusy = false
                 self.canCancel = false
                 self.activeTask = nil
+                self.manualComparisonSessionID = nil
                 if case .batch(let snapshot) = result { self.receiveBatch(snapshot) }
                 guard !self.terminationRequested else { return }
                 self.apply(result)
@@ -907,6 +978,7 @@ final class AuditWorkspace: ObservableObject {
                 self.isBusy = false
                 self.canCancel = false
                 self.activeTask = nil
+                self.manualComparisonSessionID = nil
                 if self.terminationRequested {
                     guard !cancellable else { return }
                     self.exportFailedDuringQuit = true
@@ -928,6 +1000,9 @@ final class AuditWorkspace: ObservableObject {
     private func apply(_ result: WorkspaceResult) {
         switch result {
         case .audit(let document, let source, let inspectedInput):
+            manualPairSession?.close()
+            manualPairSession = nil
+            savedReportURL = nil
             reportRevision = UUID()
             showingBatchHistory = false
             showingBatch = false
@@ -946,6 +1021,9 @@ final class AuditWorkspace: ObservableObject {
             status = "\(document.report.summary.functionCount) functions in report · " +
                 "\(document.report.summary.checkedPCCount) modeled PC observations"
         case .symbols(let document, let symbolInput):
+            manualPairSession?.close()
+            manualPairSession = nil
+            comparisonDocument = nil
             reportRevision = UUID()
             showingBatchHistory = false
             showingBatch = false
@@ -955,11 +1033,21 @@ final class AuditWorkspace: ObservableObject {
             attachedSymbolInput = symbolInput
             status = document.report.sourceAnnotations?.message ?? "Symbol attachment completed."
         case .comparison(let document):
+            if let sources = document.sources, sources.workspaceRevision != reportRevision { return }
+            manualPairSession?.close()
+            manualPairSession = document.sources.map { ManualPairReviewSession(sources: $0, document: document) }
             showingBatchHistory = false
             showingBatch = false
             showingLibrary = false
             comparisonDocument = document
             status = "Baseline comparison ready."
+        case .manualComparison(let document, let submitted):
+            guard let session = manualPairSession,
+                  session.accept(document, submission: submitted, workspaceRevision: reportRevision) else {
+                status = "The comparison was discarded because the review draft or sources changed."
+                return
+            }
+            status = "User-selected review pairs ready."
         case .boundRequest(let request):
             status = "Bound request prepared; choose a new export file."
             saveBoundRequest(request)
@@ -974,8 +1062,9 @@ final class AuditWorkspace: ObservableObject {
         case .library(let entries, let message):
             libraryEntries = entries
             status = message
-        case .retained(let document, let provenance):
+        case .retained(let document, let provenance, let sourceURL):
             apply(.audit(document, source: provenance.sourceLabel, inspectedInput: provenance.inspectedInput))
+            savedReportURL = sourceURL
             attachedSymbolInput = provenance.symbolInput
             discoveredBundleInput = provenance.bundleImage?.bundle
             currentBundleProvenance = provenance.bundleImage

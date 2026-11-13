@@ -100,6 +100,7 @@ struct FindingDetailView: View {
     let finding: Finding
     let isBusy: Bool
     let exportHandoff: () -> Void
+    var permitsHandoff = true
 
     var body: some View {
         ScrollView {
@@ -158,13 +159,15 @@ struct FindingDetailView: View {
                 }
                 LimitationsView(title: "Function limitations", limitations: finding.limitations)
                 LimitationsView(title: "Report limitations", limitations: report.limitations)
-                SectionCard("Export a handoff") {
-                    Text("Create versioned JSON containing the image identity, function range, and selected evidence for a proposed MacScope adapter.")
-                        .font(.callout).foregroundStyle(.secondary)
-                    Button(action: exportHandoff) {
-                        Label("Export Handoff JSON…", systemImage: "square.and.arrow.up")
+                if permitsHandoff {
+                    SectionCard("Export a handoff") {
+                        Text("Create versioned JSON containing the image identity, function range, and selected evidence for a proposed MacScope adapter.")
+                            .font(.callout).foregroundStyle(.secondary)
+                        Button(action: exportHandoff) {
+                            Label("Export Handoff JSON…", systemImage: "square.and.arrow.up")
+                        }
+                        .disabled(isBusy)
                     }
-                    .disabled(isBusy)
                 }
             }
             .padding(28)

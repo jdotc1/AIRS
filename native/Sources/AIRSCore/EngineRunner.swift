@@ -4,7 +4,7 @@ import Darwin
 public enum EngineCommand: Sendable {
     case audit(input: URL)
     case swiftErrorFlow(input: URL, options: SwiftFlowOptions)
-    case diff(baseline: Data, current: Data)
+    case diff(baseline: Data, current: Data, manualPairs: ManualPairSelection = .empty)
     case handoff(report: Data, findingID: String)
     case symbols(report: Data, dsym: URL)
 }
@@ -110,13 +110,16 @@ private final class EngineInvocation: @unchecked Sendable {
             case .audit(let input):
                 arguments = ["audit", "--format", "json", "--output", outputURL.path,
                              "--", input.path]
-            case .diff(let baseline, let current):
+            case .diff(let baseline, let current, let manualPairs):
+                if !manualPairs.pairs.isEmpty {
+                    try manualPairs.validateSources(baseline: AuditReport.decode(baseline), current: AuditReport.decode(current))
+                }
                 let baselineURL = workDirectory.appendingPathComponent("baseline.json")
                 let currentURL = workDirectory.appendingPathComponent("current.json")
                 try baseline.write(to: baselineURL, options: .atomic)
                 try current.write(to: currentURL, options: .atomic)
                 arguments = ["diff", "--baseline", baselineURL.path,
-                             "--current", currentURL.path, "--output", outputURL.path]
+                             "--current", currentURL.path, "--output", outputURL.path] + manualPairs.arguments
             case .symbols(let report, let dsym):
                 let reportURL = workDirectory.appendingPathComponent("report.json")
                 try report.write(to: reportURL, options: .atomic)
@@ -135,6 +138,10 @@ private final class EngineInvocation: @unchecked Sendable {
             process.standardOutput = stdoutHandle
             process.standardError = stderrHandle
             process.environment = EngineConfiguration.isolatedEnvironment(ProcessInfo.processInfo.environment)
+            if case .diff(_, _, let selection) = command, !selection.pairs.isEmpty {
+                try ReviewArgumentBudget.validate(executable: configuration.pythonExecutable.path,
+                    arguments: process.arguments ?? [], environment: process.environment ?? [:])
+            }
         } catch {
             try? stdoutHandle.close()
             try? stderrHandle.close()

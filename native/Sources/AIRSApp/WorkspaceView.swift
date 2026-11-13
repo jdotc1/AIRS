@@ -71,7 +71,8 @@ struct WorkspaceView: View {
             BatchComparisonView(plan: plan, workspace: workspace)
         }
         .sheet(item: $workspace.comparisonDocument) { document in
-            ComparisonView(document: document, workspace: workspace)
+            ComparisonPresentationView(initialDocument: document, workspace: workspace)
+                .interactiveDismissDisabled(workspace.isBusy && !workspace.canCancel)
         }
     }
 

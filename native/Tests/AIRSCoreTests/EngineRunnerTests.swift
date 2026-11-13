@@ -1,9 +1,84 @@
 import Foundation
+import Darwin
 import XCTest
 @testable import AIRSCore
 
 /// These tests execute only a temporary test-owned Python script, never a target image.
 final class EngineRunnerTests: XCTestCase {
+    func testManualPairArgumentsAreCanonicalAndSnapshotsAreStaged() async throws {
+        let fixture = try TestEngine(script: """
+        import json, pathlib, sys
+        args = sys.argv[1:]
+        old = pathlib.Path(args[args.index('--baseline') + 1]).read_text()
+        new = pathlib.Path(args[args.index('--current') + 1]).read_text()
+        pathlib.Path(args[args.index('--output') + 1]).write_text(json.dumps({'args': args, 'old': old, 'new': new}))
+        """)
+        defer { fixture.remove() }
+        let before = try ManualPairRequestFixtures.source(current: false), after = try ManualPairRequestFixtures.source(current: true)
+        let selection = try ManualPairRequestFixtures.selection()
+        let result = try await EngineRunner().run(.diff(baseline: before, current: after, manualPairs: selection), configuration: fixture.configuration)
+        let object = try XCTUnwrap(JSONSerialization.jsonObject(with: result.data) as? [String: Any])
+        let args = try XCTUnwrap(object["args"] as? [String])
+        XCTAssertEqual(Array(args.suffix(4)), selection.arguments)
+        XCTAssertEqual(args.filter { $0 == "--pair" }.count, 2)
+        XCTAssertEqual(object["old"] as? String, String(decoding: before, as: UTF8.self))
+        XCTAssertEqual(object["new"] as? String, String(decoding: after, as: UTF8.self))
+    }
+
+    func testManualPairEmptyDefaultPreservesExactLegacyArgumentList() async throws {
+        let fixture = try TestEngine(script: """
+        import json, pathlib, sys
+        args = sys.argv[1:]
+        pathlib.Path(args[args.index('--output') + 1]).write_text(json.dumps(args))
+        """)
+        defer { fixture.remove() }
+        let runner = EngineRunner()
+        for command in [EngineCommand.diff(baseline: Data(), current: Data()),
+                        EngineCommand.diff(baseline: Data(), current: Data(), manualPairs: .empty)] {
+            let result = try await runner.run(command, configuration: fixture.configuration)
+            let args = try JSONDecoder().decode([String].self, from: result.data)
+            XCTAssertEqual(args.count, 7)
+            guard args.count == 7 else { continue }
+            let root = URL(fileURLWithPath: args[6]).deletingLastPathComponent()
+            XCTAssertEqual(args, ["diff", "--baseline", root.appendingPathComponent("baseline.json").path,
+                                  "--current", root.appendingPathComponent("current.json").path,
+                                  "--output", root.appendingPathComponent("output.json").path])
+        }
+    }
+
+    func testManualPairRunnerRefusesReboundSourcesBeforeLaunch() async throws {
+        let fixture = try TestEngine(script: """
+        import pathlib
+        pathlib.Path(__file__).with_suffix('.started').write_text('unexpected launch')
+        """)
+        defer { fixture.remove() }
+        let selection = try ManualPairRequestFixtures.selection()
+        do {
+            _ = try await EngineRunner().run(.diff(baseline: ManualPairRequestFixtures.source(current: false),
+                current: ManualPairRequestFixtures.source(current: true, digest: "1"), manualPairs: selection), configuration: fixture.configuration)
+            XCTFail("Same-image rebound request must be refused")
+        } catch let error as ReportError {
+            XCTAssertTrue(error.localizedDescription.contains("exact-image"))
+        }
+        XCTAssertFalse(FileManager.default.fileExists(atPath: fixture.scriptURL.deletingPathExtension().appendingPathExtension("started").path))
+    }
+
+    func testManualPairRunnerRefusesArgumentBudgetBeforeLaunching() async throws {
+        let fixture = try TestEngine(script: "raise RuntimeError('must not launch')")
+        defer { fixture.remove() }
+        // Oversize one launcher argument rather than constructing a large report corpus.
+        let oversized = URL(fileURLWithPath: "/" + String(repeating: "x", count: max(16_384, Int(sysconf(_SC_ARG_MAX)))))
+        let configuration = EngineConfiguration(pythonExecutable: fixture.configuration.pythonExecutable, bootstrap: oversized)
+        do {
+            _ = try await EngineRunner().run(.diff(baseline: ManualPairRequestFixtures.source(current: false),
+                current: ManualPairRequestFixtures.source(current: true), manualPairs: ManualPairRequestFixtures.selection()),
+                configuration: configuration)
+            XCTFail("Oversized argv must be refused before Process.run")
+        } catch let error as ReportError {
+            XCTAssertTrue(error.localizedDescription.contains("process argument budget"))
+        }
+    }
+
     func testSwiftCommandAcceptsOnlyItsPartialExitAndPreservesArguments() async throws {
         let fixture = try TestEngine(script: """
         import json, pathlib, sys
