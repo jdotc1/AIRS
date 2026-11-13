@@ -17,7 +17,7 @@ import stat
 import subprocess
 import sys
 import time
-from build_provenance import plain_path, validate_identity, write_exclusive
+from build_provenance import VERSION, plain_path, validate_identity, write_exclusive
 
 MAX_CAPTURE_BYTES = 16 * 1024
 CHECK_TIMEOUT = 45
@@ -63,7 +63,12 @@ def candidate_metadata(app: Path) -> dict:
             'principal_sha256': read_file(app / 'Contents/MacOS' / label, MAX_EXECUTABLE_BYTES, digest=True)}
 
 
-def embedded_provenance(app: Path, commit: str, bundle_id: str, build: str) -> dict:
+def embedded_provenance(app: Path, commit: str, bundle_id: str, build: str,
+                        bundle_version: str | None = None) -> dict:
+    """Read the builder's claim. A record made before the version field existed
+    (0.4.0 build 33 and earlier) stays valid and is reported as recording no version;
+    a recorded version must be a semantic version equal to the bundle's
+    CFBundleShortVersionString, so a record with a version never matches without one."""
     path = app / 'Contents/Resources/AIRSBuildProvenance.json'
     if not path.exists():
         return {'state': 'unavailable', 'matches_request': False}
@@ -77,8 +82,15 @@ def embedded_provenance(app: Path, commit: str, bundle_id: str, build: str) -> d
                and fields.get('source_commit') == commit and fields.get('bundle_id') == bundle_id
                and fields.get('build') == build
                and fields.get('provenance_strength') == 'builder_recorded_not_reproducibly_attested')
+    recorded = isinstance(fields, dict) and 'version' in fields
+    version = fields.get('version') if recorded else None
+    if recorded:
+        matches = (matches and isinstance(version, str) and VERSION.fullmatch(version) is not None
+                   and version == bundle_version)
     return {'state': 'recorded_unverified', 'matches_request': matches,
             'embedded_commit': fields.get('source_commit') if isinstance(fields, dict) else None,
+            'version_recorded': recorded,
+            'embedded_version': version if isinstance(version, str) and len(version) <= 64 else None,
             'record_sha256': hashlib.sha256(encoded).hexdigest()}
 
 
@@ -133,7 +145,7 @@ def evaluate(app: Path, commit: str, expected_id: str, expected_build: str, expe
     validate_identity(commit, expected_id, expected_build)
     app = plain_path(app)
     metadata = candidate_metadata(app)
-    source = embedded_provenance(app, commit, expected_id, expected_build)
+    source = embedded_provenance(app, commit, expected_id, expected_build, metadata['version'])
     version_matches = None if expected_version is None else metadata['version'] == expected_version
     identity = metadata['bundle_id'] == expected_id and metadata['build'] == expected_build and version_matches is not False
     checks = {}

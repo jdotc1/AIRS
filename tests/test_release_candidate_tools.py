@@ -24,6 +24,9 @@ class ReleaseCandidateInitialTests(unittest.TestCase):
         self.assertEqual(claim['source_commit'], 'a' * 40)
         self.assertEqual(claim['bundle_id'], 'dev.airs.app')
         self.assertEqual(claim['build'], '13')
+        import re
+        authority = re.findall(r'^__version__ = "([^"]*)"$', (ROOT / 'src/airs/__init__.py').read_text(), re.M)
+        self.assertEqual([claim['version']], authority)
 
 
 class ReleaseCandidateBoundaryTests(unittest.TestCase):
@@ -80,6 +83,42 @@ class ReleaseCandidateBoundaryTests(unittest.TestCase):
                              ('source_repository', 'other/repo'), ('schema', 'unknown'), ('provenance_strength', 'proven')]:
             fields = dict(original); fields[key] = changed; path.write_text(json.dumps(fields))
             self.assertFalse(self.tool.embedded_provenance(app, 'a' * 40, 'dev.airs.app', '13')['matches_request'])
+
+    def test_engine_version_requires_exactly_one_semantic_literal(self):
+        (self.root / 'src/airs').mkdir(parents=True)
+        source = self.root / 'src/airs/__init__.py'
+        source.write_text('__version__ = "1.20.3"\n')
+        self.assertEqual(self.builder.engine_version(self.root), '1.20.3')
+        for text in ('', '__version__ = "1.2"\n', '__version__ = "01.2.3"\n', '__version__ = "1.2.3-rc1"\n',
+                     '__version__ = "1.2.3"\n__version__ = "1.2.3"\n', "__version__ = '1.2.3'\n"):
+            source.write_text(text)
+            with self.assertRaises(ValueError): self.builder.engine_version(self.root)
+
+    def test_recorded_version_must_equal_bundle_version(self):
+        import json
+        app = self.app(); path = app / 'Contents/Resources/AIRSBuildProvenance.json'
+        original = json.loads(path.read_text())
+        absent = self.tool.embedded_provenance(app, 'a' * 40, 'dev.airs.app', '13', '0.3.3')
+        self.assertTrue(absent['matches_request']); self.assertFalse(absent['version_recorded'])
+        self.assertIsNone(absent['embedded_version'])
+        fields = dict(original, version='0.3.3'); path.write_text(json.dumps(fields))
+        present = self.tool.embedded_provenance(app, 'a' * 40, 'dev.airs.app', '13', '0.3.3')
+        self.assertTrue(present['matches_request']); self.assertTrue(present['version_recorded'])
+        self.assertEqual(present['embedded_version'], '0.3.3')
+        self.assertFalse(self.tool.embedded_provenance(app, 'a' * 40, 'dev.airs.app', '13')['matches_request'])
+        for recorded, bundle in [('0.3.4', '0.3.3'), ('0.3', '0.3'), (3, '3'), (None, None), ('0.3.3', None)]:
+            fields = dict(original, version=recorded); path.write_text(json.dumps(fields))
+            self.assertFalse(self.tool.embedded_provenance(app, 'a' * 40, 'dev.airs.app', '13', bundle)['matches_request'])
+
+    def test_preflight_binds_recorded_version_to_bundle(self):
+        import json
+        app = self.app(); path = app / 'Contents/Resources/AIRSBuildProvenance.json'
+        fields = json.loads(path.read_text())
+        self.assertTrue(self.tool.evaluate(app, 'a' * 40, 'dev.airs.app', '13')['source_provenance']['matches_request'])
+        for recorded, matches in (('0.3.3', True), ('0.3.4', False)):
+            path.write_text(json.dumps(dict(fields, version=recorded)))
+            result = self.tool.evaluate(app, 'a' * 40, 'dev.airs.app', '13')
+            self.assertIs(result['source_provenance']['matches_request'], matches)
 
     def test_missing_malformed_and_excessive_claims_never_match(self):
         app = self.app(); path = app / 'Contents/Resources/AIRSBuildProvenance.json'
