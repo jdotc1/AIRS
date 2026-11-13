@@ -21,6 +21,8 @@ An import call is a call whose target stub or GOT slot the existing attribution 
 
 For each distinct Swift symbol the engine parses the declaration once and keeps the result for the run. The stub path, the GOT path and the value-witness metadata-accessor check of v3 share that one result, so a second parse of the same symbol is a defect. The parse is charged once per distinct symbol to `analysis_work`.
 
+A symbol the value-witness check admits must agree with the import table when the table lists it. A Swift metadata accessor is listed `non_throwing`. One of the fixed C runtime metadata functions of `swift-value-witness-admission-v1`, such as `swift_checkMetadataState`, is not a Swift declaration and is listed `not_swift`. A disagreement fails the report.
+
 ## Premises
 
 The licence rests on five premises, carried once in `capabilities.premises` and never repeated per row:

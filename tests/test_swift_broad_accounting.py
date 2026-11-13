@@ -1016,13 +1016,13 @@ class CheckerRuleTests(CheckerCase):
         report['decision_summary']['undecided_by_reason']['thunk_or_specialization'] = {'names': 1, 'calls': 0}
         self.assertRule('C6', report)
 
-    def _with_value_witness_row(self, symbol):
+    def _with_value_witness_row(self, symbol, kind='imported_metadata_accessor_call'):
         """A value-witness row (an indirect row admitted as a non-throwing metadata accessor) for `symbol`."""
         report = valid_report()
         row = indirect_row('0x100008000', '0x100008010')
         row['admission'].update(status='declined', reason='value_witness_abi_nonthrowing')
         row['value_witness_admission'] = {'admitted': True, 'symbol': symbol,
-                                          'provenance_kind': 'imported_metadata_accessor_call',
+                                          'provenance_kind': kind,
                                           'claims_callee_behaviour': False}
         report['calls'].append(row)
         report['selected_call_candidates'] += 1
@@ -1047,6 +1047,18 @@ class CheckerRuleTests(CheckerCase):
         names['throwing'] += names['non_throwing']
         names['non_throwing'] = 0
         self.assertRule('C7', report)
+
+    def test_c7_runtime_metadata_symbol_listed_not_swift_passes(self):
+        """A C runtime metadata function (Maccy 2.8.0: `_swift_checkMetadataState`) is listed not_swift."""
+        self.assertValid(self._with_value_witness_row(SYM_RUNTIME, 'runtime_metadata_call'))
+
+    def test_c7_runtime_metadata_symbol_listed_non_throwing(self):
+        self.assertRule('C7', self._with_value_witness_row(SYM_NONTHROWING, 'runtime_metadata_call'))
+
+    def test_c7_swift_accessor_symbol_listed_not_swift(self):
+        for kind in ('imported_metadata_accessor_call', 'metadata_accessor_call'):
+            with self.subTest(kind=kind):
+                self.assertRule('C7', self._with_value_witness_row(SYM_RUNTIME, kind))
 
     # ---- D: rows ----
 
