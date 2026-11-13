@@ -529,8 +529,7 @@ class DocumentTests(unittest.TestCase):
         self.assertRegex(text, r'(?i)\b(?:seven|eight)\b[^.]{0,60}\b(?:registered|named|names)\b|'
                                r'\b(?:registered|named)\b[^.]{0,60}\b(?:seven|eight)\b')
         self.assertRegex(text, r'(?i)\bsix\b[^.]{0,120}native')
-        self.assertRegex(text, r'(?i)\b(?:seven|eight)\b[^.]{0,160}(?:after|once)[^.]{0,40}\bP5\b|'
-                               r'\bbefore\s+P5\b[^.]{0,120}\b(?:seven|eight)\b[^.]{0,60}\bafter')
+        self.assertRegex(text, r'(?i)\bseven\b[^.]{0,40}\bonce\b[^.]{0,40}\bnative validator\b')
 
     def test_d09_profile_page_exists_and_names_the_identity(self):
         self.assertTrue(self.page_path.is_file())

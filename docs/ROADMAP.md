@@ -127,7 +127,7 @@ a user of the released application sees first. It received no work after build 3
 6. **Profiles stop multiplying.** There are eight named broad Swift profiles, each a
    superset of another, and a reader has to choose among them. New semantics still
    get a new model identity. They do not get a new profile name. Six of the eight are admitted
-   by the native application before P5 (the native validator for `broad-extended-v4`) and seven after it.
+   by the native application, and seven will be once the native validator for `broad-extended-v4` lands.
 7. **A lane that does not move the panel stops growing.** Section 4.3 and section 4.4
    each carry a stop rule.
 
