@@ -124,9 +124,10 @@ a user of the released application sees first. It received no work after build 3
 5. **A machine makes the check where a machine can.** Release acceptance on a freshly
    provisioned hosted runner replaces the wait for a spare Mac. The decode oracle runs
    in CI. Registries kept by hand in two languages are generated from one source.
-6. **Profiles stop multiplying.** There are five named broad Swift profiles, each a
+6. **Profiles stop multiplying.** There are eight named broad Swift profiles, each a
    superset of another, and a reader has to choose among them. New semantics still
-   get a new model identity. They do not get a new profile name.
+   get a new model identity. They do not get a new profile name. Six of the eight are admitted
+   by the native application, and seven will be once the native validator for `broad-extended-v4` lands.
 7. **A lane that does not move the panel stops growing.** Section 4.3 and section 4.4
    each carry a stop rule.
 
@@ -210,7 +211,8 @@ After 0.4.0, each milestone below that changes what a user sees ends in a releas
    [swift/DECLARATION_GRAMMAR_CONTRACT.md](swift/DECLARATION_GRAMMAR_CONTRACT.md).
    State: the library is merged
    ([swift/DECLARATION_GRAMMAR_V2.md](swift/DECLARATION_GRAMMAR_V2.md)), and CI checks it
-   against the demangler over the SDK text-stub lists. No profile uses it yet. On the 5,123
+   against the demangler over the SDK text-stub lists. The `broad-extended-v4` profile
+   uses it ([SWIFT_BROAD_EXTENDED_V4_PROFILE.md](SWIFT_BROAD_EXTENDED_V4_PROFILE.md)). On the 5,123
    Maccy 2.8.0 rows attributed to an imported Swift callee (494 distinct names), it
    decides 2,416 rows: 2,211 non-throwing, 195 throwing and 10 async. The demangler
    disagrees with none of them, on effects or on identity. Of the 280 names left
@@ -231,7 +233,7 @@ After 0.4.0, each milestone below that changes what a user sees ends in a releas
    any design.
 
 Items 2 to 5 land in one second-generation broad profile whose report lists its
-capabilities and limits. The five existing profile names stay admitted and
+capabilities and limits. The seven earlier profile names stay admitted and
 byte-identical.
 
 Stop rule: if items 3 and 5 are done and nearly every panel row is still unresolved,

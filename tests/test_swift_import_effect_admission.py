@@ -101,7 +101,6 @@ import contextlib
 import dataclasses
 import functools
 import hashlib
-import importlib.util
 import json
 import re
 import struct
@@ -117,7 +116,7 @@ import indirect_v3_image_helpers as helpers  # noqa: E402
 from airs import swift_value_witness_admission as witness_module  # noqa: E402
 from airs import swift_import_effect_admission as effect  # noqa: E402
 from airs.macho import parse_macho  # noqa: E402
-from airs.swift_broad_flow import PROFILE_LIMITS, PROFILE_MODELS, recover_swift_broad_flow  # noqa: E402
+from airs.swift_broad_flow import PROFILE_LIMITS, recover_swift_broad_flow  # noqa: E402
 from airs.swift_caller_error_test import caller_error_test  # noqa: E402
 from airs.swift_declaration_grammar import REASONS as GRAMMAR_REASONS  # noqa: E402
 from airs.swift_declaration_grammar import parse_declaration as real_parse  # noqa: E402
@@ -125,9 +124,7 @@ from got_image_helpers import GotImport, build_got_image, got_call  # noqa: E402
 from stub_image_helpers import Import, build_stub_image  # noqa: E402
 
 PROFILE = 'broad-extended-v4'
-ENGINE_READY = PROFILE in PROFILE_MODELS and PROFILE in PROFILE_LIMITS
-ENGINE_SKIP = 'packet P4 has not registered profile broad-extended-v4 yet'
-ACCOUNTING_READY = importlib.util.find_spec('airs.swift_broad_accounting') is not None
+V3_PROFILE = 'broad-extended-v3'
 
 SYNTAX_MODEL = 'swift-declaration-syntax-v2'
 FIRST_GENERATION_MODEL = 'swift-import-declaration-syntax-v1'
@@ -706,6 +703,344 @@ class ResolverTests(unittest.TestCase):
         twice = resolver.work_steps
         resolver.resolve(SYM_B)
         self.assertEqual(resolver.work_steps, twice)
+
+
+class SiteOnSyntheticImageTests(unittest.TestCase):
+    """A6 to A10: one call site per synthetic image. Synthetic corroboration, not compiled examples."""
+
+    def only_row(self, rep):
+        self.assertEqual(len(rep['calls']), 1)
+        (row,) = rep['calls']
+        self.assertTrue(is_import_row(row))
+        return row
+
+    def check_row_shape(self, row):
+        # Contract 5.2 D4 and 4.5: imported rows stay unresolved and carry no abi, candidate or validation.
+        self.assertEqual(row['admission']['status'], 'unresolved')
+        self.assertIsNone(row['candidate'])
+        self.assertIsNone(row['validation'])
+        self.assertNotIn('abi', row['admission'])
+        self.assertEqual(set(row_field(row, 'effect_admission')), {'model', 'licence_class', 'caller_relation'})
+        self.assertEqual(row_field(row, 'effect_admission')['model'], EFFECT_MODEL)
+
+    def test_a6_conflict_path(self):
+        """Synthetic: mov x21, xzr; bl <stub>; cbz x21, with the stub attributed to a non_throwing symbol."""
+        rep = report('non_throwing/idiom')
+        row = self.only_row(rep)
+        self.check_row_shape(row)
+        self.assertEqual(row['admission']['reason'], REASON_DISAGREEMENT)
+        self.assertEqual(row['caller_error_test']['shape'], 'swifterror_idiom')
+        self.assertEqual(row_field(row, 'effect_admission')['licence_class'], 'no_error_exit')
+        self.assertEqual(row_field(row, 'effect_admission')['caller_relation'], 'conflict')
+        entry = table_entry(rep, SYMBOLS['non_throwing'])
+        self.assertEqual((entry['decision'], entry['reason'], entry['calls'], entry['retained'],
+                          entry['skipped_non_throwing'], entry['not_swift_calls'], entry['omitted']),
+                         ('non_throwing', None, 1, 1, 0, 0, 0))
+        self.assertEqual(rep['decision_by_shape']['non_throwing']['swifterror_idiom'], 1)
+        self.assertEqual(grid_total(rep), 1)
+        self.assertEqual(rep['reason_counts'], {REASON_DISAGREEMENT: 1})
+        self.assertEqual(rep['status_counts'], {'unresolved': 1})
+
+    def test_a7_tail_branch_is_skipped_and_counted(self):
+        """Synthetic: the same caller with `b <stub>` in place of `bl`."""
+        data, layout = build_site(SYMBOLS['non_throwing'], kind='b', zero=True, test=True)
+        rep = report('non_throwing/tail')
+        self.assertEqual(rep['calls'], [])
+        entry = table_entry(rep, SYMBOLS['non_throwing'])
+        self.assertEqual((entry['calls'], entry['retained'], entry['skipped_non_throwing'], entry['omitted']),
+                         (1, 0, 1, 0))
+        words = struct.unpack_from('<8I', data, layout.caller_addrs[0] - layout.base)
+        self.assertEqual(words[4] & 0xfc000000, 0x14000000, 'the site is a tail branch')
+        located = [(layout.caller_addrs[0] + 4 * i, word) for i, word in enumerate(words)]
+        shape = caller_error_test(located, 4, 0, len(words), ())['shape']
+        self.assertNotEqual(shape, 'swifterror_idiom')
+        self.assertEqual(rep['decision_by_shape']['non_throwing'][shape], 1)
+        self.assertEqual(grid_total(rep), 1)
+
+    def test_a8_corroboration(self):
+        """Synthetic: mov x21, xzr; bl <stub>; cbz x21 to a throwing symbol, then the same without the mov."""
+        rep = report('throwing/idiom')
+        row = self.only_row(rep)
+        self.check_row_shape(row)
+        self.assertEqual(row['admission']['reason'], REASON_OUTCOME)
+        self.assertEqual(row['caller_error_test']['shape'], 'swifterror_idiom')
+        self.assertEqual(row_field(row, 'effect_admission')['licence_class'], 'declared_error_exit')
+        self.assertEqual(row_field(row, 'effect_admission')['caller_relation'], 'corroborated')
+        self.assertEqual(table_entry(rep, SYMBOLS['throwing'])['retained'], 1)
+        self.assertEqual(rep['decision_by_shape']['throwing']['swifterror_idiom'], 1)
+
+        rep = report('throwing/postcall_only')
+        row = self.only_row(rep)
+        self.check_row_shape(row)
+        self.assertEqual(row['admission']['reason'], REASON_OUTCOME)
+        self.assertEqual(row['caller_error_test']['shape'], 'postcall_test_only')
+        self.assertEqual(row_field(row, 'effect_admission')['caller_relation'], 'no_signal')
+        self.assertEqual(rep['decision_by_shape']['throwing']['postcall_test_only'], 1)
+
+    def test_a8_declared_error_exit_for_every_shape_and_for_a_tail_branch(self):
+        expected = {'idiom': 'corroborated', 'precall_only': 'no_signal', 'postcall_only': 'no_signal',
+                    'bare': 'no_signal', 'tail': 'not_applicable'}
+        for variant, relation in expected.items():
+            for name in ('throwing', 'rethrowing'):
+                with self.subTest(symbol=name, variant=variant):
+                    rep = report(name + '/' + variant)
+                    row = self.only_row(rep)
+                    self.check_row_shape(row)
+                    self.assertEqual(row['admission']['reason'], REASON_OUTCOME)
+                    self.assertEqual(row_field(row, 'effect_admission')['caller_relation'], relation)
+
+    def test_a9_refused_effects_never_conflict_or_corroborate(self):
+        """Synthetic: async, async throws and throws(E) symbols, each behind the full swifterror idiom."""
+        for name, decision in (('async_', 'async'), ('async_throws', 'throwing'), ('typed_concrete', 'throwing')):
+            for variant in ('idiom', 'precall_only', 'postcall_only', 'bare', 'tail'):
+                with self.subTest(symbol=name, variant=variant):
+                    rep = report(name + '/' + variant)
+                    row = self.only_row(rep)
+                    self.check_row_shape(row)
+                    self.assertEqual(row['admission']['reason'], REASON_UNSUPPORTED)
+                    admission = row_field(row, 'effect_admission')
+                    self.assertEqual(admission['licence_class'], 'refused_unsupported_effect')
+                    self.assertEqual(admission['caller_relation'], 'not_applicable')
+                    entry = table_entry(rep, SYMBOLS[name])
+                    self.assertEqual((entry['decision'], entry['retained'], entry['skipped_non_throwing']),
+                                     (decision, 1, 0))
+                    self.assertEqual(rep['reason_counts'], {REASON_UNSUPPORTED: 1})
+        idiom = report('async_/idiom')
+        self.assertEqual(only(idiom)['caller_error_test']['shape'], 'swifterror_idiom')
+        self.assertEqual(idiom['decision_by_shape']['async']['swifterror_idiom'], 1)
+        self.assertEqual(report('async_throws/idiom')['decision_by_shape']['throwing']['swifterror_idiom'], 1)
+
+    def test_a10_undecided_accessor_and_throws_never(self):
+        for name, reason in (('accessor', 'accessor'), ('typed_never', 'typed_throws')):
+            for variant in ('idiom', 'bare', 'tail'):
+                with self.subTest(symbol=name, variant=variant):
+                    rep = report(name + '/' + variant)
+                    row = self.only_row(rep)
+                    self.check_row_shape(row)
+                    self.assertEqual(row['admission']['reason'], REASON_UNQUALIFIED)
+                    admission = row_field(row, 'effect_admission')
+                    self.assertEqual(admission['licence_class'], 'none')
+                    self.assertEqual(admission['caller_relation'], 'not_applicable')
+                    entry = table_entry(rep, SYMBOLS[name])
+                    self.assertEqual((entry['decision'], entry['reason'], entry['retained']), ('undecided', reason, 1))
+                    self.assertEqual(sum(rep['decision_by_shape']['undecided'].values()), 1)
+
+    def test_undecided_for_a_decline_reason_is_retained_the_same_way(self):
+        rep = report('malformed/bare')
+        row = self.only_row(rep)
+        self.check_row_shape(row)
+        self.assertEqual(row['admission']['reason'], REASON_UNQUALIFIED)
+        self.assertEqual(row_field(row, 'effect_admission')['licence_class'], 'none')
+        entry = table_entry(rep, SYMBOLS['malformed'])
+        self.assertEqual((entry['decision'], entry['reason']), ('undecided', 'malformed_symbol'))
+
+    def test_non_throwing_without_a_conflict_leaves_no_row_in_any_shape(self):
+        for variant in ('precall_only', 'postcall_only', 'bare', 'tail'):
+            with self.subTest(variant=variant):
+                rep = report('non_throwing/' + variant)
+                self.assertEqual(rep['calls'], [])
+                entry = table_entry(rep, SYMBOLS['non_throwing'])
+                self.assertEqual((entry['calls'], entry['retained'], entry['skipped_non_throwing']), (1, 0, 1))
+                self.assertEqual(rep['status_counts'], {})
+                self.assertEqual(rep['reason_counts'], {})
+                self.assertEqual(grid_total(rep), 1)
+
+    def test_every_retained_row_in_every_image_is_unresolved(self):
+        for key in IMAGES:
+            rep = report(key)
+            for row in import_rows(rep):
+                with self.subTest(image=key, pc=row['call_pc']):
+                    self.check_row_shape(row)
+                    self.assertIn(row['admission']['reason'], (REASON_DISAGREEMENT, REASON_OUTCOME, REASON_UNSUPPORTED,
+                                                               REASON_UNQUALIFIED))
+            self.assertEqual(set(rep['status_counts']) - {'unresolved', 'declined'}, set(), key)
+
+
+def only(rep):
+    (row,) = rep['calls']
+    return row
+
+
+class RecordsOnRowsTests(unittest.TestCase):
+    """A12, A13, A14: the compact declaration carried by each import row."""
+
+    def test_a12_row_declaration_has_the_eight_keys(self):
+        cases = dict(throwing='throwing/bare', non_throwing='non_throwing/idiom', accessor='accessor/bare',
+                     malformed='malformed/bare')
+        for name, key in cases.items():
+            with self.subTest(symbol=name):
+                rep = report(key)
+                (row,) = rep['calls']
+                declaration = row_field(row, 'declaration')
+                self.assertEqual(set(declaration), DECLARATION_KEYS)
+                self.assertEqual(declaration['syntax_model'], SYNTAX_MODEL)
+                self.assertEqual(declaration, effect.compact_declaration(real_parse(SYMBOLS[name])))
+        throwing = row_field(only(report('throwing/bare')), 'declaration')
+        self.assertEqual((throwing['decision'], throwing['reason'], throwing['throws'], throwing['typed_throws']),
+                         ('throwing', None, True, 'none'))
+        self.assertTrue(throwing['entity'])
+        plain = row_field(only(report('non_throwing/idiom')), 'declaration')
+        self.assertEqual((plain['decision'], plain['reason'], plain['throws'], plain['is_async']),
+                         ('non_throwing', None, False, False))
+        accessor = row_field(only(report('accessor/bare')), 'declaration')
+        self.assertEqual((accessor['decision'], accessor['reason']), ('undecided', 'accessor'))
+        self.assertIsNotNone(accessor['entity'])
+        broken = row_field(only(report('malformed/bare')), 'declaration')
+        self.assertEqual(broken['decision'], 'undecided')
+        self.assertIn(broken['reason'], set(CLOSED_REASONS) - {'accessor', 'typed_throws'})
+        for key in ('entity', 'throws', 'is_async', 'typed_throws', 'identity_sha256'):
+            self.assertIsNone(broken[key], key)
+
+    def test_a13_row_digest_and_identical_records_for_one_symbol(self):
+        for name in ('throwing', 'async_throws', 'typed_concrete', 'accessor'):
+            with self.subTest(symbol=name):
+                (row,) = report(name + '/bare')['calls']
+                declaration = row_field(row, 'declaration')
+                self.assertRegex(declaration['identity_sha256'], r'^[0-9a-f]{64}$')
+                self.assertEqual(declaration['identity_sha256'], digest_of(real_parse(SYMBOLS[name]).identity))
+        # Two sites of one symbol, with different shapes and call kinds, carry identical declaration records.
+        data = build_stub_image(callers=(site_words(True, 'bl', True), site_words(False, 'b', False)),
+                                imports=(Import(SYMBOLS['throwing']),))[0]
+        data = patch_second_caller_to_stub_zero(data)
+        rep = flow(data)
+        rows = rows_for(rep, SYMBOLS['throwing'])
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(row_field(rows[0], 'declaration'), row_field(rows[1], 'declaration'))
+        self.assertNotEqual(row_field(rows[0], 'effect_admission')['caller_relation'],
+                            row_field(rows[1], 'effect_admission')['caller_relation'])
+        # Different identities give different digests.
+        digests = {row_field(only(report(n + '/bare')), 'declaration')['identity_sha256']
+                   for n in ('throwing', 'async_throws', 'typed_concrete', 'accessor')}
+        self.assertEqual(len(digests), 4)
+
+    def test_a14_the_first_generation_model_never_appears_on_an_import_row(self):
+        checked = 0
+        for key in IMAGES:
+            for row in import_rows(report(key)):
+                with self.subTest(image=key, pc=row['call_pc']):
+                    checked += 1
+                    declaration = row_field(row, 'declaration')
+                    self.assertEqual(declaration['syntax_model'], SYNTAX_MODEL)
+                    self.assertNotIn(FIRST_GENERATION_MODEL, json.dumps(declaration))
+                    self.assertNotIn(FIRST_GENERATION_MODEL, json.dumps(row, sort_keys=True))
+        self.assertGreater(checked, 20)
+
+    def test_the_declaration_is_not_the_full_grammar_identity(self):
+        for key in ('throwing/bare', 'async_throws/bare', 'accessor/bare'):
+            with self.subTest(image=key):
+                declaration = row_field(only(report(key)), 'declaration')
+                self.assertEqual(set(declaration), DECLARATION_KEYS)
+                for value in declaration.values():
+                    self.assertNotIsInstance(value, (dict, list))
+
+
+def patch_second_caller_to_stub_zero(data):
+    """Both callers of the two-site image already name stub 0 (site_words uses ('stub', 0)); nothing to patch.
+
+    Kept as a named step so the two-site image reads as built from the same helper."""
+    return data
+
+
+class NonSwiftTests(unittest.TestCase):
+    def test_a15_non_swift_stubs_make_no_row_and_no_parse(self):
+        spy = ParseSpy()
+        with patched(spy):
+            rep = flow(non_swift_image())
+        self.assertEqual(spy.calls, [])
+        self.assertEqual(rep['calls'], [])
+        self.assertEqual(rep['status_counts'], {})
+        for symbol, calls in (('_malloc', 3), ('_swift_retain', 2)):
+            with self.subTest(symbol=symbol):
+                entry = table_entry(rep, symbol)
+                self.assertEqual(entry['decision'], 'not_swift')
+                self.assertIsNone(entry['reason'])
+                self.assertEqual((entry['calls'], entry['stub_calls'], entry['got_calls']), (calls, calls, 0))
+                self.assertEqual(entry['not_swift_calls'], entry['calls'])
+                self.assertEqual((entry['retained'], entry['skipped_non_throwing'], entry['omitted']), (0, 0, 0))
+        self.assertEqual(grid_total(rep), 0)
+
+
+class OneParsePerSymbolOnImagesTests(unittest.TestCase):
+    """A11 on synthetic images, with parse_declaration replaced by a counting spy."""
+
+    def test_stub_path_and_value_witness_check_share_one_parse(self):
+        spy = ParseSpy()
+        with patched(spy):
+            rep = flow(multi_image())
+        expected = Counter({norm(SYM_A): 1, norm(SYM_B): 1, norm(SYM_C): 1, norm(helpers.IMPORTED_ACCESSOR): 1})
+        self.assertEqual(spy.counts(), expected,
+                         'each distinct $s symbol is parsed exactly once, including the value-witness accessor')
+        self.assertEqual(len(spy.calls), 4)
+        for symbol in NON_SWIFT:
+            self.assertNotIn(norm(symbol), spy.counts())
+        # The call counts that make the parse count meaningful (contract 4.8): calls do not drive parses.
+        self.assertEqual(table_entry(rep, SYM_A)['calls'], 4)
+        self.assertEqual(table_entry(rep, SYM_B)['calls'], 2)
+        self.assertEqual(table_entry(rep, SYM_C)['calls'], 1)
+        self.assertEqual(table_entry(rep, NON_SWIFT[0])['calls'], 5)
+        self.assertEqual(table_entry(rep, NON_SWIFT[1])['calls'], 5)
+        self.assertEqual(table_entry(rep, helpers.IMPORTED_ACCESSOR)['calls'], 1)
+        witness_rows = [row for row in rep['calls'] if 'value_witness_admission' in row]
+        self.assertEqual([r['value_witness_admission']['admitted'] for r in witness_rows], [True])
+        self.assertEqual(witness_rows[0]['value_witness_admission']['symbol'], helpers.IMPORTED_ACCESSOR)
+
+    def test_got_path_parses_each_symbol_once(self):
+        spy = ParseSpy()
+        with patched(spy):
+            rep = flow(got_image())
+        self.assertEqual(spy.counts(), Counter({norm(SYM_B): 1, norm(SYM_C): 1}))
+        self.assertEqual(len(spy.calls), 2)
+        self.assertEqual(table_entry(rep, SYM_B)['got_calls'], 3)
+        self.assertEqual(table_entry(rep, SYM_C)['got_calls'], 1)
+        self.assertEqual(table_entry(rep, NON_SWIFT[0])['decision'], 'not_swift')
+
+    def test_the_parse_count_does_not_depend_on_the_number_of_calls(self):
+        few, many = ParseSpy(), ParseSpy()
+        with patched(few):
+            flow(many_symbols_image([SYM_A, SYM_B]))
+        with patched(many):
+            flow(multi_image())
+        self.assertEqual(few.counts(), Counter({norm(SYM_A): 1, norm(SYM_B): 1}))
+        self.assertEqual(max(many.counts().values()), 1)
+
+    def test_a11_the_resolver_charges_the_work_once(self):
+        # Integration fix. The first version bounded the growth of analysis_work in the call count, which also counted
+        # the caller-fact work that v3 already charges at every attributed Swift site, skipped calls included (the owned
+        # fixture shows v4 minus v3 equal to the parse charges alone, C20). What the contract fixes (4.1) is that the
+        # resolver's parse is charged once per distinct symbol: the v4 total exceeds the v3 total for the same image by
+        # exactly one parse charge, 16 plus the symbol length, however many calls the symbol has.
+        for calls in (1, 4, 8):
+            first = tuple(('bl', ('stub', 0)) for _ in range(calls)) + (RET,)
+            data = build_stub_image(callers=(first,), imports=(Import(SYM_A),))[0]
+            rep = flow(data)
+            older = recover_swift_broad_flow(parse_macho(data, limits=PROFILE_LIMITS[V3_PROFILE]), profile=V3_PROFILE)
+            self.assertEqual(table_entry(rep, SYM_A)['calls'], calls)
+            self.assertEqual(rep['analysis_work'] - older['analysis_work'],
+                             16 + len(table_entry(rep, SYM_A)['symbol']), calls)
+
+
+
+class ValueWitnessRuleTests(unittest.TestCase):
+    """A16: a symbol the value-witness admission accepts as a metadata accessor must be non_throwing in the table (C7)."""
+
+    def checker(self):
+        from airs.swift_broad_accounting import check_broad_v4_report
+        return check_broad_v4_report
+
+    def test_a16_real_decision_passes(self):
+        rep = report('witness')
+        accepted = [row['value_witness_admission'] for row in rep['calls']
+                    if row.get('value_witness_admission', {}).get('admitted')]
+        self.assertEqual([w['symbol'] for w in accepted], [helpers.IMPORTED_ACCESSOR])
+        self.assertEqual(table_entry(rep, helpers.IMPORTED_ACCESSOR)['decision'], 'non_throwing')
+        self.assertIsNone(self.checker()(rep))
+
+    def test_a16_a_throwing_decision_for_that_symbol_fails_rule_c7(self):
+        from airs.swift_broad_accounting import BroadV4ReportError
+        spy = ParseSpy(force={norm(helpers.IMPORTED_ACCESSOR): 'throwing'})
+        # The engine fails closed on a report its own checker rejects (contract 6.1).
+        with patched(spy), self.assertRaisesRegex(BroadV4ReportError, r'^C7'):
+            flow(helpers.imported_metadata(helpers.IMPORTED_ACCESSOR))
 
 
 

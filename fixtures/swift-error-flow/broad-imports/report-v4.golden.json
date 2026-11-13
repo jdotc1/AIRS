@@ -1,0 +1,2249 @@
+{
+  "analysis_work": 24315,
+  "call_details_complete": true,
+  "call_return_proven": false,
+  "caller_error_test_counts": {
+    "none": 10,
+    "postcall_test_only": 2
+  },
+  "caller_error_test_decline_counts": {
+    "intervening_instruction_unmodeled": 8,
+    "postcall_window_exhausted": 2
+  },
+  "calls": [
+    {
+      "admission": {
+        "call_kind": "bl",
+        "call_pc": 4294970204,
+        "call_return_proven": false,
+        "callee_stub_pc": 4294973104,
+        "caller_start": 4294970136,
+        "declaration": {
+          "decision": "undecided",
+          "entity": null,
+          "identity_sha256": null,
+          "is_async": null,
+          "reason": "accessor",
+          "syntax_model": "swift-declaration-syntax-v2",
+          "throws": null,
+          "typed_throws": null
+        },
+        "details_complete": true,
+        "import_attribution_admitted": true,
+        "import_provenance": {
+          "nlist_offset": 51816,
+          "pointer_address": 4294984192,
+          "pointer_indirect_entry_offset": 52640,
+          "pointer_indirect_index": 42,
+          "pointer_section": "__DATA_CONST,__got",
+          "stub_index": 9,
+          "stub_indirect_entry_offset": 52508,
+          "stub_indirect_index": 9,
+          "stub_model": "arm64-import-stub-double-binding-v1",
+          "stub_section": "__TEXT,__stubs",
+          "stub_words": [
+            {
+              "container_file_offset": 5808,
+              "pc": 4294973104,
+              "slice_file_offset": 5808,
+              "word": "0xf0000010"
+            },
+            {
+              "container_file_offset": 5812,
+              "pc": 4294973108,
+              "slice_file_offset": 5812,
+              "word": "0xf9410210"
+            },
+            {
+              "container_file_offset": 5816,
+              "pc": 4294973112,
+              "slice_file_offset": 5816,
+              "word": "0xd61f0200"
+            }
+          ],
+          "symbol_index": 25
+        },
+        "library_ordinal": 3,
+        "model_version": "swift-broad-import-callsite-v1",
+        "reason": "imported_callee_abi_unqualified",
+        "status": "unresolved",
+        "symbol": "_$ss11CommandLineO9argumentsSaySSGvgZ",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 53
+      },
+      "call_pc": "0x100000b5c",
+      "caller_error_test": {
+        "claims_callee_behaviour": false,
+        "model": "swift-caller-error-test-v1",
+        "postcall": {
+          "reason": "intervening_instruction_unmodeled",
+          "window": []
+        },
+        "precall": {
+          "status": "x21_not_zeroed",
+          "window": [
+            {
+              "kind": "bl",
+              "pc": "0x100000b54",
+              "word": "0x94000085"
+            },
+            {
+              "kind": "mov",
+              "pc": "0x100000b58",
+              "word": "0xaa0003f3"
+            }
+          ]
+        },
+        "shape": "none"
+      },
+      "caller_pc": "0x100000b18",
+      "candidate": null,
+      "effect_admission": {
+        "caller_relation": "not_applicable",
+        "licence_class": "none",
+        "model": "swift-import-effect-admission-v1"
+      },
+      "validation": null
+    },
+    {
+      "admission": {
+        "call_kind": "bl",
+        "call_pc": 4294970224,
+        "call_return_proven": false,
+        "callee_stub_pc": 4294973104,
+        "caller_start": 4294970136,
+        "declaration": {
+          "decision": "undecided",
+          "entity": null,
+          "identity_sha256": null,
+          "is_async": null,
+          "reason": "accessor",
+          "syntax_model": "swift-declaration-syntax-v2",
+          "throws": null,
+          "typed_throws": null
+        },
+        "details_complete": true,
+        "import_attribution_admitted": true,
+        "import_provenance": {
+          "nlist_offset": 51816,
+          "pointer_address": 4294984192,
+          "pointer_indirect_entry_offset": 52640,
+          "pointer_indirect_index": 42,
+          "pointer_section": "__DATA_CONST,__got",
+          "stub_index": 9,
+          "stub_indirect_entry_offset": 52508,
+          "stub_indirect_index": 9,
+          "stub_model": "arm64-import-stub-double-binding-v1",
+          "stub_section": "__TEXT,__stubs",
+          "stub_words": [
+            {
+              "container_file_offset": 5808,
+              "pc": 4294973104,
+              "slice_file_offset": 5808,
+              "word": "0xf0000010"
+            },
+            {
+              "container_file_offset": 5812,
+              "pc": 4294973108,
+              "slice_file_offset": 5812,
+              "word": "0xf9410210"
+            },
+            {
+              "container_file_offset": 5816,
+              "pc": 4294973112,
+              "slice_file_offset": 5816,
+              "word": "0xd61f0200"
+            }
+          ],
+          "symbol_index": 25
+        },
+        "library_ordinal": 3,
+        "model_version": "swift-broad-import-callsite-v1",
+        "reason": "imported_callee_abi_unqualified",
+        "status": "unresolved",
+        "symbol": "_$ss11CommandLineO9argumentsSaySSGvgZ",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 53
+      },
+      "call_pc": "0x100000b70",
+      "caller_error_test": {
+        "claims_callee_behaviour": false,
+        "model": "swift-caller-error-test-v1",
+        "postcall": {
+          "reason": "intervening_instruction_unmodeled",
+          "window": []
+        },
+        "precall": {
+          "status": "x21_not_zeroed",
+          "window": [
+            {
+              "kind": "bcond",
+              "pc": "0x100000b6c",
+              "word": "0x54000183"
+            }
+          ]
+        },
+        "shape": "none"
+      },
+      "caller_pc": "0x100000b18",
+      "candidate": null,
+      "effect_admission": {
+        "caller_relation": "not_applicable",
+        "licence_class": "none",
+        "model": "swift-import-effect-admission-v1"
+      },
+      "validation": null
+    },
+    {
+      "admission": {
+        "abi": {
+          "reason": "separate_abi_admission_required",
+          "status": "unresolved"
+        },
+        "abi_admitted": false,
+        "call_return_proven": false,
+        "details_complete": true,
+        "error_state_proven": false,
+        "exclusive_entry_proven": false,
+        "model_version": "swift-broad-callsite-v1",
+        "provenance": {
+          "call": {
+            "container_file_offset": 3292,
+            "pc": 4294970588,
+            "slice_file_offset": 3292,
+            "word": "0xd63f0100"
+          }
+        },
+        "reason": "indirect_target_unresolved",
+        "status": "unresolved",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 331
+      },
+      "call_pc": "0x100000cdc",
+      "caller_pc": "0x100000b18",
+      "candidate": null,
+      "indirect_target_shape": {
+        "bounds": {
+          "max_function_words": 262144,
+          "max_register_hops": 6,
+          "window_words": 256
+        },
+        "claims_callee_behaviour": false,
+        "class": "value_witness",
+        "class_before_join_refusal": null,
+        "deciding_instructions": [
+          {
+            "pc": "0x100000cbc",
+            "role": "metadata_blocker",
+            "word": "0xa940dbf4"
+          },
+          {
+            "pc": "0x100000ccc",
+            "role": "table_load",
+            "word": "0xf85f82c8"
+          },
+          {
+            "pc": "0x100000cd0",
+            "role": "target_load",
+            "word": "0xf9400908"
+          },
+          {
+            "pc": "0x100000cdc",
+            "role": "indirect_branch",
+            "word": "0xd63f0100"
+          }
+        ],
+        "evidence": "table base loaded from [x22, #-8] (type metadata -8 = value witness table), slot +0x10",
+        "model": "swift-indirect-target-shape-v1",
+        "site_kind": "blr",
+        "site_pc": "0x100000cdc",
+        "slot_address": null,
+        "slot_offset": 16,
+        "slot_section": null,
+        "unknown_reason": null
+      },
+      "validation": null,
+      "value_witness_admission": {
+        "abi_basis": null,
+        "admitted": false,
+        "claims_callee_behaviour": false,
+        "first_failing_condition": 2,
+        "metadata_callee_pc": null,
+        "metadata_register": "x22",
+        "model": "swift-value-witness-admission-v1",
+        "provenance_kind": "stack_transport",
+        "reason": "metadata_stack_transport_not_admitted",
+        "site_kind": "blr",
+        "site_pc": "0x100000cdc",
+        "slot_offset": 16,
+        "symbol": null
+      }
+    },
+    {
+      "admission": {
+        "call_kind": "bl",
+        "call_pc": 4294970764,
+        "call_return_proven": false,
+        "callee_stub_pc": 4294973056,
+        "caller_start": 4294970752,
+        "declaration": {
+          "decision": "throwing",
+          "entity": "Allocator",
+          "identity_sha256": "b6114b274dd34133e66accdb9510e989926542267b311451db27678a7039e43e",
+          "is_async": false,
+          "reason": null,
+          "syntax_model": "swift-declaration-syntax-v2",
+          "throws": true,
+          "typed_throws": "none"
+        },
+        "details_complete": true,
+        "import_attribution_admitted": true,
+        "import_provenance": {
+          "nlist_offset": 51544,
+          "pointer_address": 4294984136,
+          "pointer_indirect_entry_offset": 52612,
+          "pointer_indirect_index": 35,
+          "pointer_section": "__DATA_CONST,__got",
+          "stub_index": 5,
+          "stub_indirect_entry_offset": 52492,
+          "stub_indirect_index": 5,
+          "stub_model": "arm64-import-stub-double-binding-v1",
+          "stub_section": "__TEXT,__stubs",
+          "stub_words": [
+            {
+              "container_file_offset": 5760,
+              "pc": 4294973056,
+              "slice_file_offset": 5760,
+              "word": "0xf0000010"
+            },
+            {
+              "container_file_offset": 5764,
+              "pc": 4294973060,
+              "slice_file_offset": 5764,
+              "word": "0xf940e610"
+            },
+            {
+              "container_file_offset": 5768,
+              "pc": 4294973064,
+              "slice_file_offset": 5768,
+              "word": "0xd61f0200"
+            }
+          ],
+          "symbol_index": 8
+        },
+        "library_ordinal": 2,
+        "model_version": "swift-broad-import-callsite-v1",
+        "reason": "imported_callee_outcome_unmodeled",
+        "status": "unresolved",
+        "symbol": "_$s10Foundation4DataV10contentsOf7optionsAcA3URLVh_So20NSDataReadingOptionsVtKcfC",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 97
+      },
+      "call_pc": "0x100000d8c",
+      "caller_error_test": {
+        "claims_callee_behaviour": false,
+        "model": "swift-caller-error-test-v1",
+        "postcall": {
+          "reason": "intervening_instruction_unmodeled",
+          "window": [
+            {
+              "kind": "ldp",
+              "pc": "0x100000d90",
+              "word": "0xa8c17bfd"
+            }
+          ]
+        },
+        "precall": {
+          "status": "precall_window_outside_caller",
+          "window": [
+            {
+              "kind": "stp",
+              "pc": "0x100000d80",
+              "word": "0xa9bf7bfd"
+            },
+            {
+              "kind": "add",
+              "pc": "0x100000d84",
+              "word": "0x910003fd"
+            },
+            {
+              "kind": "movz",
+              "pc": "0x100000d88",
+              "word": "0xd2800001"
+            }
+          ]
+        },
+        "shape": "none"
+      },
+      "caller_pc": "0x100000d80",
+      "candidate": null,
+      "effect_admission": {
+        "caller_relation": "no_signal",
+        "licence_class": "declared_error_exit",
+        "model": "swift-import-effect-admission-v1"
+      },
+      "validation": null
+    },
+    {
+      "admission": {
+        "call_kind": "bl",
+        "call_pc": 4294971016,
+        "call_return_proven": false,
+        "callee_stub_pc": 4294972996,
+        "caller_start": 4294970916,
+        "declaration": {
+          "decision": "undecided",
+          "entity": null,
+          "identity_sha256": null,
+          "is_async": null,
+          "reason": "thunk_or_specialization",
+          "syntax_model": "swift-declaration-syntax-v2",
+          "throws": null,
+          "typed_throws": null
+        },
+        "details_complete": true,
+        "import_attribution_admitted": true,
+        "import_provenance": {
+          "nlist_offset": 51464,
+          "pointer_address": 4294984096,
+          "pointer_indirect_entry_offset": 52592,
+          "pointer_indirect_index": 30,
+          "pointer_section": "__DATA_CONST,__got",
+          "stub_index": 0,
+          "stub_indirect_entry_offset": 52472,
+          "stub_indirect_index": 0,
+          "stub_model": "arm64-import-stub-double-binding-v1",
+          "stub_section": "__TEXT,__stubs",
+          "stub_words": [
+            {
+              "container_file_offset": 5700,
+              "pc": 4294972996,
+              "slice_file_offset": 5700,
+              "word": "0xf0000010"
+            },
+            {
+              "container_file_offset": 5704,
+              "pc": 4294973000,
+              "slice_file_offset": 5704,
+              "word": "0xf940d210"
+            },
+            {
+              "container_file_offset": 5708,
+              "pc": 4294973004,
+              "slice_file_offset": 5708,
+              "word": "0xd61f0200"
+            }
+          ],
+          "symbol_index": 3
+        },
+        "library_ordinal": 2,
+        "model_version": "swift-broad-import-callsite-v1",
+        "reason": "imported_callee_abi_unqualified",
+        "status": "unresolved",
+        "symbol": "_$s10Foundation11JSONDecoderC6decode_4fromxxm_AA4DataVtKSeRzlFTj",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 80
+      },
+      "call_pc": "0x100000e88",
+      "caller_error_test": {
+        "claims_callee_behaviour": false,
+        "model": "swift-caller-error-test-v1",
+        "postcall": {
+          "reason": "intervening_instruction_unmodeled",
+          "window": [
+            {
+              "kind": "mov",
+              "pc": "0x100000e8c",
+              "word": "0xaa1503f3"
+            },
+            {
+              "kind": "mov",
+              "pc": "0x100000e90",
+              "word": "0xaa1403e0"
+            },
+            {
+              "kind": "bl",
+              "pc": "0x100000e94",
+              "word": "0x9400023d"
+            }
+          ]
+        },
+        "precall": {
+          "status": "x21_not_zeroed",
+          "window": [
+            {
+              "kind": "mov",
+              "pc": "0x100000e84",
+              "word": "0xaa1303f5"
+            }
+          ]
+        },
+        "shape": "none"
+      },
+      "caller_pc": "0x100000e24",
+      "candidate": null,
+      "effect_admission": {
+        "caller_relation": "not_applicable",
+        "licence_class": "none",
+        "model": "swift-import-effect-admission-v1"
+      },
+      "validation": null
+    },
+    {
+      "admission": {
+        "call_kind": "bl",
+        "call_pc": 4294971232,
+        "call_return_proven": false,
+        "callee_stub_pc": 4294973068,
+        "caller_start": 4294971124,
+        "declaration": {
+          "decision": "undecided",
+          "entity": null,
+          "identity_sha256": null,
+          "is_async": null,
+          "reason": "accessor",
+          "syntax_model": "swift-declaration-syntax-v2",
+          "throws": null,
+          "typed_throws": null
+        },
+        "details_complete": true,
+        "import_attribution_admitted": true,
+        "import_provenance": {
+          "nlist_offset": 51688,
+          "pointer_address": 4294984144,
+          "pointer_indirect_entry_offset": 52616,
+          "pointer_indirect_index": 36,
+          "pointer_section": "__DATA_CONST,__got",
+          "stub_index": 6,
+          "stub_indirect_entry_offset": 52496,
+          "stub_indirect_index": 6,
+          "stub_model": "arm64-import-stub-double-binding-v1",
+          "stub_section": "__TEXT,__stubs",
+          "stub_words": [
+            {
+              "container_file_offset": 5772,
+              "pc": 4294973068,
+              "slice_file_offset": 5772,
+              "word": "0xf0000010"
+            },
+            {
+              "container_file_offset": 5776,
+              "pc": 4294973072,
+              "slice_file_offset": 5776,
+              "word": "0xf940ea10"
+            },
+            {
+              "container_file_offset": 5780,
+              "pc": 4294973076,
+              "slice_file_offset": 5780,
+              "word": "0xd61f0200"
+            }
+          ],
+          "symbol_index": 17
+        },
+        "library_ordinal": 2,
+        "model_version": "swift-broad-import-callsite-v1",
+        "reason": "imported_callee_abi_unqualified",
+        "status": "unresolved",
+        "symbol": "_$sSS10FoundationE8EncodingV4utf8ACvgZ",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 54
+      },
+      "call_pc": "0x100000f60",
+      "caller_error_test": {
+        "claims_callee_behaviour": false,
+        "model": "swift-caller-error-test-v1",
+        "postcall": {
+          "reason": "intervening_instruction_unmodeled",
+          "window": [
+            {
+              "kind": "bl",
+              "pc": "0x100000f64",
+              "word": "0x94000027"
+            }
+          ]
+        },
+        "precall": {
+          "status": "x21_not_zeroed",
+          "window": [
+            {
+              "kind": "unmodeled",
+              "pc": "0x100000f50",
+              "word": "0xcb080139"
+            },
+            {
+              "kind": "add",
+              "pc": "0x100000f54",
+              "word": "0x9100033f"
+            },
+            {
+              "kind": "stp",
+              "pc": "0x100000f58",
+              "word": "0xa93b53b7"
+            },
+            {
+              "kind": "mov",
+              "pc": "0x100000f5c",
+              "word": "0xaa1903e8"
+            }
+          ]
+        },
+        "shape": "none"
+      },
+      "caller_pc": "0x100000ef4",
+      "candidate": null,
+      "effect_admission": {
+        "caller_relation": "not_applicable",
+        "licence_class": "none",
+        "model": "swift-import-effect-admission-v1"
+      },
+      "validation": null
+    },
+    {
+      "admission": {
+        "call_kind": "bl",
+        "call_pc": 4294971272,
+        "call_return_proven": false,
+        "callee_stub_pc": 4294973092,
+        "caller_start": 4294971124,
+        "declaration": {
+          "decision": "throwing",
+          "entity": "Function",
+          "identity_sha256": "ee371ac89419e728b6fdb602e31748dfdf44cab7a868272225f49b4bc61e1728",
+          "is_async": false,
+          "reason": null,
+          "syntax_model": "swift-declaration-syntax-v2",
+          "throws": true,
+          "typed_throws": "none"
+        },
+        "details_complete": true,
+        "import_attribution_admitted": true,
+        "import_provenance": {
+          "nlist_offset": 51800,
+          "pointer_address": 4294984160,
+          "pointer_indirect_entry_offset": 52624,
+          "pointer_indirect_index": 38,
+          "pointer_section": "__DATA_CONST,__got",
+          "stub_index": 8,
+          "stub_indirect_entry_offset": 52504,
+          "stub_indirect_index": 8,
+          "stub_model": "arm64-import-stub-double-binding-v1",
+          "stub_section": "__TEXT,__stubs",
+          "stub_words": [
+            {
+              "container_file_offset": 5796,
+              "pc": 4294973092,
+              "slice_file_offset": 5796,
+              "word": "0xf0000010"
+            },
+            {
+              "container_file_offset": 5800,
+              "pc": 4294973096,
+              "slice_file_offset": 5800,
+              "word": "0xf940f210"
+            },
+            {
+              "container_file_offset": 5804,
+              "pc": 4294973100,
+              "slice_file_offset": 5804,
+              "word": "0xd61f0200"
+            }
+          ],
+          "symbol_index": 24
+        },
+        "library_ordinal": 2,
+        "model_version": "swift-broad-import-callsite-v1",
+        "reason": "imported_callee_outcome_unmodeled",
+        "status": "unresolved",
+        "symbol": "_$sSy10FoundationE5write2to10atomically8encodingyAA3URLV_SbSSAAE8EncodingVtKF",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 93
+      },
+      "call_pc": "0x100000f88",
+      "caller_error_test": {
+        "claims_callee_behaviour": false,
+        "model": "swift-caller-error-test-v1",
+        "postcall": {
+          "reason": "intervening_instruction_unmodeled",
+          "window": [
+            {
+              "kind": "mov",
+              "pc": "0x100000f8c",
+              "word": "0xaa1503f3"
+            }
+          ]
+        },
+        "precall": {
+          "status": "x21_not_zeroed",
+          "window": [
+            {
+              "kind": "mov",
+              "pc": "0x100000f84",
+              "word": "0xaa1303f5"
+            }
+          ]
+        },
+        "shape": "none"
+      },
+      "caller_pc": "0x100000ef4",
+      "candidate": null,
+      "effect_admission": {
+        "caller_relation": "no_signal",
+        "licence_class": "declared_error_exit",
+        "model": "swift-import-effect-admission-v1"
+      },
+      "validation": null
+    },
+    {
+      "admission": {
+        "abi": {
+          "reason": "separate_abi_admission_required",
+          "status": "unresolved"
+        },
+        "abi_admitted": false,
+        "call_return_proven": false,
+        "details_complete": true,
+        "error_state_proven": false,
+        "exclusive_entry_proven": false,
+        "model_version": "swift-broad-callsite-v1",
+        "provenance": {
+          "call": {
+            "container_file_offset": 3996,
+            "pc": 4294971292,
+            "slice_file_offset": 3996,
+            "word": "0xd63f0100"
+          }
+        },
+        "reason": "value_witness_abi_nonthrowing",
+        "status": "declined",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 355
+      },
+      "call_pc": "0x100000f9c",
+      "caller_pc": "0x100000ef4",
+      "candidate": null,
+      "indirect_target_shape": {
+        "bounds": {
+          "max_function_words": 262144,
+          "max_register_hops": 6,
+          "window_words": 256
+        },
+        "claims_callee_behaviour": false,
+        "class": "value_witness",
+        "class_before_join_refusal": null,
+        "deciding_instructions": [
+          {
+            "pc": "0x100000f24",
+            "role": "metadata_call_result",
+            "word": "0x940001dd"
+          },
+          {
+            "pc": "0x100000f2c",
+            "role": "table_load",
+            "word": "0xf85f801a"
+          },
+          {
+            "pc": "0x100000f90",
+            "role": "target_load",
+            "word": "0xf9400748"
+          },
+          {
+            "pc": "0x100000f9c",
+            "role": "indirect_branch",
+            "word": "0xd63f0100"
+          }
+        ],
+        "evidence": "table base loaded from [x0, #-8] (type metadata -8 = value witness table), slot +0x8",
+        "model": "swift-indirect-target-shape-v1",
+        "site_kind": "blr",
+        "site_pc": "0x100000f9c",
+        "slot_address": null,
+        "slot_offset": 8,
+        "slot_section": null,
+        "unknown_reason": null
+      },
+      "validation": null,
+      "value_witness_admission": {
+        "abi_basis": "value_witness_function_slots_cannot_throw",
+        "admitted": true,
+        "claims_callee_behaviour": false,
+        "first_failing_condition": null,
+        "metadata_callee_pc": "0x100001698",
+        "metadata_register": "x0",
+        "model": "swift-value-witness-admission-v1",
+        "provenance_kind": "imported_metadata_accessor_call",
+        "reason": "meets_tier2_conditions",
+        "site_kind": "blr",
+        "site_pc": "0x100000f9c",
+        "slot_offset": 8,
+        "symbol": "_$sSS10FoundationE8EncodingVMa"
+      }
+    },
+    {
+      "admission": {
+        "call_kind": "b",
+        "call_pc": 4294971824,
+        "call_return_proven": false,
+        "callee_stub_pc": 4294973212,
+        "caller_start": 4294971788,
+        "declaration": {
+          "decision": "undecided",
+          "entity": "Getter",
+          "identity_sha256": "2e2651c89099173cbdaccbff7e7ddb8f1d4fa083e780f23a9ad6fe8768c84986",
+          "is_async": false,
+          "reason": "accessor",
+          "syntax_model": "swift-declaration-syntax-v2",
+          "throws": false,
+          "typed_throws": "none"
+        },
+        "details_complete": true,
+        "import_attribution_admitted": true,
+        "import_provenance": {
+          "nlist_offset": 52168,
+          "pointer_address": 4294984280,
+          "pointer_indirect_entry_offset": 52684,
+          "pointer_indirect_index": 53,
+          "pointer_section": "__DATA_CONST,__got",
+          "stub_index": 18,
+          "stub_indirect_entry_offset": 52544,
+          "stub_indirect_index": 18,
+          "stub_model": "arm64-import-stub-double-binding-v1",
+          "stub_section": "__TEXT,__stubs",
+          "stub_words": [
+            {
+              "container_file_offset": 5916,
+              "pc": 4294973212,
+              "slice_file_offset": 5916,
+              "word": "0xf0000010"
+            },
+            {
+              "container_file_offset": 5920,
+              "pc": 4294973216,
+              "slice_file_offset": 5920,
+              "word": "0xf9412e10"
+            },
+            {
+              "container_file_offset": 5924,
+              "pc": 4294973220,
+              "slice_file_offset": 5924,
+              "word": "0xd61f0200"
+            }
+          ],
+          "symbol_index": 47
+        },
+        "library_ordinal": 3,
+        "model_version": "swift-broad-import-callsite-v1",
+        "reason": "imported_callee_abi_unqualified",
+        "status": "unresolved",
+        "symbol": "_$ss9CodingKeyPsE16debugDescriptionSSvg",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 55
+      },
+      "call_pc": "0x1000011b0",
+      "caller_error_test": {
+        "claims_callee_behaviour": false,
+        "model": "swift-caller-error-test-v1",
+        "postcall": {
+          "reason": "postcall_window_exhausted",
+          "window": []
+        },
+        "precall": {
+          "status": "x21_not_zeroed",
+          "window": [
+            {
+              "kind": "mov",
+              "pc": "0x1000011a0",
+              "word": "0xaa0003e1"
+            },
+            {
+              "kind": "mov",
+              "pc": "0x1000011a4",
+              "word": "0xaa1303e0"
+            },
+            {
+              "kind": "ldp",
+              "pc": "0x1000011a8",
+              "word": "0xa9417bfd"
+            },
+            {
+              "kind": "ldp",
+              "pc": "0x1000011ac",
+              "word": "0xa8c24ff4"
+            }
+          ]
+        },
+        "shape": "none"
+      },
+      "caller_pc": "0x10000118c",
+      "candidate": null,
+      "effect_admission": {
+        "caller_relation": "not_applicable",
+        "licence_class": "none",
+        "model": "swift-import-effect-admission-v1"
+      },
+      "validation": null
+    },
+    {
+      "admission": {
+        "call_kind": "b",
+        "call_pc": 4294971864,
+        "call_return_proven": false,
+        "callee_stub_pc": 4294973200,
+        "caller_start": 4294971828,
+        "declaration": {
+          "decision": "undecided",
+          "entity": "Getter",
+          "identity_sha256": "924e9ec6e078dcda1bf8bf20922a7700c176fcd99e552ac8f1defc7414f626c9",
+          "is_async": false,
+          "reason": "accessor",
+          "syntax_model": "swift-declaration-syntax-v2",
+          "throws": false,
+          "typed_throws": "none"
+        },
+        "details_complete": true,
+        "import_attribution_admitted": true,
+        "import_provenance": {
+          "nlist_offset": 52152,
+          "pointer_address": 4294984272,
+          "pointer_indirect_entry_offset": 52680,
+          "pointer_indirect_index": 52,
+          "pointer_section": "__DATA_CONST,__got",
+          "stub_index": 17,
+          "stub_indirect_entry_offset": 52540,
+          "stub_indirect_index": 17,
+          "stub_model": "arm64-import-stub-double-binding-v1",
+          "stub_section": "__TEXT,__stubs",
+          "stub_words": [
+            {
+              "container_file_offset": 5904,
+              "pc": 4294973200,
+              "slice_file_offset": 5904,
+              "word": "0xf0000010"
+            },
+            {
+              "container_file_offset": 5908,
+              "pc": 4294973204,
+              "slice_file_offset": 5908,
+              "word": "0xf9412a10"
+            },
+            {
+              "container_file_offset": 5912,
+              "pc": 4294973208,
+              "slice_file_offset": 5912,
+              "word": "0xd61f0200"
+            }
+          ],
+          "symbol_index": 46
+        },
+        "library_ordinal": 3,
+        "model_version": "swift-broad-import-callsite-v1",
+        "reason": "imported_callee_abi_unqualified",
+        "status": "unresolved",
+        "symbol": "_$ss9CodingKeyPsE11descriptionSSvg",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 50
+      },
+      "call_pc": "0x1000011d8",
+      "caller_error_test": {
+        "claims_callee_behaviour": false,
+        "model": "swift-caller-error-test-v1",
+        "postcall": {
+          "reason": "postcall_window_exhausted",
+          "window": []
+        },
+        "precall": {
+          "status": "x21_not_zeroed",
+          "window": [
+            {
+              "kind": "mov",
+              "pc": "0x1000011c8",
+              "word": "0xaa0003e1"
+            },
+            {
+              "kind": "mov",
+              "pc": "0x1000011cc",
+              "word": "0xaa1303e0"
+            },
+            {
+              "kind": "ldp",
+              "pc": "0x1000011d0",
+              "word": "0xa9417bfd"
+            },
+            {
+              "kind": "ldp",
+              "pc": "0x1000011d4",
+              "word": "0xa8c24ff4"
+            }
+          ]
+        },
+        "shape": "none"
+      },
+      "caller_pc": "0x1000011b4",
+      "candidate": null,
+      "effect_admission": {
+        "caller_relation": "not_applicable",
+        "licence_class": "none",
+        "model": "swift-import-effect-admission-v1"
+      },
+      "validation": null
+    },
+    {
+      "admission": {
+        "call_kind": "bl",
+        "call_pc": 4294972020,
+        "call_return_proven": false,
+        "callee_stub_pc": 4294973188,
+        "caller_start": 4294971868,
+        "declaration": {
+          "decision": "undecided",
+          "entity": null,
+          "identity_sha256": null,
+          "is_async": null,
+          "reason": "thunk_or_specialization",
+          "syntax_model": "swift-declaration-syntax-v2",
+          "throws": null,
+          "typed_throws": null
+        },
+        "details_complete": true,
+        "import_attribution_admitted": true,
+        "import_provenance": {
+          "nlist_offset": 52024,
+          "pointer_address": 4294984264,
+          "pointer_indirect_entry_offset": 52676,
+          "pointer_indirect_index": 51,
+          "pointer_section": "__DATA_CONST,__got",
+          "stub_index": 16,
+          "stub_indirect_entry_offset": 52536,
+          "stub_indirect_index": 16,
+          "stub_model": "arm64-import-stub-double-binding-v1",
+          "stub_section": "__TEXT,__stubs",
+          "stub_words": [
+            {
+              "container_file_offset": 5892,
+              "pc": 4294973188,
+              "slice_file_offset": 5892,
+              "word": "0xf0000010"
+            },
+            {
+              "container_file_offset": 5896,
+              "pc": 4294973192,
+              "slice_file_offset": 5896,
+              "word": "0xf9412610"
+            },
+            {
+              "container_file_offset": 5900,
+              "pc": 4294973196,
+              "slice_file_offset": 5900,
+              "word": "0xd61f0200"
+            }
+          ],
+          "symbol_index": 38
+        },
+        "library_ordinal": 3,
+        "model_version": "swift-broad-import-callsite-v1",
+        "reason": "imported_callee_abi_unqualified",
+        "status": "unresolved",
+        "symbol": "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 106
+      },
+      "call_pc": "0x100001274",
+      "caller_error_test": {
+        "claims_callee_behaviour": false,
+        "model": "swift-caller-error-test-v1",
+        "postcall": {
+          "error_pc": "0x1000012ac",
+          "status": "recovered_candidate",
+          "success_pc": "0x100001280",
+          "test_pc": "0x10000127c",
+          "tested_register": "x21",
+          "window": [
+            {
+              "kind": "mov",
+              "pc": "0x100001278",
+              "word": "0xaa1503f7"
+            },
+            {
+              "kind": "xcbnz",
+              "pc": "0x10000127c",
+              "word": "0xb5000195"
+            }
+          ]
+        },
+        "precall": {
+          "status": "x21_not_zeroed",
+          "window": [
+            {
+              "kind": "mov",
+              "pc": "0x100001268",
+              "word": "0xaa1703f5"
+            },
+            {
+              "kind": "mov",
+              "pc": "0x10000126c",
+              "word": "0xaa1903e3"
+            },
+            {
+              "kind": "mov",
+              "pc": "0x100001270",
+              "word": "0xaa1a03e4"
+            }
+          ]
+        },
+        "shape": "postcall_test_only"
+      },
+      "caller_pc": "0x1000011dc",
+      "candidate": null,
+      "effect_admission": {
+        "caller_relation": "not_applicable",
+        "licence_class": "none",
+        "model": "swift-import-effect-admission-v1"
+      },
+      "validation": null
+    },
+    {
+      "admission": {
+        "call_kind": "bl",
+        "call_pc": 4294972044,
+        "call_return_proven": false,
+        "callee_stub_pc": 4294973116,
+        "caller_start": 4294971868,
+        "declaration": {
+          "decision": "throwing",
+          "entity": "Function",
+          "identity_sha256": "b532dfe81dba2daca18309e13890f338b74e8656273200ae4d18f31c9586e5a1",
+          "is_async": false,
+          "reason": null,
+          "syntax_model": "swift-declaration-syntax-v2",
+          "throws": true,
+          "typed_throws": "none"
+        },
+        "details_complete": true,
+        "import_attribution_admitted": true,
+        "import_provenance": {
+          "nlist_offset": 51832,
+          "pointer_address": 4294984200,
+          "pointer_indirect_entry_offset": 52644,
+          "pointer_indirect_index": 43,
+          "pointer_section": "__DATA_CONST,__got",
+          "stub_index": 10,
+          "stub_indirect_entry_offset": 52512,
+          "stub_indirect_index": 10,
+          "stub_model": "arm64-import-stub-double-binding-v1",
+          "stub_section": "__TEXT,__stubs",
+          "stub_words": [
+            {
+              "container_file_offset": 5820,
+              "pc": 4294973116,
+              "slice_file_offset": 5820,
+              "word": "0xf0000010"
+            },
+            {
+              "container_file_offset": 5824,
+              "pc": 4294973120,
+              "slice_file_offset": 5824,
+              "word": "0xf9410610"
+            },
+            {
+              "container_file_offset": 5828,
+              "pc": 4294973124,
+              "slice_file_offset": 5828,
+              "word": "0xd61f0200"
+            }
+          ],
+          "symbol_index": 26
+        },
+        "library_ordinal": 3,
+        "model_version": "swift-broad-import-callsite-v1",
+        "reason": "imported_callee_outcome_unmodeled",
+        "status": "unresolved",
+        "symbol": "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 69
+      },
+      "call_pc": "0x10000128c",
+      "caller_error_test": {
+        "claims_callee_behaviour": false,
+        "model": "swift-caller-error-test-v1",
+        "postcall": {
+          "reason": "intervening_instruction_unmodeled",
+          "window": [
+            {
+              "kind": "mov",
+              "pc": "0x100001290",
+              "word": "0xaa0003f4"
+            },
+            {
+              "kind": "mov",
+              "pc": "0x100001294",
+              "word": "0xaa1503f7"
+            }
+          ]
+        },
+        "precall": {
+          "status": "x21_not_zeroed",
+          "window": [
+            {
+              "kind": "mov",
+              "pc": "0x100001288",
+              "word": "0xaa1703f5"
+            }
+          ]
+        },
+        "shape": "none"
+      },
+      "caller_pc": "0x1000011dc",
+      "candidate": null,
+      "effect_admission": {
+        "caller_relation": "no_signal",
+        "licence_class": "declared_error_exit",
+        "model": "swift-import-effect-admission-v1"
+      },
+      "validation": null
+    },
+    {
+      "admission": {
+        "abi": {
+          "reason": "separate_abi_admission_required",
+          "status": "unresolved"
+        },
+        "abi_admitted": false,
+        "call_return_proven": false,
+        "details_complete": true,
+        "error_state_proven": false,
+        "exclusive_entry_proven": false,
+        "model_version": "swift-broad-callsite-v1",
+        "provenance": {
+          "call": {
+            "container_file_offset": 4772,
+            "pc": 4294972068,
+            "slice_file_offset": 4772,
+            "word": "0xd63f0100"
+          }
+        },
+        "reason": "indirect_target_unresolved",
+        "status": "unresolved",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 355
+      },
+      "call_pc": "0x1000012a4",
+      "caller_pc": "0x1000011dc",
+      "candidate": null,
+      "indirect_target_shape": {
+        "bounds": {
+          "max_function_words": 262144,
+          "max_register_hops": 6,
+          "window_words": 256
+        },
+        "claims_callee_behaviour": false,
+        "class": "value_witness",
+        "class_before_join_refusal": null,
+        "deciding_instructions": [
+          {
+            "pc": "0x10000120c",
+            "role": "metadata_call_result",
+            "word": "0x97fffee3"
+          },
+          {
+            "pc": "0x100001214",
+            "role": "table_load",
+            "word": "0xf85f801b"
+          },
+          {
+            "pc": "0x100001298",
+            "role": "target_load",
+            "word": "0xf9400768"
+          },
+          {
+            "pc": "0x1000012a4",
+            "role": "indirect_branch",
+            "word": "0xd63f0100"
+          }
+        ],
+        "evidence": "table base loaded from [x0, #-8] (type metadata -8 = value witness table), slot +0x8",
+        "model": "swift-indirect-target-shape-v1",
+        "site_kind": "blr",
+        "site_pc": "0x1000012a4",
+        "slot_address": null,
+        "slot_offset": 8,
+        "slot_section": null,
+        "unknown_reason": null
+      },
+      "validation": null,
+      "value_witness_admission": {
+        "abi_basis": null,
+        "admitted": false,
+        "claims_callee_behaviour": false,
+        "first_failing_condition": 2,
+        "metadata_callee_pc": null,
+        "metadata_register": "x0",
+        "model": "swift-value-witness-admission-v1",
+        "provenance_kind": "unknown",
+        "reason": "direct_target_symbol_missing",
+        "site_kind": "blr",
+        "site_pc": "0x1000012a4",
+        "slot_offset": 8,
+        "symbol": null
+      }
+    },
+    {
+      "admission": {
+        "abi": {
+          "reason": "separate_abi_admission_required",
+          "status": "unresolved"
+        },
+        "abi_admitted": false,
+        "call_return_proven": false,
+        "details_complete": true,
+        "error_state_proven": false,
+        "exclusive_entry_proven": false,
+        "model_version": "swift-broad-callsite-v1",
+        "provenance": {
+          "call": {
+            "container_file_offset": 4956,
+            "pc": 4294972252,
+            "slice_file_offset": 4956,
+            "word": "0xd61f0040"
+          }
+        },
+        "reason": "indirect_target_unresolved",
+        "status": "unresolved",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 331
+      },
+      "call_pc": "0x10000135c",
+      "caller_pc": "0x100001348",
+      "candidate": null,
+      "indirect_target_shape": {
+        "bounds": {
+          "max_function_words": 262144,
+          "max_register_hops": 6,
+          "window_words": 256
+        },
+        "claims_callee_behaviour": false,
+        "class": "value_witness",
+        "class_before_join_refusal": null,
+        "deciding_instructions": [
+          {
+            "pc": "0x100001348",
+            "role": "metadata_load",
+            "word": "0xf9400c01"
+          },
+          {
+            "pc": "0x10000134c",
+            "role": "table_load",
+            "word": "0xf85f8028"
+          },
+          {
+            "pc": "0x100001358",
+            "role": "target_load",
+            "word": "0xf9400502"
+          },
+          {
+            "pc": "0x10000135c",
+            "role": "indirect_branch",
+            "word": "0xd61f0040"
+          }
+        ],
+        "evidence": "table base loaded from [x1, #-8] (type metadata -8 = value witness table), slot +0x8",
+        "model": "swift-indirect-target-shape-v1",
+        "site_kind": "br",
+        "site_pc": "0x10000135c",
+        "slot_address": null,
+        "slot_offset": 8,
+        "slot_section": null,
+        "unknown_reason": null
+      },
+      "validation": null,
+      "value_witness_admission": {
+        "abi_basis": null,
+        "admitted": false,
+        "claims_callee_behaviour": false,
+        "first_failing_condition": 2,
+        "metadata_callee_pc": null,
+        "metadata_register": "x1",
+        "model": "swift-value-witness-admission-v1",
+        "provenance_kind": "unknown",
+        "reason": "metadata_definition_load",
+        "site_kind": "br",
+        "site_pc": "0x10000135c",
+        "slot_offset": 8,
+        "symbol": null
+      }
+    },
+    {
+      "admission": {
+        "call_kind": "bl",
+        "call_pc": 4294972424,
+        "call_return_proven": false,
+        "callee_stub_pc": 4294973188,
+        "caller_start": 4294972264,
+        "declaration": {
+          "decision": "undecided",
+          "entity": null,
+          "identity_sha256": null,
+          "is_async": null,
+          "reason": "thunk_or_specialization",
+          "syntax_model": "swift-declaration-syntax-v2",
+          "throws": null,
+          "typed_throws": null
+        },
+        "details_complete": true,
+        "import_attribution_admitted": true,
+        "import_provenance": {
+          "nlist_offset": 52024,
+          "pointer_address": 4294984264,
+          "pointer_indirect_entry_offset": 52676,
+          "pointer_indirect_index": 51,
+          "pointer_section": "__DATA_CONST,__got",
+          "stub_index": 16,
+          "stub_indirect_entry_offset": 52536,
+          "stub_indirect_index": 16,
+          "stub_model": "arm64-import-stub-double-binding-v1",
+          "stub_section": "__TEXT,__stubs",
+          "stub_words": [
+            {
+              "container_file_offset": 5892,
+              "pc": 4294973188,
+              "slice_file_offset": 5892,
+              "word": "0xf0000010"
+            },
+            {
+              "container_file_offset": 5896,
+              "pc": 4294973192,
+              "slice_file_offset": 5896,
+              "word": "0xf9412610"
+            },
+            {
+              "container_file_offset": 5900,
+              "pc": 4294973196,
+              "slice_file_offset": 5900,
+              "word": "0xd61f0200"
+            }
+          ],
+          "symbol_index": 38
+        },
+        "library_ordinal": 3,
+        "model_version": "swift-broad-import-callsite-v1",
+        "reason": "imported_callee_abi_unqualified",
+        "status": "unresolved",
+        "symbol": "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 106
+      },
+      "call_pc": "0x100001408",
+      "caller_error_test": {
+        "claims_callee_behaviour": false,
+        "model": "swift-caller-error-test-v1",
+        "postcall": {
+          "error_pc": "0x100001440",
+          "status": "recovered_candidate",
+          "success_pc": "0x100001414",
+          "test_pc": "0x100001410",
+          "tested_register": "x21",
+          "window": [
+            {
+              "kind": "mov",
+              "pc": "0x10000140c",
+              "word": "0xaa1503f8"
+            },
+            {
+              "kind": "xcbnz",
+              "pc": "0x100001410",
+              "word": "0xb5000195"
+            }
+          ]
+        },
+        "precall": {
+          "status": "x21_not_zeroed",
+          "window": [
+            {
+              "kind": "mov",
+              "pc": "0x1000013fc",
+              "word": "0xaa1803f5"
+            },
+            {
+              "kind": "mov",
+              "pc": "0x100001400",
+              "word": "0xaa1a03e3"
+            },
+            {
+              "kind": "mov",
+              "pc": "0x100001404",
+              "word": "0xaa1b03e4"
+            }
+          ]
+        },
+        "shape": "postcall_test_only"
+      },
+      "caller_pc": "0x100001368",
+      "candidate": null,
+      "effect_admission": {
+        "caller_relation": "not_applicable",
+        "licence_class": "none",
+        "model": "swift-import-effect-admission-v1"
+      },
+      "validation": null
+    },
+    {
+      "admission": {
+        "call_kind": "bl",
+        "call_pc": 4294972448,
+        "call_return_proven": false,
+        "callee_stub_pc": 4294973116,
+        "caller_start": 4294972264,
+        "declaration": {
+          "decision": "throwing",
+          "entity": "Function",
+          "identity_sha256": "b532dfe81dba2daca18309e13890f338b74e8656273200ae4d18f31c9586e5a1",
+          "is_async": false,
+          "reason": null,
+          "syntax_model": "swift-declaration-syntax-v2",
+          "throws": true,
+          "typed_throws": "none"
+        },
+        "details_complete": true,
+        "import_attribution_admitted": true,
+        "import_provenance": {
+          "nlist_offset": 51832,
+          "pointer_address": 4294984200,
+          "pointer_indirect_entry_offset": 52644,
+          "pointer_indirect_index": 43,
+          "pointer_section": "__DATA_CONST,__got",
+          "stub_index": 10,
+          "stub_indirect_entry_offset": 52512,
+          "stub_indirect_index": 10,
+          "stub_model": "arm64-import-stub-double-binding-v1",
+          "stub_section": "__TEXT,__stubs",
+          "stub_words": [
+            {
+              "container_file_offset": 5820,
+              "pc": 4294973116,
+              "slice_file_offset": 5820,
+              "word": "0xf0000010"
+            },
+            {
+              "container_file_offset": 5824,
+              "pc": 4294973120,
+              "slice_file_offset": 5824,
+              "word": "0xf9410610"
+            },
+            {
+              "container_file_offset": 5828,
+              "pc": 4294973124,
+              "slice_file_offset": 5828,
+              "word": "0xd61f0200"
+            }
+          ],
+          "symbol_index": 26
+        },
+        "library_ordinal": 3,
+        "model_version": "swift-broad-import-callsite-v1",
+        "reason": "imported_callee_outcome_unmodeled",
+        "status": "unresolved",
+        "symbol": "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 69
+      },
+      "call_pc": "0x100001420",
+      "caller_error_test": {
+        "claims_callee_behaviour": false,
+        "model": "swift-caller-error-test-v1",
+        "postcall": {
+          "reason": "intervening_instruction_unmodeled",
+          "window": [
+            {
+              "kind": "mov",
+              "pc": "0x100001424",
+              "word": "0xaa0003f4"
+            },
+            {
+              "kind": "mov",
+              "pc": "0x100001428",
+              "word": "0xaa1503f8"
+            }
+          ]
+        },
+        "precall": {
+          "status": "x21_not_zeroed",
+          "window": [
+            {
+              "kind": "mov",
+              "pc": "0x10000141c",
+              "word": "0xaa1803f5"
+            }
+          ]
+        },
+        "shape": "none"
+      },
+      "caller_pc": "0x100001368",
+      "candidate": null,
+      "effect_admission": {
+        "caller_relation": "no_signal",
+        "licence_class": "declared_error_exit",
+        "model": "swift-import-effect-admission-v1"
+      },
+      "validation": null
+    },
+    {
+      "admission": {
+        "abi": {
+          "reason": "separate_abi_admission_required",
+          "status": "unresolved"
+        },
+        "abi_admitted": false,
+        "call_return_proven": false,
+        "details_complete": true,
+        "error_state_proven": false,
+        "exclusive_entry_proven": false,
+        "model_version": "swift-broad-callsite-v1",
+        "provenance": {
+          "call": {
+            "container_file_offset": 5176,
+            "pc": 4294972472,
+            "slice_file_offset": 5176,
+            "word": "0xd63f0100"
+          }
+        },
+        "reason": "indirect_target_unresolved",
+        "status": "unresolved",
+        "syntactic_call_target_admitted": false,
+        "work_steps": 355
+      },
+      "call_pc": "0x100001438",
+      "caller_pc": "0x100001368",
+      "candidate": null,
+      "indirect_target_shape": {
+        "bounds": {
+          "max_function_words": 262144,
+          "max_register_hops": 6,
+          "window_words": 256
+        },
+        "claims_callee_behaviour": false,
+        "class": "value_witness",
+        "class_before_join_refusal": null,
+        "deciding_instructions": [
+          {
+            "pc": "0x1000013a0",
+            "role": "metadata_call_result",
+            "word": "0x97fffe7e"
+          },
+          {
+            "pc": "0x1000013a8",
+            "role": "table_load",
+            "word": "0xf85f801c"
+          },
+          {
+            "pc": "0x10000142c",
+            "role": "target_load",
+            "word": "0xf9400788"
+          },
+          {
+            "pc": "0x100001438",
+            "role": "indirect_branch",
+            "word": "0xd63f0100"
+          }
+        ],
+        "evidence": "table base loaded from [x0, #-8] (type metadata -8 = value witness table), slot +0x8",
+        "model": "swift-indirect-target-shape-v1",
+        "site_kind": "blr",
+        "site_pc": "0x100001438",
+        "slot_address": null,
+        "slot_offset": 8,
+        "slot_section": null,
+        "unknown_reason": null
+      },
+      "validation": null,
+      "value_witness_admission": {
+        "abi_basis": null,
+        "admitted": false,
+        "claims_callee_behaviour": false,
+        "first_failing_condition": 2,
+        "metadata_callee_pc": null,
+        "metadata_register": "x0",
+        "model": "swift-value-witness-admission-v1",
+        "provenance_kind": "unknown",
+        "reason": "direct_target_symbol_missing",
+        "site_kind": "blr",
+        "site_pc": "0x100001438",
+        "slot_offset": 8,
+        "symbol": null
+      }
+    }
+  ],
+  "capabilities": {
+    "caller_error_test_model": "swift-caller-error-test-v1",
+    "declaration_syntax_model": "swift-declaration-syntax-v2",
+    "effect_admission_model": "swift-import-effect-admission-v1",
+    "grammar_pin": "swift-6.4.2-RELEASE",
+    "not_claimed": [
+      "callee_returns",
+      "dyld_binding",
+      "runtime_callee",
+      "arguments_and_results",
+      "error_value_at_runtime"
+    ],
+    "premises": [
+      "symbol_name_carries_effects",
+      "no_silgen_name_override",
+      "name_only_attribution",
+      "binding_not_proven",
+      "grammar_pinned"
+    ],
+    "report_model": "swift-broad-error-flow-extended-v4"
+  },
+  "chained_fixups_model": "macho-chained-fixups-64-bind-v1",
+  "chained_fixups_status": "decoded",
+  "decision_by_shape": {
+    "async": {
+      "none": 0,
+      "postcall_test_only": 0,
+      "precall_zero_only": 0,
+      "swifterror_idiom": 0
+    },
+    "non_throwing": {
+      "none": 15,
+      "postcall_test_only": 0,
+      "precall_zero_only": 0,
+      "swifterror_idiom": 0
+    },
+    "throwing": {
+      "none": 4,
+      "postcall_test_only": 0,
+      "precall_zero_only": 0,
+      "swifterror_idiom": 0
+    },
+    "undecided": {
+      "none": 6,
+      "postcall_test_only": 2,
+      "precall_zero_only": 0,
+      "swifterror_idiom": 0
+    }
+  },
+  "decision_summary": {
+    "names": {
+      "async": 0,
+      "non_throwing": 10,
+      "throwing": 3,
+      "undecided": 6
+    },
+    "undecided_by_reason": {
+      "accessor": {
+        "calls": 5,
+        "names": 4
+      },
+      "thunk_or_specialization": {
+        "calls": 3,
+        "names": 2
+      }
+    }
+  },
+  "got_binding_model": "arm64-got-blr-two-source-binding-v1",
+  "got_binding_reason": null,
+  "got_bindings_complete": true,
+  "got_counts": {
+    "agreeing_got_slots": 35,
+    "attributed_got_calls": 3,
+    "blr_instructions": 7,
+    "declined_got_calls": 4,
+    "declined_got_slots": 0,
+    "got_candidates": 7,
+    "got_slots": 35,
+    "non_swift_got_calls": 3,
+    "non_throwing_swift_got_calls": 0,
+    "selected_got_calls": 0
+  },
+  "got_decline_counts": {
+    "got_base_not_adrp": 4
+  },
+  "got_slot_decline_counts": {},
+  "got_window_model": "adrp-ldr-blr-straight-line-window-v1",
+  "identity": {
+    "architecture": "arm64",
+    "container_sha256": "ef13dd492b9ff8eda4843564fa03535789496eeaf31d089add3868f1980dbfb1",
+    "container_slice_count": 1,
+    "cpu_subtype": 0,
+    "preferred_base": "0x100000000",
+    "slice_index": 0,
+    "slice_offset": "0x0",
+    "slice_sha256": "ef13dd492b9ff8eda4843564fa03535789496eeaf31d089add3868f1980dbfb1",
+    "slice_size": "0xd8b0",
+    "uuid": "f597b328-ed6b-3082-8af9-92a484fa1e89"
+  },
+  "import_calls": {
+    "attributed_calls": 57,
+    "attributed_swift_calls": 27,
+    "complete": true,
+    "distinct_symbols": 30,
+    "entries": [
+      {
+        "calls": 1,
+        "decision": "undecided",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": "thunk_or_specialization",
+        "retained": 1,
+        "skipped_non_throwing": 0,
+        "stub_calls": 1,
+        "symbol": "_$s10Foundation11JSONDecoderC6decode_4fromxxm_AA4DataVtKSeRzlFTj"
+      },
+      {
+        "calls": 1,
+        "decision": "non_throwing",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 1,
+        "stub_calls": 1,
+        "symbol": "_$s10Foundation11JSONDecoderCACycfc"
+      },
+      {
+        "calls": 1,
+        "decision": "non_throwing",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 1,
+        "stub_calls": 1,
+        "symbol": "_$s10Foundation11JSONDecoderCMa"
+      },
+      {
+        "calls": 1,
+        "decision": "non_throwing",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 1,
+        "stub_calls": 1,
+        "symbol": "_$s10Foundation3URLV15fileURLWithPathACSSh_tcfC"
+      },
+      {
+        "calls": 1,
+        "decision": "non_throwing",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 1,
+        "stub_calls": 1,
+        "symbol": "_$s10Foundation3URLVMa"
+      },
+      {
+        "calls": 1,
+        "decision": "throwing",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": null,
+        "retained": 1,
+        "skipped_non_throwing": 0,
+        "stub_calls": 1,
+        "symbol": "_$s10Foundation4DataV10contentsOf7optionsAcA3URLVh_So20NSDataReadingOptionsVtKcfC"
+      },
+      {
+        "calls": 1,
+        "decision": "undecided",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": "accessor",
+        "retained": 1,
+        "skipped_non_throwing": 0,
+        "stub_calls": 1,
+        "symbol": "_$sSS10FoundationE8EncodingV4utf8ACvgZ"
+      },
+      {
+        "calls": 1,
+        "decision": "non_throwing",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 1,
+        "stub_calls": 1,
+        "symbol": "_$sSS10FoundationE8EncodingVMa"
+      },
+      {
+        "calls": 1,
+        "decision": "throwing",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": null,
+        "retained": 1,
+        "skipped_non_throwing": 0,
+        "stub_calls": 1,
+        "symbol": "_$sSy10FoundationE5write2to10atomically8encodingyAA3URLV_SbSSAAE8EncodingVtKF"
+      },
+      {
+        "calls": 2,
+        "decision": "undecided",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": "accessor",
+        "retained": 2,
+        "skipped_non_throwing": 0,
+        "stub_calls": 2,
+        "symbol": "_$ss11CommandLineO9argumentsSaySSGvgZ"
+      },
+      {
+        "calls": 2,
+        "decision": "throwing",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": null,
+        "retained": 2,
+        "skipped_non_throwing": 0,
+        "stub_calls": 2,
+        "symbol": "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF"
+      },
+      {
+        "calls": 1,
+        "decision": "non_throwing",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 1,
+        "stub_calls": 1,
+        "symbol": "_$ss27_stringCompareWithSmolCheck__9expectingSbs11_StringGutsV_ADs01_G16ComparisonResultOtF"
+      },
+      {
+        "calls": 2,
+        "decision": "non_throwing",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 2,
+        "stub_calls": 2,
+        "symbol": "_$ss5print_9separator10terminatoryypd_S2StF"
+      },
+      {
+        "calls": 2,
+        "decision": "non_throwing",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 2,
+        "stub_calls": 2,
+        "symbol": "_$ss6HasherV5_seedABSi_tcfC"
+      },
+      {
+        "calls": 3,
+        "decision": "non_throwing",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 3,
+        "stub_calls": 3,
+        "symbol": "_$ss6HasherV8_combineyySuF"
+      },
+      {
+        "calls": 2,
+        "decision": "non_throwing",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 2,
+        "stub_calls": 2,
+        "symbol": "_$ss6HasherV9_finalizeSiyF"
+      },
+      {
+        "calls": 2,
+        "decision": "undecided",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": "thunk_or_specialization",
+        "retained": 2,
+        "skipped_non_throwing": 0,
+        "stub_calls": 2,
+        "symbol": "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj"
+      },
+      {
+        "calls": 1,
+        "decision": "undecided",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": "accessor",
+        "retained": 1,
+        "skipped_non_throwing": 0,
+        "stub_calls": 1,
+        "symbol": "_$ss9CodingKeyPsE11descriptionSSvg"
+      },
+      {
+        "calls": 1,
+        "decision": "undecided",
+        "got_calls": 0,
+        "not_swift_calls": 0,
+        "omitted": 0,
+        "reason": "accessor",
+        "retained": 1,
+        "skipped_non_throwing": 0,
+        "stub_calls": 1,
+        "symbol": "_$ss9CodingKeyPsE16debugDescriptionSSvg"
+      },
+      {
+        "calls": 3,
+        "decision": "not_swift",
+        "got_calls": 3,
+        "not_swift_calls": 3,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "stub_calls": 0,
+        "symbol": "___chkstk_darwin"
+      },
+      {
+        "calls": 1,
+        "decision": "not_swift",
+        "got_calls": 0,
+        "not_swift_calls": 1,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "stub_calls": 1,
+        "symbol": "_swift_allocBox"
+      },
+      {
+        "calls": 3,
+        "decision": "not_swift",
+        "got_calls": 0,
+        "not_swift_calls": 3,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "stub_calls": 3,
+        "symbol": "_swift_allocObject"
+      },
+      {
+        "calls": 5,
+        "decision": "not_swift",
+        "got_calls": 0,
+        "not_swift_calls": 5,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "stub_calls": 5,
+        "symbol": "_swift_bridgeObjectRelease"
+      },
+      {
+        "calls": 1,
+        "decision": "not_swift",
+        "got_calls": 0,
+        "not_swift_calls": 1,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "stub_calls": 1,
+        "symbol": "_swift_bridgeObjectRetain"
+      },
+      {
+        "calls": 1,
+        "decision": "not_swift",
+        "got_calls": 0,
+        "not_swift_calls": 1,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "stub_calls": 1,
+        "symbol": "_swift_errorRelease"
+      },
+      {
+        "calls": 1,
+        "decision": "not_swift",
+        "got_calls": 0,
+        "not_swift_calls": 1,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "stub_calls": 1,
+        "symbol": "_swift_getErrorValue"
+      },
+      {
+        "calls": 1,
+        "decision": "not_swift",
+        "got_calls": 0,
+        "not_swift_calls": 1,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "stub_calls": 1,
+        "symbol": "_swift_getTypeByMangledNameInContext"
+      },
+      {
+        "calls": 6,
+        "decision": "not_swift",
+        "got_calls": 0,
+        "not_swift_calls": 6,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "stub_calls": 6,
+        "symbol": "_swift_getWitnessTable"
+      },
+      {
+        "calls": 7,
+        "decision": "not_swift",
+        "got_calls": 0,
+        "not_swift_calls": 7,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "stub_calls": 7,
+        "symbol": "_swift_release"
+      },
+      {
+        "calls": 1,
+        "decision": "not_swift",
+        "got_calls": 0,
+        "not_swift_calls": 1,
+        "omitted": 0,
+        "reason": null,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "stub_calls": 1,
+        "symbol": "_swift_slowAlloc"
+      }
+    ],
+    "residual": {
+      "calls": 0,
+      "not_swift_calls": 0,
+      "omitted": 0,
+      "retained": 0,
+      "skipped_non_throwing": 0,
+      "symbols": 0
+    }
+  },
+  "import_stub_counts": {
+    "attributed_stubs": 29,
+    "declined_stub_calls": 0,
+    "declined_stubs": 0,
+    "invalid_stub_sections": 0,
+    "non_swift_import_calls": 27,
+    "non_throwing_swift_import_calls": 15,
+    "selected_import_calls": 12
+  },
+  "import_stub_model": "arm64-import-stub-double-binding-v1",
+  "import_stub_reason": null,
+  "import_stubs_complete": true,
+  "indirect_target_shape_counts": {
+    "value_witness": 5
+  },
+  "indirect_target_shape_model": "swift-indirect-target-shape-v1",
+  "limitations": [
+    "structural_only",
+    "no_source_or_handler_semantics",
+    "unsupported_abi_and_dispatch_remain_unresolved",
+    "recorded_checks_are_historical_when_saved",
+    "caller_error_test_does_not_claim_callee_behaviour",
+    "indirect_target_shape_does_not_claim_callee_behaviour",
+    "value_witness_admission_by_abi_with_recorded_provenance",
+    "imported_callees_attribution_only",
+    "got_callees_attribution_only",
+    "got_window_entry_screen_syntactic"
+  ],
+  "limits": {
+    "analysis_work_ceiling": 536870912,
+    "import_table_byte_reserve": 2097152,
+    "import_table_entries": 4096,
+    "max_instructions_per_function": 262144,
+    "max_observations_per_function": 256,
+    "max_total_evidence": 8192,
+    "max_total_instructions": 2097152,
+    "output_budget_bytes": 14614528
+  },
+  "model_version": "swift-broad-error-flow-extended-v4",
+  "observed_call_instructions": 89,
+  "omission_causes": {
+    "analysis_work_budget": 0,
+    "output_budget": 0,
+    "per_function_limit": 0,
+    "total_row_limit": 0
+  },
+  "omitted_by_kind": {
+    "import_got": 0,
+    "import_stub": 0,
+    "indirect": 0,
+    "local_swift_direct": 0
+  },
+  "omitted_calls": 0,
+  "outcome_witnesses_complete": true,
+  "profile": "broad-extended-v4",
+  "reason_counts": {
+    "imported_callee_abi_unqualified": 8,
+    "imported_callee_outcome_unmodeled": 4,
+    "indirect_target_unresolved": 4,
+    "value_witness_abi_nonthrowing": 1
+  },
+  "research_only": true,
+  "runtime_reachability_proven": false,
+  "scan": {
+    "candidates_in_unscanned_words": 0,
+    "candidates_in_unscanned_words_reason": null,
+    "functions_excluded_boundary": 0,
+    "functions_total": 40,
+    "functions_truncated": 0,
+    "words_excluded_boundary": 0,
+    "words_scanned": 715,
+    "words_total": 715,
+    "words_unscanned_per_function_ceiling": 0,
+    "words_unscanned_total_ceiling": 0
+  },
+  "scanned_words": 715,
+  "selected_call_candidates": 17,
+  "status_counts": {
+    "declined": 1,
+    "unresolved": 16
+  },
+  "unselected_call_counts": {
+    "declined_stub": 0,
+    "direct_target_not_swift_function": 27,
+    "direct_target_unattributed": 0,
+    "non_swift_import": 30,
+    "other": 0,
+    "skipped_non_throwing": 15
+  },
+  "validation_model_version": "swift-outcome-validation-v2",
+  "value_witness_admission_counts": {
+    "admitted": 1,
+    "refused": 4
+  },
+  "value_witness_admission_model": "swift-value-witness-admission-v1",
+  "value_witness_refusal_condition_counts": {
+    "2": 4
+  },
+  "witness_model_version": "swift-outcome-witness-v2",
+  "word_scan_complete": true
+}
