@@ -13,6 +13,8 @@ def render_swift_broad_text(report):
                 and report.get('profile')=='broad-extended-v1')
             or (report.get('model_version')=='swift-broad-error-flow-extended-v2'
                 and report.get('profile')=='broad-extended-v2')
+            or (report.get('model_version')=='swift-broad-error-flow-extended-v3'
+                and report.get('profile')=='broad-extended-v3')
             or (report.get('model_version')=='swift-broad-error-flow-imports-v1'
                 and report.get('profile')=='broad-imports-v1')
             or (report.get('model_version')=='swift-broad-error-flow-imports-got-v1'
@@ -36,8 +38,9 @@ def render_swift_broad_text(report):
     for name in ('word_scan_complete','call_details_complete','outcome_witnesses_complete',
                  'scanned_words','selected_call_candidates','omitted_calls'):
         lines.append(name+': '+safe(report.get(name)))
-    imports=report.get('profile') in ('broad-imports-v1','broad-imports-got-v1','broad-extended-v2')
-    got=report.get('profile') in ('broad-imports-got-v1','broad-extended-v2')
+    caller_profiles=('broad-extended-v2','broad-extended-v3')
+    imports=report.get('profile') in ('broad-imports-v1','broad-imports-got-v1')+caller_profiles
+    got=report.get('profile') in ('broad-imports-got-v1',)+caller_profiles
     if imports:
         # Imported callees are attribution and declaration syntax only.
         lines.append('Imported stub calls: attribution and declaration syntax only; no ABI, witness or runtime binding.')
@@ -63,6 +66,17 @@ def render_swift_broad_text(report):
         for key in ('got_decline_counts','got_slot_decline_counts'):
             table=report.get(key) or {}
             if type(table) is not dict:raise InputError('swift_broad_text_shape','GOT decline counts must be an object')
+            for name in sorted(table)[:64]:
+                lines.append(key+'.'+safe(name)+': '+safe(table[name]))
+    indirect=report.get('profile')=='broad-extended-v3'
+    if indirect:
+        lines.append('Indirect target shape: where an indirect call target was loaded from; no callee behaviour is claimed.')
+        lines.append('Value-witness admission: ABI non-throwing only for calls proven to use a value witness function slot.')
+        for name in ('indirect_target_shape_model','value_witness_admission_model'):
+            lines.append(name+': '+safe(report.get(name)))
+        for key in ('indirect_target_shape_counts','value_witness_admission_counts','value_witness_refusal_condition_counts'):
+            table=report.get(key) or {}
+            if type(table) is not dict:raise InputError('swift_broad_text_shape','Indirect target counts must be an object')
             for name in sorted(table)[:64]:
                 lines.append(key+'.'+safe(name)+': '+safe(table[name]))
     calls=report.get('calls',[])
@@ -91,10 +105,18 @@ def render_swift_broad_text(report):
         else:
             detail.append('  test '+safe(post.get('test_pc'))+'; success '+safe(post.get('success_successor_pc'))+
                          '; error '+safe(post.get('error_successor_pc')))
-        if report.get('profile')=='broad-extended-v2' and 'caller_error_test' in row:
+        if report.get('profile') in caller_profiles and 'caller_error_test' in row:
             fact=row['caller_error_test']
             if type(fact) is not dict:raise InputError('swift_broad_text_shape','Caller error test must be an object')
             detail.append('  caller x21 shape '+safe(fact.get('shape'))+'; no callee behaviour claim')
+        if indirect and 'indirect_target_shape' in row:
+            shape=row['indirect_target_shape'];witness=row.get('value_witness_admission')
+            if type(shape) is not dict or type(witness) is not dict:
+                raise InputError('swift_broad_text_shape','Indirect target records must be objects')
+            detail.append('  indirect target '+safe(shape.get('class'))+'; slot '+safe(shape.get('slot_offset'))+
+                         '; reason '+safe(shape.get('unknown_reason'))+'; no callee behaviour claim')
+            detail.append('  value witness admitted '+safe(witness.get('admitted'))+'; '+safe(witness.get('provenance_kind'))+
+                         '; condition '+safe(witness.get('first_failing_condition'))+'; '+safe(witness.get('reason')))
         cost=sum(len(line)+1 for line in detail)
         if size+cost>MAX_TEXT_BYTES-128:break
         lines.extend(detail);size+=cost;shown+=1

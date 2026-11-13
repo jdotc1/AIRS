@@ -26,7 +26,8 @@ def unique(values, description):
 
 
 def validate(source):
-    exact_keys(source, ('cfg_models', 'linear_models', 'current_model', 'swift_broad_pairs', 'swift_caller_error_test_model'))
+    exact_keys(source, ('cfg_models', 'linear_models', 'current_model', 'swift_broad_pairs', 'swift_caller_error_test_model',
+                       'swift_indirect_target_shape_model', 'swift_value_witness_admission_model'))
     for key in ('cfg_models', 'linear_models', 'swift_broad_pairs'):
         if not isinstance(source[key], list):
             raise ValueError(f'{key} must be an array')
@@ -51,8 +52,11 @@ def validate(source):
             raise ValueError('native_admitted must be a boolean')
         models.append(item['model'])
         profiles.append(item['profile'])
-    label(source['swift_caller_error_test_model'])
-    unique(labels + models + [source['swift_caller_error_test_model']], 'model')
+    fact_models = [source[key] for key in ('swift_caller_error_test_model', 'swift_indirect_target_shape_model',
+                                           'swift_value_witness_admission_model')]
+    for value in fact_models:
+        label(value)
+    unique(labels + models + fact_models, 'model')
     unique(profiles, 'profile')
     return source
 
@@ -84,6 +88,8 @@ def render(source):
         f'EVALUATED_CFI_MODELS = CFG_MODELS | frozenset({tuple(evaluated)!r})',
         f'CURRENT_MODEL = {source["current_model"]!r}',
         f'SWIFT_CALLER_ERROR_TEST_MODEL = {source["swift_caller_error_test_model"]!r}',
+        f'SWIFT_INDIRECT_TARGET_SHAPE_MODEL = {source["swift_indirect_target_shape_model"]!r}',
+        f'SWIFT_VALUE_WITNESS_ADMISSION_MODEL = {source["swift_value_witness_admission_model"]!r}',
         'SWIFT_BROAD_PAIRS = (',
         *(f'    {(item["model"], item["profile"])!r},' for item in pairs), ')',
         'SWIFT_BROAD_ENGINE_ONLY_PROFILES = frozenset(' + repr(tuple(
@@ -100,6 +106,8 @@ def render(source):
         f'    static let known = cfg.union({json.dumps(linear)})',
         f'    static let evaluatedCFI = cfg.union({json.dumps(evaluated)})',
         f'    static let swiftCallerErrorTest = "{source["swift_caller_error_test_model"]}"',
+        f'    static let swiftIndirectTargetShape = "{source["swift_indirect_target_shape_model"]}"',
+        f'    static let swiftValueWitnessAdmission = "{source["swift_value_witness_admission_model"]}"',
         '    static let swiftBroadNativePairs: [(model: String, profile: String)] = [',
         *(f'        (model: "{item["model"]}", profile: "{item["profile"]}"),'
           for item in pairs if item['native_admitted']), '    ]', '}',
