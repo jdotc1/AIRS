@@ -78,6 +78,8 @@ A frozen result with:
 3. The outer function type is found by the grammar: the type of the entity itself, looking through a
    generic signature. Its own effects carry no throws, no typed throws and no async.
 
+For the metadata accessor, whose mangling carries no function type, rule 3 holds vacuously and only for that entity.
+
 Effects of a closure parameter's type are part of the parameter, not of the outer function. A `rethrows`
 function mangles as throwing and is `throwing`. Typed `throws(Never)` is `undecided` with reason
 `typed_throws` in this model. That keeps the exit test in section 7 exact; a later model may decide it.
