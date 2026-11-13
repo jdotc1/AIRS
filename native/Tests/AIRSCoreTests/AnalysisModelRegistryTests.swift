@@ -13,7 +13,8 @@ final class AnalysisModelRegistryTests: XCTestCase {
             }), profile.rawValue)
             broadCount += 1
         }
-        let recordedOnlyPairs = [(model: "swift-broad-error-flow-extended-v2", profile: "broad-extended-v2")]
+        let recordedOnlyPairs = [(model: "swift-broad-error-flow-extended-v2", profile: "broad-extended-v2"),
+                                  (model: "swift-broad-error-flow-extended-v3", profile: "broad-extended-v3")]
         for expected in recordedOnlyPairs {
             XCTAssertTrue(AnalysisModels.swiftBroadNativePairs.contains(where: { pair in
                 pair.model == expected.model && pair.profile == expected.profile

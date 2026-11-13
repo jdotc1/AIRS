@@ -60,8 +60,10 @@ enum SwiftBroadFlowReport {
         func json(_ value: Any, pretty: Bool = false) throws -> Data {
             try JSONSerialization.data(withJSONObject: value, options: pretty ? [.sortedKeys, .prettyPrinted] : [.sortedKeys, .fragmentsAllowed])
         }
-        let callerTestProfile = object["model_version"] as? String == "swift-broad-error-flow-extended-v2"
-            && object["profile"] as? String == "broad-extended-v2"
+        let indirectProfile = object["model_version"] as? String == "swift-broad-error-flow-extended-v3"
+            && object["profile"] as? String == "broad-extended-v3"
+        let callerTestProfile = indirectProfile || (object["model_version"] as? String == "swift-broad-error-flow-extended-v2"
+            && object["profile"] as? String == "broad-extended-v2")
         let importsProfile = object["model_version"] as? String == "swift-broad-error-flow-imports-v1"
             && object["profile"] as? String == "broad-imports-v1"
         let extendedProfile = object["model_version"] as? String == "swift-broad-error-flow-extended-v1"
@@ -125,6 +127,8 @@ enum SwiftBroadFlowReport {
         var seen = Set<String>(), calls: [SwiftFlowCall] = []
         var importStubs: [UInt64: Data] = [:]
         var callerShapes: [String: Int] = [:], callerDeclines: [String: Int] = [:]
+        var indirectShapes: [String: Int] = [:], indirectAdmission: [String: Int] = ["admitted": 0, "refused": 0]
+        var indirectConditions: [String: Int] = [:]
         for row in rows {
             try Task.checkCancellation()
             guard let callPC = address(row["call_pc"]), let callerPC = address(row["caller_pc"]),
@@ -149,6 +153,11 @@ enum SwiftBroadFlowReport {
                 } else if row["caller_error_test"] != nil {
                     throw fail("caller error test without imported callsite model")
                 }
+            }
+            if indirectProfile {
+                try validateIndirectRecords(row, admission: admission, call: callNumber, importRow: importRow, gotRow: gotRow,
+                    boolean: boolean, address: address, hex: { hex($0) }, unsigned: unsigned, shapes: &indirectShapes,
+                    admissions: &indirectAdmission, conditions: &indirectConditions)
             }
             var importFacts: [String] = []
             if importsProfile || callerTestProfile {
@@ -276,6 +285,21 @@ enum SwiftBroadFlowReport {
                 }
             }
         }
+        if indirectProfile {
+            guard object["indirect_target_shape_model"] as? String == AnalysisModels.swiftIndirectTargetShape,
+                  object["value_witness_admission_model"] as? String == AnalysisModels.swiftValueWitnessAdmission,
+                  limitations.filter({ $0 == "indirect_target_shape_does_not_claim_callee_behaviour" }).count == 1,
+                  limitations.filter({ $0 == "value_witness_admission_by_abi_with_recorded_provenance" }).count == 1,
+                  let shapeCounts = object["indirect_target_shape_counts"] as? [String: Any],
+                  let admissionCounts = object["value_witness_admission_counts"] as? [String: Any],
+                  let conditionCounts = object["value_witness_refusal_condition_counts"] as? [String: Any],
+                  Set(shapeCounts.keys) == Set(indirectShapes.keys), Set(admissionCounts.keys) == ["admitted", "refused"],
+                  Set(conditionCounts.keys) == Set(indirectConditions.keys) else { throw fail("invalid indirect target counters") }
+            for (counters, expected) in [(shapeCounts, indirectShapes), (admissionCounts, indirectAdmission),
+                                         (conditionCounts, indirectConditions)] {
+                for (name, value) in expected where count(counters[name]) != value { throw fail("indirect target counter mismatch") }
+            }
+        }
         let uuidText = uuid as? String ?? "explicitly absent"
         let accounting = "\(calls.count) retained calls · \(omitted) omitted calls · \(scanned) scanned words · \(observed) observed call instructions · \(selected) selected candidates · \(analysisWork) analysis work · scan \(wordComplete ? "complete" : "partial") · details \(detailsComplete ? "complete" : "partial") · witnesses \(witnessesComplete ? "complete" : "partial")"
         return .init(sourceData: data,
@@ -283,6 +307,111 @@ enum SwiftBroadFlowReport {
             modelVersion: model, supportsInterpretation: supported, wordScanComplete: wordComplete,
             callDetailsComplete: detailsComplete, witnessesComplete: witnessesComplete, calls: calls,
             limitations: limitations, summaryText: accounting + importSummary, omittedCallCount: omitted)
+    }
+
+    private static let indirectClasses: Set<String> = ["value_witness", "protocol_witness_slot", "class_vtable", "closure_context",
+        "got_or_global_fnptr", "static_address", "runtime_or_objc_ptr", "unknown"]
+    private static let valueWitnessSlots: Set<UInt64> = [0x0, 0x8, 0x10, 0x18, 0x20, 0x28, 0x30, 0x38, 0x58, 0x60, 0x68]
+    private static let runtimeMetadataFunctions: Set<String> = [
+        "swift_getGenericMetadata", "swift_getTypeByMangledNameInContext",
+        "swift_getTypeByMangledNameInContextInMetadataState", "swift_getTypeByMangledNameInContext2",
+        "swift_getTypeByMangledNameInContextInMetadataState2", "swift_checkMetadataState",
+        "swift_getExistentialTypeMetadata", "swift_getAssociatedTypeWitness"]
+
+    /// Checks the recorded tier 1 shape and tier 2 admission records of one base callsite row.
+    /// Everything is recorded evidence: no input bytes or callee behavior are established here.
+    private static func validateIndirectRecords(
+        _ row: [String: Any], admission: [String: Any]?, call: UInt64, importRow: Bool, gotRow: Bool,
+        boolean: (Any?) -> Bool?, address: (Any?) -> String?, hex: (Any?) -> UInt64?, unsigned: (Any?) -> UInt64?,
+        shapes: inout [String: Int], admissions: inout [String: Int], conditions: inout [String: Int]
+    ) throws {
+        func fail(_ message: String) -> SwiftFlowReportError { .invalid("broad-extended-v3: " + message) }
+        let admittedReason = "value_witness_abi_nonthrowing"
+        let reason = admission?["reason"] as? String
+        let required = reason == "indirect_target_unresolved" || reason == admittedReason
+        let shapeValue = row["indirect_target_shape"], witnessValue = row["value_witness_admission"]
+        if shapeValue == nil && witnessValue == nil {
+            if required { throw fail("indirect row without shape and admission records") }
+            return
+        }
+        guard !importRow, !gotRow, admission?["model_version"] as? String == "swift-broad-callsite-v1",
+              let shape = shapeValue as? [String: Any], let witness = witnessValue as? [String: Any] else {
+            throw fail("indirect records on a row that cannot carry them")
+        }
+        let shapeKeys: Set<String> = ["model", "site_pc", "site_kind", "class", "slot_offset", "unknown_reason",
+            "deciding_instructions", "evidence", "class_before_join_refusal", "slot_address", "slot_section",
+            "claims_callee_behaviour", "bounds"]
+        guard Set(shape.keys) == shapeKeys, shape["model"] as? String == AnalysisModels.swiftIndirectTargetShape,
+              let cls = shape["class"] as? String, indirectClasses.contains(cls),
+              boolean(shape["claims_callee_behaviour"]) == false,
+              let sitePC = address(shape["site_pc"]), hex(sitePC) == call,
+              shape["site_kind"] is NSNull || (shape["site_kind"] as? String).map({ !$0.isEmpty && $0.utf8.count <= 16 }) == true,
+              shape["unknown_reason"] is NSNull || (shape["unknown_reason"] as? String).map({ $0.utf8.count <= 256 }) == true,
+              shape["evidence"] is NSNull || (shape["evidence"] as? String).map({ $0.utf8.count <= 1024 }) == true,
+              let deciding = shape["deciding_instructions"] as? [[String: Any]], deciding.count <= 64,
+              shape["bounds"] is [String: Any] else { throw fail("malformed indirect target shape") }
+        var slot: UInt64?
+        if let value = shape["slot_offset"], !(value is NSNull) {
+            guard let number = unsigned(value), number <= 0xffff else { throw fail("malformed shape slot") }
+            slot = number
+        }
+        var words: [UInt64: (word: UInt64, role: String)] = [:]
+        for item in deciding {
+            guard Set(item.keys) == ["pc", "word", "role"], let pcText = address(item["pc"]), let pc = hex(pcText),
+                  let wordText = item["word"] as? String, wordText.hasPrefix("0x"), wordText.utf8.count == 10,
+                  let word = UInt64(wordText.dropFirst(2), radix: 16), let role = item["role"] as? String, !role.isEmpty, role.utf8.count <= 64,
+                  words.updateValue((word, role), forKey: pc) == nil else { throw fail("malformed shape deciding instruction") }
+        }
+        guard Set(witness.keys).isSuperset(of: ["model", "admitted", "provenance_kind", "first_failing_condition", "reason",
+                  "site_pc", "site_kind", "slot_offset", "claims_callee_behaviour"]),
+              witness["model"] as? String == AnalysisModels.swiftValueWitnessAdmission,
+              let admitted = boolean(witness["admitted"]),
+              boolean(witness["claims_callee_behaviour"]) == false,
+              let kind = witness["provenance_kind"] as? String, !kind.isEmpty, kind.utf8.count <= 64,
+              let witnessReason = witness["reason"] as? String, !witnessReason.isEmpty, witnessReason.utf8.count <= 256,
+              address(witness["site_pc"]) == sitePC else { throw fail("malformed value witness admission") }
+        shapes[cls, default: 0] += 1
+        if !admitted {
+            guard let failing = unsigned(witness["first_failing_condition"]), (1...3).contains(failing),
+                  reason != admittedReason else {
+                throw fail("refused admission without a failing condition or with the admitted reason")
+            }
+            admissions["refused", default: 0] += 1
+            conditions[String(failing), default: 0] += 1
+            return
+        }
+        // Admitted: the recorded provenance must satisfy design section 2 tier 2 on its own.
+        guard reason == admittedReason, admission?["status"] as? String == "declined",
+              witness["first_failing_condition"] is NSNull, witnessReason == "meets_tier2_conditions",
+              cls == "value_witness", let slot, valueWitnessSlots.contains(slot),
+              unsigned(witness["slot_offset"]) == slot,
+              ["metadata_accessor_call", "imported_metadata_accessor_call", "runtime_metadata_call"].contains(kind),
+              let register = witness["metadata_register"] as? String, register.hasPrefix("x"),
+              let registerNumber = Int(register.dropFirst()), (0...30).contains(registerNumber),
+              let symbol = witness["symbol"] as? String, !symbol.isEmpty, symbol.utf8.count <= 4096,
+              symbol.unicodeScalars.allSatisfy({ $0.value > 0x20 && $0.value < 0x7f }),
+              let calleeText = address(witness["metadata_callee_pc"]), let callee = hex(calleeText) else {
+            throw fail("admitted value witness lacks tier 2 provenance")
+        }
+        let canonical = symbol.hasPrefix("_") ? String(symbol.dropFirst()) : symbol
+        if kind == "runtime_metadata_call" {
+            guard runtimeMetadataFunctions.contains(canonical) else { throw fail("admitted runtime function is not allowlisted") }
+        } else {
+            guard (canonical.hasPrefix("$s") || canonical.hasPrefix("$S")), canonical.hasSuffix("Ma"), canonical.utf8.count > 4 else {
+                throw fail("admitted symbol is not a metadata accessor")
+            }
+        }
+        // The metadata is x0 from a direct bl recorded as the deciding metadata_call_result.
+        guard registerNumber == 0 else { throw fail("admitted metadata is not x0") }
+        let calls = words.filter { $0.value.role == "metadata_call_result" }
+        guard calls.count == 1, let found = calls.first, found.value.word & 0xfc00_0000 == 0x9400_0000, found.key % 4 == 0 else {
+            throw fail("admitted site lacks a recorded direct metadata call")
+        }
+        var imm = Int64(found.value.word & 0x03ff_ffff)
+        if imm & 0x0200_0000 != 0 { imm -= 0x0400_0000 }
+        let target = Int64(bitPattern: found.key) &+ imm &* 4
+        guard target >= 0, UInt64(target) == callee else { throw fail("admitted metadata callee does not match the recorded call") }
+        admissions["admitted", default: 0] += 1
     }
 
     /// Checks bounded recorded shape only; no input bytes or callee behavior are established.

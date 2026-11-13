@@ -75,6 +75,71 @@ there restore x21 from a saved register or pass the incoming x21 on. So the full
 idiom, and with it `declaration_caller_disagreement`, does not occur on that
 example. The recognized shapes were not widened to fit it.
 
+## Indirect target facts: broad-extended-v3
+
+`broad-extended-v3` is `broad-extended-v2` plus two recorded facts for indirect branch sites. Its report model is
+`swift-broad-error-flow-extended-v3`. Every `indirect_target_unresolved` row, and every site that the GOT window
+declined as `got_base_not_adrp`, carries an `indirect_target_shape` record and a `value_witness_admission` record.
+Earlier profiles are byte-identical to their previous output.
+
+### Tier 1: indirect target shape, `swift-indirect-target-shape-v1`
+
+For one `blr` site the module walks the target register backward (at most 256 words, at most 6 register hops) and
+classifies where the target came from, first match wins:
+
+- `value_witness`: the target is a load from a value witness table, reached by `ldur Xt, [Xm, #-8]`, at a function
+  slot in {0x0, 0x8, 0x10, 0x18, 0x20, 0x28, 0x30, 0x38, 0x58, 0x60, 0x68}. Offsets 0x40, 0x48 and 0x50 are data
+  fields and any other offset is outside the table; both give `unknown` with reason
+  `value_witness_offset_not_function_slot`.
+- `class_vtable`: a load at or above +0x50 from an isa pointer.
+- `got_or_global_fnptr`: a load from an address formed in the image, with the slot section recorded.
+- `closure_context`: a function pointer loaded from the context pair held in x20.
+- `protocol_witness_slot`: a load from a table also passed to the callee as the trailing witness-table argument.
+- `static_address` and `runtime_or_objc_ptr`: an address formed in the image, or a pointer returned by a call.
+- `unknown`: everything else, with a stable reason such as `join_in_slice`, `target_is_entry_register_xN`,
+  `target_loaded_from_stack_object` or a bound.
+
+The record lists the deciding instructions (pc, word, role), the slot offset, the unknown reason and the bounds.
+`claims_callee_behaviour` is always false: the class says where the target was loaded from, never what the callee
+does. The record changes no status, reason or count. `indirect_target_shape_counts` gives the class counts of the
+retained rows.
+
+### Tier 2: value-witness admission, `swift-value-witness-admission-v1`
+
+Value witness function slots cannot throw, so a call proven to go through one is admissible as non-throwing by the
+ABI. Tier 1 alone does not prove it. A site is admitted only when all of these hold:
+
+1. tier 1 is `value_witness` at a function slot;
+2. the metadata is x0 returned by a direct `bl` (optionally through register copies) to one of:
+   a decided local function entry whose name is a type metadata accessor (`$s...Ma`);
+   an attributed import stub whose symbol is a type metadata accessor;
+   an import stub for exactly one of the runtime metadata functions `swift_getGenericMetadata`,
+   `swift_getTypeByMangledNameInContext`, `swift_getTypeByMangledNameInContextInMetadataState`,
+   `swift_getTypeByMangledNameInContext2`, `swift_getTypeByMangledNameInContextInMetadataState2`,
+   `swift_checkMetadataState`, `swift_getExistentialTypeMetadata` or `swift_getAssociatedTypeWitness`;
+3. no write to a register on a definition-to-use interval of the traced chain (a call clobbers x0 to x17 and x30).
+
+An isa load, metadata in an entry register, metadata moved through the stack and `swift_getObjCClassMetadata` are
+refused. The symbol knowledge comes from the report's own decided accessor symbols and attributed import stubs; the
+module performs no I/O.
+
+An admitted site leaves the unresolved set. Its row stays in `calls` with status `declined` and reason
+`value_witness_abi_nonthrowing`, keeps both records, and is counted in `value_witness_admission_counts`. A refused
+site keeps its `unresolved` row and `indirect_target_unresolved` reason with both records; the first failing
+condition (1, 2 or 3) is counted in `value_witness_refusal_condition_counts`. All counts describe retained rows. A
+candidate omitted for lack of analysis work carries no record. Each site decodes its whole function, so the shared
+analysis work budget is charged per site.
+
+The native validator in `AIRSCore` checks the recorded evidence of this profile: the model identities, the record
+shapes, `claims_callee_behaviour` false in both records, the counts, and, for an admitted site, that the recorded
+provenance meets tier 2 (a value witness function slot, an accepted provenance kind and symbol, x0, and a recorded
+direct `bl` whose target equals the recorded metadata callee). It does not re-read the binary.
+
+On the owned example `OwnedImports.macho` the profile finds 5 indirect sites, all `value_witness`. One is admitted
+through an attributed import stub for a Foundation type metadata accessor; the other four are refused at condition 2
+(a metadata value moved through the stack, or a direct target whose symbol is not recorded). This is one owned case,
+not a prevalence claim.
+
 ## Evidence
 
 The new synthetic tests are in `tests/test_swift_broad_imports.py`, 48 methods in total. 46 were written independently of the implementation, from the model description and from hand-built Mach-O bytes. The implementer added two more: one for the section-relocation refusal, and one, after review, for the section-metadata mismatch. They cover:
