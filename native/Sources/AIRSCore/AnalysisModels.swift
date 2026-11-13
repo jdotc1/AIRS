@@ -69,5 +69,6 @@ enum AnalysisModels {
         (model: "swift-broad-error-flow-imports-v1", profile: "broad-imports-v1"),
         (model: "swift-broad-error-flow-extended-v2", profile: "broad-extended-v2"),
         (model: "swift-broad-error-flow-extended-v3", profile: "broad-extended-v3"),
+        (model: "swift-broad-error-flow-extended-v4", profile: "broad-extended-v4"),
     ]
 }

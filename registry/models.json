@@ -101,7 +101,7 @@
     {
       "model": "swift-broad-error-flow-extended-v4",
       "profile": "broad-extended-v4",
-      "native_admitted": false
+      "native_admitted": true
     }
   ],
   "swift_caller_error_test_model": "swift-caller-error-test-v1",

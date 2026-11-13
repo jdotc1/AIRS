@@ -8,7 +8,7 @@ struct SwiftFlowView: View {
         guard workspace.profile != .standard else {
             return "Methods: qualified synchronous Int → Int struct calls only. Witnesses include required region, entry and presentation evidence. ARM64 only; other forms decline or remain unresolved."
         }
-        let extendedLimits: Bool = [.broadExtended, .broadExtendedV2, .broadExtendedV3, .broadImports].contains(workspace.profile)
+        let extendedLimits: Bool = [.broadExtended, .broadExtendedV2, .broadExtendedV3, .broadExtendedV4, .broadImports].contains(workspace.profile)
         let functionLimit: String = workspace.profile == .broad ? "8,192" : "9,216"
         let scanLimit: String = extendedLimits ? "2,097,152" : "262,144"
         let retainedCalls: String = extendedLimits ? "8,192" : "4,096"
@@ -18,7 +18,7 @@ struct SwiftFlowView: View {
         if workspace.profile == .broadImports {
             caption += " Direct calls to imported `$s` symbols are attributed through verified stubs and remain unresolved: no ABI, witness, return or dyld-binding claim."
         }
-        if workspace.profile == .broadExtendedV2 || workspace.profile == .broadExtendedV3 {
+        if workspace.profile == .broadExtendedV2 || workspace.profile == .broadExtendedV3 || workspace.profile == .broadExtendedV4 {
             caption += " Imported callees are attributed only and stay unresolved."
         }
         if workspace.profile == .broadExtendedV2 {
@@ -26,6 +26,9 @@ struct SwiftFlowView: View {
         }
         if workspace.profile == .broadExtendedV3 {
             caption += " Adds the caller-side error test (a fact about the caller only), plus indirect-target shape and value-witness admission records for indirect call sites: recorded evidence with no claim about callee behaviour; an admitted value-witness call stays declined as value_witness_abi_nonthrowing."
+        }
+        if workspace.profile == .broadExtendedV4 {
+            caption += " Adds, for each imported callee, the licence its decided declaration gives at the call site, and a full accounting of every observed call, omission cause and scan limit. A decided non-throwing import call is skipped and counted per symbol; every other imported call stays unresolved. No witness, return or dyld-binding claim."
         }
         return caption
     }
