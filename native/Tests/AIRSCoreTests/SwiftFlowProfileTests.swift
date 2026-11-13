@@ -9,7 +9,7 @@ final class SwiftFlowProfileTests: XCTestCase {
 
     func testPickerOffersEveryAdmittedExtendedProfileInOrder() {
         XCTAssertEqual(SwiftFlowProfile.allCases,
-                       [.standard, .broad, .broadLarge, .broadExtended, .broadExtendedV2, .broadExtendedV3, .broadImports])
+                       [.standard, .broad, .broadLarge, .broadExtended, .broadExtendedV2, .broadExtendedV3, .broadImports, .broadExtendedV4])
     }
 
     func testTitlesAreNonEmptyAndDistinct() {

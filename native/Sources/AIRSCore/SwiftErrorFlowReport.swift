@@ -2,7 +2,7 @@ import Foundation
 import CoreFoundation
 
 public enum SwiftFlowProfile: String, CaseIterable, Identifiable, Sendable {
-    case standard, broad, broadLarge, broadExtended, broadExtendedV2, broadExtendedV3, broadImports
+    case standard, broad, broadLarge, broadExtended, broadExtendedV2, broadExtendedV3, broadImports, broadExtendedV4
     public var id: Self { self }
     public var title: String {
         switch self {
@@ -13,6 +13,7 @@ public enum SwiftFlowProfile: String, CaseIterable, Identifiable, Sendable {
         case .broadExtendedV2: return "Broad Swift · extended + caller error tests (v2)"
         case .broadExtendedV3: return "Broad Swift · v2 + indirect targets and value witnesses (v3)"
         case .broadImports: return "Broad Swift · imported callees (attribution only)"
+        case .broadExtendedV4: return "Broad Swift · v3 + declaration licences and full accounting (v4)"
         }
     }
     public var broadModel: String? {
@@ -24,6 +25,7 @@ public enum SwiftFlowProfile: String, CaseIterable, Identifiable, Sendable {
         case .broadExtendedV2: return "swift-broad-error-flow-extended-v2"
         case .broadExtendedV3: return "swift-broad-error-flow-extended-v3"
         case .broadImports: return "swift-broad-error-flow-imports-v1"
+        case .broadExtendedV4: return "swift-broad-error-flow-extended-v4"
         }
     }
     public var broadArgument: String? {
@@ -35,6 +37,7 @@ public enum SwiftFlowProfile: String, CaseIterable, Identifiable, Sendable {
         case .broadExtendedV2: return "broad-extended-v2"
         case .broadExtendedV3: return "broad-extended-v3"
         case .broadImports: return "broad-imports-v1"
+        case .broadExtendedV4: return "broad-extended-v4"
         }
     }
 }

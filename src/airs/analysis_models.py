@@ -74,4 +74,4 @@ SWIFT_BROAD_PAIRS = (
     ('swift-broad-error-flow-extended-v3', 'broad-extended-v3'),
     ('swift-broad-error-flow-extended-v4', 'broad-extended-v4'),
 )
-SWIFT_BROAD_ENGINE_ONLY_PROFILES = frozenset(('broad-imports-got-v1', 'broad-extended-v4'))
+SWIFT_BROAD_ENGINE_ONLY_PROFILES = frozenset(('broad-imports-got-v1',))

@@ -73,8 +73,8 @@ BASELINE_PAIRS = (
     ('swift-broad-error-flow-extended-v2', 'broad-extended-v2', True),
     ('swift-broad-error-flow-extended-v3', 'broad-extended-v3', True),
 )
-# After P4 the native decoder does not admit the v4 pair yet; the flip to True belongs to P5 and this constant with it.
-V4_NATIVE_ADMITTED = False
+# The native decoder admits the v4 pair, so its registry flag is true and the generated native file lists it.
+V4_NATIVE_ADMITTED = True
 
 # Build the strings the publication rules reject, so that this file does not spell them out.
 MAINTAINER = re.compile(r'\bJe' + r'ff\b', re.I)
@@ -247,7 +247,7 @@ class RegistryTests(unittest.TestCase):
 
     def test_d04_the_v4_pair_and_its_native_flag(self):
         pairs = {profile: (model, admitted) for model, profile, admitted in self.pairs()}
-        self.assertEqual(pairs[PROFILE], (MODEL, V4_NATIVE_ADMITTED))      # flips to True after P5, with the constant
+        self.assertEqual(pairs[PROFILE], (MODEL, V4_NATIVE_ADMITTED))
 
     def test_d04_effect_model_key(self):
         self.assertEqual(self.source['swift_import_effect_admission_model'], EFFECT_MODEL)
@@ -342,13 +342,13 @@ class GeneratorTests(unittest.TestCase):
         self.assertEqual(swift_text.count(EFFECT_MODEL), 1)
 
     def test_d05_generated_files_list_the_v4_pair(self):
-        # Integration fix: the native file lists only native-admitted pairs (contract section 10: P4 merges with
-        # native_admitted false and P5 flips it), so the v4 pair belongs in the engine file and not yet in the native one.
-        self.assertIn(MODEL, (ROOT / OUTPUTS[0]).read_text())
-        self.assertIn(PROFILE, (ROOT / OUTPUTS[0]).read_text())
-        native = (ROOT / OUTPUTS[1]).read_text()
-        self.assertNotIn(MODEL, native)
-        self.assertNotIn(PROFILE, native)
+        # The native file lists only native-admitted pairs; the v4 pair is native-admitted, so both files list it.
+        self.assertTrue(V4_NATIVE_ADMITTED)
+        for output in OUTPUTS:
+            with self.subTest(output=output):
+                text = (ROOT / output).read_text()
+                self.assertIn(MODEL, text)
+                self.assertIn(PROFILE, text)
 
 
 # --- D6: command line -----------------------------------------------------------------------------------------
@@ -528,8 +528,9 @@ class DocumentTests(unittest.TestCase):
         text = re.sub(r'\s+', ' ', self.roadmap)
         self.assertRegex(text, r'(?i)\b(?:seven|eight)\b[^.]{0,60}\b(?:registered|named|names)\b|'
                                r'\b(?:registered|named)\b[^.]{0,60}\b(?:seven|eight)\b')
-        self.assertRegex(text, r'(?i)\bsix\b[^.]{0,120}native')
-        self.assertRegex(text, r'(?i)\bseven\b[^.]{0,40}\bonce\b[^.]{0,40}\bnative validator\b')
+        self.assertRegex(text, r'(?i)\bseven\b[^.]{0,60}\beight\b[^.]{0,120}\bnative')
+        self.assertNotRegex(text, r'(?i)\bsix\b[^.]{0,120}native')
+        self.assertNotRegex(text, r'(?i)\bonce\b[^.]{0,40}\bnative validator\b')
 
     def test_d09_profile_page_exists_and_names_the_identity(self):
         self.assertTrue(self.page_path.is_file())

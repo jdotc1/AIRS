@@ -1,6 +1,6 @@
 # Imported callee effect admission profile (`broad-extended-v4`)
 
-`broad-extended-v4` is an explicitly selected profile for the broad structural Swift analysis. It is the second-generation broad profile. It adds three things to the report of `broad-extended-v3`: the licence that a decided declaration gives an imported callee at a call site, a complete accounting of every candidate and observed call, and a header that states the profile's premises, claims and limits. Every earlier profile keeps its selection, rows, counters and output bytes unchanged. This profile is engine-only: its registry pair is registered with `native_admitted` false, so the native application does not yet admit it.
+`broad-extended-v4` is an explicitly selected profile for the broad structural Swift analysis. It is the second-generation broad profile. It adds three things to the report of `broad-extended-v3`: the licence that a decided declaration gives an imported callee at a call site, a complete accounting of every candidate and observed call, and a header that states the profile's premises, claims and limits. Every earlier profile keeps its selection, rows, counters and output bytes unchanged. The native application admits this profile: its registry pair is registered with `native_admitted` true.
 
 ## Identity
 
@@ -106,7 +106,14 @@ All fields below are present only under this profile, and the profile requires a
 
 ## Native status
 
-The registry pair is registered with `native_admitted` false. Selecting the profile in the native application is not offered until a native validator for this report shape is admitted. The command line tool and the engine accept it today.
+The registry pair is registered with `native_admitted` true, and the native application offers the profile as the last entry of the analysis-profile picker ("Broad Swift · v3 + declaration licences and full accounting (v4)"). The native decoder is a second, independent implementation of the report rules. Before it accepts a v4 report it refuses, with a message that begins with the rule id, any report that breaks a rule it can check from the report alone:
+
+- Report shape (E1, E2): the nine v4 groups are all present and no key is unknown; the header strings and the limits keys are fixed; the v4 identity and groups appear only together.
+- Integer discipline: every count is a non-negative integer (never a boolean or a fraction), and every sum is checked for overflow.
+- Accounting (A1 to A6, B1 to B3, C1 to C7): the row, omission, scan and import-table arithmetic of this page.
+- Import rows (D1 to D4): the compact declaration record is internally consistent and the licence class is recomputed from it by the table above (the grammar itself is not run); the caller relation, the row status and the row reason follow from the licence, the caller-test shape and the call kind; no import row carries an ABI, a candidate or a validation.
+
+Older profiles are admitted exactly as before. The native view shows the recorded licence class and caller relation of each imported-call row beside the other evidence; both are recorded evidence, and the call stays unresolved. The command line tool and the engine accept the profile as before.
 
 ## Related
 

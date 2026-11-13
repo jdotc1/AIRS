@@ -62,12 +62,18 @@ report model:
 | Broad Swift · extended + caller error tests (v2) | `broad-extended-v2` | `swift-broad-error-flow-extended-v2` |
 | Broad Swift · v2 + indirect targets and value witnesses (v3) | `broad-extended-v3` | `swift-broad-error-flow-extended-v3` |
 | Broad Swift · imported callees (attribution only) | `broad-imports-v1` | `swift-broad-error-flow-imports-v1` |
+| Broad Swift · v3 + declaration licences and full accounting (v4) | `broad-extended-v4` | `swift-broad-error-flow-extended-v4` |
 
-The v2 and v3 entries use the extended limits (9,216 functions, 2,097,152 scanned words, 8,192
+The v2, v3 and v4 entries use the extended limits (9,216 functions, 2,097,152 scanned words, 8,192
 retained calls). v2 records, for each retained imported-call row, what the caller did around the
 call; that is a fact about the caller and says nothing about whether the callee throws. v3 adds
 indirect-target shape and value-witness admission records; an admitted value-witness call stays
-declined as `value_witness_abi_nonthrowing`, with no claim about callee behavior. See
+declined as `value_witness_abi_nonthrowing`, with no claim about callee behavior. v4 adds, for each
+retained imported-call row, the licence class that the decided declaration gives at the call site and the
+caller relation, plus a full accounting of observed calls, omission causes and scan limits; every retained
+imported call stays unresolved. The application checks the v4 report rules before it shows a v4 report and
+refuses a report that breaks one, naming the rule; see
+[the v4 profile](SWIFT_BROAD_EXTENDED_V4_PROFILE.md) and
 [the imported-callee profile](SWIFT_BROAD_IMPORTS_PROFILE.md). A run whose engine response names a
 different model than the selected profile is refused, and a saved report reopens under the entry
 that matches its model.

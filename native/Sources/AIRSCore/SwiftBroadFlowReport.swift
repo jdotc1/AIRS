@@ -35,6 +35,8 @@ enum SwiftBroadFlowReport {
             }
         }
         try inspect(object, depth: 0)
+        try validateV4Report(object)
+        let v4Profile = object["model_version"] as? String == v4Model && object["profile"] as? String == v4ProfileName
         func boolean(_ value: Any?) -> Bool? {
             guard let number = value as? NSNumber, CFGetTypeID(number) == CFBooleanGetTypeID() else { return nil }
             return number.boolValue
@@ -60,8 +62,8 @@ enum SwiftBroadFlowReport {
         func json(_ value: Any, pretty: Bool = false) throws -> Data {
             try JSONSerialization.data(withJSONObject: value, options: pretty ? [.sortedKeys, .prettyPrinted] : [.sortedKeys, .fragmentsAllowed])
         }
-        let indirectProfile = object["model_version"] as? String == "swift-broad-error-flow-extended-v3"
-            && object["profile"] as? String == "broad-extended-v3"
+        let indirectProfile = v4Profile || (object["model_version"] as? String == "swift-broad-error-flow-extended-v3"
+            && object["profile"] as? String == "broad-extended-v3")
         let callerTestProfile = indirectProfile || (object["model_version"] as? String == "swift-broad-error-flow-extended-v2"
             && object["profile"] as? String == "broad-extended-v2")
         let importsProfile = object["model_version"] as? String == "swift-broad-error-flow-imports-v1"
@@ -149,7 +151,7 @@ enum SwiftBroadFlowReport {
             if callerTestProfile {
                 if importRow || gotRow {
                     try validateCallerErrorTest(row, call: callNumber, caller: callerNumber,
-                        boolean: boolean, address: address, shapes: &callerShapes, declines: &callerDeclines)
+                        boolean: boolean, address: address, shapes: &callerShapes, declines: &callerDeclines, v4: v4Profile)
                 } else if row["caller_error_test"] != nil {
                     throw fail("caller error test without imported callsite model")
                 }
@@ -165,7 +167,7 @@ enum SwiftBroadFlowReport {
                     importFacts = try validateImportRow(row, admission: admission, call: callNumber,
                         caller: callerNumber, sliceOffset: offset, sliceSize: size, stubs: &importStubs,
                         boolean: boolean, unsigned: unsigned, count: count, nonclaims: nonclaims,
-                        allowDisagreement: callerTestProfile)
+                        allowDisagreement: callerTestProfile, v4: v4Profile)
                 } else if !gotRow {
                     let importKeys = ["import_attribution_admitted", "callee_stub_pc", "import_provenance", "library_ordinal"]
                     if importKeys.contains(where: { admission?[$0] != nil }) {
@@ -243,6 +245,7 @@ enum SwiftBroadFlowReport {
             }
             if supported && importRow {
                 facts = importFacts.map { summary($0) }
+                if v4Profile { facts += v4Facts(row) }
             } else if supported {
                 for key in ["status", "reason"] { if let text = admission?[key] as? String { facts.append("Admission \(key): \(summary(text))") } }
                 for key in ["declaration", "abi"] {
@@ -435,7 +438,7 @@ enum SwiftBroadFlowReport {
     private static func validateCallerErrorTest(
         _ row: [String: Any], call: UInt64, caller: UInt64,
         boolean: (Any?) -> Bool?, address: (Any?) -> String?,
-        shapes: inout [String: Int], declines: inout [String: Int]
+        shapes: inout [String: Int], declines: inout [String: Int], v4: Bool = false
     ) throws {
         func fail() -> SwiftFlowReportError { .invalid("broad-extended-v2: malformed caller error test") }
         func pc(_ value: Any?) -> UInt64? {
@@ -522,13 +525,15 @@ enum SwiftBroadFlowReport {
               boolean(admission["import_attribution_admitted"]) == true,
               admission["abi"] == nil, let reason = admission["reason"] as? String,
               let declaration = admission["declaration"] as? [String: Any] else { throw fail() }
-        let declarationIdentity = declaration["identity"] as? [String: Any]
-        let nonthrowing = declaration["status"] as? String == "syntax_admitted"
-            && boolean(declarationIdentity?["throws"]) == false
-        if nonthrowing {
-            guard shape == "swifterror_idiom", reason == "declaration_caller_disagreement",
-                  ["bl", "blr_got"].contains(admission["call_kind"] as? String ?? "") else { throw fail() }
-        } else if reason != "imported_callee_abi_unqualified" { throw fail() }
+        if !v4 {
+            let declarationIdentity = declaration["identity"] as? [String: Any]
+            let nonthrowing = declaration["status"] as? String == "syntax_admitted"
+                && boolean(declarationIdentity?["throws"]) == false
+            if nonthrowing {
+                guard shape == "swifterror_idiom", reason == "declaration_caller_disagreement",
+                      ["bl", "blr_got"].contains(admission["call_kind"] as? String ?? "") else { throw fail() }
+            } else if reason != "imported_callee_abi_unqualified" { throw fail() }
+        }
         shapes[shape, default: 0] += 1
     }
 
@@ -595,13 +600,14 @@ enum SwiftBroadFlowReport {
         _ row: [String: Any], admission: [String: Any], call: UInt64, caller: UInt64,
         sliceOffset: UInt64, sliceSize: UInt64, stubs: inout [UInt64: Data],
         boolean: (Any?) -> Bool?, unsigned: (Any?) -> UInt64?, count: (Any?) -> Int?,
-        nonclaims: (Any) -> Bool, allowDisagreement: Bool = false
+        nonclaims: (Any) -> Bool, allowDisagreement: Bool = false, v4: Bool = false
     ) throws -> [String] {
         func fail(_ message: String) -> SwiftFlowReportError { .invalid("broad-v1: " + message) }
-        let disagreement = allowDisagreement && admission["reason"] as? String == "declaration_caller_disagreement"
+        let disagreement = allowDisagreement && !v4 && admission["reason"] as? String == "declaration_caller_disagreement"
+        let v4Reason = v4 && v4RowReasons.values.contains(admission["reason"] as? String ?? "")
         guard row["candidate"] is NSNull, row["validation"] is NSNull,
               admission["status"] as? String == "unresolved",
-              (admission["reason"] as? String == "imported_callee_abi_unqualified" || disagreement),
+              (admission["reason"] as? String == "imported_callee_abi_unqualified" || disagreement || v4Reason),
               let kind = admission["call_kind"] as? String, ["bl", "b"].contains(kind),
               unsigned(admission["call_pc"]) == call, unsigned(admission["caller_start"]) == caller,
               let stub = unsigned(admission["callee_stub_pc"]), stub % 4 == 0, stub != call,
@@ -675,9 +681,17 @@ enum SwiftBroadFlowReport {
         }
         guard slot == pointer, slot <= UInt64.max - 7 else { throw fail("import pointer binding mismatch") }
         guard let declaration = admission["declaration"] as? [String: Any],
-              Set(declaration.keys) == Set(["status", "identity", "reason"]),
-              let declarationStatus = declaration["status"] as? String else { throw fail("invalid import declaration") }
+              v4 ? Set(declaration.keys) == Set(v4RecordKeys) : Set(declaration.keys) == Set(["status", "identity", "reason"]),
+              let declarationStatus = v4 ? declaration["decision"] as? String : declaration["status"] as? String else {
+            throw fail("invalid import declaration")
+        }
         let declarationFact: String
+        if v4 {
+            // The compact record is checked by the v4 report rules; here it is only described.
+            let why = declaration["reason"] as? String
+            declarationFact = "Declaration record: " + declarationStatus + (why.map { " · " + $0 } ?? "")
+                + " (decided from the symbol name; the callee is not shown to behave so)"
+        } else {
         switch declarationStatus {
         case "syntax_admitted":
             guard let identity = declaration["identity"] as? [String: Any], declaration["reason"] is NSNull,
@@ -697,6 +711,7 @@ enum SwiftBroadFlowReport {
             declarationFact = "Declaration syntax: syntax_unresolved · " + reason
         default: throw fail("invalid import declaration status")
         }
+        }
         var binding: [String: Any] = [:]
         binding["symbol"] = symbol
         binding["library_ordinal"] = ordinal
@@ -714,6 +729,496 @@ enum SwiftBroadFlowReport {
             "No ABI admission, outcome witness or validation was recorded for this call (attribution only).",
             "Recorded attribution only; no source bytes were reread by this view.",
             "Stub section bounds are not recorded; this view cannot check section containment."]
+    }
+
+    // MARK: - broad-extended-v4
+
+    private static let v4Model = "swift-broad-error-flow-extended-v4"
+    private static let v4ProfileName = "broad-extended-v4"
+    private static let v4EffectModel = "swift-import-effect-admission-v1"
+    private static let v4GrammarModel = "swift-declaration-syntax-v2"
+    private static let v4GroupNames = ["capabilities", "limits", "omission_causes", "omitted_by_kind", "unselected_call_counts",
+        "scan", "import_calls", "decision_by_shape", "decision_summary"]
+    /// Every top-level key a v4 report may carry: the v3 report fields, the GOT envelope the engine records beside them,
+    /// and the nine v4 groups. Any other key is refused.
+    private static let v4TopLevelKeys: Set<String> = [
+        "analysis_work", "call_details_complete", "call_return_proven", "caller_error_test_counts",
+        "caller_error_test_decline_counts", "calls", "capabilities", "chained_fixups_model",
+        "chained_fixups_status", "decision_by_shape", "decision_summary", "got_binding_model",
+        "got_binding_reason", "got_bindings_complete", "got_counts", "got_decline_counts",
+        "got_slot_decline_counts", "got_window_model", "identity", "import_calls", "import_stub_counts",
+        "import_stub_model", "import_stub_reason", "import_stubs_complete", "indirect_target_shape_counts",
+        "indirect_target_shape_model", "limitations", "limits", "model_version", "observed_call_instructions",
+        "omission_causes", "omitted_by_kind", "omitted_calls", "outcome_witnesses_complete", "profile",
+        "reason_counts", "research_only", "runtime_reachability_proven", "scan", "scanned_words",
+        "selected_call_candidates", "status_counts", "unselected_call_counts", "validation_model_version",
+        "value_witness_admission_counts", "value_witness_admission_model",
+        "value_witness_refusal_condition_counts", "witness_model_version", "word_scan_complete"]
+    private static let v4Premises = ["symbol_name_carries_effects", "no_silgen_name_override", "name_only_attribution",
+        "binding_not_proven", "grammar_pinned"]
+    private static let v4NotClaimed = ["callee_returns", "dyld_binding", "runtime_callee", "arguments_and_results",
+        "error_value_at_runtime"]
+    private static let v4LimitKeys = ["max_total_evidence", "max_observations_per_function", "max_instructions_per_function",
+        "max_total_instructions", "analysis_work_ceiling", "output_budget_bytes", "import_table_entries",
+        "import_table_byte_reserve"]
+    private static let v4Causes = ["analysis_work_budget", "per_function_limit", "total_row_limit", "output_budget"]
+    private static let v4Kinds = ["import_stub", "import_got", "local_swift_direct", "indirect"]
+    private static let v4Buckets = ["skipped_non_throwing", "non_swift_import", "declined_stub",
+        "direct_target_not_swift_function", "direct_target_unattributed"]
+    private static let v4Decisions = ["non_throwing", "throwing", "async", "undecided"]
+    private static let v4Shapes = ["swifterror_idiom", "postcall_test_only", "precall_zero_only", "none"]
+    private static let v4ScanKeys = ["words_total", "words_scanned", "words_unscanned_per_function_ceiling",
+        "words_unscanned_total_ceiling", "words_excluded_boundary", "functions_total", "functions_excluded_boundary",
+        "functions_truncated", "candidates_in_unscanned_words", "candidates_in_unscanned_words_reason"]
+    private static let v4EntryKeys = ["symbol", "decision", "reason", "calls", "stub_calls", "got_calls", "retained",
+        "skipped_non_throwing", "not_swift_calls", "omitted"]
+    private static let v4ResidualKeys = ["symbols", "calls", "retained", "skipped_non_throwing", "not_swift_calls", "omitted"]
+    private static let v4RecordKeys = ["syntax_model", "decision", "reason", "entity", "throws", "is_async", "typed_throws",
+        "identity_sha256"]
+    /// The closed reason list of the declaration grammar. Read from the record only; the grammar is never run here.
+    private static let v4Reasons: Set<String> = ["invalid_input", "thunk_or_specialization", "unknown_substitution", "truncated",
+        "malformed_symbol", "trailing_input", "unsupported_production", "limit_exceeded", "typed_throws", "accessor",
+        "not_function_entity"]
+    /// Entity names the grammar gives accessors; a record naming one is undecided with reason accessor (finding 6).
+    private static let v4AccessorEntities: Set<String> = ["Getter", "Setter", "MaterializeForSet", "GlobalGetter", "WillSet",
+        "DidSet", "ReadAccessor", "ModifyAccessor", "YieldingMutateAccessor", "YieldingBorrowAccessor", "BorrowAccessor",
+        "MutateAccessor", "InitAccessor", "UnsafeMutableAddressor", "OwningMutableAddressor", "NativeOwningMutableAddressor",
+        "NativePinningMutableAddressor", "UnsafeAddressor", "OwningAddressor", "NativeOwningAddressor",
+        "NativePinningAddressor"]
+    private static let v4Licences = ["no_error_exit", "declared_error_exit", "refused_unsupported_effect", "none"]
+    private static let v4Relations = ["conflict", "corroborated", "no_signal", "not_applicable"]
+    private static let v4RowReasons: [String: String] = [
+        "no_error_exit": "declaration_caller_disagreement",
+        "declared_error_exit": "imported_callee_outcome_unmodeled",
+        "refused_unsupported_effect": "imported_callee_effect_unsupported",
+        "none": "imported_callee_abi_unqualified"]
+    private static let v4ScanMarkers: Set<String> = ["excluded_boundary"]
+    private static let v4RetentionLimit = 8192
+
+    /// The recorded licence and caller relation of one import row, as view facts.
+    private static func v4Facts(_ row: [String: Any]) -> [String] {
+        guard let effect = row["effect_admission"] as? [String: Any],
+              let licence = effect["licence_class"] as? String, let relation = effect["caller_relation"] as? String else { return [] }
+        return ["Licence class: \(licence) · caller relation: \(relation) (recorded; the call stays unresolved)"]
+    }
+
+    private static func v4Fail(_ rule: String, _ text: String) -> SwiftFlowReportError { .invalid(rule + ": " + text) }
+
+    /// The licence class that a compact declaration record gives, by the table of contract 4.3.
+    private static func v4LicenceClass(decision: String, isAsync: Bool?, typedThrows: String?) -> String {
+        switch decision {
+        case "non_throwing": return "no_error_exit"
+        case "throwing":
+            return (isAsync == true || (typedThrows != nil && typedThrows != "none")) ? "refused_unsupported_effect" : "declared_error_exit"
+        case "async": return "refused_unsupported_effect"
+        default: return "none"
+        }
+    }
+
+    /// The caller relation the tables of 4.4 give; nil means no retained row may exist for that case.
+    private static func v4ExpectedRelation(licence: String, shape: String, tail: Bool) -> String? {
+        switch licence {
+        case "no_error_exit": return shape == "swifterror_idiom" && !tail ? "conflict" : nil
+        case "declared_error_exit": return tail ? "not_applicable" : (shape == "swifterror_idiom" ? "corroborated" : "no_signal")
+        default: return "not_applicable"
+        }
+    }
+
+    private static func v4Canonical(_ value: Any) -> Data? {
+        try? JSONSerialization.data(withJSONObject: value, options: [.sortedKeys, .fragmentsAllowed])
+    }
+
+    /// The v4 report rules of the design contract, with the rule id leading every message. Shape and arithmetic only:
+    /// the grammar, the digest and the demangler are never recomputed here. Applies only to the v4 pair; any other
+    /// report that names the v4 identity or carries a v4 group is refused (E2).
+    private static func validateV4Report(_ object: [String: Any]) throws {
+        let model = object["model_version"] as? String, profile = object["profile"] as? String
+        let pair = model == v4Model && profile == v4ProfileName
+        let present = v4GroupNames.filter { object[$0] != nil }
+        guard pair else {
+            if model == v4Model || profile == v4ProfileName || !present.isEmpty {
+                throw v4Fail("E2", "v4 identity or fields appear outside the v4 pair")
+            }
+            if let rows = object["calls"] as? [[String: Any]], rows.contains(where: { $0["effect_admission"] != nil }) {
+                throw v4Fail("E2", "a row effect_admission appears outside the v4 pair")
+            }
+            return
+        }
+        let missing = v4GroupNames.filter { object[$0] == nil }
+        guard missing.isEmpty else { throw v4Fail("E2", "a v4 report requires every v4 group; missing \(missing)") }
+        guard Set(object.keys).isSubset(of: v4TopLevelKeys) else {
+            throw v4Fail("E2", "unknown top-level key \(Set(object.keys).subtracting(v4TopLevelKeys).sorted())")
+        }
+        func integer(_ rule: String, _ value: Any?, _ what: String) throws -> Int {
+            guard let number = value as? NSNumber, CFGetTypeID(number) != CFBooleanGetTypeID(),
+                  !["f", "d"].contains(String(cString: number.objCType)), number.doubleValue >= 0,
+                  number.uint64Value <= UInt64(Int.max) else { throw v4Fail(rule, "\(what) must be a non-negative integer") }
+            return Int(number.uint64Value)
+        }
+        func flag(_ rule: String, _ value: Any?, _ what: String) throws -> Bool {
+            guard let number = value as? NSNumber, CFGetTypeID(number) == CFBooleanGetTypeID() else {
+                throw v4Fail(rule, "\(what) must be a boolean")
+            }
+            return number.boolValue
+        }
+        func add(_ rule: String, _ left: Int, _ right: Int) throws -> Int {
+            let (sum, overflow) = left.addingReportingOverflow(right)
+            guard !overflow else { throw v4Fail(rule, "integer overflow in a sum") }
+            return sum
+        }
+        func total(_ rule: String, _ values: [Int]) throws -> Int { try values.reduce(0) { try add(rule, $0, $1) } }
+        func mapping(_ rule: String, _ value: Any?, _ what: String, _ keys: [String]) throws -> [String: Any] {
+            guard let dict = value as? [String: Any], Set(dict.keys) == Set(keys) else {
+                throw v4Fail(rule, "\(what) must be an object with exactly the keys \(keys)")
+            }
+            return dict
+        }
+        func counts(_ rule: String, _ value: Any?, _ what: String, _ keys: [String]) throws -> [String: Int] {
+            let dict = try mapping(rule, value, what, keys)
+            var result: [String: Int] = [:]
+            for key in keys { result[key] = try integer(rule, dict[key], "\(what).\(key)") }
+            return result
+        }
+
+        // E1: capabilities and limits.
+        let expectedText: [String: String] = ["report_model": v4Model, "effect_admission_model": v4EffectModel,
+            "declaration_syntax_model": v4GrammarModel, "grammar_pin": "swift-6.4.2-RELEASE",
+            "caller_error_test_model": AnalysisModels.swiftCallerErrorTest]
+        guard let capabilities = object["capabilities"] as? [String: Any],
+              Set(capabilities.keys) == Set(expectedText.keys).union(["premises", "not_claimed"]),
+              expectedText.allSatisfy({ capabilities[$0.key] as? String == $0.value }),
+              capabilities["premises"] as? [String] == v4Premises,
+              capabilities["not_claimed"] as? [String] == v4NotClaimed else {
+            throw v4Fail("E1", "capabilities must equal the fixed strings")
+        }
+        let limits = try counts("E1", object["limits"], "limits", v4LimitKeys)
+
+        guard let rows = object["calls"] as? [[String: Any]] else { throw v4Fail("A1", "calls must be an array of objects") }
+        // The existing row bound keeps its existing message.
+        guard rows.count <= 8192 else { throw SwiftFlowReportError.invalid("broad-v1: invalid report shape, identity or accounting") }
+
+        // A1 to A6.
+        let selected = try integer("A1", object["selected_call_candidates"], "selected_call_candidates")
+        let omitted = try integer("A1", object["omitted_calls"], "omitted_calls")
+        guard omitted <= selected, rows.count == selected - omitted else {
+            throw v4Fail("A1", "len(calls) \(rows.count) != selected_call_candidates \(selected) - omitted_calls \(omitted)")
+        }
+        let causes = try counts("A2", object["omission_causes"], "omission_causes", v4Causes)
+        let kinds = try counts("A2", object["omitted_by_kind"], "omitted_by_kind", v4Kinds)
+        let causeSum = try total("A2", v4Causes.map { causes[$0] ?? 0 }), kindSum = try total("A2", v4Kinds.map { kinds[$0] ?? 0 })
+        guard omitted == causeSum, omitted == kindSum else {
+            throw v4Fail("A2", "omitted_calls \(omitted), sum of omission_causes \(causeSum), sum of omitted_by_kind \(kindSum) must be equal")
+        }
+        if omitted > 0 {
+            for key in ["call_details_complete", "outcome_witnesses_complete"] where try flag("A3", object[key], key) {
+                throw v4Fail("A3", "omitted_calls > 0 requires \(key) to be false")
+            }
+        }
+        var statusSum = 0, reasonSum = 0
+        for (key, name) in [("reason_counts", "reason"), ("status_counts", "status")] {
+            guard let group = object[key] as? [String: Any] else { throw v4Fail("A4", "\(key) must be an object") }
+            var sum = 0
+            for (item, value) in group { sum = try add("A4", sum, try integer("A4", value, "\(key)[\(item)]")) }
+            if name == "reason" {
+                reasonSum = sum
+                if let marker = group.keys.first(where: { v4ScanMarkers.contains($0) }) {
+                    throw v4Fail("A4", "reason_counts carries the internal scan marker \(marker)")
+                }
+            } else { statusSum = sum }
+        }
+        guard reasonSum == rows.count else { throw v4Fail("A4", "sum(reason_counts) \(reasonSum) != len(calls) \(rows.count)") }
+        guard statusSum == rows.count else { throw v4Fail("A4", "sum(status_counts) \(statusSum) != len(calls) \(rows.count)") }
+        let unselected = try counts("A5", object["unselected_call_counts"], "unselected_call_counts", v4Buckets + ["other"])
+        let observed = try integer("A5", object["observed_call_instructions"], "observed_call_instructions")
+        let named = try total("A5", v4Buckets.map { unselected[$0] ?? 0 })
+        guard observed == (try add("A5", selected, named)) else {
+            throw v4Fail("A5", "observed_call_instructions \(observed) != selected \(selected) + unselected buckets \(named)")
+        }
+        guard unselected["other"] == 0 else { throw v4Fail("A5", "unselected_call_counts.other must be 0") }
+        let maxEvidence = limits["max_total_evidence"] ?? 0, maxPerFunction = limits["max_observations_per_function"] ?? 0
+        guard maxEvidence == v4RetentionLimit else {
+            throw v4Fail("A6", "limits.max_total_evidence is \(maxEvidence), the retention limit is \(v4RetentionLimit)")
+        }
+        guard rows.count <= maxEvidence else { throw v4Fail("A6", "len(calls) exceeds limits.max_total_evidence") }
+        if (causes["total_row_limit"] ?? 0) > 0, rows.count != maxEvidence {
+            throw v4Fail("A6", "total_row_limit omissions with len(calls) \(rows.count) below limits.max_total_evidence \(maxEvidence)")
+        }
+        var perCaller: [String: Int] = [:]
+        for row in rows {
+            guard let caller = row["caller_pc"] as? String else { throw v4Fail("A6", "a row has no caller_pc") }
+            perCaller[caller, default: 0] += 1
+        }
+        let busiest = perCaller.values.max() ?? 0
+        guard busiest <= maxPerFunction else { throw v4Fail("A6", "a caller_pc has \(busiest) rows, above limits.max_observations_per_function") }
+        if (causes["per_function_limit"] ?? 0) > 0, busiest != maxPerFunction {
+            throw v4Fail("A6", "per_function_limit omissions but no caller_pc has exactly \(maxPerFunction) rows")
+        }
+
+        // B1 to B3.
+        func scanBlock(_ rule: String) throws -> [String: Any] { try mapping(rule, object["scan"], "scan", v4ScanKeys) }
+        func scanCounts(_ rule: String) throws -> [String: Int] {
+            let scan = try scanBlock(rule)
+            var result: [String: Int] = [:]
+            for key in v4ScanKeys.prefix(8) { result[key] = try integer(rule, scan[key], "scan.\(key)") }
+            return result
+        }
+        let scan1 = try scanCounts("B1")
+        let scanParts = try total("B1", ["words_scanned", "words_unscanned_per_function_ceiling",
+            "words_unscanned_total_ceiling", "words_excluded_boundary"].map { scan1[$0] ?? 0 })
+        guard scan1["words_total"] == scanParts else { throw v4Fail("B1", "words_total != scanned + unscanned + excluded") }
+        let scannedWords = try integer("B1", object["scanned_words"], "scanned_words")
+        guard scan1["words_scanned"] == scannedWords else { throw v4Fail("B1", "words_scanned != scanned_words") }
+        let scan2 = try scanCounts("B2")
+        let wordComplete = try flag("B2", object["word_scan_complete"], "word_scan_complete")
+        let truncated = scan2["functions_truncated"] ?? 0, excluded = scan2["functions_excluded_boundary"] ?? 0
+        guard wordComplete == (truncated == 0 && excluded == 0) else {
+            throw v4Fail("B2", "word_scan_complete \(wordComplete) with functions_truncated \(truncated) and functions_excluded_boundary \(excluded)")
+        }
+        let ceilingUnscanned = try add("B2", scan2["words_unscanned_per_function_ceiling"] ?? 0, scan2["words_unscanned_total_ceiling"] ?? 0)
+        guard (truncated == 0) == (ceilingUnscanned == 0) else {
+            throw v4Fail("B2", "functions_truncated \(truncated) does not agree with the unscanned word counts \(ceilingUnscanned)")
+        }
+        guard try add("B2", truncated, excluded) <= (scan2["functions_total"] ?? 0) else {
+            throw v4Fail("B2", "functions_truncated + functions_excluded_boundary exceeds functions_total")
+        }
+        let scan3 = try scanCounts("B3"), scanBlock3 = try scanBlock("B3")
+        let notDecoded = try add("B3", ceilingUnscanned, scan3["words_excluded_boundary"] ?? 0)
+        let candidates = scanBlock3["candidates_in_unscanned_words"], candidateReason = scanBlock3["candidates_in_unscanned_words_reason"]
+        if notDecoded == 0 {
+            guard let value = candidates, !(value is NSNull), (try integer("B3", value, "candidates_in_unscanned_words")) == 0,
+                  candidateReason is NSNull else {
+                throw v4Fail("B3", "with no undecoded words candidates_in_unscanned_words must be 0 with a null reason")
+            }
+        } else {
+            guard candidates is NSNull, candidateReason as? String == "words_not_decoded" else {
+                throw v4Fail("B3", "with undecoded words candidates_in_unscanned_words must be null with reason words_not_decoded")
+            }
+        }
+
+        // C1 to C7.
+        func importBlock(_ rule: String) throws -> (complete: Bool, attributed: Int, swiftCalls: Int, distinct: Int,
+                                                      entries: [[String: Any]], residual: [String: Int]) {
+            let block = try mapping(rule, object["import_calls"], "import_calls",
+                ["complete", "attributed_calls", "attributed_swift_calls", "distinct_symbols", "entries", "residual"])
+            let complete = try flag(rule, block["complete"], "import_calls.complete")
+            guard let entries = block["entries"] as? [[String: Any]] else { throw v4Fail(rule, "import_calls.entries must be an array of objects") }
+            for item in entries {
+                _ = try mapping(rule, item, "an import call entry", v4EntryKeys)
+                guard item["symbol"] is String else { throw v4Fail(rule, "an import call entry needs a string symbol") }
+                for key in v4EntryKeys where !["symbol", "decision", "reason"].contains(key) {
+                    _ = try integer(rule, item[key], "entry \(key)")
+                }
+            }
+            return (complete, try integer(rule, block["attributed_calls"], "import_calls.attributed_calls"),
+                    try integer(rule, block["attributed_swift_calls"], "import_calls.attributed_swift_calls"),
+                    try integer(rule, block["distinct_symbols"], "import_calls.distinct_symbols"), entries,
+                    try counts(rule, block["residual"], "import_calls.residual", v4ResidualKeys))
+        }
+        func entryInt(_ item: [String: Any], _ key: String) -> Int { (item[key] as? NSNumber)?.intValue ?? 0 }
+        func closes(_ item: [String: Int]) throws -> Bool {
+            item["calls"] == (try total("C1", ["retained", "skipped_non_throwing", "not_swift_calls", "omitted"].map { item[$0] ?? 0 }))
+        }
+        let c1 = try importBlock("C1")
+        for item in c1.entries {
+            let symbol = item["symbol"] as? String ?? ""
+            let calls = entryInt(item, "calls")
+            let outcomes = try total("C1", ["retained", "skipped_non_throwing", "not_swift_calls", "omitted"].map { entryInt(item, $0) })
+            guard calls == (try add("C1", entryInt(item, "stub_calls"), entryInt(item, "got_calls"))), calls == outcomes else {
+                throw v4Fail("C1", "entry \(symbol) does not close: calls, stub + got and the outcomes must be equal")
+            }
+            guard let decision = item["decision"] as? String, v4Decisions.contains(decision) || decision == "not_swift" else {
+                throw v4Fail("C1", "entry \(symbol) has an unknown decision")
+            }
+            let reason = item["reason"]
+            guard reason is NSNull || reason is String, (decision == "undecided") == !(reason is NSNull) else {
+                throw v4Fail("C1", "entry \(symbol): reason must be non-null exactly when the decision is undecided")
+            }
+            if let text = reason as? String, !v4Reasons.contains(text) {
+                throw v4Fail("C1", "entry \(symbol) has a reason outside the grammar list")
+            }
+            guard (decision == "not_swift") == (entryInt(item, "not_swift_calls") == calls) else {
+                throw v4Fail("C1", "entry \(symbol): not_swift_calls must equal calls exactly when the decision is not_swift")
+            }
+        }
+        let c2 = try importBlock("C2")
+        let symbols = c2.entries.compactMap { $0["symbol"] as? String }
+        for index in symbols.indices.dropFirst() where symbols[index - 1] >= symbols[index] {
+            throw v4Fail("C2", "entries must be unique and sorted by symbol")
+        }
+        guard c2.entries.count <= (limits["import_table_entries"] ?? 0) else { throw v4Fail("C2", "\(c2.entries.count) entries exceed limits.import_table_entries") }
+        let entryCalls = try total("C2", c2.entries.map { entryInt($0, "calls") })
+        guard c2.attributed == (try add("C2", entryCalls, c2.residual["calls"] ?? 0)) else {
+            throw v4Fail("C2", "attributed_calls does not equal the entries plus residual.calls")
+        }
+        guard c2.distinct == (try add("C2", c2.entries.count, c2.residual["symbols"] ?? 0)) else {
+            throw v4Fail("C2", "distinct_symbols does not equal len(entries) + residual.symbols")
+        }
+        let residualOutcomes = try total("C2", ["retained", "skipped_non_throwing", "not_swift_calls", "omitted"].map { c2.residual[$0] ?? 0 })
+        guard c2.residual["calls"] == residualOutcomes else { throw v4Fail("C2", "the residual does not close: calls != retained + skipped + not_swift + omitted") }
+        _ = try closes(c2.residual)
+        let c3 = try importBlock("C3")
+        guard c3.complete == (c3.residual["symbols"] == 0 && wordComplete) else {
+            throw v4Fail("C3", "complete is \(c3.complete) but residual.symbols == 0 and word_scan_complete is \(wordComplete)")
+        }
+        let c4 = try importBlock("C4")
+        func sumOver(_ rule: String, _ block: (entries: [[String: Any]], residual: [String: Int]), _ key: String) throws -> Int {
+            try add(rule, try total(rule, block.entries.map { entryInt($0, key) }), block.residual[key] ?? 0)
+        }
+        let importRowCount = rows.filter { $0["effect_admission"] != nil }.count
+        let retainedSum = try sumOver("C4", (c4.entries, c4.residual), "retained")
+        guard retainedSum == importRowCount else { throw v4Fail("C4", "retained sums to \(retainedSum) but \(importRowCount) rows carry effect_admission") }
+        guard try sumOver("C4", (c4.entries, c4.residual), "skipped_non_throwing") == unselected["skipped_non_throwing"] else {
+            throw v4Fail("C4", "skipped_non_throwing differs from unselected_call_counts.skipped_non_throwing")
+        }
+        let notSwiftSum = try sumOver("C4", (c4.entries, c4.residual), "not_swift_calls")
+        guard notSwiftSum == unselected["non_swift_import"] else { throw v4Fail("C4", "not_swift_calls differs from unselected_call_counts.non_swift_import") }
+        guard try sumOver("C4", (c4.entries, c4.residual), "omitted") == (try add("C4", kinds["import_stub"] ?? 0, kinds["import_got"] ?? 0)) else {
+            throw v4Fail("C4", "omitted differs from omitted_by_kind.import_stub + import_got")
+        }
+        let c5 = try importBlock("C5")
+        guard notSwiftSum <= c5.attributed, c5.swiftCalls == c5.attributed - notSwiftSum else {
+            throw v4Fail("C5", "attributed_swift_calls != attributed_calls - not_swift_calls")
+        }
+        func grid(_ rule: String) throws -> [String: [String: Int]] {
+            let raw = try mapping(rule, object["decision_by_shape"], "decision_by_shape", v4Decisions)
+            var result: [String: [String: Int]] = [:]
+            for decision in v4Decisions { result[decision] = try counts(rule, raw[decision], "decision_by_shape.\(decision)", v4Shapes) }
+            return result
+        }
+        let grid5 = try grid("C5")
+        let cells = try total("C5", v4Decisions.flatMap { decision in v4Shapes.map { grid5[decision]?[$0] ?? 0 } })
+        guard cells == c5.swiftCalls else { throw v4Fail("C5", "decision_by_shape sums to \(cells), attributed_swift_calls is \(c5.swiftCalls)") }
+        let c6 = try importBlock("C6")
+        let summary = try mapping("C6", object["decision_summary"], "decision_summary", ["names", "undecided_by_reason"])
+        let names = try counts("C6", summary["names"], "decision_summary.names", v4Decisions)
+        let listedSwift = c6.entries.filter { ($0["decision"] as? String) != "not_swift" }.count
+        let residualSwiftCalls = (c6.residual["calls"] ?? 0) - (c6.residual["not_swift_calls"] ?? 0)
+        let residualOther = c6.residual["not_swift_calls"] ?? 0, residualSymbols = c6.residual["symbols"] ?? 0
+        let low = listedSwift + max(residualSwiftCalls > 0 ? 1 : 0, residualSymbols - residualOther)
+        let high = listedSwift + min(residualSwiftCalls, residualSymbols - (residualOther > 0 ? 1 : 0))
+        let nameSum = try total("C6", v4Decisions.map { names[$0] ?? 0 })
+        guard low <= high else { throw v4Fail("C6", "the residual cannot hold any whole number of Swift symbols") }
+        guard nameSum >= low, nameSum <= high else {
+            throw v4Fail("C6", "decision_summary.names sums to \(nameSum), the distinct Swift symbols number \(low == high ? "\(low)" : "\(low) to \(high)")")
+        }
+        guard let byReason = summary["undecided_by_reason"] as? [String: Any] else { throw v4Fail("C6", "undecided_by_reason must be an object") }
+        var reasonNames = 0, reasonCalls = 0
+        for (reason, slot) in byReason {
+            guard v4Reasons.contains(reason) else { throw v4Fail("C6", "undecided_by_reason key \(reason) is not in the closed reason list") }
+            let parts = try counts("C6", slot, "undecided_by_reason[\(reason)]", ["names", "calls"])
+            reasonNames = try add("C6", reasonNames, parts["names"] ?? 0); reasonCalls = try add("C6", reasonCalls, parts["calls"] ?? 0)
+        }
+        guard reasonNames == names["undecided"] else { throw v4Fail("C6", "undecided_by_reason names do not sum to names.undecided") }
+        let grid6 = try grid("C6")
+        let undecidedRow = try total("C6", v4Shapes.map { grid6["undecided"]?[$0] ?? 0 })
+        guard reasonCalls == undecidedRow else { throw v4Fail("C6", "undecided_by_reason calls do not sum to the undecided row of decision_by_shape") }
+        let c7 = try importBlock("C7")
+        var entryDecisions: [String: String] = [:]
+        for item in c7.entries { if let symbol = item["symbol"] as? String { entryDecisions[symbol] = item["decision"] as? String } }
+        for row in rows {
+            guard let witness = row["value_witness_admission"] as? [String: Any], (witness["admitted"] as? NSNumber).map({ CFGetTypeID($0) == CFBooleanGetTypeID() && $0.boolValue }) == true,
+                  let symbol = witness["symbol"] as? String, let decision = entryDecisions[symbol], decision != "non_throwing" else { continue }
+            throw v4Fail("C7", "metadata accessor \(symbol) is admitted by the value-witness check but listed \(decision)")
+        }
+
+        // D1 to D4, over the rows that carry effect_admission. A row with an import or GOT callsite model must carry it.
+        let importModels: Set<String> = ["swift-broad-import-callsite-v1", "swift-broad-got-callsite-v1"]
+        for row in rows {
+            let model = (row["admission"] as? [String: Any])?["model_version"] as? String
+            let isImport = model.map { importModels.contains($0) } ?? false
+            if isImport && row["effect_admission"] == nil { throw v4Fail("D2", "an import row without effect_admission") }
+            if !isImport && row["effect_admission"] != nil { throw v4Fail("D2", "effect_admission on a row without an import callsite model") }
+        }
+        let importRows = rows.filter { $0["effect_admission"] != nil }
+        func admission(_ rule: String, _ row: [String: Any]) throws -> [String: Any] {
+            guard let value = row["admission"] as? [String: Any] else { throw v4Fail(rule, "an import row needs an admission object") }
+            return value
+        }
+        func recordOf(_ rule: String, _ row: [String: Any]) throws -> [String: Any] {
+            try mapping(rule, try admission(rule, row)["declaration"], "the declaration record", v4RecordKeys)
+        }
+        var firstRecord: [String: Data] = [:]
+        for row in importRows {
+            let record = try recordOf("D1", row), symbol = try admission("D1", row)["symbol"] as? String
+            guard record["syntax_model"] as? String == v4GrammarModel else { throw v4Fail("D1", "declaration syntax_model is not \(v4GrammarModel)") }
+            guard let decision = record["decision"] as? String, v4Decisions.contains(decision) else {
+                throw v4Fail("D1", "declaration decision is not one of the four")
+            }
+            let reason = record["reason"]
+            if decision == "undecided" {
+                guard let text = reason as? String, v4Reasons.contains(text) else { throw v4Fail("D1", "an undecided declaration needs a grammar reason") }
+            } else if !(reason is NSNull) { throw v4Fail("D1", "a decided declaration has a null reason") }
+            let identityKeys = ["entity", "throws", "is_async", "typed_throws", "identity_sha256"]
+            if record["entity"] is NSNull {
+                guard identityKeys.allSatisfy({ record[$0] is NSNull }) else {
+                    throw v4Fail("D1", "a declared-without-identity record has null entity, throws, is_async, typed_throws and digest")
+                }
+                // The grammar declines a static accessor with no identity (contract 10, call 7); typed_throws needs an identity.
+                guard decision == "undecided", reason as? String != "typed_throws" else {
+                    throw v4Fail("D1", "a declaration without an identity is undecided with a decline reason")
+                }
+            } else {
+                guard let entity = record["entity"] as? String, !entity.isEmpty else { throw v4Fail("D1", "declaration entity must be a non-empty string") }
+                let throwsFlag = try flag("D1", record["throws"], "declaration throws"), asyncFlag = try flag("D1", record["is_async"], "declaration is_async")
+                guard let typed = record["typed_throws"] as? String, ["none", "never", "concrete"].contains(typed) else {
+                    throw v4Fail("D1", "declaration typed_throws must be none, never or concrete")
+                }
+                guard let digest = record["identity_sha256"] as? String, digest.utf8.count == 64,
+                      digest.utf8.allSatisfy({ (48...57).contains($0) || (97...102).contains($0) }) else {
+                    throw v4Fail("D1", "declaration identity_sha256 must be 64 lowercase hex characters")
+                }
+                let expected: (String, String?)
+                if reason as? String == "accessor" || v4AccessorEntities.contains(entity) { expected = ("undecided", "accessor") }
+                else if typed == "never" { expected = ("undecided", "typed_throws") }
+                else if throwsFlag || typed != "none" { expected = ("throwing", nil) }
+                else if asyncFlag { expected = ("async", nil) }
+                else { expected = ("non_throwing", nil) }
+                guard expected.0 == decision, expected.1 == (reason as? String) else {
+                    throw v4Fail("D1", "declaration decision \(decision) does not follow from its fields")
+                }
+            }
+            guard let symbol, let canonical = v4Canonical(record) else { throw v4Fail("D1", "an import row needs a string admission.symbol") }
+            if let previous = firstRecord[symbol], previous != canonical { throw v4Fail("D1", "rows of \(symbol) carry different declaration records") }
+            firstRecord[symbol] = canonical
+        }
+        func licenceOf(_ rule: String, _ row: [String: Any]) throws -> (claimed: String, relation: String, expected: String) {
+            let effect = try mapping(rule, row["effect_admission"], "effect_admission", ["model", "licence_class", "caller_relation"])
+            guard effect["model"] as? String == v4EffectModel else { throw v4Fail(rule, "effect_admission.model is not \(v4EffectModel)") }
+            let record = try recordOf(rule, row)
+            let expected = v4LicenceClass(decision: record["decision"] as? String ?? "", isAsync: record["is_async"] as? Bool,
+                                          typedThrows: record["typed_throws"] as? String)
+            return (effect["licence_class"] as? String ?? "", effect["caller_relation"] as? String ?? "", expected)
+        }
+        for row in importRows {
+            let licence = try licenceOf("D2", row)
+            guard v4Licences.contains(licence.claimed), licence.claimed == licence.expected else {
+                throw v4Fail("D2", "licence_class \(licence.claimed), the record produces \(licence.expected)")
+            }
+        }
+        for row in importRows {
+            let licence = try licenceOf("D3", row), admitted = try admission("D3", row)
+            guard v4Relations.contains(licence.relation) else { throw v4Fail("D3", "unknown caller_relation") }
+            guard let shape = (row["caller_error_test"] as? [String: Any])?["shape"] as? String, v4Shapes.contains(shape) else {
+                throw v4Fail("D3", "an import row needs a caller error test with a known shape")
+            }
+            guard let callKind = admitted["call_kind"] as? String, ["bl", "b", "blr_got"].contains(callKind) else {
+                throw v4Fail("D3", "an import row needs a call kind of bl, b or blr_got")
+            }
+            guard let relation = v4ExpectedRelation(licence: licence.expected, shape: shape, tail: callKind == "b") else {
+                throw v4Fail("D3", "a retained row with licence no_error_exit needs a bl-kind call and shape swifterror_idiom")
+            }
+            guard licence.relation == relation else {
+                throw v4Fail("D3", "relation \(licence.relation), contract 4.4 gives \(relation) for licence \(licence.expected), shape \(shape), call kind \(callKind)")
+            }
+            guard admitted["status"] as? String == "unresolved" else { throw v4Fail("D3", "a retained import row stays unresolved") }
+            guard admitted["reason"] as? String == v4RowReasons[licence.expected] else {
+                throw v4Fail("D3", "row reason does not match licence \(licence.expected)")
+            }
+        }
+        for row in importRows {
+            guard row["candidate"] is NSNull, row["validation"] is NSNull else { throw v4Fail("D4", "an import row carries a candidate or a validation") }
+            guard row["abi"] == nil, try admission("D4", row)["abi"] == nil else { throw v4Fail("D4", "an import row carries an abi") }
+        }
     }
 
 }

@@ -126,8 +126,8 @@ a user of the released application sees first. It received no work after build 3
    in CI. Registries kept by hand in two languages are generated from one source.
 6. **Profiles stop multiplying.** There are eight named broad Swift profiles, each a
    superset of another, and a reader has to choose among them. New semantics still
-   get a new model identity. They do not get a new profile name. Six of the eight are admitted
-   by the native application, and seven will be once the native validator for `broad-extended-v4` lands.
+   get a new model identity. They do not get a new profile name. Seven of the eight are now admitted
+   by the native application; only the engine-only GOT profile is not.
 7. **A lane that does not move the panel stops growing.** Section 4.3 and section 4.4
    each carry a stop rule.
 
