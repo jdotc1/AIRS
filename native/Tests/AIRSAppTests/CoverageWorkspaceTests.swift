@@ -4,14 +4,16 @@ import AIRSEntitlements
 final class CoverageWorkspaceTests:XCTestCase {
     var root:URL {URL(fileURLWithPath:#filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("fixtures/coverage")}
     @MainActor
-    func testInventoryStagesWithoutChangingSessionsAndSourceSelectsReferencedFinding() async throws {
+    func testInventoryStagesAndSourceDetailReturnsWithoutReplacingWorkspace() async throws {
         let owner=AIRSFileOpen(hasModal:{false}),audit=AuditWorkspace(),entitlements=EntitlementsWorkspace(),navigation=AIRSNavigation(),revision=audit.reportRevision
         navigation.showsEntitlements=true
         await owner.openCoverage(root.appendingPathComponent("single.json"),audit:audit,entitlements:entitlements)?.value
         XCTAssertNotNil(owner.coverageReview);XCTAssertTrue(owner.blocksActions);XCTAssertEqual(audit.reportRevision,revision);XCTAssertNil(audit.report)
         let inventory=try XCTUnwrap(owner.coverageReview?.inventory),reason=try XCTUnwrap(inventory.reasons.first),example=try XCTUnwrap(reason.examples.first)
         await owner.openCoverageObservation(example,reason:reason.reason,source:root.appendingPathComponent("source.audit.json"),audit:audit,entitlements:entitlements,navigation:navigation)?.value
-        XCTAssertNil(owner.coverageReview);XCTAssertEqual(audit.selectedFinding?.id,example.finding_id);XCTAssertFalse(navigation.showsEntitlements)
+        XCTAssertNotNil(owner.coverageReview);XCTAssertEqual(owner.savedReportTriage?.sourceFinding?.id,example.finding_id)
+        XCTAssertEqual(audit.reportRevision,revision);XCTAssertNil(audit.report);XCTAssertTrue(navigation.showsEntitlements)
+        owner.savedReportTriage?.backToInventory();XCTAssertEqual(owner.savedReportTriage?.page,.inventory)
     }
     @MainActor
     func testInvalidObservationPreservesCoverageAndAuditAndQuitPreventsLatePublication() async throws {

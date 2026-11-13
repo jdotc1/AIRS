@@ -107,10 +107,18 @@ struct AIRSWindowView: View {
                 openAudit:{fileOpen.chooseDecodeAudit($0,audit:audit,entitlements:entitlements,navigation:navigation)},close:fileOpen.closeDecodeInventory)
                 .interactiveDismissDisabled()
         }
-        .sheet(item:$fileOpen.coverageReview) {session in
-            CoverageReviewView(inventory:session.inventory,busy:fileOpen.isBusy,status:fileOpen.status,
-                openObservation:{fileOpen.chooseCoverageObservation($0,reason:$1,audit:audit,entitlements:entitlements,navigation:navigation)},close:fileOpen.closeCoverage)
-                .interactiveDismissDisabled()
+        .sheet(item:$fileOpen.coverageReview) { _ in
+            if let session = fileOpen.savedReportTriage {
+                SavedReportTriageView(session: session, owner: fileOpen, audit: audit, entitlements: entitlements, navigation: navigation)
+                    .interactiveDismissDisabled()
+            }
+        }
+        .sheet(isPresented: Binding(get: { fileOpen.savedReportTriage != nil && fileOpen.coverageReview == nil },
+                                    set: { if !$0 { fileOpen.closeCoverage() } })) {
+            if let session = fileOpen.savedReportTriage {
+                SavedReportTriageView(session: session, owner: fileOpen, audit: audit, entitlements: entitlements, navigation: navigation)
+                    .interactiveDismissDisabled()
+            }
         }
         .sheet(item:$fileOpen.policyReview) {session in
             PolicyReviewView(session:session,busy:fileOpen.isBusy,status:fileOpen.status,

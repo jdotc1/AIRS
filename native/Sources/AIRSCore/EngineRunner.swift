@@ -5,6 +5,8 @@ public enum EngineCommand: Sendable {
     case audit(input: URL)
     case swiftErrorFlow(input: URL, options: SwiftFlowOptions)
     case diff(baseline: Data, current: Data, manualPairs: ManualPairSelection = .empty)
+    case coverage(reports: [Data], options: CoverageOptions)
+    case summary(report: Data, options: SummaryOptions)
     case handoff(report: Data, findingID: String)
     case symbols(report: Data, dsym: URL)
 }
@@ -120,6 +122,20 @@ private final class EngineInvocation: @unchecked Sendable {
                 try current.write(to: currentURL, options: .atomic)
                 arguments = ["diff", "--baseline", baselineURL.path,
                              "--current", currentURL.path, "--output", outputURL.path] + manualPairs.arguments
+            case .coverage(let reports, let options):
+                try SavedReportInputBudget.validate(reports)
+                var inputs: [String] = []
+                for (index, report) in reports.enumerated() {
+                    let url = workDirectory.appendingPathComponent("report-\(index).json")
+                    try report.write(to: url, options: .atomic)
+                    inputs += ["--report", url.path]
+                }
+                arguments = ["coverage"] + inputs + options.arguments + ["--format", "json", "--output", outputURL.path]
+            case .summary(let report, let options):
+                try SavedReportInputBudget.validate([report])
+                let url = workDirectory.appendingPathComponent("report.json")
+                try report.write(to: url, options: .atomic)
+                arguments = ["summary", "--report", url.path] + options.arguments + ["--format", "json", "--output", outputURL.path]
             case .symbols(let report, let dsym):
                 let reportURL = workDirectory.appendingPathComponent("report.json")
                 try report.write(to: reportURL, options: .atomic)

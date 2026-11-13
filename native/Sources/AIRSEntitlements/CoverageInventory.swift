@@ -54,6 +54,7 @@ public struct CoverageInventory:Decodable,Sendable {
     public let models:[String:Int]
     public let reasons:[Reason]
     public let limitations:[String]
+    public private(set) var selection: CoverageSelectionMetadata? = nil
     private var configurationIdentities:[CoverageJSONIdentity]=[]
     private enum CodingKeys:String,CodingKey {case schema_version,report_kind,status,summary,reports,conflicting_report_indices,models,reasons,limitations}
     public struct VerdictRatio:Sendable {
@@ -74,13 +75,23 @@ public struct CoverageInventory:Decodable,Sendable {
         return "Configuration identity group \(first + 1)"
     }
     public static func decode(_ bytes:Data) throws -> Self {
-        guard bytes.count <= 32*1_048_576 else {throw InspectionArchiveError.limit}
-        let root=try CoverageJSONIdentity.parse(bytes)
-        guard case .object(let fields)=root,Set(fields.keys) == Set(["schema_version","report_kind","status","summary","reports","conflicting_report_indices","models","reasons","limitations"].map{Data($0.utf8)}) else {throw InspectionArchiveError.invalid}
+        guard bytes.count <= 32*1_048_576 else {throw ReportError.invalidContents("Native coverage admission is limited to 32 MiB of output; reduce selected reason details and apply again.")}
+        let root=try CoverageJSONIdentity.parse(bytes, detailedLimits: true)
+        try ProjectionAdmission.keys(root, required: ["schema_version","report_kind","status","summary","reports","conflicting_report_indices","models","reasons","limitations"], optional: CoverageSelectionMetadata.keys)
         var value=try JSONDecoder().decode(Self.self,from:bytes)
         guard let records=root["reports"]?.array else {throw InspectionArchiveError.invalid}
         value.configurationIdentities=records.map{$0["analysis_config"] ?? .null}
-        try value.validate();return value
+        if value.reasons.count > 4096 { throw ReportError.invalidContents("Native coverage admission is limited to 4,096 reason rows; use an explicit detail limit or reason filter.") }
+        if value.reports.count > 128 { throw ReportError.invalidContents("Native coverage admission is limited to 128 report records.") }
+        if value.models.count > 128 { throw ReportError.invalidContents("Native coverage admission is limited to 128 models.") }
+        if value.limitations.count > 64 { throw ReportError.invalidContents("Native coverage admission is limited to 64 limitations.") }
+        try value.validate()
+        if CoverageSelectionMetadata.keys.contains(where: { root[$0] != nil }) {
+            let selection = try JSONDecoder().decode(CoverageSelectionMetadata.self, from: bytes)
+            try selection.validate(root: root, rows: value.reasons)
+            value.selection = selection
+        }
+        return value
     }
     private func validate() throws {
         func nonnegative(_ s:ReportSummary)->Bool {
@@ -123,13 +134,121 @@ public struct CoverageInventory:Decodable,Sendable {
             }
         }
     }
+    public func bindSource(_ sourceBytes: Data, at index: Int) throws -> AuditReport {
+        guard reports.indices.contains(index), configurationIdentities.count == reports.count else { throw InspectionArchiveError.invalid }
+        guard sourceBytes.count <= 64 * 1_048_576 else { throw ReportError.invalidContents("Saved source admission is limited to 64 MiB per report.") }
+        let record = reports[index], report = try AuditReport.decode(sourceBytes)
+        let root = try CoverageJSONIdentity.parse(sourceBytes, detailedLimits: true)
+        guard report.image.sliceSHA256 == record.image.slice_sha256,
+              report.image.architecture == record.image.architecture, report.image.cpuSubtype == record.image.cpu_subtype,
+              report.image.uuid == record.image.uuid, ProjectionAdmission.same(report.image.displayName, record.image.display_name),
+              ProjectionAdmission.same(report.generator.analysisModelVersion, record.model),
+              (root["analysis_config"] ?? .null) == configurationIdentities[index],
+              report.summary.functionCount == record.summary.functionCount,
+              report.summary.agreementCount == record.summary.agreementCount,
+              report.summary.inconsistencyCount == record.summary.inconsistencyCount,
+              report.summary.unresolvedCount == record.summary.unresolvedCount,
+              report.summary.metadataEntryCount == record.summary.metadataEntryCount,
+              report.summary.checkedPCCount == record.summary.checkedPCCount else { throw InspectionArchiveError.invalid }
+        return report
+    }
+
+    /// Validate selection claims against all retained inputs, decoding one input at a time.
+    public func validateSources(_ sources: [Data], options: CoverageOptions) throws {
+        guard sources.count == reports.count, configurationIdentities.count == reports.count else { throw InspectionArchiveError.invalid }
+        guard selection?.reason_selection?.requested == options.reasons,
+              selection?.reason_frequency_selection?.minimum_count == options.minimumCount,
+              selection?.reason_order == (options.order == .reason ? "reason" : nil),
+              selection?.reason_limit?.maximum == options.limit else { throw InspectionArchiveError.invalid }
+        var counts: [Data: Int] = [:]
+        for (index, bytes) in sources.enumerated() {
+            let record = reports[index]
+            var duplicate: Int?
+            let peers = reports.prefix(index).filter {
+                $0.duplicate_of == nil && $0.image.slice_sha256 == record.image.slice_sha256 &&
+                $0.image.architecture == record.image.architecture && $0.image.cpu_subtype == record.image.cpu_subtype &&
+                ProjectionAdmission.same($0.model, record.model) && configurationIdentities[$0.index] == configurationIdentities[index]
+            }
+            if !peers.isEmpty {
+                // Retain a flat comparison buffer, releasing each decoded input before the next.
+                let signature = try Self.duplicateBytes(bytes)
+                for peer in peers {
+                    if try sources[peer.index] == bytes || Self.duplicateBytes(sources[peer.index]) == signature {
+                        duplicate = peer.index; break
+                    }
+                }
+            }
+            guard duplicate == record.duplicate_of else { throw InspectionArchiveError.invalid }
+            let source = try bindSource(bytes, at: index)
+            if duplicate != nil { continue }
+            for finding in source.findings where finding.verdict == .unresolved {
+                for reason in Set(finding.reasonCodes.map { Data($0.utf8) }) { counts[reason, default: 0] += 1 }
+            }
+            let findingsByID = Dictionary(uniqueKeysWithValues: source.findings.map { ($0.id, $0) })
+            for row in reasons {
+                for example in row.examples where example.report_index == index {
+                    guard let finding = findingsByID[example.finding_id],
+                          finding.verdict == .unresolved, finding.function.address == example.pc,
+                          finding.function.name.map({ Data($0.utf8) }) == example.function_name.map({ Data($0.utf8) }),
+                          finding.scope == example.scope, finding.mode == example.mode,
+                          finding.reasonCodes.contains(where: { ProjectionAdmission.same($0, row.reason) }) else { throw InspectionArchiveError.invalid }
+                }
+            }
+        }
+        var selected = counts.keys.map { String(decoding: $0, as: UTF8.self) }.filter { options.reasons?.contains($0) ?? true }
+        if let requested = options.reasons {
+            guard selection?.reason_selection?.matched == requested.filter({ counts[Data($0.utf8)] != nil }),
+                  selection?.reason_selection?.unmatched == requested.filter({ counts[Data($0.utf8)] == nil }) else { throw InspectionArchiveError.invalid }
+        }
+        if let minimum = options.minimumCount {
+            let input = selected.count
+            selected = selected.filter { counts[Data($0.utf8), default: 0] >= minimum }
+            guard selection?.reason_frequency_selection?.input_count == input,
+                  selection?.reason_frequency_selection?.selected_count == selected.count else { throw InspectionArchiveError.invalid }
+        }
+        selected.sort {
+            if options.order == .reason || counts[Data($0.utf8)] == counts[Data($1.utf8)] { return $0.utf8.lexicographicallyPrecedes($1.utf8) }
+            return counts[Data($0.utf8), default: 0] > counts[Data($1.utf8), default: 0]
+        }
+        if let limit = options.limit {
+            guard selection?.reason_limit?.selected_count == selected.count else { throw InspectionArchiveError.invalid }
+            selected = Array(selected.prefix(limit))
+        }
+        guard reasons.map({ Data($0.reason.utf8) }) == selected.map({ Data($0.utf8) }),
+              reasons.allSatisfy({ counts[Data($0.reason.utf8)] == $0.count }) else { throw InspectionArchiveError.invalid }
+    }
+
+    private static func duplicateBytes(_ bytes: Data) throws -> Data {
+        let root = try CoverageJSONIdentity.parse(bytes, detailedLimits: true)
+        var result = Data()
+        func field(_ tag: UInt8, _ bytes: Data) {
+            result.append(tag); result.append(contentsOf: String(bytes.count).utf8); result.append(58); result.append(bytes)
+        }
+        func append(_ value: CoverageJSONIdentity) {
+            switch value {
+            case .null: result.append(110)
+            case .boolean(let b): result.append(b ? 116 : 102)
+            case .string(let bytes): field(115, bytes)
+            case .number(let number): field(100, Data(number.utf8))
+            case .array(let array):
+                result.append(91); for value in array { append(value) }; result.append(93)
+            case .object(let object):
+                result.append(123)
+                for key in object.keys.sorted(by: { $0.lexicographicallyPrecedes($1) }) { field(107, key); if let value = object[key] { append(value) } }
+                result.append(125)
+            }
+        }
+        for key in ["findings", "summary", "metadata_ranges", "issues"] { append(root[key] ?? .null) }
+        return result
+    }
+
     /// Resolve only a user-selected saved report; no path inference or live read.
     /// The inventory has no original-report digest, so this proves a matching
     /// referenced observation, not the original file's byte identity.
     public func resolve(_ example:Example,reason:String,sourceBytes:Data) throws -> (AuditReport,Finding) {
         guard let category=reasons.first(where:{$0.reason.utf8.elementsEqual(reason.utf8)}),let example=category.examples.first(where:{$0.id == example.id}),reports.indices.contains(example.report_index),configurationIdentities.count == reports.count else {throw InspectionArchiveError.invalid}
         let record=reports[example.report_index],report=try AuditReport.decode(sourceBytes)
-        let config=try CoverageJSONIdentity.parse(sourceBytes)["analysis_config"] ?? .null
+        let config=try CoverageJSONIdentity.parse(sourceBytes, detailedLimits: true)["analysis_config"] ?? .null
         guard report.image.sliceSHA256 == record.image.slice_sha256,report.image.architecture == record.image.architecture,report.image.cpuSubtype == record.image.cpu_subtype,report.image.uuid == record.image.uuid,
               report.generator.analysisModelVersion.utf8.elementsEqual(record.model.utf8),config == configurationIdentities[record.index],
               report.summary.functionCount == record.summary.functionCount,report.summary.agreementCount == record.summary.agreementCount,report.summary.inconsistencyCount == record.summary.inconsistencyCount,report.summary.unresolvedCount == record.summary.unresolvedCount,report.summary.metadataEntryCount == record.summary.metadataEntryCount,report.summary.checkedPCCount == record.summary.checkedPCCount,
