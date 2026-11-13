@@ -248,9 +248,10 @@ ranking. Until the ranking exists the chain is treated as complete.
 
 ### 4.5 Native application
 
-1. Swift 6 language mode for the core module. The batch-history save race was a real
-   concurrency defect that CI found by chance on an unrelated change; the compiler's
-   data-race checking is the systematic version of that.
+1. Done. The core module (`AIRSCore`) builds in Swift 6 language mode, so the compiler's
+   data-race checking now covers it; the batch-history save race was the kind of defect
+   CI had found only by chance. The other targets stay in Swift 5 mode (package tools
+   version 6.0); the vendored packages keep their own manifests.
 2. Replace the vendored design-system snapshot, which dates from the macOS 14 floor
    and carries 11 local workaround rows (`native/LUMEN-GAPS.md`), with a current
    upstream release, and delete the workarounds it makes unnecessary. Record the

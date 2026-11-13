@@ -1,4 +1,4 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.0
 import PackageDescription
 
 let package = Package(
@@ -18,7 +18,7 @@ let package = Package(
             .product(name: "EntitlementDiffCLIKit", package: "EntitlementDiff"),
             .product(name: "EntitlementDiffSecurity", package: "EntitlementDiff")
         ]),
-        .target(name: "AIRSCore"),
+        .target(name: "AIRSCore", swiftSettings: [.swiftLanguageMode(.v6)]),
         .target(name: "AIRSEntitlements", dependencies: ["AIRSCore",
             .product(name: "EntitlementDiffCore", package: "EntitlementDiff"),
             .product(name: "EntitlementDiffSecurity", package: "EntitlementDiff")]),
@@ -39,5 +39,6 @@ let package = Package(
             dependencies: ["AIRSCore"],
             resources: [.copy("Fixtures")]
         )
-    ]
+    ],
+    swiftLanguageModes: [.v5]
 )
