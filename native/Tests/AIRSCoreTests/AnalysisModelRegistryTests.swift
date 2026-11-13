@@ -13,7 +13,13 @@ final class AnalysisModelRegistryTests: XCTestCase {
             }), profile.rawValue)
             broadCount += 1
         }
-        XCTAssertEqual(broadCount, AnalysisModels.swiftBroadNativePairs.count)
+        let recordedOnlyPairs = [(model: "swift-broad-error-flow-extended-v2", profile: "broad-extended-v2")]
+        for expected in recordedOnlyPairs {
+            XCTAssertTrue(AnalysisModels.swiftBroadNativePairs.contains(where: { pair in
+                pair.model == expected.model && pair.profile == expected.profile
+            }))
+        }
+        XCTAssertEqual(broadCount + recordedOnlyPairs.count, AnalysisModels.swiftBroadNativePairs.count)
     }
 
     func testExactHistoricalPolicySets() {

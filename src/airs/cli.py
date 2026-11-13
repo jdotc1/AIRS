@@ -13,7 +13,7 @@ from .dsym import attach_dsym
 from .coverage import coverage_inventory, validate_reason_selection
 from .decode_inventory import decode_inventory_path
 from .swift_error_flow import recover_swift_error_flow_path
-from .swift_broad_profiles import BROAD_PROFILE, BROAD_LARGE_PROFILE, BROAD_EXTENDED_PROFILE, BROAD_IMPORTS_PROFILE, BROAD_IMPORTS_GOT_PROFILE, validate_broad_options
+from .swift_broad_profiles import BROAD_PROFILE, BROAD_LARGE_PROFILE, BROAD_EXTENDED_PROFILE, BROAD_IMPORTS_PROFILE, BROAD_IMPORTS_GOT_PROFILE, BROAD_EXTENDED_V2_PROFILE, validate_broad_options
 from .swift_broad_flow import recover_swift_broad_flow_path
 from .swift_broad_text import render_swift_broad_text
 from .engine import audit_path, resolve_input
@@ -94,7 +94,7 @@ def _parser() -> argparse.ArgumentParser:
     swift_flow.add_argument("--include-error-regions", action="store_true", help="Describe bounded structural error intervals; calls remain opaque")
     swift_flow.add_argument("--include-swift-methods", action="store_true", help="Admit qualified concrete struct methods under the v38 profile")
     swift_flow.add_argument("--include-outcome-witnesses", action="store_true", help="Build byte-validated structural witnesses; requires regions, entry validation and structured presentation")
-    swift_flow.add_argument("--swift-profile", choices=(BROAD_PROFILE,BROAD_LARGE_PROFILE,BROAD_EXTENDED_PROFILE,BROAD_IMPORTS_PROFILE,BROAD_IMPORTS_GOT_PROFILE), default=None,
+    swift_flow.add_argument("--swift-profile", choices=(BROAD_PROFILE,BROAD_LARGE_PROFILE,BROAD_EXTENDED_PROFILE,BROAD_IMPORTS_PROFILE,BROAD_IMPORTS_GOT_PROFILE,BROAD_EXTENDED_V2_PROFILE), default=None,
                             help="Select a bounded broad profile; requires outcome witnesses and all region/entry/presentation flags")
     return parser
 
@@ -112,7 +112,7 @@ def main(argv: list[str] | None = None) -> int:
             protected = (source, args.input)
             exit_code = 1 if args.fail_on_inconsistency and report["summary"]["inconsistency_count"] else 0
         elif args.command == "swift-error-flow":
-            if args.swift_profile in (BROAD_PROFILE,BROAD_LARGE_PROFILE,BROAD_EXTENDED_PROFILE,BROAD_IMPORTS_PROFILE,BROAD_IMPORTS_GOT_PROFILE):
+            if args.swift_profile in (BROAD_PROFILE,BROAD_LARGE_PROFILE,BROAD_EXTENDED_PROFILE,BROAD_IMPORTS_PROFILE,BROAD_IMPORTS_GOT_PROFILE,BROAD_EXTENDED_V2_PROFILE):
                 validate_broad_options(include_outcome_witnesses=args.include_outcome_witnesses,
                                        include_error_regions=args.include_error_regions,
                                        validate_region_entries=args.validate_region_entries,
@@ -123,11 +123,11 @@ def main(argv: list[str] | None = None) -> int:
             if args.format == "text" and not args.include_structured_presentation:
                 raise InputError("swift_text_options", "Swift text requires --include-structured-presentation and its region/entry prerequisites")
             source = resolve_input(args.input)
-            if args.swift_profile in (BROAD_PROFILE,BROAD_LARGE_PROFILE,BROAD_EXTENDED_PROFILE,BROAD_IMPORTS_PROFILE,BROAD_IMPORTS_GOT_PROFILE):
+            if args.swift_profile in (BROAD_PROFILE,BROAD_LARGE_PROFILE,BROAD_EXTENDED_PROFILE,BROAD_IMPORTS_PROFILE,BROAD_IMPORTS_GOT_PROFILE,BROAD_EXTENDED_V2_PROFILE):
                 report = recover_swift_broad_flow_path(source, requested_arch=args.arch, **({'profile': args.swift_profile} if args.swift_profile != BROAD_PROFILE else {}))
             else:
                 report = recover_swift_error_flow_path(source, requested_arch=args.arch, include_error_regions=args.include_error_regions, validate_region_entries=args.validate_region_entries, include_structured_presentation=args.include_structured_presentation, include_swift_methods=args.include_swift_methods, include_outcome_witnesses=args.include_outcome_witnesses)
-            renderer = render_swift_broad_text if args.swift_profile in (BROAD_PROFILE,BROAD_LARGE_PROFILE,BROAD_EXTENDED_PROFILE,BROAD_IMPORTS_PROFILE,BROAD_IMPORTS_GOT_PROFILE) else render_swift_error_text
+            renderer = render_swift_broad_text if args.swift_profile in (BROAD_PROFILE,BROAD_LARGE_PROFILE,BROAD_EXTENDED_PROFILE,BROAD_IMPORTS_PROFILE,BROAD_IMPORTS_GOT_PROFILE,BROAD_EXTENDED_V2_PROFILE) else render_swift_error_text
             output, protected = (renderer(report) if args.format == "text" else dumps(report)), (source, args.input)
             exit_code = 0 if report["word_scan_complete"] and report["call_details_complete"] and report.get("outcome_witnesses_complete", True) else 1
         elif args.command == "decode-blockers":

@@ -60,11 +60,13 @@ enum SwiftBroadFlowReport {
         func json(_ value: Any, pretty: Bool = false) throws -> Data {
             try JSONSerialization.data(withJSONObject: value, options: pretty ? [.sortedKeys, .prettyPrinted] : [.sortedKeys, .fragmentsAllowed])
         }
+        let callerTestProfile = object["model_version"] as? String == "swift-broad-error-flow-extended-v2"
+            && object["profile"] as? String == "broad-extended-v2"
         let importsProfile = object["model_version"] as? String == "swift-broad-error-flow-imports-v1"
             && object["profile"] as? String == "broad-imports-v1"
         let extendedProfile = object["model_version"] as? String == "swift-broad-error-flow-extended-v1"
             && object["profile"] as? String == "broad-extended-v1"
-        let maxCalls: Int = importsProfile || extendedProfile ? 8192 : maximumCalls
+        let maxCalls: Int = importsProfile || extendedProfile || callerTestProfile ? 8192 : maximumCalls
         guard let model = object["model_version"] as? String,
               let identity = object["identity"] as? [String: Any],
               let architecture = identity["architecture"] as? String,
@@ -97,7 +99,7 @@ enum SwiftBroadFlowReport {
             pair.model == model && pair.profile == reportedProfile
         })
         let importSummary: String
-        if importsProfile {
+        if importsProfile || callerTestProfile {
             importSummary = try validateImportEnvelope(object, rows: rows, selected: selected, observed: observed,
                 detailsComplete: detailsComplete, limitations: limitations, boolean: boolean, count: count)
         } else { importSummary = "" }
@@ -122,6 +124,7 @@ enum SwiftBroadFlowReport {
         }
         var seen = Set<String>(), calls: [SwiftFlowCall] = []
         var importStubs: [UInt64: Data] = [:]
+        var callerShapes: [String: Int] = [:], callerDeclines: [String: Int] = [:]
         for row in rows {
             try Task.checkCancellation()
             guard let callPC = address(row["call_pc"]), let callerPC = address(row["caller_pc"]),
@@ -137,14 +140,24 @@ enum SwiftBroadFlowReport {
                 guard try json(record).count <= 256 * 1024 else { throw fail("witness/validation exceeds 256 KiB") }
             }
             if let pc = admission?["call_pc"], unsigned(pc) != callNumber { throw fail("admission call binding mismatch") }
-            let importRow = importsProfile && admission?["model_version"] as? String == "swift-broad-import-callsite-v1"
+            let importRow = (importsProfile || callerTestProfile) && admission?["model_version"] as? String == "swift-broad-import-callsite-v1"
+            let gotRow = callerTestProfile && admission?["model_version"] as? String == "swift-broad-got-callsite-v1"
+            if callerTestProfile {
+                if importRow || gotRow {
+                    try validateCallerErrorTest(row, call: callNumber, caller: callerNumber,
+                        boolean: boolean, address: address, shapes: &callerShapes, declines: &callerDeclines)
+                } else if row["caller_error_test"] != nil {
+                    throw fail("caller error test without imported callsite model")
+                }
+            }
             var importFacts: [String] = []
-            if importsProfile {
+            if importsProfile || callerTestProfile {
                 if importRow, let admission {
                     importFacts = try validateImportRow(row, admission: admission, call: callNumber,
                         caller: callerNumber, sliceOffset: offset, sliceSize: size, stubs: &importStubs,
-                        boolean: boolean, unsigned: unsigned, count: count, nonclaims: nonclaims)
-                } else {
+                        boolean: boolean, unsigned: unsigned, count: count, nonclaims: nonclaims,
+                        allowDisagreement: callerTestProfile)
+                } else if !gotRow {
                     let importKeys = ["import_attribution_admitted", "callee_stub_pc", "import_provenance", "library_ordinal"]
                     if importKeys.contains(where: { admission?[$0] != nil }) {
                         throw fail("import evidence without import callsite model")
@@ -252,6 +265,17 @@ enum SwiftBroadFlowReport {
                 witnessCheckedInstructionCount: supported ? count((validation?["accounting"] as? [String: Any])?["instructions"]) : nil,
                 witnessEdges: [], detailJSON: String(decoding: rawDetail, as: UTF8.self)))
         }
+        if callerTestProfile {
+            for (key, expected) in [("caller_error_test_counts", callerShapes),
+                                    ("caller_error_test_decline_counts", callerDeclines)] {
+                guard let counters = object[key] as? [String: Any], Set(counters.keys) == Set(expected.keys) else {
+                    throw fail("invalid caller error test counters")
+                }
+                for (name, value) in expected where count(counters[name]) != value {
+                    throw fail("caller error test counter mismatch")
+                }
+            }
+        }
         let uuidText = uuid as? String ?? "explicitly absent"
         let accounting = "\(calls.count) retained calls · \(omitted) omitted calls · \(scanned) scanned words · \(observed) observed call instructions · \(selected) selected candidates · \(analysisWork) analysis work · scan \(wordComplete ? "complete" : "partial") · details \(detailsComplete ? "complete" : "partial") · witnesses \(witnessesComplete ? "complete" : "partial")"
         return .init(sourceData: data,
@@ -259,6 +283,107 @@ enum SwiftBroadFlowReport {
             modelVersion: model, supportsInterpretation: supported, wordScanComplete: wordComplete,
             callDetailsComplete: detailsComplete, witnessesComplete: witnessesComplete, calls: calls,
             limitations: limitations, summaryText: accounting + importSummary, omittedCallCount: omitted)
+    }
+
+    /// Checks bounded recorded shape only; no input bytes or callee behavior are established.
+    private static func validateCallerErrorTest(
+        _ row: [String: Any], call: UInt64, caller: UInt64,
+        boolean: (Any?) -> Bool?, address: (Any?) -> String?,
+        shapes: inout [String: Int], declines: inout [String: Int]
+    ) throws {
+        func fail() -> SwiftFlowReportError { .invalid("broad-extended-v2: malformed caller error test") }
+        func pc(_ value: Any?) -> UInt64? {
+            guard let text = address(value) else { return nil }
+            return UInt64(text.dropFirst(2), radix: 16)
+        }
+        func window(_ value: Any?, maximum: Int) throws -> [[String: Any]] {
+            guard let words = value as? [[String: Any]], words.count <= maximum else { throw fail() }
+            var previous: UInt64?
+            for word in words {
+                guard Set(word.keys) == Set(["pc", "word", "kind"]), let here = pc(word["pc"]),
+                      let text = word["word"] as? String, text.count == 10, text.hasPrefix("0x"),
+                      text.dropFirst(2).utf8.allSatisfy({ (48...57).contains($0) || (97...102).contains($0) }),
+                      let kind = word["kind"] as? String, !kind.isEmpty, kind.utf8.count <= 64 else { throw fail() }
+                if let previous, previous > UInt64.max - 4 || here != previous + 4 { throw fail() }
+                previous = here
+            }
+            return words
+        }
+        guard let fact = row["caller_error_test"] as? [String: Any],
+              Set(fact.keys) == Set(["model", "postcall", "precall", "shape", "claims_callee_behaviour"]),
+              fact["model"] as? String == AnalysisModels.swiftCallerErrorTest,
+              boolean(fact["claims_callee_behaviour"]) == false,
+              let pre = fact["precall"] as? [String: Any],
+              let post = fact["postcall"] as? [String: Any],
+              let preStatus = pre["status"] as? String,
+              ["x21_zeroed", "x21_not_zeroed", "precall_entries_unchecked", "precall_window_outside_caller"].contains(preStatus),
+              let shape = fact["shape"] as? String else { throw fail() }
+        let before = preStatus == "x21_zeroed"
+        let after = post["status"] as? String == "recovered_candidate"
+        let expectedShape = before ? (after ? "swifterror_idiom" : "precall_zero_only")
+                                   : (after ? "postcall_test_only" : "none")
+        guard shape == expectedShape,
+              Set(pre.keys) == Set(before ? ["status", "zero_pc", "window"] : ["status", "window"]) else { throw fail() }
+        let preWords = try window(pre["window"], maximum: 4)
+        for word in preWords {
+            guard let here = pc(word["pc"]), here >= caller, here < call, call - here <= 16 else { throw fail() }
+        }
+        if let last = preWords.last {
+            guard let lastPC = pc(last["pc"]), call >= 4, lastPC == call - 4 else { throw fail() }
+        }
+        if before {
+            guard let first = preWords.first, pc(pre["zero_pc"]) == pc(first["pc"]),
+                  first["word"] as? String == "0xaa1f03f5", first["kind"] as? String == "mov" else { throw fail() }
+        }
+        let postWords = try window(post["window"], maximum: 8)
+        if let first = postWords.first {
+            guard call <= UInt64.max - 4, pc(first["pc"]) == call + 4 else { throw fail() }
+        }
+        if after {
+            let baseKeys: Set<String> = ["status", "test_pc", "tested_register", "success_pc", "error_pc", "window"]
+            let compare = post["test_kind"] as? String == "cmp_zero_bcond"
+            let expectedKeys = compare ? baseKeys.union(["test_kind", "comparison_pc", "test_condition"]) : baseKeys
+            guard Set(post.keys) == expectedKeys, let last = postWords.last,
+                  let test = pc(post["test_pc"]), pc(last["pc"]) == test, test <= UInt64.max - 4,
+                  let success = pc(post["success_pc"]), let error = pc(post["error_pc"]),
+                  success > test, error > test, success != error,
+                  let register = post["tested_register"] as? String,
+                  (0...30).map({ "x\($0)" }).contains(register) else { throw fail() }
+            if compare {
+                guard postWords.count >= 2, let comparison = pc(post["comparison_pc"]), test >= 4,
+                      comparison == test - 4, pc(postWords[postWords.count - 2]["pc"]) == comparison,
+                      last["kind"] as? String == "bcond",
+                      let condition = post["test_condition"] as? String, ["eq", "ne"].contains(condition),
+                      (condition == "eq" ? error : success) == test + 4 else { throw fail() }
+            } else {
+                guard let kind = last["kind"] as? String, ["xcbz", "xcbnz"].contains(kind),
+                      (kind == "xcbz" ? error : success) == test + 4 else { throw fail() }
+            }
+        } else {
+            let reasons: Set<String> = ["comparison_branch_unmodeled", "intervening_instruction_unmodeled",
+                "comparison_branch_not_adjacent_or_supported", "error_value_clobbered",
+                "not_error_result_comparison", "narrow_error_test", "literal_prefix_requires_compare_test",
+                "not_error_result_test", "unsupported_successor_region",
+                "comparison_branch_missing_or_outside_window", "postcall_window_exhausted"]
+            guard Set(post.keys) == Set(["reason", "window"]), let reason = post["reason"] as? String,
+                  reasons.contains(reason) else { throw fail() }
+            declines[reason, default: 0] += 1
+        }
+        guard let admission = row["admission"] as? [String: Any],
+              admission["status"] as? String == "unresolved", row["candidate"] is NSNull,
+              row["validation"] is NSNull, boolean(admission["call_return_proven"]) == false,
+              boolean(admission["syntactic_call_target_admitted"]) == false,
+              boolean(admission["import_attribution_admitted"]) == true,
+              admission["abi"] == nil, let reason = admission["reason"] as? String,
+              let declaration = admission["declaration"] as? [String: Any] else { throw fail() }
+        let declarationIdentity = declaration["identity"] as? [String: Any]
+        let nonthrowing = declaration["status"] as? String == "syntax_admitted"
+            && boolean(declarationIdentity?["throws"]) == false
+        if nonthrowing {
+            guard shape == "swifterror_idiom", reason == "declaration_caller_disagreement",
+                  ["bl", "blr_got"].contains(admission["call_kind"] as? String ?? "") else { throw fail() }
+        } else if reason != "imported_callee_abi_unqualified" { throw fail() }
+        shapes[shape, default: 0] += 1
     }
 
     private static func validateImportEnvelope(
@@ -324,12 +449,13 @@ enum SwiftBroadFlowReport {
         _ row: [String: Any], admission: [String: Any], call: UInt64, caller: UInt64,
         sliceOffset: UInt64, sliceSize: UInt64, stubs: inout [UInt64: Data],
         boolean: (Any?) -> Bool?, unsigned: (Any?) -> UInt64?, count: (Any?) -> Int?,
-        nonclaims: (Any) -> Bool
+        nonclaims: (Any) -> Bool, allowDisagreement: Bool = false
     ) throws -> [String] {
         func fail(_ message: String) -> SwiftFlowReportError { .invalid("broad-v1: " + message) }
+        let disagreement = allowDisagreement && admission["reason"] as? String == "declaration_caller_disagreement"
         guard row["candidate"] is NSNull, row["validation"] is NSNull,
               admission["status"] as? String == "unresolved",
-              admission["reason"] as? String == "imported_callee_abi_unqualified",
+              (admission["reason"] as? String == "imported_callee_abi_unqualified" || disagreement),
               let kind = admission["call_kind"] as? String, ["bl", "b"].contains(kind),
               unsigned(admission["call_pc"]) == call, unsigned(admission["caller_start"]) == caller,
               let stub = unsigned(admission["callee_stub_pc"]), stub % 4 == 0, stub != call,
@@ -412,8 +538,10 @@ enum SwiftBroadFlowReport {
                   identity["symbol"] as? String == symbol,
                   let syntax = identity["syntax_model"] as? String else { throw fail("invalid admitted import declaration") }
             if syntax == "swift-import-declaration-syntax-v1" {
-                guard boolean(identity["throws"]) == true else { throw fail("import declaration is not throwing") }
-                declarationFact = "Declaration syntax: syntax_admitted (throws per mangled name)"
+                guard boolean(identity["throws"]) == !disagreement else { throw fail("import declaration is not throwing") }
+                declarationFact = disagreement
+                    ? "Declaration syntax says non-throwing; caller x21 idiom disagrees (review required)."
+                    : "Declaration syntax: syntax_admitted (throws per mangled name)"
             } else {
                 declarationFact = "Declaration syntax: declaration syntax model unrecognized; raw only"
             }

@@ -26,7 +26,7 @@ def unique(values, description):
 
 
 def validate(source):
-    exact_keys(source, ('cfg_models', 'linear_models', 'current_model', 'swift_broad_pairs'))
+    exact_keys(source, ('cfg_models', 'linear_models', 'current_model', 'swift_broad_pairs', 'swift_caller_error_test_model'))
     for key in ('cfg_models', 'linear_models', 'swift_broad_pairs'):
         if not isinstance(source[key], list):
             raise ValueError(f'{key} must be an array')
@@ -51,7 +51,8 @@ def validate(source):
             raise ValueError('native_admitted must be a boolean')
         models.append(item['model'])
         profiles.append(item['profile'])
-    unique(labels + models, 'model')
+    label(source['swift_caller_error_test_model'])
+    unique(labels + models + [source['swift_caller_error_test_model']], 'model')
     unique(profiles, 'profile')
     return source
 
@@ -82,6 +83,7 @@ def render(source):
         f'KNOWN_MODELS = CFG_MODELS | frozenset({tuple(linear)!r})',
         f'EVALUATED_CFI_MODELS = CFG_MODELS | frozenset({tuple(evaluated)!r})',
         f'CURRENT_MODEL = {source["current_model"]!r}',
+        f'SWIFT_CALLER_ERROR_TEST_MODEL = {source["swift_caller_error_test_model"]!r}',
         'SWIFT_BROAD_PAIRS = (',
         *(f'    {(item["model"], item["profile"])!r},' for item in pairs), ')',
         'SWIFT_BROAD_ENGINE_ONLY_PROFILES = frozenset(' + repr(tuple(
@@ -97,6 +99,7 @@ def render(source):
         f'    static let current = "{source["current_model"]}"',
         f'    static let known = cfg.union({json.dumps(linear)})',
         f'    static let evaluatedCFI = cfg.union({json.dumps(evaluated)})',
+        f'    static let swiftCallerErrorTest = "{source["swift_caller_error_test_model"]}"',
         '    static let swiftBroadNativePairs: [(model: String, profile: String)] = [',
         *(f'        (model: "{item["model"]}", profile: "{item["profile"]}"),'
           for item in pairs if item['native_admitted']), '    ]', '}',

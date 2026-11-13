@@ -1,0 +1,2798 @@
+{
+  "model": "swift-caller-error-test-v1",
+  "profile": "broad-extended-v2",
+  "binary": "OwnedImports.macho",
+  "derivation": {
+    "method": "Manual application of the written caller-error-test contract to xcrun objdump disassembly, with transcription of words, addresses and instruction windows. No AIRS implementation or analysis output was used.",
+    "command": "xcrun objdump -d --macho fixtures/swift-error-flow/broad-imports/OwnedImports.macho",
+    "symbol_and_throws_source": "expected.json: stub_calls and independent demangler record",
+    "precall_rule": "Only exact 0xaa1f03f5 counts; MOVZ X21, #0 and restoration from an alias do not. No site has the exact zero within four words.",
+    "postcall_rule": "Stop at the first unsupported instruction; a later textual alias test is not a recovered test. Tail B sites have no post-call window.",
+    "boundary_assumption": "A four-word search truncated by the caller start and containing no zero is precall_window_outside_caller.",
+    "denominator_note": "27 imported Swift sites include two tail B sites and 25 BL sites; seven BL sites are declared throwing."
+  },
+  "counts": {
+    "sites": 27,
+    "throwing": 7,
+    "non_throwing": 20,
+    "bl": 25,
+    "tail_b": 2,
+    "shapes": {
+      "swifterror_idiom": 0,
+      "postcall_test_only": 2,
+      "precall_zero_only": 0,
+      "none": 25
+    }
+  },
+  "callers": [
+    {
+      "start": "0x100000b18",
+      "end": "0x100000d28",
+      "words": [
+        "0xd101c3ff",
+        "0xa9035ff8",
+        "0xa90457f6",
+        "0xa9054ff4",
+        "0xa9067bfd",
+        "0x910183fd",
+        "0xd2800000",
+        "0x940002d0",
+        "0xaa0003f3",
+        "0x90000054",
+        "0x91008294",
+        "0xaa1403e1",
+        "0x94000078",
+        "0xaa1303e0",
+        "0xaa1403e1",
+        "0x94000085",
+        "0xaa0003f3",
+        "0x940002d5",
+        "0xf9400814",
+        "0x940002f7",
+        "0xf1000a9f",
+        "0x54000183",
+        "0x940002d0",
+        "0xf9400808",
+        "0xf100091f",
+        "0x54000d43",
+        "0xa9435015",
+        "0xaa0003f6",
+        "0xaa1403e0",
+        "0x940002f0",
+        "0xaa1603e0",
+        "0x940002eb",
+        "0x14000003",
+        "0xd2fc2014",
+        "0x52800f15",
+        "0xaa1303e8",
+        "0xaa1503e0",
+        "0xaa1403e1",
+        "0x940002ae",
+        "0xaa1403e0",
+        "0x940002e2",
+        "0xaa1303e0",
+        "0xd2800015",
+        "0x9400006f",
+        "0xb0000018",
+        "0xb50005b5",
+        "0xaa0003f6",
+        "0xaa0103f4",
+        "0x90000040",
+        "0x91000000",
+        "0xb0000001",
+        "0x911ec021",
+        "0x9400006c",
+        "0x52800801",
+        "0x528000e2",
+        "0x940002d0",
+        "0xaa0003f7",
+        "0x3dc1eb00",
+        "0x3d800400",
+        "0xaa1603e0",
+        "0xaa1403e1",
+        "0x94000086",
+        "0xb4000115",
+        "0xaa1603e0",
+        "0xaa1403e1",
+        "0x940000a6",
+        "0xf9000aff",
+        "0xaa1703e0",
+        "0x940002d8",
+        "0x14000015",
+        "0x90000028",
+        "0xf940fd08",
+        "0xf9001ee8",
+        "0xf90012e0",
+        "0xaa1703e0",
+        "0x52800401",
+        "0xd2fc2002",
+        "0x52800143",
+        "0xd2fc2004",
+        "0x940002a0",
+        "0xaa1703e0",
+        "0x940002cb",
+        "0x528d6de0",
+        "0xd2fc4001",
+        "0xaa1303e2",
+        "0x940000a2",
+        "0xaa1603e0",
+        "0xaa1403e1",
+        "0x9400008f",
+        "0xb4000475",
+        "0x90000040",
+        "0x91000000",
+        "0xb0000001",
+        "0x911ec021",
+        "0x94000042",
+        "0x52800801",
+        "0x528000e2",
+        "0x940002a6",
+        "0xaa0003f3",
+        "0x3dc1eb00",
+        "0x3d800400",
+        "0x910083e1",
+        "0x910023e2",
+        "0xaa1503e0",
+        "0x940002ab",
+        "0xa940dbf4",
+        "0xf9001e76",
+        "0x91008260",
+        "0x94000048",
+        "0xf85f82c8",
+        "0xf9400908",
+        "0xaa1403e1",
+        "0xaa1603e2",
+        "0xd63f0100",
+        "0xaa1303e0",
+        "0x52800401",
+        "0xd2fc2002",
+        "0x52800143",
+        "0xd2fc2004",
+        "0x94000278",
+        "0xaa1303e0",
+        "0x940002a3",
+        "0xaa1503e0",
+        "0x94000295",
+        "0x52800000",
+        "0xa9467bfd",
+        "0xa9454ff4",
+        "0xa94457f6",
+        "0xa9435ff8",
+        "0x9101c3ff",
+        "0xd65f03c0",
+        "0xd4200020"
+      ],
+      "entry_indices": [
+        33,
+        35,
+        70,
+        90,
+        124,
+        131
+      ]
+    },
+    {
+      "start": "0x100000d80",
+      "end": "0x100000d98",
+      "words": [
+        "0xa9bf7bfd",
+        "0x910003fd",
+        "0xd2800001",
+        "0x9400023d",
+        "0xa8c17bfd",
+        "0xd65f03c0"
+      ],
+      "entry_indices": []
+    },
+    {
+      "start": "0x100000e24",
+      "end": "0x100000eb4",
+      "words": [
+        "0xd10103ff",
+        "0xa9015bf7",
+        "0xa9024ff4",
+        "0xa9037bfd",
+        "0x9100c3fd",
+        "0xaa1503f3",
+        "0xaa0103f6",
+        "0xaa0003f7",
+        "0xd2800000",
+        "0x94000205",
+        "0xb9403001",
+        "0x79406802",
+        "0x94000238",
+        "0xaa0003f4",
+        "0x940001fd",
+        "0xaa0003f4",
+        "0x94000057",
+        "0xaa0003e4",
+        "0x90000020",
+        "0x91004000",
+        "0x910023e8",
+        "0xaa1703e1",
+        "0xaa1603e2",
+        "0xaa0003e3",
+        "0xaa1303f5",
+        "0x940001ef",
+        "0xaa1503f3",
+        "0xaa1403e0",
+        "0x9400023d",
+        "0xf94007e0",
+        "0xaa1303f5",
+        "0xa9437bfd",
+        "0xa9424ff4",
+        "0xa9415bf7",
+        "0x910103ff",
+        "0xd65f03c0"
+      ],
+      "entry_indices": []
+    },
+    {
+      "start": "0x100000ef4",
+      "end": "0x100000fc0",
+      "words": [
+        "0xf81b0ffa",
+        "0xa90163f9",
+        "0xa9025bf7",
+        "0xa9034ff4",
+        "0xa9047bfd",
+        "0x910103fd",
+        "0xd10043ff",
+        "0xaa1503f3",
+        "0xaa0203f6",
+        "0xaa0103f4",
+        "0xaa0003f7",
+        "0xd2800000",
+        "0x940001dd",
+        "0xaa0003f8",
+        "0xf85f801a",
+        "0xf9402348",
+        "0xaa0803e9",
+        "0x90000030",
+        "0xf940ce10",
+        "0xd63f0200",
+        "0x910003e9",
+        "0x91003d08",
+        "0x927ced08",
+        "0xcb080139",
+        "0x9100033f",
+        "0xa93b53b7",
+        "0xaa1903e8",
+        "0x940001cb",
+        "0x94000027",
+        "0xaa0003e4",
+        "0x90000023",
+        "0xf940f463",
+        "0xd10143b4",
+        "0xaa1603e0",
+        "0x52800021",
+        "0xaa1903e2",
+        "0xaa1303f5",
+        "0x940001c7",
+        "0xaa1503f3",
+        "0xf9400748",
+        "0xaa1903e0",
+        "0xaa1803e1",
+        "0xd63f0100",
+        "0xaa1303f5",
+        "0xd10103bf",
+        "0xa9447bfd",
+        "0xa9434ff4",
+        "0xa9425bf7",
+        "0xa94163f9",
+        "0xf84507fa",
+        "0xd65f03c0"
+      ],
+      "entry_indices": []
+    },
+    {
+      "start": "0x10000104c",
+      "end": "0x10000108c",
+      "words": [
+        "0xd101c3ff",
+        "0xa9054ff4",
+        "0xa9067bfd",
+        "0x910183fd",
+        "0x910023e8",
+        "0xd2800000",
+        "0x9400019f",
+        "0x910023f4",
+        "0xd2800000",
+        "0x9400019f",
+        "0x910023f4",
+        "0x940001a0",
+        "0xa9467bfd",
+        "0xa9454ff4",
+        "0x9101c3ff",
+        "0xd65f03c0"
+      ],
+      "entry_indices": []
+    },
+    {
+      "start": "0x10000108c",
+      "end": "0x1000010b0",
+      "words": [
+        "0xa9be4ff4",
+        "0xa9017bfd",
+        "0x910043fd",
+        "0xaa0003f4",
+        "0xd2800000",
+        "0x94000193",
+        "0xa9417bfd",
+        "0xa8c24ff4",
+        "0xd65f03c0"
+      ],
+      "entry_indices": []
+    },
+    {
+      "start": "0x1000010b0",
+      "end": "0x1000010ec",
+      "words": [
+        "0xd101c3ff",
+        "0xa9054ff4",
+        "0xa9067bfd",
+        "0x910183fd",
+        "0x910023e8",
+        "0x94000187",
+        "0x910023f4",
+        "0xd2800000",
+        "0x94000187",
+        "0x910023f4",
+        "0x94000188",
+        "0xa9467bfd",
+        "0xa9454ff4",
+        "0x9101c3ff",
+        "0xd65f03c0"
+      ],
+      "entry_indices": []
+    },
+    {
+      "start": "0x1000010f8",
+      "end": "0x100001174",
+      "words": [
+        "0xa9bd57f6",
+        "0xa9014ff4",
+        "0xa9027bfd",
+        "0x910083fd",
+        "0xaa0103f4",
+        "0xaa0803f3",
+        "0x528c8d28",
+        "0xeb08001f",
+        "0xd2fc4008",
+        "0xfa480020",
+        "0x540001a0",
+        "0xaa0003e2",
+        "0x528c8d20",
+        "0xd2fc4001",
+        "0xaa1403e3",
+        "0x52800004",
+        "0x94000164",
+        "0xaa0003f5",
+        "0xaa1403e0",
+        "0x9400017f",
+        "0x52800028",
+        "0x0a350108",
+        "0x14000004",
+        "0xaa1403e0",
+        "0x9400017a",
+        "0x52800008",
+        "0x39000268",
+        "0xa9427bfd",
+        "0xa9414ff4",
+        "0xa8c357f6",
+        "0xd65f03c0"
+      ],
+      "entry_indices": [
+        23,
+        26
+      ]
+    },
+    {
+      "start": "0x10000118c",
+      "end": "0x1000011b4",
+      "words": [
+        "0xa9be4ff4",
+        "0xa9017bfd",
+        "0x910043fd",
+        "0xaa0003f3",
+        "0x9400005b",
+        "0xaa0003e1",
+        "0xaa1303e0",
+        "0xa9417bfd",
+        "0xa8c24ff4",
+        "0x1400015b"
+      ],
+      "entry_indices": []
+    },
+    {
+      "start": "0x1000011b4",
+      "end": "0x1000011dc",
+      "words": [
+        "0xa9be4ff4",
+        "0xa9017bfd",
+        "0x910043fd",
+        "0xaa0003f3",
+        "0x94000051",
+        "0xaa0003e1",
+        "0xaa1303e0",
+        "0xa9417bfd",
+        "0xa8c24ff4",
+        "0x1400014e"
+      ],
+      "entry_indices": []
+    },
+    {
+      "start": "0x1000011dc",
+      "end": "0x1000012e4",
+      "words": [
+        "0xa9bb6bfb",
+        "0xa90163f9",
+        "0xa9025bf7",
+        "0xa9034ff4",
+        "0xa9047bfd",
+        "0x910103fd",
+        "0xaa1503f7",
+        "0xaa0003f3",
+        "0xf0000020",
+        "0x91006000",
+        "0x90000001",
+        "0x911ee021",
+        "0x97fffee3",
+        "0xaa0003f6",
+        "0xf85f801b",
+        "0xf9402369",
+        "0x91003d28",
+        "0x927ced08",
+        "0xf0000010",
+        "0xf940ce10",
+        "0xd63f0200",
+        "0x910003e9",
+        "0xcb080138",
+        "0x9100031f",
+        "0xa941ea79",
+        "0xaa1303e0",
+        "0xaa1903e1",
+        "0x94000027",
+        "0xaa0003f4",
+        "0x9400002e",
+        "0xaa0003e2",
+        "0xf0000000",
+        "0x91038000",
+        "0xaa1803e8",
+        "0xaa0003e1",
+        "0xaa1703f5",
+        "0xaa1903e3",
+        "0xaa1a03e4",
+        "0x94000124",
+        "0xaa1503f7",
+        "0xb5000195",
+        "0xaa1603e1",
+        "0xaa1803f4",
+        "0xaa1703f5",
+        "0x9400010c",
+        "0xaa0003f4",
+        "0xaa1503f7",
+        "0xf9400768",
+        "0xaa1803e0",
+        "0xaa1603e1",
+        "0xd63f0100",
+        "0xb4000197",
+        "0xaa1303e0",
+        "0x94000026",
+        "0xaa1403e0",
+        "0xaa1703f5",
+        "0xd10103bf",
+        "0xa9447bfd",
+        "0xa9434ff4",
+        "0xa9425bf7",
+        "0xa94163f9",
+        "0xa8c56bfb",
+        "0xd65f03c0",
+        "0xaa1303e0",
+        "0x9400001b",
+        "0x17fffff5"
+      ],
+      "entry_indices": [
+        52,
+        54,
+        63
+      ]
+    },
+    {
+      "start": "0x100001368",
+      "end": "0x10000147c",
+      "words": [
+        "0xf81a0ffc",
+        "0xa9016bfb",
+        "0xa90263f9",
+        "0xa9035bf7",
+        "0xa9044ff4",
+        "0xa9057bfd",
+        "0x910143fd",
+        "0xaa1503f8",
+        "0xaa0003f3",
+        "0xaa0803f6",
+        "0xf0000020",
+        "0x91006000",
+        "0x90000001",
+        "0x911ee021",
+        "0x97fffe7e",
+        "0xaa0003f7",
+        "0xf85f801c",
+        "0xf9402389",
+        "0x91003d28",
+        "0x927ced08",
+        "0xf0000010",
+        "0xf940ce10",
+        "0xd63f0200",
+        "0x910003e9",
+        "0xcb080139",
+        "0x9100033f",
+        "0xa941ee7a",
+        "0xaa1303e0",
+        "0xaa1a03e1",
+        "0x97ffffc2",
+        "0xaa0003f4",
+        "0x97ffffc9",
+        "0xaa0003e2",
+        "0xf0000000",
+        "0x91038000",
+        "0xaa1903e8",
+        "0xaa0003e1",
+        "0xaa1803f5",
+        "0xaa1a03e3",
+        "0xaa1b03e4",
+        "0x940000bf",
+        "0xaa1503f8",
+        "0xb5000195",
+        "0xaa1703e1",
+        "0xaa1903f4",
+        "0xaa1803f5",
+        "0x940000a7",
+        "0xaa0003f4",
+        "0xaa1503f8",
+        "0xf9400788",
+        "0xaa1903e0",
+        "0xaa1703e1",
+        "0xd63f0100",
+        "0xb4000198",
+        "0xaa1303e0",
+        "0x97ffffc1",
+        "0xaa1803f5",
+        "0xd10143bf",
+        "0xa9457bfd",
+        "0xa9444ff4",
+        "0xa9435bf7",
+        "0xa94263f9",
+        "0xa9416bfb",
+        "0xf84607fc",
+        "0xd65f03c0",
+        "0xaa1303e0",
+        "0x97ffffb6",
+        "0xf90002d4",
+        "0x17fffff4"
+      ],
+      "entry_indices": [
+        54,
+        56,
+        65
+      ]
+    }
+  ],
+  "sites": [
+    {
+      "call_pc": "0x100000b34",
+      "callee_symbol": "_$s10Foundation3URLVMa",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x100000b18",
+      "caller_end": "0x100000d28",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100000b24",
+            "word": "0xa9054ff4",
+            "assembly": "stp x20, x19, [sp, #0x50]"
+          },
+          {
+            "pc": "0x100000b28",
+            "word": "0xa9067bfd",
+            "assembly": "stp x29, x30, [sp, #0x60]"
+          },
+          {
+            "pc": "0x100000b2c",
+            "word": "0x910183fd",
+            "assembly": "add x29, sp, #0x60"
+          },
+          {
+            "pc": "0x100000b30",
+            "word": "0xd2800000",
+            "assembly": "mov x0, #0x0"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100000b38",
+            "word": "0xaa0003f3",
+            "assembly": "mov x19, x0"
+          },
+          {
+            "pc": "0x100000b3c",
+            "word": "0x90000054",
+            "assembly": "adrp x20, 8 ; 0x100008000"
+          },
+          {
+            "pc": "0x100000b40",
+            "word": "0x91008294",
+            "assembly": "add x20, x20, #0x20"
+          },
+          {
+            "pc": "0x100000b44",
+            "word": "0xaa1403e1",
+            "assembly": "mov x1, x20"
+          },
+          {
+            "pc": "0x100000b48",
+            "word": "0x94000078",
+            "assembly": "bl 0x100000d28"
+          },
+          {
+            "pc": "0x100000b4c",
+            "word": "0xaa1303e0",
+            "assembly": "mov x0, x19"
+          },
+          {
+            "pc": "0x100000b50",
+            "word": "0xaa1403e1",
+            "assembly": "mov x1, x20"
+          },
+          {
+            "pc": "0x100000b54",
+            "word": "0x94000085",
+            "assembly": "bl 0x100000d68"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100000b3c",
+          "word": "0x90000054",
+          "assembly": "adrp x20, 8 ; 0x100008000"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x100000b5c",
+      "callee_symbol": "_$ss11CommandLineO9argumentsSaySSGvgZ",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x100000b18",
+      "caller_end": "0x100000d28",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100000b4c",
+            "word": "0xaa1303e0",
+            "assembly": "mov x0, x19"
+          },
+          {
+            "pc": "0x100000b50",
+            "word": "0xaa1403e1",
+            "assembly": "mov x1, x20"
+          },
+          {
+            "pc": "0x100000b54",
+            "word": "0x94000085",
+            "assembly": "bl 0x100000d68"
+          },
+          {
+            "pc": "0x100000b58",
+            "word": "0xaa0003f3",
+            "assembly": "mov x19, x0"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100000b60",
+            "word": "0xf9400814",
+            "assembly": "ldr x20, [x0, #0x10]"
+          },
+          {
+            "pc": "0x100000b64",
+            "word": "0x940002f7",
+            "assembly": "bl 0x100001740 ; symbol stub for: _swift_bridgeObjectRelease"
+          },
+          {
+            "pc": "0x100000b68",
+            "word": "0xf1000a9f",
+            "assembly": "cmp x20, #0x2"
+          },
+          {
+            "pc": "0x100000b6c",
+            "word": "0x54000183",
+            "assembly": "b.lo 0x100000b9c"
+          },
+          {
+            "pc": "0x100000b70",
+            "word": "0x940002d0",
+            "assembly": "bl 0x1000016b0 ; symbol stub for: _$ss11CommandLineO9argumentsSaySSGvgZ"
+          },
+          {
+            "pc": "0x100000b74",
+            "word": "0xf9400808",
+            "assembly": "ldr x8, [x0, #0x10]"
+          },
+          {
+            "pc": "0x100000b78",
+            "word": "0xf100091f",
+            "assembly": "cmp x8, #0x2"
+          },
+          {
+            "pc": "0x100000b7c",
+            "word": "0x54000d43",
+            "assembly": "b.lo 0x100000d24"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100000b60",
+          "word": "0xf9400814",
+          "assembly": "ldr x20, [x0, #0x10]"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x100000b70",
+      "callee_symbol": "_$ss11CommandLineO9argumentsSaySSGvgZ",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x100000b18",
+      "caller_end": "0x100000d28",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100000b60",
+            "word": "0xf9400814",
+            "assembly": "ldr x20, [x0, #0x10]"
+          },
+          {
+            "pc": "0x100000b64",
+            "word": "0x940002f7",
+            "assembly": "bl 0x100001740 ; symbol stub for: _swift_bridgeObjectRelease"
+          },
+          {
+            "pc": "0x100000b68",
+            "word": "0xf1000a9f",
+            "assembly": "cmp x20, #0x2"
+          },
+          {
+            "pc": "0x100000b6c",
+            "word": "0x54000183",
+            "assembly": "b.lo 0x100000b9c"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100000b74",
+            "word": "0xf9400808",
+            "assembly": "ldr x8, [x0, #0x10]"
+          },
+          {
+            "pc": "0x100000b78",
+            "word": "0xf100091f",
+            "assembly": "cmp x8, #0x2"
+          },
+          {
+            "pc": "0x100000b7c",
+            "word": "0x54000d43",
+            "assembly": "b.lo 0x100000d24"
+          },
+          {
+            "pc": "0x100000b80",
+            "word": "0xa9435015",
+            "assembly": "ldp x21, x20, [x0, #0x30]"
+          },
+          {
+            "pc": "0x100000b84",
+            "word": "0xaa0003f6",
+            "assembly": "mov x22, x0"
+          },
+          {
+            "pc": "0x100000b88",
+            "word": "0xaa1403e0",
+            "assembly": "mov x0, x20"
+          },
+          {
+            "pc": "0x100000b8c",
+            "word": "0x940002f0",
+            "assembly": "bl 0x10000174c ; symbol stub for: _swift_bridgeObjectRetain"
+          },
+          {
+            "pc": "0x100000b90",
+            "word": "0xaa1603e0",
+            "assembly": "mov x0, x22"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100000b74",
+          "word": "0xf9400808",
+          "assembly": "ldr x8, [x0, #0x10]"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x100000bb0",
+      "callee_symbol": "_$s10Foundation3URLV15fileURLWithPathACSSh_tcfC",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x100000b18",
+      "caller_end": "0x100000d28",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100000ba0",
+            "word": "0x52800f15",
+            "assembly": "mov w21, #0x78"
+          },
+          {
+            "pc": "0x100000ba4",
+            "word": "0xaa1303e8",
+            "assembly": "mov x8, x19"
+          },
+          {
+            "pc": "0x100000ba8",
+            "word": "0xaa1503e0",
+            "assembly": "mov x0, x21"
+          },
+          {
+            "pc": "0x100000bac",
+            "word": "0xaa1403e1",
+            "assembly": "mov x1, x20"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100000bb4",
+            "word": "0xaa1403e0",
+            "assembly": "mov x0, x20"
+          },
+          {
+            "pc": "0x100000bb8",
+            "word": "0x940002e2",
+            "assembly": "bl 0x100001740 ; symbol stub for: _swift_bridgeObjectRelease"
+          },
+          {
+            "pc": "0x100000bbc",
+            "word": "0xaa1303e0",
+            "assembly": "mov x0, x19"
+          },
+          {
+            "pc": "0x100000bc0",
+            "word": "0xd2800015",
+            "assembly": "mov x21, #0x0"
+          },
+          {
+            "pc": "0x100000bc4",
+            "word": "0x9400006f",
+            "assembly": "bl 0x100000d80"
+          },
+          {
+            "pc": "0x100000bc8",
+            "word": "0xb0000018",
+            "assembly": "adrp x24, 1 ; 0x100001000"
+          },
+          {
+            "pc": "0x100000bcc",
+            "word": "0xb50005b5",
+            "assembly": "cbnz x21, 0x100000c80"
+          },
+          {
+            "pc": "0x100000bd0",
+            "word": "0xaa0003f6",
+            "assembly": "mov x22, x0"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100000bb8",
+          "word": "0x940002e2",
+          "assembly": "bl 0x100001740 ; symbol stub for: _swift_bridgeObjectRelease"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x100000c54",
+      "callee_symbol": "_$ss5print_9separator10terminatoryypd_S2StF",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x100000b18",
+      "caller_end": "0x100000d28",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100000c44",
+            "word": "0x52800401",
+            "assembly": "mov w1, #0x20"
+          },
+          {
+            "pc": "0x100000c48",
+            "word": "0xd2fc2002",
+            "assembly": "mov x2, #-0x1f00000000000000"
+          },
+          {
+            "pc": "0x100000c4c",
+            "word": "0x52800143",
+            "assembly": "mov w3, #0xa"
+          },
+          {
+            "pc": "0x100000c50",
+            "word": "0xd2fc2004",
+            "assembly": "mov x4, #-0x1f00000000000000"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100000c58",
+            "word": "0xaa1703e0",
+            "assembly": "mov x0, x23"
+          },
+          {
+            "pc": "0x100000c5c",
+            "word": "0x940002cb",
+            "assembly": "bl 0x100001788 ; symbol stub for: _swift_release"
+          },
+          {
+            "pc": "0x100000c60",
+            "word": "0x528d6de0",
+            "assembly": "mov w0, #0x6b6f"
+          },
+          {
+            "pc": "0x100000c64",
+            "word": "0xd2fc4001",
+            "assembly": "mov x1, #-0x1e00000000000000"
+          },
+          {
+            "pc": "0x100000c68",
+            "word": "0xaa1303e2",
+            "assembly": "mov x2, x19"
+          },
+          {
+            "pc": "0x100000c6c",
+            "word": "0x940000a2",
+            "assembly": "bl 0x100000ef4"
+          },
+          {
+            "pc": "0x100000c70",
+            "word": "0xaa1603e0",
+            "assembly": "mov x0, x22"
+          },
+          {
+            "pc": "0x100000c74",
+            "word": "0xaa1403e1",
+            "assembly": "mov x1, x20"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100000c5c",
+          "word": "0x940002cb",
+          "assembly": "bl 0x100001788 ; symbol stub for: _swift_release"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x100000cf4",
+      "callee_symbol": "_$ss5print_9separator10terminatoryypd_S2StF",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x100000b18",
+      "caller_end": "0x100000d28",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100000ce4",
+            "word": "0x52800401",
+            "assembly": "mov w1, #0x20"
+          },
+          {
+            "pc": "0x100000ce8",
+            "word": "0xd2fc2002",
+            "assembly": "mov x2, #-0x1f00000000000000"
+          },
+          {
+            "pc": "0x100000cec",
+            "word": "0x52800143",
+            "assembly": "mov w3, #0xa"
+          },
+          {
+            "pc": "0x100000cf0",
+            "word": "0xd2fc2004",
+            "assembly": "mov x4, #-0x1f00000000000000"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100000cf8",
+            "word": "0xaa1303e0",
+            "assembly": "mov x0, x19"
+          },
+          {
+            "pc": "0x100000cfc",
+            "word": "0x940002a3",
+            "assembly": "bl 0x100001788 ; symbol stub for: _swift_release"
+          },
+          {
+            "pc": "0x100000d00",
+            "word": "0xaa1503e0",
+            "assembly": "mov x0, x21"
+          },
+          {
+            "pc": "0x100000d04",
+            "word": "0x94000295",
+            "assembly": "bl 0x100001758 ; symbol stub for: _swift_errorRelease"
+          },
+          {
+            "pc": "0x100000d08",
+            "word": "0x52800000",
+            "assembly": "mov w0, #0x0"
+          },
+          {
+            "pc": "0x100000d0c",
+            "word": "0xa9467bfd",
+            "assembly": "ldp x29, x30, [sp, #0x60]"
+          },
+          {
+            "pc": "0x100000d10",
+            "word": "0xa9454ff4",
+            "assembly": "ldp x20, x19, [sp, #0x50]"
+          },
+          {
+            "pc": "0x100000d14",
+            "word": "0xa94457f6",
+            "assembly": "ldp x22, x21, [sp, #0x40]"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100000cfc",
+          "word": "0x940002a3",
+          "assembly": "bl 0x100001788 ; symbol stub for: _swift_release"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x100000d8c",
+      "callee_symbol": "_$s10Foundation4DataV10contentsOf7optionsAcA3URLVh_So20NSDataReadingOptionsVtKcfC",
+      "call_kind": "bl",
+      "demangled_throws": true,
+      "caller_start": "0x100000d80",
+      "caller_end": "0x100000d98",
+      "precall": {
+        "status": "precall_window_outside_caller",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100000d80",
+            "word": "0xa9bf7bfd",
+            "assembly": "stp x29, x30, [sp, #-0x10]!"
+          },
+          {
+            "pc": "0x100000d84",
+            "word": "0x910003fd",
+            "assembly": "mov x29, sp"
+          },
+          {
+            "pc": "0x100000d88",
+            "word": "0xd2800001",
+            "assembly": "mov x1, #0x0"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100000d90",
+            "word": "0xa8c17bfd",
+            "assembly": "ldp x29, x30, [sp], #0x10"
+          },
+          {
+            "pc": "0x100000d94",
+            "word": "0xd65f03c0",
+            "assembly": "ret"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100000d90",
+          "word": "0xa8c17bfd",
+          "assembly": "ldp x29, x30, [sp], #0x10"
+        }
+      },
+      "shape": "none",
+      "explanation": "The wrapper forwards incoming x21 and returns after LDP; there is no local zero or supported test."
+    },
+    {
+      "call_pc": "0x100000e48",
+      "callee_symbol": "_$s10Foundation11JSONDecoderCMa",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x100000e24",
+      "caller_end": "0x100000eb4",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100000e38",
+            "word": "0xaa1503f3",
+            "assembly": "mov x19, x21"
+          },
+          {
+            "pc": "0x100000e3c",
+            "word": "0xaa0103f6",
+            "assembly": "mov x22, x1"
+          },
+          {
+            "pc": "0x100000e40",
+            "word": "0xaa0003f7",
+            "assembly": "mov x23, x0"
+          },
+          {
+            "pc": "0x100000e44",
+            "word": "0xd2800000",
+            "assembly": "mov x0, #0x0"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100000e4c",
+            "word": "0xb9403001",
+            "assembly": "ldr w1, [x0, #0x30]"
+          },
+          {
+            "pc": "0x100000e50",
+            "word": "0x79406802",
+            "assembly": "ldrh w2, [x0, #0x34]"
+          },
+          {
+            "pc": "0x100000e54",
+            "word": "0x94000238",
+            "assembly": "bl 0x100001734 ; symbol stub for: _swift_allocObject"
+          },
+          {
+            "pc": "0x100000e58",
+            "word": "0xaa0003f4",
+            "assembly": "mov x20, x0"
+          },
+          {
+            "pc": "0x100000e5c",
+            "word": "0x940001fd",
+            "assembly": "bl 0x100001650 ; symbol stub for: _$s10Foundation11JSONDecoderCACycfc"
+          },
+          {
+            "pc": "0x100000e60",
+            "word": "0xaa0003f4",
+            "assembly": "mov x20, x0"
+          },
+          {
+            "pc": "0x100000e64",
+            "word": "0x94000057",
+            "assembly": "bl 0x100000fc0"
+          },
+          {
+            "pc": "0x100000e68",
+            "word": "0xaa0003e4",
+            "assembly": "mov x4, x0"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100000e4c",
+          "word": "0xb9403001",
+          "assembly": "ldr w1, [x0, #0x30]"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x100000e5c",
+      "callee_symbol": "_$s10Foundation11JSONDecoderCACycfc",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x100000e24",
+      "caller_end": "0x100000eb4",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100000e4c",
+            "word": "0xb9403001",
+            "assembly": "ldr w1, [x0, #0x30]"
+          },
+          {
+            "pc": "0x100000e50",
+            "word": "0x79406802",
+            "assembly": "ldrh w2, [x0, #0x34]"
+          },
+          {
+            "pc": "0x100000e54",
+            "word": "0x94000238",
+            "assembly": "bl 0x100001734 ; symbol stub for: _swift_allocObject"
+          },
+          {
+            "pc": "0x100000e58",
+            "word": "0xaa0003f4",
+            "assembly": "mov x20, x0"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100000e60",
+            "word": "0xaa0003f4",
+            "assembly": "mov x20, x0"
+          },
+          {
+            "pc": "0x100000e64",
+            "word": "0x94000057",
+            "assembly": "bl 0x100000fc0"
+          },
+          {
+            "pc": "0x100000e68",
+            "word": "0xaa0003e4",
+            "assembly": "mov x4, x0"
+          },
+          {
+            "pc": "0x100000e6c",
+            "word": "0x90000020",
+            "assembly": "adrp x0, 4 ; 0x100004000"
+          },
+          {
+            "pc": "0x100000e70",
+            "word": "0x91004000",
+            "assembly": "add x0, x0, #0x10"
+          },
+          {
+            "pc": "0x100000e74",
+            "word": "0x910023e8",
+            "assembly": "add x8, sp, #0x8"
+          },
+          {
+            "pc": "0x100000e78",
+            "word": "0xaa1703e1",
+            "assembly": "mov x1, x23"
+          },
+          {
+            "pc": "0x100000e7c",
+            "word": "0xaa1603e2",
+            "assembly": "mov x2, x22"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100000e64",
+          "word": "0x94000057",
+          "assembly": "bl 0x100000fc0"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x100000e88",
+      "callee_symbol": "_$s10Foundation11JSONDecoderC6decode_4fromxxm_AA4DataVtKSeRzlFTj",
+      "call_kind": "bl",
+      "demangled_throws": true,
+      "caller_start": "0x100000e24",
+      "caller_end": "0x100000eb4",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100000e78",
+            "word": "0xaa1703e1",
+            "assembly": "mov x1, x23"
+          },
+          {
+            "pc": "0x100000e7c",
+            "word": "0xaa1603e2",
+            "assembly": "mov x2, x22"
+          },
+          {
+            "pc": "0x100000e80",
+            "word": "0xaa0003e3",
+            "assembly": "mov x3, x0"
+          },
+          {
+            "pc": "0x100000e84",
+            "word": "0xaa1303f5",
+            "assembly": "mov x21, x19"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100000e8c",
+            "word": "0xaa1503f3",
+            "assembly": "mov x19, x21"
+          },
+          {
+            "pc": "0x100000e90",
+            "word": "0xaa1403e0",
+            "assembly": "mov x0, x20"
+          },
+          {
+            "pc": "0x100000e94",
+            "word": "0x9400023d",
+            "assembly": "bl 0x100001788 ; symbol stub for: _swift_release"
+          },
+          {
+            "pc": "0x100000e98",
+            "word": "0xf94007e0",
+            "assembly": "ldr x0, [sp, #0x8]"
+          },
+          {
+            "pc": "0x100000e9c",
+            "word": "0xaa1303f5",
+            "assembly": "mov x21, x19"
+          },
+          {
+            "pc": "0x100000ea0",
+            "word": "0xa9437bfd",
+            "assembly": "ldp x29, x30, [sp, #0x30]"
+          },
+          {
+            "pc": "0x100000ea4",
+            "word": "0xa9424ff4",
+            "assembly": "ldp x20, x19, [sp, #0x20]"
+          },
+          {
+            "pc": "0x100000ea8",
+            "word": "0xa9415bf7",
+            "assembly": "ldp x23, x22, [sp, #0x10]"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100000e94",
+          "word": "0x9400023d",
+          "assembly": "bl 0x100001788 ; symbol stub for: _swift_release"
+        }
+      },
+      "shape": "none",
+      "explanation": "Incoming x21 is restored from a saved alias, not zeroed by MOV X21, XZR. The post-call sequence reaches an unsupported instruction before a recognised test."
+    },
+    {
+      "call_pc": "0x100000f24",
+      "callee_symbol": "_$sSS10FoundationE8EncodingVMa",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x100000ef4",
+      "caller_end": "0x100000fc0",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100000f14",
+            "word": "0xaa0203f6",
+            "assembly": "mov x22, x2"
+          },
+          {
+            "pc": "0x100000f18",
+            "word": "0xaa0103f4",
+            "assembly": "mov x20, x1"
+          },
+          {
+            "pc": "0x100000f1c",
+            "word": "0xaa0003f7",
+            "assembly": "mov x23, x0"
+          },
+          {
+            "pc": "0x100000f20",
+            "word": "0xd2800000",
+            "assembly": "mov x0, #0x0"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100000f28",
+            "word": "0xaa0003f8",
+            "assembly": "mov x24, x0"
+          },
+          {
+            "pc": "0x100000f2c",
+            "word": "0xf85f801a",
+            "assembly": "ldur x26, [x0, #-0x8]"
+          },
+          {
+            "pc": "0x100000f30",
+            "word": "0xf9402348",
+            "assembly": "ldr x8, [x26, #0x40]"
+          },
+          {
+            "pc": "0x100000f34",
+            "word": "0xaa0803e9",
+            "assembly": "mov x9, x8"
+          },
+          {
+            "pc": "0x100000f38",
+            "word": "0x90000030",
+            "assembly": "adrp x16, 4 ; 0x100004000"
+          },
+          {
+            "pc": "0x100000f3c",
+            "word": "0xf940ce10",
+            "assembly": "ldr x16, [x16, #0x198] ; literal pool symbol address: ___chkstk_darwin"
+          },
+          {
+            "pc": "0x100000f40",
+            "word": "0xd63f0200",
+            "assembly": "blr x16"
+          },
+          {
+            "pc": "0x100000f44",
+            "word": "0x910003e9",
+            "assembly": "mov x9, sp"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100000f2c",
+          "word": "0xf85f801a",
+          "assembly": "ldur x26, [x0, #-0x8]"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x100000f60",
+      "callee_symbol": "_$sSS10FoundationE8EncodingV4utf8ACvgZ",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x100000ef4",
+      "caller_end": "0x100000fc0",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100000f50",
+            "word": "0xcb080139",
+            "assembly": "sub x25, x9, x8"
+          },
+          {
+            "pc": "0x100000f54",
+            "word": "0x9100033f",
+            "assembly": "mov sp, x25"
+          },
+          {
+            "pc": "0x100000f58",
+            "word": "0xa93b53b7",
+            "assembly": "stp x23, x20, [x29, #-0x50]"
+          },
+          {
+            "pc": "0x100000f5c",
+            "word": "0xaa1903e8",
+            "assembly": "mov x8, x25"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100000f64",
+            "word": "0x94000027",
+            "assembly": "bl 0x100001000"
+          },
+          {
+            "pc": "0x100000f68",
+            "word": "0xaa0003e4",
+            "assembly": "mov x4, x0"
+          },
+          {
+            "pc": "0x100000f6c",
+            "word": "0x90000023",
+            "assembly": "adrp x3, 4 ; 0x100004000"
+          },
+          {
+            "pc": "0x100000f70",
+            "word": "0xf940f463",
+            "assembly": "ldr x3, [x3, #0x1e8] ; literal pool symbol address: _$sSSN"
+          },
+          {
+            "pc": "0x100000f74",
+            "word": "0xd10143b4",
+            "assembly": "sub x20, x29, #0x50"
+          },
+          {
+            "pc": "0x100000f78",
+            "word": "0xaa1603e0",
+            "assembly": "mov x0, x22"
+          },
+          {
+            "pc": "0x100000f7c",
+            "word": "0x52800021",
+            "assembly": "mov w1, #0x1"
+          },
+          {
+            "pc": "0x100000f80",
+            "word": "0xaa1903e2",
+            "assembly": "mov x2, x25"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100000f64",
+          "word": "0x94000027",
+          "assembly": "bl 0x100001000"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x100000f88",
+      "callee_symbol": "_$sSy10FoundationE5write2to10atomically8encodingyAA3URLV_SbSSAAE8EncodingVtKF",
+      "call_kind": "bl",
+      "demangled_throws": true,
+      "caller_start": "0x100000ef4",
+      "caller_end": "0x100000fc0",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100000f78",
+            "word": "0xaa1603e0",
+            "assembly": "mov x0, x22"
+          },
+          {
+            "pc": "0x100000f7c",
+            "word": "0x52800021",
+            "assembly": "mov w1, #0x1"
+          },
+          {
+            "pc": "0x100000f80",
+            "word": "0xaa1903e2",
+            "assembly": "mov x2, x25"
+          },
+          {
+            "pc": "0x100000f84",
+            "word": "0xaa1303f5",
+            "assembly": "mov x21, x19"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100000f8c",
+            "word": "0xaa1503f3",
+            "assembly": "mov x19, x21"
+          },
+          {
+            "pc": "0x100000f90",
+            "word": "0xf9400748",
+            "assembly": "ldr x8, [x26, #0x8]"
+          },
+          {
+            "pc": "0x100000f94",
+            "word": "0xaa1903e0",
+            "assembly": "mov x0, x25"
+          },
+          {
+            "pc": "0x100000f98",
+            "word": "0xaa1803e1",
+            "assembly": "mov x1, x24"
+          },
+          {
+            "pc": "0x100000f9c",
+            "word": "0xd63f0100",
+            "assembly": "blr x8"
+          },
+          {
+            "pc": "0x100000fa0",
+            "word": "0xaa1303f5",
+            "assembly": "mov x21, x19"
+          },
+          {
+            "pc": "0x100000fa4",
+            "word": "0xd10103bf",
+            "assembly": "sub sp, x29, #0x40"
+          },
+          {
+            "pc": "0x100000fa8",
+            "word": "0xa9447bfd",
+            "assembly": "ldp x29, x30, [sp, #0x40]"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100000f90",
+          "word": "0xf9400748",
+          "assembly": "ldr x8, [x26, #0x8]"
+        }
+      },
+      "shape": "none",
+      "explanation": "Incoming x21 is restored from a saved alias, not zeroed by MOV X21, XZR. The post-call sequence reaches an unsupported instruction before a recognised test."
+    },
+    {
+      "call_pc": "0x100001064",
+      "callee_symbol": "_$ss6HasherV5_seedABSi_tcfC",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x10000104c",
+      "caller_end": "0x10000108c",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100001054",
+            "word": "0xa9067bfd",
+            "assembly": "stp x29, x30, [sp, #0x60]"
+          },
+          {
+            "pc": "0x100001058",
+            "word": "0x910183fd",
+            "assembly": "add x29, sp, #0x60"
+          },
+          {
+            "pc": "0x10000105c",
+            "word": "0x910023e8",
+            "assembly": "add x8, sp, #0x8"
+          },
+          {
+            "pc": "0x100001060",
+            "word": "0xd2800000",
+            "assembly": "mov x0, #0x0"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100001068",
+            "word": "0x910023f4",
+            "assembly": "add x20, sp, #0x8"
+          },
+          {
+            "pc": "0x10000106c",
+            "word": "0xd2800000",
+            "assembly": "mov x0, #0x0"
+          },
+          {
+            "pc": "0x100001070",
+            "word": "0x9400019f",
+            "assembly": "bl 0x1000016ec ; symbol stub for: _$ss6HasherV8_combineyySuF"
+          },
+          {
+            "pc": "0x100001074",
+            "word": "0x910023f4",
+            "assembly": "add x20, sp, #0x8"
+          },
+          {
+            "pc": "0x100001078",
+            "word": "0x940001a0",
+            "assembly": "bl 0x1000016f8 ; symbol stub for: _$ss6HasherV9_finalizeSiyF"
+          },
+          {
+            "pc": "0x10000107c",
+            "word": "0xa9467bfd",
+            "assembly": "ldp x29, x30, [sp, #0x60]"
+          },
+          {
+            "pc": "0x100001080",
+            "word": "0xa9454ff4",
+            "assembly": "ldp x20, x19, [sp, #0x50]"
+          },
+          {
+            "pc": "0x100001084",
+            "word": "0x9101c3ff",
+            "assembly": "add sp, sp, #0x70"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100001068",
+          "word": "0x910023f4",
+          "assembly": "add x20, sp, #0x8"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x100001070",
+      "callee_symbol": "_$ss6HasherV8_combineyySuF",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x10000104c",
+      "caller_end": "0x10000108c",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100001060",
+            "word": "0xd2800000",
+            "assembly": "mov x0, #0x0"
+          },
+          {
+            "pc": "0x100001064",
+            "word": "0x9400019f",
+            "assembly": "bl 0x1000016e0 ; symbol stub for: _$ss6HasherV5_seedABSi_tcfC"
+          },
+          {
+            "pc": "0x100001068",
+            "word": "0x910023f4",
+            "assembly": "add x20, sp, #0x8"
+          },
+          {
+            "pc": "0x10000106c",
+            "word": "0xd2800000",
+            "assembly": "mov x0, #0x0"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100001074",
+            "word": "0x910023f4",
+            "assembly": "add x20, sp, #0x8"
+          },
+          {
+            "pc": "0x100001078",
+            "word": "0x940001a0",
+            "assembly": "bl 0x1000016f8 ; symbol stub for: _$ss6HasherV9_finalizeSiyF"
+          },
+          {
+            "pc": "0x10000107c",
+            "word": "0xa9467bfd",
+            "assembly": "ldp x29, x30, [sp, #0x60]"
+          },
+          {
+            "pc": "0x100001080",
+            "word": "0xa9454ff4",
+            "assembly": "ldp x20, x19, [sp, #0x50]"
+          },
+          {
+            "pc": "0x100001084",
+            "word": "0x9101c3ff",
+            "assembly": "add sp, sp, #0x70"
+          },
+          {
+            "pc": "0x100001088",
+            "word": "0xd65f03c0",
+            "assembly": "ret"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100001074",
+          "word": "0x910023f4",
+          "assembly": "add x20, sp, #0x8"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x100001078",
+      "callee_symbol": "_$ss6HasherV9_finalizeSiyF",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x10000104c",
+      "caller_end": "0x10000108c",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100001068",
+            "word": "0x910023f4",
+            "assembly": "add x20, sp, #0x8"
+          },
+          {
+            "pc": "0x10000106c",
+            "word": "0xd2800000",
+            "assembly": "mov x0, #0x0"
+          },
+          {
+            "pc": "0x100001070",
+            "word": "0x9400019f",
+            "assembly": "bl 0x1000016ec ; symbol stub for: _$ss6HasherV8_combineyySuF"
+          },
+          {
+            "pc": "0x100001074",
+            "word": "0x910023f4",
+            "assembly": "add x20, sp, #0x8"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x10000107c",
+            "word": "0xa9467bfd",
+            "assembly": "ldp x29, x30, [sp, #0x60]"
+          },
+          {
+            "pc": "0x100001080",
+            "word": "0xa9454ff4",
+            "assembly": "ldp x20, x19, [sp, #0x50]"
+          },
+          {
+            "pc": "0x100001084",
+            "word": "0x9101c3ff",
+            "assembly": "add sp, sp, #0x70"
+          },
+          {
+            "pc": "0x100001088",
+            "word": "0xd65f03c0",
+            "assembly": "ret"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x10000107c",
+          "word": "0xa9467bfd",
+          "assembly": "ldp x29, x30, [sp, #0x60]"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x1000010a0",
+      "callee_symbol": "_$ss6HasherV8_combineyySuF",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x10000108c",
+      "caller_end": "0x1000010b0",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100001090",
+            "word": "0xa9017bfd",
+            "assembly": "stp x29, x30, [sp, #0x10]"
+          },
+          {
+            "pc": "0x100001094",
+            "word": "0x910043fd",
+            "assembly": "add x29, sp, #0x10"
+          },
+          {
+            "pc": "0x100001098",
+            "word": "0xaa0003f4",
+            "assembly": "mov x20, x0"
+          },
+          {
+            "pc": "0x10000109c",
+            "word": "0xd2800000",
+            "assembly": "mov x0, #0x0"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x1000010a4",
+            "word": "0xa9417bfd",
+            "assembly": "ldp x29, x30, [sp, #0x10]"
+          },
+          {
+            "pc": "0x1000010a8",
+            "word": "0xa8c24ff4",
+            "assembly": "ldp x20, x19, [sp], #0x20"
+          },
+          {
+            "pc": "0x1000010ac",
+            "word": "0xd65f03c0",
+            "assembly": "ret"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x1000010a4",
+          "word": "0xa9417bfd",
+          "assembly": "ldp x29, x30, [sp, #0x10]"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x1000010c4",
+      "callee_symbol": "_$ss6HasherV5_seedABSi_tcfC",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x1000010b0",
+      "caller_end": "0x1000010ec",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x1000010b4",
+            "word": "0xa9054ff4",
+            "assembly": "stp x20, x19, [sp, #0x50]"
+          },
+          {
+            "pc": "0x1000010b8",
+            "word": "0xa9067bfd",
+            "assembly": "stp x29, x30, [sp, #0x60]"
+          },
+          {
+            "pc": "0x1000010bc",
+            "word": "0x910183fd",
+            "assembly": "add x29, sp, #0x60"
+          },
+          {
+            "pc": "0x1000010c0",
+            "word": "0x910023e8",
+            "assembly": "add x8, sp, #0x8"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x1000010c8",
+            "word": "0x910023f4",
+            "assembly": "add x20, sp, #0x8"
+          },
+          {
+            "pc": "0x1000010cc",
+            "word": "0xd2800000",
+            "assembly": "mov x0, #0x0"
+          },
+          {
+            "pc": "0x1000010d0",
+            "word": "0x94000187",
+            "assembly": "bl 0x1000016ec ; symbol stub for: _$ss6HasherV8_combineyySuF"
+          },
+          {
+            "pc": "0x1000010d4",
+            "word": "0x910023f4",
+            "assembly": "add x20, sp, #0x8"
+          },
+          {
+            "pc": "0x1000010d8",
+            "word": "0x94000188",
+            "assembly": "bl 0x1000016f8 ; symbol stub for: _$ss6HasherV9_finalizeSiyF"
+          },
+          {
+            "pc": "0x1000010dc",
+            "word": "0xa9467bfd",
+            "assembly": "ldp x29, x30, [sp, #0x60]"
+          },
+          {
+            "pc": "0x1000010e0",
+            "word": "0xa9454ff4",
+            "assembly": "ldp x20, x19, [sp, #0x50]"
+          },
+          {
+            "pc": "0x1000010e4",
+            "word": "0x9101c3ff",
+            "assembly": "add sp, sp, #0x70"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x1000010c8",
+          "word": "0x910023f4",
+          "assembly": "add x20, sp, #0x8"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x1000010d0",
+      "callee_symbol": "_$ss6HasherV8_combineyySuF",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x1000010b0",
+      "caller_end": "0x1000010ec",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x1000010c0",
+            "word": "0x910023e8",
+            "assembly": "add x8, sp, #0x8"
+          },
+          {
+            "pc": "0x1000010c4",
+            "word": "0x94000187",
+            "assembly": "bl 0x1000016e0 ; symbol stub for: _$ss6HasherV5_seedABSi_tcfC"
+          },
+          {
+            "pc": "0x1000010c8",
+            "word": "0x910023f4",
+            "assembly": "add x20, sp, #0x8"
+          },
+          {
+            "pc": "0x1000010cc",
+            "word": "0xd2800000",
+            "assembly": "mov x0, #0x0"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x1000010d4",
+            "word": "0x910023f4",
+            "assembly": "add x20, sp, #0x8"
+          },
+          {
+            "pc": "0x1000010d8",
+            "word": "0x94000188",
+            "assembly": "bl 0x1000016f8 ; symbol stub for: _$ss6HasherV9_finalizeSiyF"
+          },
+          {
+            "pc": "0x1000010dc",
+            "word": "0xa9467bfd",
+            "assembly": "ldp x29, x30, [sp, #0x60]"
+          },
+          {
+            "pc": "0x1000010e0",
+            "word": "0xa9454ff4",
+            "assembly": "ldp x20, x19, [sp, #0x50]"
+          },
+          {
+            "pc": "0x1000010e4",
+            "word": "0x9101c3ff",
+            "assembly": "add sp, sp, #0x70"
+          },
+          {
+            "pc": "0x1000010e8",
+            "word": "0xd65f03c0",
+            "assembly": "ret"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x1000010d4",
+          "word": "0x910023f4",
+          "assembly": "add x20, sp, #0x8"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x1000010d8",
+      "callee_symbol": "_$ss6HasherV9_finalizeSiyF",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x1000010b0",
+      "caller_end": "0x1000010ec",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x1000010c8",
+            "word": "0x910023f4",
+            "assembly": "add x20, sp, #0x8"
+          },
+          {
+            "pc": "0x1000010cc",
+            "word": "0xd2800000",
+            "assembly": "mov x0, #0x0"
+          },
+          {
+            "pc": "0x1000010d0",
+            "word": "0x94000187",
+            "assembly": "bl 0x1000016ec ; symbol stub for: _$ss6HasherV8_combineyySuF"
+          },
+          {
+            "pc": "0x1000010d4",
+            "word": "0x910023f4",
+            "assembly": "add x20, sp, #0x8"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x1000010dc",
+            "word": "0xa9467bfd",
+            "assembly": "ldp x29, x30, [sp, #0x60]"
+          },
+          {
+            "pc": "0x1000010e0",
+            "word": "0xa9454ff4",
+            "assembly": "ldp x20, x19, [sp, #0x50]"
+          },
+          {
+            "pc": "0x1000010e4",
+            "word": "0x9101c3ff",
+            "assembly": "add sp, sp, #0x70"
+          },
+          {
+            "pc": "0x1000010e8",
+            "word": "0xd65f03c0",
+            "assembly": "ret"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x1000010dc",
+          "word": "0xa9467bfd",
+          "assembly": "ldp x29, x30, [sp, #0x60]"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x100001138",
+      "callee_symbol": "_$ss27_stringCompareWithSmolCheck__9expectingSbs11_StringGutsV_ADs01_G16ComparisonResultOtF",
+      "call_kind": "bl",
+      "demangled_throws": false,
+      "caller_start": "0x1000010f8",
+      "caller_end": "0x100001174",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100001128",
+            "word": "0x528c8d20",
+            "assembly": "mov w0, #0x6469"
+          },
+          {
+            "pc": "0x10000112c",
+            "word": "0xd2fc4001",
+            "assembly": "mov x1, #-0x1e00000000000000"
+          },
+          {
+            "pc": "0x100001130",
+            "word": "0xaa1403e3",
+            "assembly": "mov x3, x20"
+          },
+          {
+            "pc": "0x100001134",
+            "word": "0x52800004",
+            "assembly": "mov w4, #0x0"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "error_value_clobbered",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x10000113c",
+            "word": "0xaa0003f5",
+            "assembly": "mov x21, x0"
+          },
+          {
+            "pc": "0x100001140",
+            "word": "0xaa1403e0",
+            "assembly": "mov x0, x20"
+          },
+          {
+            "pc": "0x100001144",
+            "word": "0x9400017f",
+            "assembly": "bl 0x100001740 ; symbol stub for: _swift_bridgeObjectRelease"
+          },
+          {
+            "pc": "0x100001148",
+            "word": "0x52800028",
+            "assembly": "mov w8, #0x1"
+          },
+          {
+            "pc": "0x10000114c",
+            "word": "0x0a350108",
+            "assembly": "bic w8, w8, w21"
+          },
+          {
+            "pc": "0x100001150",
+            "word": "0x14000004",
+            "assembly": "b 0x100001160"
+          },
+          {
+            "pc": "0x100001154",
+            "word": "0xaa1403e0",
+            "assembly": "mov x0, x20"
+          },
+          {
+            "pc": "0x100001158",
+            "word": "0x9400017a",
+            "assembly": "bl 0x100001740 ; symbol stub for: _swift_bridgeObjectRelease"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x10000113c",
+          "word": "0xaa0003f5",
+          "assembly": "mov x21, x0"
+        }
+      },
+      "shape": "none"
+    },
+    {
+      "call_pc": "0x1000011b0",
+      "callee_symbol": "_$ss9CodingKeyPsE16debugDescriptionSSvg",
+      "call_kind": "b",
+      "demangled_throws": false,
+      "caller_start": "0x10000118c",
+      "caller_end": "0x1000011b4",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x1000011a0",
+            "word": "0xaa0003e1",
+            "assembly": "mov x1, x0"
+          },
+          {
+            "pc": "0x1000011a4",
+            "word": "0xaa1303e0",
+            "assembly": "mov x0, x19"
+          },
+          {
+            "pc": "0x1000011a8",
+            "word": "0xa9417bfd",
+            "assembly": "ldp x29, x30, [sp, #0x10]"
+          },
+          {
+            "pc": "0x1000011ac",
+            "word": "0xa8c24ff4",
+            "assembly": "ldp x20, x19, [sp], #0x20"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "postcall_window_exhausted",
+        "test_shape": "none",
+        "window": []
+      },
+      "shape": "none",
+      "explanation": "This entry in the 27-site oracle is a tail B, not BL. No returning post-call window exists inside its caller."
+    },
+    {
+      "call_pc": "0x1000011d8",
+      "callee_symbol": "_$ss9CodingKeyPsE11descriptionSSvg",
+      "call_kind": "b",
+      "demangled_throws": false,
+      "caller_start": "0x1000011b4",
+      "caller_end": "0x1000011dc",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x1000011c8",
+            "word": "0xaa0003e1",
+            "assembly": "mov x1, x0"
+          },
+          {
+            "pc": "0x1000011cc",
+            "word": "0xaa1303e0",
+            "assembly": "mov x0, x19"
+          },
+          {
+            "pc": "0x1000011d0",
+            "word": "0xa9417bfd",
+            "assembly": "ldp x29, x30, [sp, #0x10]"
+          },
+          {
+            "pc": "0x1000011d4",
+            "word": "0xa8c24ff4",
+            "assembly": "ldp x20, x19, [sp], #0x20"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "postcall_window_exhausted",
+        "test_shape": "none",
+        "window": []
+      },
+      "shape": "none",
+      "explanation": "This entry in the 27-site oracle is a tail B, not BL. No returning post-call window exists inside its caller."
+    },
+    {
+      "call_pc": "0x100001274",
+      "callee_symbol": "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj",
+      "call_kind": "bl",
+      "demangled_throws": true,
+      "caller_start": "0x1000011dc",
+      "caller_end": "0x1000012e4",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100001264",
+            "word": "0xaa0003e1",
+            "assembly": "mov x1, x0"
+          },
+          {
+            "pc": "0x100001268",
+            "word": "0xaa1703f5",
+            "assembly": "mov x21, x23"
+          },
+          {
+            "pc": "0x10000126c",
+            "word": "0xaa1903e3",
+            "assembly": "mov x3, x25"
+          },
+          {
+            "pc": "0x100001270",
+            "word": "0xaa1a03e4",
+            "assembly": "mov x4, x26"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "recovered_candidate",
+        "reason": null,
+        "test_shape": "cbnz",
+        "window": [
+          {
+            "pc": "0x100001278",
+            "word": "0xaa1503f7",
+            "assembly": "mov x23, x21"
+          },
+          {
+            "pc": "0x10000127c",
+            "word": "0xb5000195",
+            "assembly": "cbnz x21, 0x1000012ac"
+          },
+          {
+            "pc": "0x100001280",
+            "word": "0xaa1603e1",
+            "assembly": "mov x1, x22"
+          },
+          {
+            "pc": "0x100001284",
+            "word": "0xaa1803f4",
+            "assembly": "mov x20, x24"
+          },
+          {
+            "pc": "0x100001288",
+            "word": "0xaa1703f5",
+            "assembly": "mov x21, x23"
+          },
+          {
+            "pc": "0x10000128c",
+            "word": "0x9400010c",
+            "assembly": "bl 0x1000016bc ; symbol stub for: _$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF"
+          },
+          {
+            "pc": "0x100001290",
+            "word": "0xaa0003f4",
+            "assembly": "mov x20, x0"
+          },
+          {
+            "pc": "0x100001294",
+            "word": "0xaa1503f7",
+            "assembly": "mov x23, x21"
+          }
+        ],
+        "test_pc": "0x10000127c",
+        "tested_register": "x21",
+        "success_pc": "0x100001280",
+        "error_pc": "0x1000012ac"
+      },
+      "shape": "postcall_test_only",
+      "explanation": "Incoming x21 is restored from a saved alias, not zeroed by MOV X21, XZR. The following MOV alias and CBNZ are recognised."
+    },
+    {
+      "call_pc": "0x10000128c",
+      "callee_symbol": "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF",
+      "call_kind": "bl",
+      "demangled_throws": true,
+      "caller_start": "0x1000011dc",
+      "caller_end": "0x1000012e4",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x10000127c",
+            "word": "0xb5000195",
+            "assembly": "cbnz x21, 0x1000012ac"
+          },
+          {
+            "pc": "0x100001280",
+            "word": "0xaa1603e1",
+            "assembly": "mov x1, x22"
+          },
+          {
+            "pc": "0x100001284",
+            "word": "0xaa1803f4",
+            "assembly": "mov x20, x24"
+          },
+          {
+            "pc": "0x100001288",
+            "word": "0xaa1703f5",
+            "assembly": "mov x21, x23"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100001290",
+            "word": "0xaa0003f4",
+            "assembly": "mov x20, x0"
+          },
+          {
+            "pc": "0x100001294",
+            "word": "0xaa1503f7",
+            "assembly": "mov x23, x21"
+          },
+          {
+            "pc": "0x100001298",
+            "word": "0xf9400768",
+            "assembly": "ldr x8, [x27, #0x8]"
+          },
+          {
+            "pc": "0x10000129c",
+            "word": "0xaa1803e0",
+            "assembly": "mov x0, x24"
+          },
+          {
+            "pc": "0x1000012a0",
+            "word": "0xaa1603e1",
+            "assembly": "mov x1, x22"
+          },
+          {
+            "pc": "0x1000012a4",
+            "word": "0xd63f0100",
+            "assembly": "blr x8"
+          },
+          {
+            "pc": "0x1000012a8",
+            "word": "0xb4000197",
+            "assembly": "cbz x23, 0x1000012d8"
+          },
+          {
+            "pc": "0x1000012ac",
+            "word": "0xaa1303e0",
+            "assembly": "mov x0, x19"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x100001298",
+          "word": "0xf9400768",
+          "assembly": "ldr x8, [x27, #0x8]"
+        },
+        "later_syntactic_test": {
+          "pc": "0x1000012a8",
+          "word": "0xb4000197",
+          "assembly": "cbz x23, 0x1000012d8",
+          "distance_words": 7,
+          "recognised": false,
+          "why": "LDR and BLR intervene before the alias test; the unchanged post-call model stops at LDR."
+        }
+      },
+      "shape": "none",
+      "explanation": "Incoming x21 is restored from a saved alias, not zeroed by MOV X21, XZR. The post-call sequence reaches an unsupported instruction before a recognised test."
+    },
+    {
+      "call_pc": "0x100001408",
+      "callee_symbol": "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj",
+      "call_kind": "bl",
+      "demangled_throws": true,
+      "caller_start": "0x100001368",
+      "caller_end": "0x10000147c",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x1000013f8",
+            "word": "0xaa0003e1",
+            "assembly": "mov x1, x0"
+          },
+          {
+            "pc": "0x1000013fc",
+            "word": "0xaa1803f5",
+            "assembly": "mov x21, x24"
+          },
+          {
+            "pc": "0x100001400",
+            "word": "0xaa1a03e3",
+            "assembly": "mov x3, x26"
+          },
+          {
+            "pc": "0x100001404",
+            "word": "0xaa1b03e4",
+            "assembly": "mov x4, x27"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "recovered_candidate",
+        "reason": null,
+        "test_shape": "cbnz",
+        "window": [
+          {
+            "pc": "0x10000140c",
+            "word": "0xaa1503f8",
+            "assembly": "mov x24, x21"
+          },
+          {
+            "pc": "0x100001410",
+            "word": "0xb5000195",
+            "assembly": "cbnz x21, 0x100001440"
+          },
+          {
+            "pc": "0x100001414",
+            "word": "0xaa1703e1",
+            "assembly": "mov x1, x23"
+          },
+          {
+            "pc": "0x100001418",
+            "word": "0xaa1903f4",
+            "assembly": "mov x20, x25"
+          },
+          {
+            "pc": "0x10000141c",
+            "word": "0xaa1803f5",
+            "assembly": "mov x21, x24"
+          },
+          {
+            "pc": "0x100001420",
+            "word": "0x940000a7",
+            "assembly": "bl 0x1000016bc ; symbol stub for: _$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF"
+          },
+          {
+            "pc": "0x100001424",
+            "word": "0xaa0003f4",
+            "assembly": "mov x20, x0"
+          },
+          {
+            "pc": "0x100001428",
+            "word": "0xaa1503f8",
+            "assembly": "mov x24, x21"
+          }
+        ],
+        "test_pc": "0x100001410",
+        "tested_register": "x21",
+        "success_pc": "0x100001414",
+        "error_pc": "0x100001440"
+      },
+      "shape": "postcall_test_only",
+      "explanation": "Incoming x21 is restored from a saved alias, not zeroed by MOV X21, XZR. The following MOV alias and CBNZ are recognised."
+    },
+    {
+      "call_pc": "0x100001420",
+      "callee_symbol": "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF",
+      "call_kind": "bl",
+      "demangled_throws": true,
+      "caller_start": "0x100001368",
+      "caller_end": "0x10000147c",
+      "precall": {
+        "status": "x21_not_zeroed",
+        "zero_within_four_words": false,
+        "zero_pc": null,
+        "distance_words": null,
+        "window": [
+          {
+            "pc": "0x100001410",
+            "word": "0xb5000195",
+            "assembly": "cbnz x21, 0x100001440"
+          },
+          {
+            "pc": "0x100001414",
+            "word": "0xaa1703e1",
+            "assembly": "mov x1, x23"
+          },
+          {
+            "pc": "0x100001418",
+            "word": "0xaa1903f4",
+            "assembly": "mov x20, x25"
+          },
+          {
+            "pc": "0x10000141c",
+            "word": "0xaa1803f5",
+            "assembly": "mov x21, x24"
+          }
+        ]
+      },
+      "postcall": {
+        "status": "unresolved",
+        "reason": "intervening_instruction_unmodeled",
+        "test_shape": "none",
+        "window": [
+          {
+            "pc": "0x100001424",
+            "word": "0xaa0003f4",
+            "assembly": "mov x20, x0"
+          },
+          {
+            "pc": "0x100001428",
+            "word": "0xaa1503f8",
+            "assembly": "mov x24, x21"
+          },
+          {
+            "pc": "0x10000142c",
+            "word": "0xf9400788",
+            "assembly": "ldr x8, [x28, #0x8]"
+          },
+          {
+            "pc": "0x100001430",
+            "word": "0xaa1903e0",
+            "assembly": "mov x0, x25"
+          },
+          {
+            "pc": "0x100001434",
+            "word": "0xaa1703e1",
+            "assembly": "mov x1, x23"
+          },
+          {
+            "pc": "0x100001438",
+            "word": "0xd63f0100",
+            "assembly": "blr x8"
+          },
+          {
+            "pc": "0x10000143c",
+            "word": "0xb4000198",
+            "assembly": "cbz x24, 0x10000146c"
+          },
+          {
+            "pc": "0x100001440",
+            "word": "0xaa1303e0",
+            "assembly": "mov x0, x19"
+          }
+        ],
+        "first_blocker": {
+          "pc": "0x10000142c",
+          "word": "0xf9400788",
+          "assembly": "ldr x8, [x28, #0x8]"
+        },
+        "later_syntactic_test": {
+          "pc": "0x10000143c",
+          "word": "0xb4000198",
+          "assembly": "cbz x24, 0x10000146c",
+          "distance_words": 7,
+          "recognised": false,
+          "why": "LDR and BLR intervene before the alias test; the unchanged post-call model stops at LDR."
+        }
+      },
+      "shape": "none",
+      "explanation": "Incoming x21 is restored from a saved alias, not zeroed by MOV X21, XZR. The post-call sequence reaches an unsupported instruction before a recognised test."
+    }
+  ]
+}
