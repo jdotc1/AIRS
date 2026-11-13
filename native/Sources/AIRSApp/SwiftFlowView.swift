@@ -8,7 +8,7 @@ struct SwiftFlowView: View {
         guard workspace.profile != .standard else {
             return "Methods: qualified synchronous Int → Int struct calls only. Witnesses include required region, entry and presentation evidence. ARM64 only; other forms decline or remain unresolved."
         }
-        let extendedLimits: Bool = workspace.profile == .broadExtended || workspace.profile == .broadImports
+        let extendedLimits: Bool = [.broadExtended, .broadExtendedV2, .broadExtendedV3, .broadImports].contains(workspace.profile)
         let functionLimit: String = workspace.profile == .broad ? "8,192" : "9,216"
         let scanLimit: String = extendedLimits ? "2,097,152" : "262,144"
         let retainedCalls: String = extendedLimits ? "8,192" : "4,096"
@@ -17,6 +17,15 @@ struct SwiftFlowView: View {
         caption += " Call, metadata, per-function and work limits can still make results incomplete. Structural eligibility is not runtime or source proof."
         if workspace.profile == .broadImports {
             caption += " Direct calls to imported `$s` symbols are attributed through verified stubs and remain unresolved: no ABI, witness, return or dyld-binding claim."
+        }
+        if workspace.profile == .broadExtendedV2 || workspace.profile == .broadExtendedV3 {
+            caption += " Imported callees are attributed only and stay unresolved."
+        }
+        if workspace.profile == .broadExtendedV2 {
+            caption += " Each retained imported-call row also records a caller-side error test: a fact about the caller at that call, with no claim about whether the callee throws; absence of the idiom proves nothing."
+        }
+        if workspace.profile == .broadExtendedV3 {
+            caption += " Adds the caller-side error test (a fact about the caller only), plus indirect-target shape and value-witness admission records for indirect call sites: recorded evidence with no claim about callee behaviour; an admitted value-witness call stays declined as value_witness_abi_nonthrowing."
         }
         return caption
     }
