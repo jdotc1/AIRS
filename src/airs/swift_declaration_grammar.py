@@ -45,6 +45,8 @@ class GrammarLimits:
 class ContextElement:
     kind: str
     name: str
+    generic_signature: 'GenericSignature | None' = None
+    enclosing: 'DeclarationIdentity | None' = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -99,6 +101,7 @@ class DeclarationIdentity:
     generic_signature: GenericSignature | None = None
     effects: Effects = Effects()
     name_discriminator: str | None = None
+    fixity: str | None = None
 
     def oracle_projection(self):
         return dict(entity=self.entity, context=[[c.kind, c.name] for c in self.context],
@@ -128,12 +131,12 @@ class DeclarationResult:
 class _Name:
     text: str
     discriminator: str | None = None
+    fixity: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
 class _Context:
     path: tuple[ContextElement, ...]
-    signature: GenericSignature | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -269,14 +272,47 @@ class _Parser:
     def context(self):
         value = self.pop()
         if isinstance(value, _Name):
+            self.bare_name(value, 'module_name_operand')
             return _Context(self.path((ContextElement('module', value.text),)))
         if isinstance(value, _Context):
             return value
         if isinstance(value, _Type) and value.path:
-            return _Context(self.path(value.path), value.signature)
+            self.nominal_operand(value, 'context_type_operand')
+            return _Context(self.path(value.path))
         if isinstance(value, DeclarationIdentity):
-            return _Context(self.path(value.context + (ContextElement('local', value.name),)))
+            if value.entity == 'TypeMetadataAccessFunction':
+                self.fail()
+            return _Context(self.path(value.context +
+                (ContextElement('local', value.name, enclosing=value),)))
         self.fail()
+
+    def bare_name(self, value, detail):
+        if value.discriminator is not None or value.fixity is not None:
+            self.fail('unsupported_production', detail)
+        return value.text
+
+    def nominal_operand(self, value, detail):
+        if (value.node.kind != 'nominal' or not value.path or
+                value.node.modifiers or value.signature is not None):
+            self.fail('unsupported_production', detail)
+
+    def type_node(self, value, signature=False):
+        # A wrapper's signature and rich declaration context cannot disappear
+        # when only its TypeNode is retained. Entity wrappers keep signatures.
+        if value.signature is not None and not signature:
+            self.fail('unsupported_production', 'nested_generic_signature')
+        if any(c.enclosing is not None or c.generic_signature is not None or
+               c.kind == 'anonymous' for c in value.path):
+            self.fail('unsupported_production', 'nominal_type_context')
+        return value.node
+
+    def type_name(self, path):
+        if any(c.kind == 'extension' or '.' in c.name or ':' in c.name for c in path):
+            # Encode the extending module as well as the nominal path. JSON
+            # escaping keeps names containing punctuation unambiguous.
+            return 'context:' + json.dumps([(c.kind, c.name) for c in path],
+                                           separators=(',', ':'), ensure_ascii=True)
+        return '.'.join(c.name for c in path)
 
     def ty(self, kind, name='', args=(), labels=(), modifiers=(), convention=None,
            effects=None, path=(), signature=None):
@@ -286,7 +322,7 @@ class _Parser:
         # Keep a shared DAG while parsing. The final iterative occurrence walk
         # stops at max_nodes without expanding or serializing the whole DAG.
         # Temporary function wrappers and nominal contexts do not count.
-        return _Type(TypeNode(kind, name, tuple(a.node for a in args), tuple(labels),
+        return _Type(TypeNode(kind, name, tuple(self.type_node(a) for a in args), tuple(labels),
                               tuple(modifiers), convention, effects), tuple(path),
                      signature, depth, size)
 
@@ -297,10 +333,9 @@ class _Parser:
 
     def nominal(self, kind):
         name, context = self.pop(_Name), self.context()
+        self.bare_name(name, 'nominal_name_operand')
         path = self.path(context.path + (ContextElement(kind, name.text),))
-        qualified = '.'.join(c.name for c in path if c.kind != 'extension')
-        return self.substitute(self.ty('nominal', qualified, path=path,
-                                      signature=context.signature))
+        return self.substitute(self.ty('nominal', self.type_name(path), path=path))
 
     def identifier(self):
         # Identifiers / identifier, IDENTIFIER-PART, word substitutions, Punycode.
@@ -363,7 +398,9 @@ class _Parser:
             if c == '_':
                 index, repeats, last = 26 if count is None else count + 27, 1, True
             elif c.isalpha():
-                index, repeats, last = ord(c.lower()) - ord('a'), count or 1, c.isupper()
+                if count == 0:
+                    self.fail()
+                index, repeats, last = ord(c.lower()) - ord('a'), 1 if count is None else count, c.isupper()
             else:
                 self.fail()
             if index >= len(self.subs):
@@ -382,6 +419,8 @@ class _Parser:
         if self.eat('g'):
             return self.substitute(self.ty('bound_generic', 'Swift.Optional', (self.pop(_Type),)))
         count = self.number() if self.peek().isdigit() else 1
+        if count == 0:
+            self.fail()
         code = self.take()
         if code == 'c':
             code += self.take()
@@ -413,8 +452,9 @@ class _Parser:
                 return value
             self.fail()
         name, context = self.pop(_Name), self.context()
+        self.bare_name(name, 'protocol_name_operand')
         path = self.path(context.path + (ContextElement('protocol', name.text),))
-        return self.ty('nominal', '.'.join(c.name for c in path), path=path)
+        return self.ty('nominal', self.type_name(path), path=path)
 
     def sequence(self, kind):
         # Types / type-list, protocol-list, pack-element-list.
@@ -423,7 +463,8 @@ class _Parser:
             while True:
                 first = self.marker(_FIRST)
                 variadic = kind == 'tuple' and self.marker(_VARIADIC)
-                label = self.pop(_Name).text if kind == 'tuple' and self.top_is(_Name) else None
+                label = (self.bare_name(self.pop(_Name), 'tuple_label_operand')
+                         if kind == 'tuple' and self.top_is(_Name) else None)
                 value = self.protocol() if kind == 'protocol' else self.pop(_Type)
                 if variadic:
                     value = replace(value, node=replace(value.node,
@@ -444,8 +485,8 @@ class _Parser:
         while True:
             first = self.marker(_FIRST) if compound else True
             if self.top_is(_Type) and self.stack[-1].path and self.stack[-1].path[-1].kind == 'protocol':
-                self.pop(_Type)
-            names.append(self.pop(_Name).text)
+                self.fail('unsupported_production', 'associated_type_protocol_qualifier')
+            names.append(self.bare_name(self.pop(_Name), 'associated_type_name_operand'))
             if first:
                 break
         if base is None:
@@ -480,9 +521,9 @@ class _Parser:
         if form in ('assoc', 'compound'):
             subject = self.substitute(self.associated(subject, form == 'compound'))
         if kind == 'conformance':
-            constraint = self.protocol().node
+            constraint = self.type_node(self.protocol())
         elif kind in ('same_type', 'base_class', 'same_shape'):
-            constraint = self.pop(_Type).node
+            constraint = self.type_node(self.pop(_Type))
         elif kind == 'pack_marker':
             constraint = ''
         elif kind == 'inverse':
@@ -498,7 +539,7 @@ class _Parser:
                 constraint += ':' + ':'.join(map(str, extra))
         self.requirements += 1
         self.budget('max_generic_requirements', self.requirements)
-        return Requirement(kind, subject.node, constraint)
+        return Requirement(kind, self.type_node(subject), constraint)
 
     def signature(self, explicit):
         # Generics / generic-signature, GENERIC-PARAM-COUNT.
@@ -539,6 +580,12 @@ class _Parser:
             self.fail()
         argument = None if self.marker(_EMPTY) else self.pop(_Type)
         result = self.ty('void') if self.marker(_EMPTY) else self.pop(_Type)
+        self.type_node(result)
+        if argument is not None:
+            self.type_node(argument)
+            if argument.node.kind == 'tuple' and (argument.node.modifiers or
+                    any(label is not None for label in argument.node.labels)):
+                self.fail('unsupported_production', 'function_argument_tuple_metadata')
         if argument is None:
             params = ()
         elif argument.node.kind == 'tuple':
@@ -548,21 +595,24 @@ class _Parser:
         self.budget('max_parameters', len(params))
         isolation = None
         if 'c' in ann:
-            isolation = 'global_actor:' + ann['c'].node.name
+            actor = self.type_node(ann['c'])
+            if actor.kind != 'nominal' or actor.modifiers:
+                self.fail('unsupported_production', 'global_actor_operand')
+            isolation = 'global_actor:' + actor.name
         elif 'A' in ann:
             isolation = 'isolated_any'
         elif any('isolated' in p.modifiers for p in params):
             isolation = 'isolated_parameter'
         typed = ann.get('K')
         effects = Effects('K' in ann and typed is None,
-                          typed.node if typed else None, 'a' in ann, isolation)
+                          self.type_node(typed) if typed else None, 'a' in ann, isolation)
         if 'T' in ann:
             result = replace(result, node=replace(result.node,
                              modifiers=result.node.modifiers + ('sending',)))
-        return params, result, effects, argument
+        return params, result, effects, argument, 'b' in ann
 
     def function_type(self, convention='thick'):
-        params, result, effects, argument = self.function_parts()
+        params, result, effects, argument, sendable = self.function_parts()
         # Reuse node metadata from the argument tree without a recursive walk.
         depth = max(result.depth, (argument.depth if argument else 0)) + 1
         size = result.size + (argument.size if argument else 0) + 1
@@ -574,6 +624,8 @@ class _Parser:
             size += 1
         self.budget('max_type_depth', depth)
         modifiers = ('autoclosure',) if convention in ('autoclosure', 'escaping_autoclosure') else ()
+        if sendable:
+            modifiers += ('sendable',)
         return _Type(TypeNode('function', args=params + (result.node,),
                              modifiers=modifiers, convention=convention, effects=effects),
                      depth=depth, size=size)
@@ -586,25 +638,35 @@ class _Parser:
             if self.marker(_FIRST):
                 labels.append(None)
             else:
-                labels.append(self.pop(_Name).text)
+                labels.append(self.bare_name(self.pop(_Name), 'parameter_label_operand'))
         return tuple(reversed(labels))
 
     def plain_function(self):
         signature = self.pop() if self.top_is(GenericSignature) else None
-        params, result, effects, _ = self.function_parts()
+        params, result, effects, _, sendable = self.function_parts()
+        if sendable:
+            self.fail('unsupported_production', 'declaration_sendable')
         labels = self.labels(len(params))
         name, context = self.pop(_Name), self.context()
         return DeclarationIdentity('Function', context.path, name.text, labels, params,
-                                   result.node, signature, effects, name.discriminator)
+                                   result.node, signature, effects, name.discriminator, name.fixity)
+
+    def entity_function(self, value):
+        node = self.type_node(value, signature=True)
+        if node.kind != 'function':
+            self.fail()
+        if node.modifiers or node.convention != 'thick':
+            self.fail('unsupported_production', 'entity_function_type_metadata')
+        return node
 
     def typed_entity(self, kind):
         private = None
         if self.top_is(_Name) and self.stack[-1].discriminator is not None:
             private = self.pop(_Name)
+            if private.text or private.fixity or not private.discriminator.startswith('private:'):
+                self.fail('unsupported_production', 'initializer_name_operand')
         value = self.pop(_Type)
-        node = value.node
-        if node.kind != 'function':
-            self.fail()
+        node = self.entity_function(value)
         params, result = node.args[:-1], node.args[-1]
         labels = self.labels(len(params))
         context = self.context()
@@ -615,13 +677,12 @@ class _Parser:
     def accessor(self, subscript=False):
         value = self.pop(_Type)
         if subscript:
-            if value.node.kind != 'function':
-                self.fail()
-            params, result = value.node.args[:-1], value.node.args[-1]
+            node = self.entity_function(value)
+            params, result = node.args[:-1], node.args[-1]
             labels = self.labels(len(params))
             name = _Name('subscript')
         else:
-            params, result, labels = (), value.node, ()
+            params, result, labels = (), self.type_node(value, signature=True), ()
             name = self.pop(_Name)
         context = self.context()
         c = self.take()
@@ -634,7 +695,7 @@ class _Parser:
         return DeclarationIdentity(_ACCESSORS[c], context.path, name.text, labels,
                                    params, result, value.signature,
                                    value.node.effects if subscript else Effects(),
-                                   name.discriminator)
+                                   name.discriminator, name.fixity)
 
     def bound_generic(self):
         # Types / bound-generic-type; argument lists run outermost first.
@@ -649,13 +710,15 @@ class _Parser:
             if not self.marker(_FIRST):
                 self.fail()
         nominal = self.pop(_Type)
-        if nominal.node.kind != 'nominal' or not nominal.path:
-            self.fail()
+        self.nominal_operand(nominal, 'bound_generic_operand')
         if len(lists) > sum(c.kind not in ('module', 'extension') for c in nominal.path):
             self.fail()
+        if len(lists) != 1:
+            self.fail('unsupported_production', 'nested_generic_argument_groups')
+        self.type_node(nominal)
         args = tuple(a for group in reversed(lists) for a in group)
         return self.substitute(self.ty('bound_generic', nominal.node.name, args,
-                                      path=nominal.path, signature=nominal.signature))
+                                      path=nominal.path))
 
     def special(self):
         # Types / FUNCTION-KIND, METATYPE-REPR, existential-layout, sugar.
@@ -670,12 +733,18 @@ class _Parser:
             self.budget('max_identifier_length', n)
             if self.pos + n > len(self.text):
                 self.fail('truncated')
+            clang_type = self.text[self.pos:self.pos + n]
             self.pos += n
-            return self.function_type(_CONVENTIONS[code])
+            return self.function_type(_CONVENTIONS[code] + ':clang:' + clang_type)
         if c in 'Mmp':
-            if c in 'Mm' and self.take() not in 'tTo':
-                self.fail()
-            return self.ty('metatype' if c == 'M' else 'existential_metatype', args=(self.pop(_Type),))
+            representation = None
+            if c in 'Mm':
+                code = self.take()
+                if code not in 'tTo':
+                    self.fail()
+                representation = {'t': 'thin', 'T': 'thick', 'o': 'objc'}[code]
+            return self.ty('metatype' if c == 'M' else 'existential_metatype',
+                           args=(self.pop(_Type),), convention=representation)
         if c == 'S':
             code = self.take()
             if code not in 'qaD':
@@ -685,8 +754,11 @@ class _Parser:
             return self.ty('bound_generic', {'q': 'Swift.Optional', 'a': 'Swift.Array',
                            'D': 'Swift.Dictionary'}[code], args)
         if c == 'Z':
-            self.sequence('pack')
+            arguments = self.sequence('pack')
+            if arguments.node.args:
+                self.fail('unsupported_production', 'anonymous_context_arguments')
             name, context = self.pop(_Name), self.context()
+            self.bare_name(name, 'anonymous_context_name_operand')
             return _Context(self.path(context.path + (ContextElement('anonymous', name.text),)))
         if c in 'lc':
             superclass = self.pop(_Type) if c == 'c' else self.ty('nominal', 'Swift.AnyObject')
@@ -711,6 +783,7 @@ class _Parser:
             return self.substitute(self.associated(base, c in 'YZX'))
         if c == 'a':
             name, base = self.pop(_Name), self.pop(_Type)
+            self.bare_name(name, 'associated_type_name_operand')
             return self.substitute(self.ty('dependent_member', name.text, (base,)))
         if c == 'p':
             count, pattern = self.pop(_Type), self.pop(_Type)
@@ -815,8 +888,10 @@ class _Parser:
                 module, extended = self.context(), self.pop(_Type)
                 if len(module.path) != 1 or module.path[0].kind != 'module' or not extended.path:
                     self.fail()
-                value = _Context(self.path((ContextElement('extension', module.path[0].name),)
-                                           + extended.path), signature)
+                self.nominal_operand(extended, 'extension_type_operand')
+                value = _Context(self.path((ContextElement('extension', module.path[0].name,
+                                                          generic_signature=signature),)
+                                           + extended.path))
             elif c == 'F':
                 value = self.plain_function()
             elif c == 'c':
@@ -830,13 +905,7 @@ class _Parser:
                     value = DeclarationIdentity({'d': 'Destructor', 'D': 'Deallocator',
                         'Z': 'IsolatedDeallocator'}[code], context.path, 'deinit')
                 elif code in 'Uu':
-                    index = self.index()
-                    closure_type = self.pop(_Type)
-                    if closure_type.node.kind != 'function':
-                        self.fail()
-                    context = self.context()
-                    value = _Context(self.path(context.path +
-                                     (ContextElement('local', str(index)),)))
+                    self.fail('unsupported_production', 'closure_context')
                 elif code in 'EeiPFW':
                     # entity-spec: storage/property initialization helpers are
                     # outside the rule-2 callable entities.
@@ -850,10 +919,11 @@ class _Parser:
                 code = self.take()
                 if code == 'a':
                     nominal = self.pop(_Type)
-                    if not nominal.path:
-                        self.fail()
+                    self.nominal_operand(nominal, 'metadata_accessor_operand')
                     value = DeclarationIdentity('TypeMetadataAccessFunction', nominal.path[:-1],
                                                  nominal.path[-1].name)
+                    if self.pos < len(self.text):
+                        self.fail('malformed_symbol', 'non_entity_global_context')
                 else:
                     self.fail('not_function_entity', 'metadata global')
             elif c in 'NWwD':
@@ -905,30 +975,45 @@ class _Parser:
                 value = self.signature(c == 'r')
             elif c == 'u':
                 sig, ty = self.pop(GenericSignature), self.pop(_Type)
+                if ty.signature is not None:
+                    self.fail('unsupported_production', 'nested_generic_signature')
                 value = replace(ty, signature=sig)
             elif c == 'L':
                 if self.eat('L'):
                     discriminator, name = self.pop(_Name), self.pop(_Name)
-                    value = replace(name, discriminator=discriminator.text)
+                    text = self.bare_name(discriminator, 'private_discriminator_operand')
+                    if name.discriminator is not None:
+                        self.fail('unsupported_production', 'nested_name_discriminator')
+                    value = replace(name, discriminator='private:' + text)
                 elif self.eat('l'):
                     discriminator = self.pop(_Name)
-                    value = _Name('', discriminator.text)
+                    text = self.bare_name(discriminator, 'private_discriminator_operand')
+                    value = _Name('', 'private:' + text)
                 elif self.peek() and self.peek() in 'abcdefghijABCDEFGHIJ':
                     relation = self.take()
-                    value = replace(self.pop(_Name), discriminator='related:' + relation)
+                    name = self.pop(_Name)
+                    if name.discriminator is not None:
+                        self.fail('unsupported_production', 'nested_name_discriminator')
+                    value = replace(name, discriminator='related:' + relation)
                 else:
                     discriminator = str(self.index())
-                    value = replace(self.pop(_Name), discriminator=discriminator)
+                    name = self.pop(_Name)
+                    if name.discriminator is not None:
+                        self.fail('unsupported_production', 'nested_name_discriminator')
+                    value = replace(name, discriminator='local:' + discriminator)
             elif c == 'o':
                 name = self.pop(_Name)
+                self.bare_name(name, 'operator_name_operand')
                 # Identifiers / OPERATOR-FIXITY.
                 spelling = {'a': '&', 'c': '@', 'd': '/', 'e': '=', 'g': '>',
                             'l': '<', 'm': '*', 'n': '!', 'o': '|', 'p': '+',
                             'q': '?', 'r': '%', 's': '-', 't': '~', 'x': '^', 'z': '.'}
                 operator = ''.join(spelling[ch] if ch.isascii() else ch for ch in name.text)
-                if self.take() not in 'ipP':
+                fixity = self.take()
+                if fixity not in 'ipP':
                     self.fail()
-                value = _Name(operator, name.discriminator)
+                value = _Name(operator, name.discriminator,
+                              {'i': 'infix', 'p': 'prefix', 'P': 'postfix'}[fixity])
             elif c == 'B':
                 value = self.builtin()
             elif c == 'I':

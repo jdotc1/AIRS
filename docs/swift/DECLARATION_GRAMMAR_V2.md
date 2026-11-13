@@ -11,10 +11,30 @@ accessor. Only the entity's outer function effects determine `non_throwing`,
 Typed `throws(Never)` and all accessors remain undecided. These are syntax
 classifications, not claims about runtime behavior or ABI admission.
 
-The frozen identity includes context, declaration name and discriminator,
+The frozen identity includes context, declaration name, discriminator and fixity,
 parameter labels and types, result, generic signature and effects. Canonical
 JSON includes every field and uses sorted keys, compact separators and ASCII
 escaping. Historical declaration parsers and their consumers are independent.
+
+`fixity` is `prefix`, `postfix` or `infix` for an operator, and null otherwise.
+Each context element has `kind`, `name`, `generic_signature` and `enclosing`.
+An extension retains its own generic signature; other context kinds have a null
+signature. A local context retains the complete enclosing declaration identity,
+including accessor kind, parameters and effects; other kinds have null
+`enclosing`. The independent oracle projection still uses only context kind and
+name. Local, private and related-name discriminators have distinct `local:`,
+`private:` and `related:` prefixes.
+
+Function types retain `Yb` as the `sendable` modifier. The modifier belongs to
+the nested function type and does not alter the enclosing declaration's effects.
+The allowed modifiers are `inout`, `shared`, `owned`, `sending`, `isolated`,
+`autoclosure`, `variadic`, `noDerivative` and, on function types, `sendable`.
+Metatype representations use `convention` values `thin`, `thick` or `objc`;
+an unspecified representation remains null. A function convention with a C type
+spelling is encoded as `c:clang:<spelling>` or `block:clang:<spelling>`.
+Unconstrained extension type names retain their context as `context:` followed
+by a compact JSON array of kind/name pairs. Names containing qualification
+delimiters use the same unambiguous encoding.
 
 `GrammarLimits` bounds symbol length (4096), identifier length (256), context
 levels (16), retained type nodes (256), substitutions (128), parameters (64),
@@ -56,6 +76,23 @@ unimplemented special types and function entities also use
 Descriptors, value witnesses, witness tables and static wrappers are outside the
 decision set. Static accessors retain the `accessor` decline without an identity.
 An arbitrary unknown spelling is not evidence of a supported production.
+
+Every consumed operand must be retained or cause a decline. In particular,
+`Ma` requires a plain nominal operand: a bound generic, tuple, function,
+existential, modified type or generic wrapper is `unsupported_production`
+with detail `metadata_accessor_operand`. A metadata accessor followed by more
+text is `malformed_symbol`; it cannot become a local declaration context.
+
+Additional conservative declines prevent information loss where the fixed
+identity has no suitable field: protocol-qualified associated types, multiple
+nested generic argument groups, nonempty anonymous-context arguments, closure
+contexts, nested generic signatures in type operands, and nominal type operands
+with local, anonymous or constrained-extension contexts. Decorated names used
+as plain module/type names or labels, nested name discriminators, complex
+global-actor operands, and labelled or modified outer argument tuples also
+decline. Initializer and subscript function wrappers must have the ordinary
+thick convention and no outer modifiers. Direct declaration-level `Yb`
+declines because only a function TypeNode can carry `sendable`.
 
 The pinned demangler takes precedence when the reference grammar differs:
 standard floating types use `Swift.Double` and `Swift.Float`, `ScM` is a class,

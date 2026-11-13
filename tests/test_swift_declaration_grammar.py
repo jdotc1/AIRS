@@ -493,17 +493,66 @@ class DeclarationGrammarTests(unittest.TestCase):
         # keys sorted, tuples arrays, None null, and no JSON whitespace.
         cases = (
             ('$s1M1fyyF', projection(),
-             b'{"context":[{"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"Function","generic_signature":null,"labels":[],"name":"f","name_discriminator":null,"parameters":[],"result":{"args":[],"convention":null,"effects":null,"kind":"void","labels":[],"modifiers":[],"name":""}}'),
+             b'{"context":[{"enclosing":null,"generic_signature":null,"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"Function","fixity":null,"generic_signature":null,"labels":[],"name":"f","name_discriminator":null,"parameters":[],"result":{"args":[],"convention":null,"effects":null,"kind":"void","labels":[],"modifiers":[],"name":""}}'),
             ('$s1M1fySiyF', projection(),
-             b'{"context":[{"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"Function","generic_signature":null,"labels":[],"name":"f","name_discriminator":null,"parameters":[],"result":{"args":[],"convention":null,"effects":null,"kind":"nominal","labels":[],"modifiers":[],"name":"Swift.Int"}}'),
+             b'{"context":[{"enclosing":null,"generic_signature":null,"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"Function","fixity":null,"generic_signature":null,"labels":[],"name":"f","name_discriminator":null,"parameters":[],"result":{"args":[],"convention":null,"effects":null,"kind":"nominal","labels":[],"modifiers":[],"name":"Swift.Int"}}'),
             ('$s1M1SVMa', projection('TypeMetadataAccessFunction', name='S'),
-             b'{"context":[{"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"TypeMetadataAccessFunction","generic_signature":null,"labels":[],"name":"S","name_discriminator":null,"parameters":[],"result":null}'),
+             b'{"context":[{"enclosing":null,"generic_signature":null,"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"TypeMetadataAccessFunction","fixity":null,"generic_signature":null,"labels":[],"name":"S","name_discriminator":null,"parameters":[],"result":null}'),
         )
         for symbol, expected_projection, expected_bytes in cases:
             with self.subTest(symbol=symbol):
                 identity = self.positive(symbol, expected_projection)
                 self.assertEqual(identity.serialize(), expected_bytes)
                 self.assertEqual(identity.to_json(), json.loads(expected_bytes))
+
+    def test_distinct_declarations_have_distinct_identities(self):
+        pairs = (
+            ('$sSa4mainSiRszlE3sumSiyF', '$sSa4mainSdRszlE3sumSiyF'),
+            ('$s4main2ppopyySizF', '$s4main2ppoPyySizF'),
+            ('$s4main3fooyyF3barL_yyF', '$s4main3foo1aySi_tF3barL_yyF'),
+            ('$s4main1xSivg3barL_yyF', '$s4main1xSivs3barL_yyF'),
+            ('$s4main1fyyyyYbXEF', '$s4main1fyyyyXEF'),
+        )
+        for left, right in pairs:
+            with self.subTest(left=left, right=right):
+                first, second = parse_declaration(left), parse_declaration(right)
+                for result in (first, second):
+                    self.invariant(result)
+                    self.assertNotEqual(result.throw_decision, 'undecided')
+                    self.assertIsNotNone(result.identity)
+                self.assertNotEqual(first.identity.serialize(), second.identity.serialize())
+        for code, fixity in (('op', 'prefix'), ('oP', 'postfix'), ('oi', 'infix')):
+            symbol = next(row[0] for row in FUNCTIONS if '1p' + code in row[0])
+            self.assertEqual(parse_declaration(symbol).identity.fixity, fixity)
+        extension = next(c for c in parse_declaration(pairs[0][0]).identity.context
+                         if c.kind == 'extension')
+        self.assertIsNotNone(extension.generic_signature)
+        self.assertEqual([r.kind for r in extension.generic_signature.requirements], ['same_type'])
+        local = next(c for c in parse_declaration(pairs[2][0]).identity.context
+                     if c.kind == 'local')
+        self.assertIsNotNone(local.enclosing)
+        self.assertEqual((local.enclosing.entity, local.enclosing.name), ('Function', 'foo'))
+        parameter = parse_declaration(pairs[4][0]).identity.parameters[0]
+        self.assertEqual(parameter.kind, 'function')
+        self.assertIn('sendable', parameter.modifiers)
+
+    def test_non_entity_global_cannot_be_context(self):
+        for symbol in ('$s4main1SVMa3fooyyF', '$s4main1SVMaAByyF'):
+            with self.subTest(symbol=symbol):
+                result = parse_declaration(symbol)
+                self.invariant(result)
+                self.assertEqual((result.throw_decision, result.reason),
+                                 ('undecided', 'malformed_symbol'))
+                self.assertIsNone(result.identity)
+
+    def test_metadata_accessor_operand(self):
+        result = parse_declaration('$s4main1SVySiGMa')
+        self.invariant(result)
+        self.assertEqual((result.throw_decision, result.reason),
+                         ('undecided', 'unsupported_production'))
+        self.assertIsNone(result.identity)
+        self.positive('$s4main1SVMa', projection('TypeMetadataAccessFunction',
+                                              [['module', 'main']], 'S'))
 
     def test_totality_and_determinism(self):
         rng = random.Random(20261113)
