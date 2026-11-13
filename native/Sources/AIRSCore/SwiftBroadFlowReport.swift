@@ -92,10 +92,10 @@ enum SwiftBroadFlowReport {
             }
             if key == "status_counts" && total != rows.count { throw fail("status denominator mismatch") }
         }
-        let profilePairSupported = (model == "swift-broad-error-flow-v1" && object["profile"] as? String == "broad-v1")
-            || (model == "swift-broad-error-flow-large-v1" && object["profile"] as? String == "broad-large-v1")
-            || (model == "swift-broad-error-flow-extended-v1" && object["profile"] as? String == "broad-extended-v1")
-            || importsProfile
+        let reportedProfile = object["profile"] as? String
+        let profilePairSupported = AnalysisModels.swiftBroadNativePairs.contains(where: { pair in
+            pair.model == model && pair.profile == reportedProfile
+        })
         let importSummary: String
         if importsProfile {
             importSummary = try validateImportEnvelope(object, rows: rows, selected: selected, observed: observed,

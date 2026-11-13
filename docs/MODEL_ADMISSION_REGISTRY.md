@@ -1,5 +1,15 @@
 # Exact model-admission registry hardening
 
+## Generated registries
+
+The Python and Swift registries are generated from `registry/models.json` by
+`scripts/generate-model-registries.py`. To add a model or profile, edit that source
+file, run `python3 -I -B scripts/generate-model-registries.py`, and add the engine
+or application code the new identity needs. A test fails if the generated files
+are stale.
+
+## Historical admission hardening
+
 The Python and native report validators previously repeated the same historical
 model identities in three membership lists each. Future additions could omit a
 validation path and accidentally use generic import rules for a recognized model.

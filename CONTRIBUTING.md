@@ -13,6 +13,9 @@ Preserve the analysis contract, unresolved boundaries and exact image/slice iden
 Treat selected binaries as data, never as code to load or execute. Reuse the existing
 Lumen and owned component implementations where they meet the requirement.
 
+For model or profile additions, edit `registry/models.json`, run
+`python3 -I -B scripts/generate-model-registries.py`, and add the required engine or application code.
+
 Validate changed behavior and retain existing valid receipts for unchanged inputs.
 Native UI fixes require stable interaction acceptance after pending work settles;
 compile-only or immediate selection evidence is insufficient. Source checks, GUI

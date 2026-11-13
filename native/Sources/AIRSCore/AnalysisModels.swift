@@ -1,3 +1,4 @@
+// Generated from registry/models.json; do not edit by hand.
 // Exact report-admission identities, not a claim of current engine capability.
 // Unknown and future labels retain generic import validation.
 enum AnalysisModels {
@@ -57,4 +58,10 @@ enum AnalysisModels {
     static let current = "arm64-bounded-extract-class-v51"
     static let known = cfg.union(["arm64-linear-v1", "arm64-linear-dwarf-v2"])
     static let evaluatedCFI = cfg.union(["arm64-linear-dwarf-v2"])
+    static let swiftBroadNativePairs: [(model: String, profile: String)] = [
+        (model: "swift-broad-error-flow-v1", profile: "broad-v1"),
+        (model: "swift-broad-error-flow-large-v1", profile: "broad-large-v1"),
+        (model: "swift-broad-error-flow-extended-v1", profile: "broad-extended-v1"),
+        (model: "swift-broad-error-flow-imports-v1", profile: "broad-imports-v1"),
+    ]
 }

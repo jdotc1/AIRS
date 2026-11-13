@@ -3,6 +3,19 @@ import XCTest
 @testable import AIRSCore
 
 final class AnalysisModelRegistryTests: XCTestCase {
+    func testBroadProfilePairsMatchGeneratedRegistry() throws {
+        var broadCount = 0
+        for profile in SwiftFlowProfile.allCases {
+            guard let model = profile.broadModel else { continue }
+            let argument = try XCTUnwrap(profile.broadArgument)
+            XCTAssertTrue(AnalysisModels.swiftBroadNativePairs.contains(where: { pair in
+                pair.model == model && pair.profile == argument
+            }), profile.rawValue)
+            broadCount += 1
+        }
+        XCTAssertEqual(broadCount, AnalysisModels.swiftBroadNativePairs.count)
+    }
+
     func testExactHistoricalPolicySets() {
         XCTAssertEqual(AnalysisModels.cfg.count, 50)
         XCTAssertEqual(AnalysisModels.known.subtracting(AnalysisModels.cfg), ["arm64-linear-v1", "arm64-linear-dwarf-v2"])
