@@ -206,8 +206,16 @@ After 0.4.0, each milestone below that changes what a user sees ends in a releas
    at a time. Check it differentially against the toolchain's demangler over every
    imported Swift symbol name in the panel. Exit: no symbol the grammar admits as
    non-throwing that the demangler shows as throwing or async, and the admitted share
-   reported (today 4 of 5,123 on Maccy). Contract:
+   reported (4 of 5,123 on Maccy with the first-generation parsers). Contract:
    [swift/DECLARATION_GRAMMAR_CONTRACT.md](swift/DECLARATION_GRAMMAR_CONTRACT.md).
+   State: the library is merged
+   ([swift/DECLARATION_GRAMMAR_V2.md](swift/DECLARATION_GRAMMAR_V2.md)), and CI checks it
+   against the demangler over the SDK text-stub lists. No profile uses it yet. On the 5,123
+   Maccy 2.8.0 rows attributed to an imported Swift callee (494 distinct names), it
+   decides 2,416 rows: 2,211 non-throwing, 195 throwing and 10 async. The demangler
+   disagrees with none of them, on effects or on identity. Of the 280 names left
+   undecided, 174 are accessors, which this version does not decide. The rest of the
+   panel has not been measured.
 4. **GOT candidate screen.** Explain `got_base_not_adrp`. In the owned fixture the
    four declines with this reason are value-witness calls. If the same holds on the
    panel, which nobody has checked, these are table calls and not GOT loads, and they
