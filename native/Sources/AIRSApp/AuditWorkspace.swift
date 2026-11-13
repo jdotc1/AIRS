@@ -184,6 +184,13 @@ final class AuditWorkspace: ObservableObject {
     private let compareSavedReports: (@Sendable (Data, Data, ManualPairSelection) async throws -> Data)?
     private let batchAudit: (@Sendable (URL) async throws -> Data)?
     private var batchID: UUID?
+    var savedTriageInput: (data: Data, url: URL?)? {
+        rawReport.map { ($0, savedReportURL) }
+    }
+    func savedTriageOperation() throws -> @Sendable (EngineCommand) async throws -> Data {
+        let configuration = try EngineConfiguration.resolve(pythonSetting: pythonPath, useExternalPython: usesExternalPython)
+        return { [runner] command in try await runner.run(command, configuration: configuration).data }
+    }
     private var rawReport: Data?
     private var inspectedInput: URL?
     private var currentBundleProvenance: BundleImageProvenance?

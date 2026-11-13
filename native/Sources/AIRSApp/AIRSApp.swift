@@ -129,6 +129,8 @@ struct AIRSApp: App {
                     .disabled(navigation.swiftFlow.isBusy || workspace.report == nil || workspace.isBusy || entitlements.isBusy || fileOpen.blocksActions)
                 Button("Open Decoder Inventory…") {fileOpen.chooseDecodeInventory(audit:workspace,entitlements:entitlements)}
                     .disabled(navigation.swiftFlow.isBusy || workspace.blocksFileOpen || entitlements.isBusy || fileOpen.blocksActions)
+                Button("Review Unresolved Reasons…") { fileOpen.beginSavedReportTriage(audit: workspace, entitlements: entitlements) }
+                    .disabled(navigation.swiftFlow.isBusy || fileOpen.blocksActions || workspace.blocksFileOpen || entitlements.isBusy)
                 Button("Open Coverage Inventory…") {fileOpen.chooseCoverage(audit:workspace,entitlements:entitlements)}
                     .disabled(navigation.swiftFlow.isBusy || fileOpen.blocksActions || workspace.blocksFileOpen || entitlements.isBusy)
                 Button("Review Owned Build Policy…") {fileOpen.choosePolicyReview(audit:workspace,entitlements:entitlements)}

@@ -123,6 +123,8 @@ final class AIRSFileOpen {
     var decodeInventoryError:String?
     var decodeInventoryReview:DecodeInventorySession?
     var coverageReview:CoverageReviewSession?
+    var savedReportTriage: SavedReportTriageSession?
+    private let triageOperation: (@Sendable (EngineCommand) async throws -> Data)?
     var policyReview:PolicyReviewSession?
     var assessmentReview: AssessmentReviewSession?
     private let assessmentRunner: AssessmentRunner
@@ -146,7 +148,7 @@ final class AIRSFileOpen {
     private let read: @Sendable (URL) async throws -> AIRSOpenedReport
     private let hasModal: @MainActor () -> Bool
 
-    init(read: @escaping @Sendable (URL) async throws -> AIRSOpenedReport = { try await AIRSOpenedReport.read($0) },
+    init(triageOperation: (@Sendable (EngineCommand) async throws -> Data)? = nil, read: @escaping @Sendable (URL) async throws -> AIRSOpenedReport = { try await AIRSOpenedReport.read($0) },
          hasModal: @escaping @MainActor () -> Bool = {
              NSApp?.modalWindow != nil || NSApp?.windows.contains(where: { $0.attachedSheet != nil }) == true
          }, inventoryBuild: @escaping @Sendable (URL) throws -> LiveComponentInventory = { try ComponentInventoryBuilder().capture($0) },
@@ -174,6 +176,7 @@ final class AIRSFileOpen {
          }, settledExportWrite:@escaping @Sendable (SettledProjectExportPreview,URL) async throws -> Void = {preview,target in
              try await Task.detached {try preview.write(to:target)}.value
          }) {
+        self.triageOperation = triageOperation
         self.settledExportWrite=settledExportWrite
         self.projectStore=projectStore ?? InspectionProjectStore(root:Self.defaultProjectRoot)
         self.portableExport=portableExport;self.portableReconstruct=portableReconstruct
@@ -186,7 +189,7 @@ final class AIRSFileOpen {
         self.read = read; self.hasModal = hasModal
     }
 
-    var blocksActions: Bool { decodeInventoryError != nil || decodeInventoryReview != nil || coverageReview != nil || policyReview != nil || intakeReview != nil || archiveReview != nil || inventoryReview != nil || signatureEvidenceReview != nil || componentReview != nil || assessmentReview != nil || projectReview != nil || componentPairReview != nil || isBusy || isPresentingPanel || isTerminating }
+    var blocksActions: Bool { savedReportTriage != nil || decodeInventoryError != nil || decodeInventoryReview != nil || coverageReview != nil || policyReview != nil || intakeReview != nil || archiveReview != nil || inventoryReview != nil || signatureEvidenceReview != nil || componentReview != nil || assessmentReview != nil || projectReview != nil || componentPairReview != nil || isBusy || isPresentingPanel || isTerminating }
 
     func chooseReport(audit: AuditWorkspace, entitlements: EntitlementsWorkspace, navigation: AIRSNavigation) {
         guard !navigation.swiftFlow.isBusy, !blocksActions, !audit.blocksFileOpen, !entitlements.isBusy, !hasModal() else { return }
@@ -384,16 +387,17 @@ final class AIRSFileOpen {
     }
 
     var canCancel: Bool { isBusy && !isWritingInventory }
-    func cancel() { if !isWritingInventory { activeTask?.cancel() } }
+    func cancel() { if !isWritingInventory { savedReportTriage?.invalidate(); activeTask?.cancel() } }
     @discardableResult
     func finishBeforeQuit() async -> Bool {
         isTerminating = true
+        savedReportTriage?.close()
         intakeReview = nil; archiveReview = nil
         if !isWritingInventory { activeTask?.cancel() }
         await activeTask?.value
         if inventoryWriteFailedDuringQuit { return false }
         portableProjectPreview=nil;settledProjectExportPreview=nil;settledExportGeneration=UUID();importedProjectHistory=nil
-        inventoryReview = nil; signatureEvidenceReview = nil; decodeInventoryError=nil; decodeInventoryReview=nil; coverageReview=nil; policyReview=nil; projectReview=nil; assessmentReview = nil; componentReview = nil; componentPairReview = nil; pendingComponentPair = nil
+        inventoryReview = nil; signatureEvidenceReview = nil; decodeInventoryError=nil; decodeInventoryReview=nil; coverageReview=nil; savedReportTriage=nil; policyReview=nil; projectReview=nil; assessmentReview = nil; componentReview = nil; componentPairReview = nil; pendingComponentPair = nil
         return true
     }
     func resumeAfterCancelledQuit() { isTerminating = false; inventoryWriteFailedDuringQuit = false }
@@ -741,12 +745,20 @@ final class AIRSFileOpen {
     @discardableResult
     func openCoverage(_ url:URL,audit:AuditWorkspace,entitlements:EntitlementsWorkspace)->Task<Void,Never>? {
         guard !blocksActions,!audit.blocksFileOpen,!entitlements.isBusy else {return nil}
+        let auditRevision = audit.reportRevision, entitlementRevision = entitlements.model.reportRevision
         isBusy=true;status="Reading saved coverage inventory; no image audit…"
         let task=Task {
             defer {isBusy=false;activeTask=nil}
             do {
-                let inventory=try await Task.detached {try CoverageInventory.decode(ReportFiles.readBounded(url))}.value
+                let inventory=try await Task.detached {
+                    let access = url.startAccessingSecurityScopedResource()
+                    defer { if access { url.stopAccessingSecurityScopedResource() } }
+                    return try CoverageInventory.decode(ReportFiles.readBounded(url))
+                }.value
                 try Task.checkCancellation();guard !isTerminating else {return}
+                guard audit.reportRevision == auditRevision, entitlements.model.reportRevision == entitlementRevision else { return }
+                savedReportTriage = SavedReportTriageSession(sources: [], auditRevision: auditRevision,
+                    entitlementRevision: entitlementRevision, inventory: inventory, importedURL: url)
                 coverageReview=CoverageReviewSession(inventory:inventory,sourceURL:url)
                 status="Saved counts loaded. Aggregation status is separate from analysis completeness."
             } catch {status="Coverage inventory unavailable: "+error.localizedDescription}
@@ -762,28 +774,35 @@ final class AIRSFileOpen {
     }
     @discardableResult
     func openCoverageObservation(_ example:CoverageInventory.Example,reason:String,source:URL,audit:AuditWorkspace,entitlements:EntitlementsWorkspace,navigation:AIRSNavigation)->Task<Void,Never>? {
-        guard let session=coverageReview,!isBusy,!isTerminating,!audit.blocksFileOpen,!entitlements.isBusy else {return nil}
+        guard let session=coverageReview, let triage = savedReportTriage, let token = try? triage.submission(), !isBusy,!isTerminating,!audit.blocksFileOpen,!entitlements.isBusy else {return nil}
         let revision=audit.reportRevision,entitlementRevision=entitlements.model.reportRevision
         isBusy=true;status="Resolving selected saved observation…"
         let task=Task {
             defer {isBusy=false;activeTask=nil}
             do {
                 let value=try await Task.detached {
+                    let access = source.startAccessingSecurityScopedResource()
+                    defer { if access { source.stopAccessingSecurityScopedResource() } }
                     let bytes=try ReportFiles.readBounded(source)
                     let resolved=try session.inventory.resolve(example,reason:reason,sourceBytes:bytes)
-                    return (bytes,resolved.0,resolved.1.id)
+                    return (bytes,resolved.0,resolved.1)
                 }.value
                 try Task.checkCancellation()
-                guard !isTerminating,coverageReview?.id == session.id,audit.reportRevision == revision,entitlements.model.reportRevision == entitlementRevision,!audit.blocksFileOpen,!entitlements.isBusy else {
+                guard !isTerminating,coverageReview?.id == session.id,audit.reportRevision == revision,entitlements.model.reportRevision == entitlementRevision,!audit.blocksFileOpen,!entitlements.isBusy, triageIsCurrent(triage, token: token, audit: audit, entitlements: entitlements) else {
                     status="Workspace changed; referenced observation was not opened.";return
                 }
-                audit.openValidatedReport(value.1,data:value.0,from:source);audit.selection = .finding(value.2);audit.revealSelectedFinding()
-                navigation.showsEntitlements=false;coverageReview=nil;status="Selected saved observation matches the reference; source issues and limits remain visible."
+                savedReportTriage?.openReferenced(report: value.1, finding: value.2, url: source)
+                status="Selected saved observation matches the reference; return to the inventory to continue review."
             } catch {status="Source observation unavailable; sessions preserved. "+error.localizedDescription}
         }
         activeTask=task;return task
     }
-    func closeCoverage() {guard !isBusy else {return};coverageReview=nil;status=""}
+    func closeCoverage() {
+        guard !isWritingInventory else { return }
+        savedReportTriage?.close()
+        if isBusy { activeTask?.cancel() }
+        savedReportTriage = nil; coverageReview = nil; status = ""
+    }
 
     func choosePolicyReview(audit:AuditWorkspace,entitlements:EntitlementsWorkspace) {
         guard !blocksActions,!audit.blocksFileOpen,!entitlements.isBusy,!hasModal() else {return}
@@ -1294,4 +1313,179 @@ final class AIRSFileOpen {
     }
     func closeProjects() {guard !isBusy else {return};cancelPortableProjectPreview();projectReview=nil;status=""}
 
+}
+
+
+extension AIRSFileOpen {
+    @discardableResult
+    func beginSavedReportTriage(audit: AuditWorkspace, entitlements: EntitlementsWorkspace) -> Task<Void, Never>? {
+        guard !blocksActions, !audit.blocksFileOpen, !entitlements.isBusy, !hasModal() else { return nil }
+        let input = audit.savedTriageInput, a = audit.reportRevision, e = entitlements.model.reportRevision
+        isBusy = true; status = "Preparing saved report review…"
+        let task = Task {
+            defer { isBusy = false; activeTask = nil }
+            do {
+                let sources = try await Task.detached {
+                    try input.map { [try SavedTriageSource.admit($0.data, url: $0.url)] } ?? []
+                }.value
+                try Task.checkCancellation()
+                guard !isTerminating, audit.reportRevision == a, entitlements.model.reportRevision == e else { return }
+                savedReportTriage = SavedReportTriageSession(sources: sources, auditRevision: a, entitlementRevision: e)
+                status = "Add saved reports explicitly, then apply. No image analysis is performed."
+            } catch is CancellationError { status = "Review preparation cancelled." }
+            catch { status = error.localizedDescription }
+        }
+        activeTask = task; return task
+    }
+
+    func chooseTriageReports(audit: AuditWorkspace, entitlements: EntitlementsWorkspace) {
+        guard savedReportTriage != nil, !isBusy, !isPresentingPanel, !isTerminating, !audit.blocksFileOpen, !entitlements.isBusy else { return }
+        isPresentingPanel = true
+        let panel = NSOpenPanel(); panel.title = "Add Saved Audit Reports"; panel.allowedContentTypes = [.json]
+        panel.allowsMultipleSelection = true; panel.canChooseDirectories = false
+        let result = panel.runModal(); isPresentingPanel = false
+        if result == .OK { _ = addTriageReports(panel.urls, audit: audit, entitlements: entitlements) }
+    }
+
+    @discardableResult
+    func addTriageReports(_ urls: [URL], audit: AuditWorkspace, entitlements: EntitlementsWorkspace) -> Task<Void, Never>? {
+        guard let session = savedReportTriage, !isBusy, !isTerminating, !audit.blocksFileOpen, !entitlements.isBusy else { return nil }
+        do {
+            let token = try session.submission(), sources = session.sources
+            isBusy = true; status = "Reading explicitly selected saved reports…"
+            let task = Task {
+                defer { isBusy = false; activeTask = nil }
+                do {
+                    let next = try await Task.detached { try SavedTriageSource.adding(urls, to: sources) }.value
+                    try Task.checkCancellation()
+                    guard triageIsCurrent(session, token: token, audit: audit, entitlements: entitlements) else { return }
+                    session.replaceSources(next); status = "Inputs added in selection order; duplicates retained."
+                } catch is CancellationError { status = "Adding reports cancelled; previous inputs retained." }
+                catch { session.message = error.localizedDescription; status = error.localizedDescription }
+            }
+            activeTask = task; return task
+        } catch { session.message = error.localizedDescription; return nil }
+    }
+
+    private func triageIsCurrent(_ session: SavedReportTriageSession, token: TriageSubmission,
+                                 audit: AuditWorkspace, entitlements: EntitlementsWorkspace) -> Bool {
+        !isTerminating && savedReportTriage?.id == session.id && !audit.blocksFileOpen && !entitlements.isBusy &&
+        session.isCurrent(token, audit: audit.reportRevision, entitlements: entitlements.model.reportRevision)
+    }
+
+    @discardableResult
+    func runTriageCoverage(audit: AuditWorkspace, entitlements: EntitlementsWorkspace) -> Task<Void, Never>? {
+        guard let session = savedReportTriage, !isBusy, !isTerminating, !audit.blocksFileOpen, !entitlements.isBusy else { return nil }
+        do {
+            let options = try session.coverageOptions(), token = try session.submission(), sources = session.sources
+            let run = try triageOperation ?? audit.savedTriageOperation()
+            isBusy = true; session.message = nil; status = "Collecting unresolved reasons from saved reports…"
+            let task = Task {
+                defer { isBusy = false; activeTask = nil }
+                do {
+                    try await Task.detached { try SavedTriageSource.validate(sources) }.value
+                    try Task.checkCancellation()
+                    guard triageIsCurrent(session, token: token, audit: audit, entitlements: entitlements) else { status = "Draft or workspace changed; previous result retained."; return }
+                    let data = try await run(.coverage(reports: sources.map(\.data), options: options))
+                    try Task.checkCancellation()
+                    guard triageIsCurrent(session, token: token, audit: audit, entitlements: entitlements) else { status = "Draft or workspace changed; previous result retained."; return }
+                    let inventory = try await Task.detached {
+                        let value = try CoverageInventory.decode(data)
+                        try value.validateSources(sources.map(\.data), options: options)
+                        return value
+                    }.value
+                    try Task.checkCancellation()
+                    guard triageIsCurrent(session, token: token, audit: audit, entitlements: entitlements) else { return }
+                    _ = session.acceptInventory(inventory, data: data, sources: sources, token: token,
+                        audit: audit.reportRevision, entitlements: entitlements.model.reportRevision)
+                    status = "Saved-report counts loaded; full denominators are unchanged by filters."
+                } catch is CancellationError { status = "Cancelled; the draft and last accepted result are retained." }
+                catch { session.message = error.localizedDescription; status = error.localizedDescription }
+            }
+            activeTask = task; return task
+        } catch { session.message = error.localizedDescription; return nil }
+    }
+
+    func chooseTriageFindings(reportIndex: Int, reason: String?, audit: AuditWorkspace, entitlements: EntitlementsWorkspace) {
+        guard let session = savedReportTriage, !isBusy, !isPresentingPanel, !isTerminating,
+              !audit.blocksFileOpen, !entitlements.isBusy else { return }
+        session.select(reason: reason, report: reportIndex)
+        if session.inventorySources.indices.contains(reportIndex) {
+            _ = runTriageSummary(source: session.inventorySources[reportIndex], audit: audit, entitlements: entitlements)
+        } else if let retained = session.resolvedSources[reportIndex] {
+            _ = runTriageSummary(source: retained, audit: audit, entitlements: entitlements)
+        } else {
+            isPresentingPanel = true
+            let panel = NSOpenPanel(); panel.title = "Choose Original Saved Audit Report"; panel.allowedContentTypes = [.json]
+            panel.allowsMultipleSelection = false; panel.canChooseDirectories = false
+            let result = panel.runModal(); isPresentingPanel = false
+            if result == .OK, let url = panel.url { _ = runTriageSummary(sourceURL: url, audit: audit, entitlements: entitlements) }
+        }
+    }
+
+    @discardableResult
+    func runTriageSummary(source: SavedTriageSource? = nil, sourceURL: URL? = nil,
+                          audit: AuditWorkspace, entitlements: EntitlementsWorkspace) -> Task<Void, Never>? {
+        guard let session = savedReportTriage, let inventory = session.inventory, !isBusy, !isTerminating,
+              !audit.blocksFileOpen, !entitlements.isBusy else { return nil }
+        do {
+            let options = try session.summaryOptions(), token = try session.submission(), index = session.selectedReport
+            let resolved = session.resolvedSources
+            let run = try triageOperation ?? audit.savedTriageOperation()
+            isBusy = true; session.message = nil; status = "Selecting findings from the original saved report…"
+            let task = Task {
+                defer { isBusy = false; activeTask = nil }
+                do {
+                    let input = try await Task.detached {
+                        let input: SavedTriageSource
+                        if let source { input = source }
+                        else if let sourceURL, let loaded = try SavedTriageSource.adding([sourceURL], to: []).first { input = loaded }
+                        else { throw ReportError.invalidContents("Choose an original saved audit report for this record.") }
+                        _ = try inventory.bindSource(input.data, at: index)
+                        var proposed = resolved; proposed[index] = input
+                        try SavedTriageSource.validate(Array(proposed.values))
+                        return input
+                    }.value
+                    try Task.checkCancellation()
+                    guard triageIsCurrent(session, token: token, audit: audit, entitlements: entitlements) else { status = "Draft or workspace changed; previous result retained."; return }
+                    let data = try await run(.summary(report: input.data, options: options))
+                    try Task.checkCancellation()
+                    guard triageIsCurrent(session, token: token, audit: audit, entitlements: entitlements) else { status = "Draft or workspace changed; previous result retained."; return }
+                    let result = try await Task.detached {
+                        let summary = try SavedReportSummary.decode(data)
+                        let original = try summary.bind(input.data, projectionBytes: data, options: options)
+                        return TriageFindings(summary: summary, data: data, source: input, report: original, reportIndex: index)
+                    }.value
+                    try Task.checkCancellation()
+                    guard triageIsCurrent(session, token: token, audit: audit, entitlements: entitlements) else { return }
+                    _ = session.acceptFindings(result, token: token, audit: audit.reportRevision, entitlements: entitlements.model.reportRevision)
+                    status = "Selected findings are bound to the saved source; evidence opens from that source."
+                } catch is CancellationError { status = "Cancelled; previous results retained." }
+                catch { session.message = error.localizedDescription; status = error.localizedDescription }
+            }
+            activeTask = task; return task
+        } catch { session.message = error.localizedDescription; return nil }
+    }
+
+    func exportTriage(audit: AuditWorkspace, entitlements: EntitlementsWorkspace) {
+        guard let session = savedReportTriage, !isBusy, !isPresentingPanel, !isTerminating else { return }
+        let data = session.page == .inventory ? session.inventoryData : session.findings?.data
+        guard let data else { return }
+        let protected = session.protectedURLs + entitlements.protectedInputs
+        isPresentingPanel = true
+        let panel = NSSavePanel(); panel.allowedContentTypes = [.json]; panel.nameFieldStringValue = session.page == .inventory ? "coverage.json" : "summary.json"
+        let result = panel.runModal(); isPresentingPanel = false
+        guard result == .OK, let url = panel.url else { return }
+        do { try audit.validateExportDestination(url, protectedInputs: protected) }
+        catch { session.message = error.localizedDescription; return }
+        isBusy = true; isWritingInventory = true; inventoryWriteFailedDuringQuit = false; status = "Saving admitted result…"
+        let task = Task {
+            defer { isBusy = false; isWritingInventory = false; activeTask = nil }
+            do {
+                try await Task.detached { try ComparisonExportProtection.write(data, to: url, sources: protected) }.value
+                status = "Saved admitted result."
+            } catch { inventoryWriteFailedDuringQuit = isTerminating; status = error.localizedDescription }
+        }
+        activeTask = task
+    }
 }
