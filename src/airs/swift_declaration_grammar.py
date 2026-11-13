@@ -47,6 +47,7 @@ class ContextElement:
     name: str
     generic_signature: 'GenericSignature | None' = None
     enclosing: 'DeclarationIdentity | None' = None
+    extended_path: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -103,6 +104,8 @@ class DeclarationIdentity:
     effects: Effects = Effects()
     name_discriminator: str | None = None
     fixity: str | None = None
+    storage: str | None = None
+    symbol: str | None = None
 
     def oracle_projection(self):
         return dict(entity=self.entity, context=[[c.kind, c.name] for c in self.context],
@@ -851,7 +854,8 @@ class _Parser:
         return DeclarationIdentity(_ACCESSORS[c], context.path, name.text, labels,
                                    params, result, value.signature,
                                    value.node.effects if subscript else Effects(),
-                                   name.discriminator, name.fixity)
+                                   name.discriminator, name.fixity,
+                                   storage='subscript' if subscript else 'variable')
 
     def bound_generic(self):
         # Types / bound-generic-type; argument lists run outermost first.
@@ -1062,7 +1066,8 @@ class _Parser:
                     self.fail()
                 self.nominal_operand(extended, 'extension_type_operand', 'malformed_symbol')
                 value = _Context(self.path((ContextElement('extension', module.path[0].name,
-                                                          generic_signature=signature),)
+                                                          generic_signature=signature,
+                                                          extended_path=self.path_text(extended.path)),)
                                            + extended.path))
             elif c == 'F':
                 value = self.plain_function()
@@ -1202,7 +1207,8 @@ class _Parser:
             if self.pos <= start:
                 self.fail()
         if len(self.stack) == 1 and isinstance(self.stack[0], DeclarationIdentity):
-            identity = self.stack[0]
+            identity = replace(self.stack[0], symbol=self.text[1:]
+                               if self.text.startswith('_') else self.text)
             self.validate(identity)
             return identity
         if len(self.stack) == 1 and isinstance(self.stack[0], _Type) and self.stack[0].path:

@@ -12,7 +12,13 @@ Typed `throws(Never)` and all accessors remain undecided. These are syntax
 classifications, not claims about runtime behavior or ABI admission.
 
 The frozen identity includes context, declaration name, discriminator and fixity,
-parameter labels and types, result, generic signature and effects. Canonical
+parameter labels and types, result, generic signature, effects, storage kind and
+symbol text. Distinctness is anchored on the symbol text; the structured fields
+are its decoded description. The top-level `symbol` removes one leading
+underscore from the input, so `$s` and `_$s` spellings serialize identically.
+A local context's nested `enclosing` identity has `symbol` set to null.
+`storage` is `variable` or `subscript` for accessors, including nested enclosing
+accessors, and null for all other entities. Canonical
 JSON includes every field and uses sorted keys, compact separators and ASCII
 escaping. Every TypeNode has keys `args`, `convention`, `effects`, `kind`,
 `labels`, `modifiers`, `name` and `path`. A nominal type's `path` is canonical
@@ -34,7 +40,11 @@ oracle projection are unchanged. Historical declaration parsers and their
 consumers are independent.
 
 `fixity` is `prefix`, `postfix` or `infix` for an operator, and null otherwise.
-Each context element has `kind`, `name`, `generic_signature` and `enclosing`.
+Each context element has `kind`, `name`, `generic_signature`, `enclosing` and
+`extended_path`. An extension's `extended_path` is canonical JSON text of the
+extended type's kind/name path, recording where that type ends within the flat
+context list. It is null for other context kinds. The flat context and oracle
+projection are unchanged.
 An extension retains its own generic signature; other context kinds have a null
 signature. A local context retains the complete enclosing declaration identity,
 including accessor kind, parameters and effects; other kinds have null

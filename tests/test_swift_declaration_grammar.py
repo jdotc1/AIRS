@@ -501,17 +501,54 @@ class DeclarationGrammarTests(unittest.TestCase):
         # keys sorted, tuples arrays, None null, and no JSON whitespace.
         cases = (
             ('$s1M1fyyF', projection(),
-             b'{"context":[{"enclosing":null,"generic_signature":null,"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"Function","fixity":null,"generic_signature":null,"labels":[],"name":"f","name_discriminator":null,"parameters":[],"result":{"args":[],"convention":null,"effects":null,"kind":"void","labels":[],"modifiers":[],"name":"","path":null}}'),
+             b'{"context":[{"enclosing":null,"extended_path":null,"generic_signature":null,"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"Function","fixity":null,"generic_signature":null,"labels":[],"name":"f","name_discriminator":null,"parameters":[],"result":{"args":[],"convention":null,"effects":null,"kind":"void","labels":[],"modifiers":[],"name":"","path":null},"storage":null,"symbol":"$s1M1fyyF"}'),
             ('$s1M1fySiyF', projection(),
-             b'{"context":[{"enclosing":null,"generic_signature":null,"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"Function","fixity":null,"generic_signature":null,"labels":[],"name":"f","name_discriminator":null,"parameters":[],"result":{"args":[],"convention":null,"effects":null,"kind":"nominal","labels":[],"modifiers":[],"name":"Swift.Int","path":"[[\\\"module\\\",\\\"Swift\\\"],[\\\"struct\\\",\\\"Int\\\"]]"}}'),
+             b'{"context":[{"enclosing":null,"extended_path":null,"generic_signature":null,"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"Function","fixity":null,"generic_signature":null,"labels":[],"name":"f","name_discriminator":null,"parameters":[],"result":{"args":[],"convention":null,"effects":null,"kind":"nominal","labels":[],"modifiers":[],"name":"Swift.Int","path":"[[\\\"module\\\",\\\"Swift\\\"],[\\\"struct\\\",\\\"Int\\\"]]"},"storage":null,"symbol":"$s1M1fySiyF"}'),
             ('$s1M1SVMa', projection('TypeMetadataAccessFunction', name='S'),
-             b'{"context":[{"enclosing":null,"generic_signature":null,"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"TypeMetadataAccessFunction","fixity":null,"generic_signature":null,"labels":[],"name":"S","name_discriminator":null,"parameters":[],"result":{"args":[{"args":[],"convention":null,"effects":null,"kind":"nominal","labels":[],"modifiers":[],"name":"M.S","path":"[[\\\"module\\\",\\\"M\\\"],[\\\"struct\\\",\\\"S\\\"]]"}],"convention":null,"effects":null,"kind":"metatype","labels":[],"modifiers":[],"name":"","path":null}}'),
+             b'{"context":[{"enclosing":null,"extended_path":null,"generic_signature":null,"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"TypeMetadataAccessFunction","fixity":null,"generic_signature":null,"labels":[],"name":"S","name_discriminator":null,"parameters":[],"result":{"args":[{"args":[],"convention":null,"effects":null,"kind":"nominal","labels":[],"modifiers":[],"name":"M.S","path":"[[\\\"module\\\",\\\"M\\\"],[\\\"struct\\\",\\\"S\\\"]]"}],"convention":null,"effects":null,"kind":"metatype","labels":[],"modifiers":[],"name":"","path":null},"storage":null,"symbol":"$s1M1SVMa"}'),
         )
         for symbol, expected_projection, expected_bytes in cases:
             with self.subTest(symbol=symbol):
                 identity = self.positive(symbol, expected_projection)
                 self.assertEqual(identity.serialize(), expected_bytes)
                 self.assertEqual(identity.to_json(), json.loads(expected_bytes))
+
+    def test_identity_anchor_and_extent(self):
+        pairs = (
+            ('$s4main1SV1ME1TV3fooyyF', '$s4main1SV1TV1ME3fooyyF'),
+            ('$s4main1SVSiycig', '$s4main1SV9subscriptSivg'),
+            ('$s4main3fooyyyF', '$s4main3fooyyF'),
+            ('$s4main1xySivg', '$s4main1xSivg'),
+            ('$s4main3foo_ySi_tF', '$s4main3foo_ySiF'),
+        )
+        for left, right in pairs:
+            with self.subTest(left=left, right=right):
+                identities = []
+                for symbol in (left, right):
+                    result = parse_declaration(symbol)
+                    self.invariant(result)
+                    self.assertIsNotNone(result.identity)
+                    self.assertEqual(result.identity.symbol, symbol)
+                    identities.append(result.identity)
+                self.assertNotEqual(identities[0].serialize(), identities[1].serialize())
+        for symbol, expected in zip(pairs[0], (
+                '[["module","main"],["struct","S"]]',
+                '[["module","main"],["struct","S"],["struct","T"]]')):
+            identity = parse_declaration(symbol).identity
+            self.assertEqual([c.extended_path for c in identity.context
+                              if c.kind == 'extension'], [expected.replace('[[', '[[')])
+        for symbol, storage in zip(pairs[1], ('subscript', 'variable')):
+            self.assertEqual(parse_declaration(symbol).identity.storage, storage)
+        plain = parse_declaration('$s1M1fyyF').identity
+        prefixed = parse_declaration('_$s1M1fyyF').identity
+        self.assertEqual(plain.serialize(), prefixed.serialize())
+        self.assertEqual(plain.symbol, '$s1M1fyyF')
+        self.assertEqual(prefixed.symbol, '$s1M1fyyF')
+        local = parse_declaration('$s4main1xSivg3barL_yyF').identity
+        self.assertIsNotNone(local)
+        enclosing = next(c.enclosing for c in local.context if c.kind == 'local')
+        self.assertIsNone(enclosing.symbol)
+        self.assertEqual(enclosing.storage, 'variable')
 
     def test_distinct_declarations_have_distinct_identities(self):
         pairs = (
