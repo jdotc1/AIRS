@@ -4,107 +4,74 @@
 
 # AIRS
 
-A native macOS evidence-review workspace with a separately executable,
-standard-library-only Python ARM64 Mach-O unwind analyzer. Selected binaries are
-input data and are never loaded or executed by the analyzer.
+AIRS is a macOS application for reviewing what a compiled program contains without
+running it. You select an application, a framework or a single ARM64 Mach-O file, and
+AIRS reads it as data and shows what it found, what it could not decide, and why.
 
-## Development source and the published app
+It has two parts:
 
-This is the **single active AIRS development repository**. Development branches,
-pull requests, issues and future releases belong here.
+- a native macOS application (SwiftUI and AppKit) for selecting inputs, reviewing
+  results and saving them, and
+- an analysis engine written in Python with no dependency outside the standard
+  library, which also runs on its own from the command line.
+
+## What it does
+
+- **Unwind audit.** For each function in an ARM64 image, AIRS compares the recorded
+  unwind information with what a bounded reading of the instructions supports. Each
+  function gets a verdict and, when the verdict is not agreement, a reason.
+- **Component review.** AIRS lists the code units inside an application bundle with
+  their signatures and entitlements. For a previous and a current version of the same
+  application it reports what changed in the declared permissions and components
+  ([Security Changes](docs/COMPONENT_SECURITY_DELTA.md)).
+- **Swift error flow.** For selected images, AIRS finds calls to throwing Swift
+  functions and the paths their success and error returns take, within stated limits
+  ([Swift error flow](docs/SWIFT_ERROR_FLOW.md)).
+- **Saved reports.** Results are saved as files that can be reopened, summarised and
+  compared across builds ([examples](docs/SAVED_REPORT_COMMAND_EXAMPLES.md)).
+
+## What it never does
+
+- It never loads or executes the program it is inspecting. A selected binary is
+  input data.
+- It watches nothing and fetches nothing. A person selects each input.
+- It does not count an undecided result as agreement. Functions and changes it could
+  not decide stay in every total, each with a reason.
+
+## What its results do not establish
+
+A result describes the structure of the bytes that were read. It is not a statement
+that a program is safe, trusted or correct, that a code path runs, or what the
+original source looked like. Signature and entitlement evidence is a record of what
+the file declares; it does not authenticate the signer. Every analysis has a named
+model with documented limits, and anything outside those limits is reported as
+unsupported or unresolved. The limits are listed in the
+[analysis contract](docs/ANALYSIS_CONTRACT.md) and the page for each model.
+
+## Install
+
+Download the current release from the
+[releases page](https://github.com/jdotc1/AIRS/releases). Each release provides the
+signed and notarized application archive, the exact source, a qualification summary
+and SHA-256 checksums.
 
 The current release is the
-[AIRS 0.3.4/build 32 preview](https://github.com/jdotc1/AIRS/releases/tag/v0.3.4-build32),
-using the accepted signed, notarized and stapled application. It includes evidence-linked
-Security Changes in Component Review and native Standard/Broad Swift analysis,
-including broad-v1 declaration, ABI, control-flow, value and recorded witness evidence,
-plus the explicitly selected extended Swift scan profile. The release includes source, checksums and a
-qualification summary describing reused evidence and the limited installed-app check.
-Historical build 13 browser-download and local App Translocation acceptance remain
-recorded in [prior release qualification](docs/CURRENT_SOURCE_RELEASE_GATES.md).
-**Independent clean-machine and minimum-macOS acceptance remain pending.**
-Window-capture geometry diagnostics on the tested macOS build are documented as
-a [macOS limitation](docs/MACOS_LIMITATIONS.md).
-The [build 12 records](docs/RELEASE_0_3_3_BUILD12.md) and
-[sidebar acceptance](docs/SIDEBAR_NAVIGATION.md) retain their historical scope.
+[AIRS 0.4.0 build 33 preview](https://github.com/jdotc1/AIRS/releases/tag/v0.4.0-build33).
+It requires macOS 27 on Apple silicon and adds the imported-callee Swift error-flow
+profile ([release record](docs/RELEASE_0_4_0_BUILD33.md)).
 
-Build 10 introduced the isolated downloaded-app acceptance profile.
-See [its evidence and limits](docs/RELEASE_0_3_3_BUILD10.md).
-SOURCE_SNAPSHOT.json records the retained baseline and its changed/reused
-sanitization scope. Subsequent development is committed directly
-here, with private execution records kept outside the tracked source tree.
+## Requirements
 
-The source includes the v40 baseline: bounded X29-relative
-X stack access, signed X division, W RBIT, equivalent contiguous compact rules,
-and local refusal for the two operand-free FDE row-state opcodes. These changes
-retain explicit unsupported and unresolved boundaries; they are not general
-memory analysis or broad DWARF-program support. See
-[development scope and evidence limits](docs/DEVELOPMENT_STATUS.md).
+- AIRS 0.4.0 and later: macOS 27 or later on Apple silicon.
+- AIRS 0.3.4 build 32 is the last release for macOS 14 to 26. It declares macOS 14 as
+  its minimum and was never tested on it.
+- Intel Macs are not supported.
 
-The native app adopts Lumen's complete settings-window scaffold: a compact
-native toolbar, one sidebar control, category history, coherent surfaces and
-searchable Engine/Reports panes. The actual AIRS Settings window was visually
-reviewed before a separate local developer installation. This is appearance
-evidence, not complete interaction or release qualification.
+The application includes its own Python runtime. Nothing else needs to be installed.
 
-Other development changes include settled project companion import/export and
-re-export, historical-outcome presentation, and a bounded read-only project
-catalog command. Historical observations and imported receipts do not establish
-current permissions, issuer authenticity, trust, safety or a restored live queue.
-The stronger C4 exchange retains its separate
-[public protocol contract](docs/MACSCOPE_BOUND_CONTRACT.md).
+## Build from source
 
-## Raw signature evidence and v41 CFI controls
-
-Component Review also includes an evidence-linked Security Changes mode for a
-selected previous/current app pair. It reports bounded static declaration and
-component changes, related observations, and coverage limitations, with
-explicit per-component evidence capture. See the [security change analysis
-contract](docs/COMPONENT_SECURITY_DELTA.md), [original qualification record](docs/COMPONENT_SECURITY_DELTA_RESULTS.md),
-and [independent real-release corpus](docs/security-delta-real-corpus/RESULTS.md).
-
-Current source adds descriptor-bound raw XML/DER signature evidence and the
-`arm64-bounded-cfi-control-v41` extension. It preserves v40 structural checks,
-refusal accounting and historical parser defaults, while the active engine
-opts into bounded fixed-width location advances and remembered recovery state.
-Historical model identities remain distinct. Raw signature bytes are structural
-evidence; saved imports do not authenticate the original or authorize live reads.
-See [signature evidence](docs/SIGNATURE_EVIDENCE.md) and
-[the v41 contract](docs/CFI_CONTROL_V41.md).
-
-## Saved reports and project navigation
-
-The source adds view-local project name search, bounded catalog name selection
-and deterministic ordering. Saved-report summaries support JSON or escaped text,
-verdict and literal reason selection, stable verdict ordering and explicit detail
-limits. Full source counts and unresolved denominators remain intact. Comparison
-and coverage commands also provide bounded text output. See the
-[saved-report examples](docs/SAVED_REPORT_COMMAND_EXAMPLES.md).
-The source CLI also supports explicit one-to-one finding pairs for stripped or
-renamed cross-build review via repeatable `diff --pair BASELINE_ID=CURRENT_ID`.
-See [manual pairing](docs/MANUAL_FUNCTION_PAIRS.md) for validation and limits.
-Source audit can optionally emit bounded exact-byte function-body evidence with
-`--include-function-fingerprints`; [the fingerprint contract](docs/FUNCTION_BODY_FINGERPRINTS.md)
-explains eligibility and why production alone does not perform matching.
-Saved-report comparison can separately opt into `diff --match-exact-bodies` for
-[unique exact-body review candidates](docs/EXACT_BODY_CANDIDATES.md), preserving
-manual/symbol precedence, duplicate ambiguity and compatibility limits.
-
-See [workspace footprint guidance](docs/WORKSPACE_FOOTPRINT.md) for preserving
-qualification evidence while removing obsolete build products and worktrees.
-
-## Build and verification
-
-The engine literal `__version__` in `src/airs/__init__.py` defines the product
-version. Static package metadata and the Swift constant are guarded copies checked
-against it by a source test. Reports from earlier product versions stay admissible.
-
-The current source requires macOS 27 or newer on Apple silicon and Xcode 27 or
-newer. Python source requires 3.11 or newer. Continuous integration builds and
-tests the native package on a hosted macOS 27 runner. Releases up to 0.3.4 build 32
-declare macOS 14 as their minimum and were never tested on it; systems older than
-macOS 27 are not supported from the next release. Clean-Mac acceptance of a
-published archive and Intel-host qualification remain separate limits.
+Building requires macOS 27, Xcode 27 or later, and Python 3.11 or later.
 
 ```
 swift build --package-path native --configuration release --product AIRSApp
@@ -112,43 +79,44 @@ swift build --package-path native --configuration release --product airs-entitle
 python3 -I -B airs_cli.py --version
 ```
 
-Lumen and EntitlementDiff are vendored. A developer bundle can be assembled with
-`bash scripts/package-app.sh --release --external-python`. A standalone bundle
-requires a prepared private Python runtime; see docs/PRIVATE_PYTHON.md. These are
-operator instructions, not newly executed release qualification. Version constants
-in the source and developer packaging are not a new release identity.
+A developer bundle that uses the system Python is assembled with
+`bash scripts/package-app.sh --release --external-python`. A standalone bundle needs a
+prepared private Python runtime ([PRIVATE_PYTHON.md](docs/PRIVATE_PYTHON.md)).
 
-Accepted checks are reused for unchanged boundaries. New source preparation does
-not repeat engine suites, corpora, dependency checks or signing. Test output roots
-use portable temporary defaults; AIRS_TEST_OUTPUT_ROOT selects an explicit output root.
-An explicit, fail-closed Settings-review mode uses isolated storage and preferences;
-normal startup remains the default. CI instructions are not a distribution approval.
+The product has one version. The literal `__version__` in `src/airs/__init__.py`
+defines it; the package metadata and a Swift constant are copies that a test checks.
+
+Continuous integration runs the Python tests on two Python versions, builds and tests
+the native package on a hosted macOS 27 runner, checks the ARM64 decoders against an
+independent disassembler, and scans every pull request for text that must not be
+published. [CONTRIBUTING.md](CONTRIBUTING.md) describes the workflow.
+
+## Where to read more
+
+- [Roadmap](docs/ROADMAP.md): what is planned, what is not, and why.
+- [Architecture](docs/ARCHITECTURE.md) and the
+  [analysis contract](docs/ANALYSIS_CONTRACT.md).
+- [Model registry](docs/MODEL_ADMISSION_REGISTRY.md): every analysis model and what it
+  admits.
+- [Release acceptance](docs/RELEASE_ACCEPTANCE.md): how a published archive is checked
+  on a clean machine, and what that check does not cover.
+- Release documents: [0.4.0 build 33](docs/RELEASE_0_4_0_BUILD33.md),
+  [0.3.4 build 32](docs/RELEASE_0_3_4_BUILD32.md),
+  [0.3.4 build 29](docs/RELEASE_0_3_4_BUILD29.md),
+  [0.3.3 build 12](docs/RELEASE_0_3_3_BUILD12.md),
+  [0.3.3 build 10](docs/RELEASE_0_3_3_BUILD10.md),
+  [0.3.3 build 9](docs/RELEASE_0_3_3_BUILD9.md) and the
+  [release history](docs/RELEASE_HISTORY_RECONCILIATION.md).
+- [Known macOS limitation](docs/MACOS_LIMITATIONS.md) in window-geometry diagnostics.
 
 ## Source scope and licensing
 
-The export excludes private Git history, maintainer instructions, internal
-handoffs, qualification/comparison receipts, local logs, screenshots, corpus
-locations and compiled apps/runtimes. Owned parser/report regression fixtures and
-public schemas/contracts remain included. SOURCE_FILES.txt inventories the
-historical source-export payload, not current repository membership;
-SOURCE_EXPORT_SCOPE.json records that export's inspection and evidence reuse.
+This is the only active AIRS repository. The source excludes private history,
+maintainer records, logs, screenshots, corpus locations and compiled applications.
+Owned regression fixtures and public schemas are included. `SOURCE_FILES.txt`,
+`SOURCE_EXPORT_SCOPE.json` and `SOURCE_SNAPSHOT.json` describe the original 0.3.3
+source import and are kept as records of it.
 
-AIRS and the bundled Lumen snapshot are licensed under the [MIT License](LICENSE).
-Lumen's mixed-snapshot source identity and distribution authorization are recorded
-in native/Vendor/Lumen/PROVENANCE.md. EntitlementDiff retains its MIT license;
-Python's upstream licenses accompany the separately packaged runtime. See
-[third-party notices](THIRD_PARTY_NOTICES.md).
-
-Publication, optimized release integration, signing/notarization and release
-acceptance are separate steps. This source snapshot claims none of them.
-
-## Swift throwing-call recovery
-
-The separate `swift-error-flow` CLI recovers bounded synchronous Swift success
-and error return-edge candidates from selected ARM64 images. See
-[the admission contract and owned qualification](docs/SWIFT_ERROR_FLOW.md).
-This first slice does not change unwind verdicts or reconstruct full `do/catch`.
-
-The integrated Swift workspace and separate broad-v1 engine profile are described
-in [Integrated Swift build](docs/INTEGRATED_SWIFT_BUILD.md). Component Review and
-Security Changes retain their existing evidence and coverage semantics.
+AIRS and the bundled design-system snapshot are licensed under the
+[MIT License](LICENSE). EntitlementDiff keeps its MIT license, and Python's licenses
+accompany the packaged runtime. See [third-party notices](THIRD_PARTY_NOTICES.md).
