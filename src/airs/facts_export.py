@@ -246,7 +246,10 @@ def _validate(report):
         p = _field(admission, 'import_provenance', dict)
         if _text(p, 'stub_model') != STUB_MODEL:
             _fail('unsupported_stub_model')
-        for key in ('stub_indirect_entry_offset', 'pointer_indirect_entry_offset', 'nlist_offset', 'symbol_index'):
+        if 'stub_indirect_index' not in p or 'pointer_indirect_index' not in p:
+            _fail('missing_indirect_index')
+        for key in ('stub_indirect_entry_offset', 'pointer_indirect_entry_offset', 'nlist_offset',
+                    'symbol_index', 'stub_indirect_index', 'pointer_indirect_index', 'pointer_address'):
             _int(p, key)
         words = _field(p, 'stub_words', list)
         if len(words) != 3:
@@ -361,10 +364,11 @@ def _unit(row):
                  [dict(kind='decodedInstruction', ref=hex(row['call_pc']))])
     p = row['import_provenance']
     evidence = [dict(kind='decodedInstruction', ref=hex(w['pc'])) for w in p['stub_words']]
-    for table, key in (('stubIndirectEntry', 'stub_indirect_entry_offset'),
-                       ('pointerIndirectEntry', 'pointer_indirect_entry_offset')):
-        evidence.append(dict(kind='loaderRecord', ref=table + '[0]@' + hex(p[key])))
-    evidence.append(dict(kind='loaderRecord', ref=f"symtab[{p['symbol_index']}]@{hex(p['nlist_offset'])}"))
+    evidence.append(dict(kind='loaderRecord',
+        ref=f"indirectSymbol[{p['stub_indirect_index']}]@{hex(row['callee_stub_pc'])}"))
+    evidence.append(dict(kind='loaderRecord',
+        ref=f"indirectSymbol[{p['pointer_indirect_index']}]@{hex(p['pointer_address'])}"))
+    evidence.append(dict(kind='loaderRecord', ref=f"undefinedSymbol[{p['symbol_index']}]@0x0"))
     name = _fact(address(row['callee_stub_pc']), 'hasName', row['symbol'], evidence)
     return call, name, frontier
 

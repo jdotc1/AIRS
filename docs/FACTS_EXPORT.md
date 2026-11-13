@@ -57,10 +57,17 @@ Each admitted imported-callee row contributes an authoritative `callsTarget`
 fact, whose subject is the call address and whose value is the stub address
 string, plus an `unknownCalleeEffects` frontier item. The first occurrence of a
 stub in a file also contributes an authoritative `hasName` fact with its raw
-symbol string. Its provenance retains the three recorded stub instructions and
-the two indirect-table entries and symbol-table entry. Loader refs retain the
-recorded offset-based forms `stubIndirectEntry[0]@…`,
-`pointerIndirectEntry[0]@…`, and `symtab[index]@…`.
+symbol string. Its provenance contains these four ref forms in order:
+
+- Three `decodedInstruction` refs, one VM address per recorded stub word.
+- `loaderRecord` `indirectSymbol[stub_indirect_index]@callee_stub_pc`.
+- `loaderRecord` `indirectSymbol[pointer_indirect_index]@pointer_address`.
+- `loaderRecord` `undefinedSymbol[symbol_index]@0x0`.
+
+Refs carry VM addresses and table indices, never file offsets. Addresses use
+canonical lowercase hexadecimal without leading zeros, with `0x0` for zero.
+The undefined-symbol address is its stored zero value; the producer refuses
+nonzero values. Recorded file offsets remain subject to input consistency checks.
 
 The first evidence item carries rule attribution
 `airs.swift-broad-error-flow-imports-v1` with version `"1"`; no separate
@@ -72,10 +79,8 @@ use the resulting ID.
 Authoritative describes a producer-reported image reading, not independent
 verification. There are no proven facts, proof certificates, `generation`,
 `dependsOn`, derived facts, function-start claims, ABI admission, callee throw
-or return claims, or dyld binding claims. Format acceptance establishes neither
-image identity acceptance nor resolvable evidence nor store admission. In
-particular, the offset-based loader references still need a consumer evidence
-resolver; this exporter does not claim that later-stage acceptance.
+or return claims, or dyld binding claims. Admission beyond the format stage
+belongs to MacScope and is not tested here.
 
 ## Selection, packing, and completion
 
@@ -139,6 +144,10 @@ for which `parsed.supported and not parsed.identity.throws`.
 Unsupported symbols refuse as `unsupported_symbol`; semicolons and whitespace
 refuse as `invalid_field_symbol`. Forbidden output text takes precedence as
 `unsafe_text`, including oversized strings and oversized constructed details.
+
+Missing stub or pointer indirect indices refuse as `missing_indirect_index`.
+Both indices, the symbol index, and the pointer address must be non-negative
+integers. Rows for the same stub must agree on both indices.
 
 Identity errors include `unsupported_architecture`, `cpu_subtype_range`,
 `slice_range`, `empty_slice`, `slice_extent_overflow`, and field-specific

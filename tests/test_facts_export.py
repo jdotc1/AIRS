@@ -37,7 +37,8 @@ def tiny():
             syntactic_call_target_admitted=False, import_attribution_admitted=True,
             declaration=dict(status='syntax_unresolved', identity=None, reason='unsupported_production'),
             import_provenance=dict(stub_model='arm64-import-stub-double-binding-v1',
-                symbol_index=7, stub_indirect_entry_offset=512,
+                symbol_index=7, stub_indirect_index=2, pointer_indirect_index=3,
+                pointer_address=8192, stub_indirect_entry_offset=512,
                 pointer_indirect_entry_offset=516, nlist_offset=768,
                 stub_words=[dict(pc=4352+4*i, word='0x00000000',
                     slice_file_offset=256+4*i, container_file_offset=256+4*i) for i in range(3)])))])
@@ -103,9 +104,14 @@ class MappingTests(unittest.TestCase):
         self.assertEqual(facts['callsTarget']['subject'], dict(kind='address', ref='0x1004'))
         self.assertEqual(facts['callsTarget']['value'], '0x1100')
         self.assertEqual(facts['hasName']['value'], '_$sDemo')
-        self.assertEqual([p['ref'] for p in facts['hasName']['provenance']], [
-            '0x1100', '0x1104', '0x1108',
-            'stubIndirectEntry[0]@0x200', 'pointerIndirectEntry[0]@0x204', 'symtab[7]@0x300'])
+        self.assertEqual(facts['hasName']['provenance'], [
+            dict(kind='decodedInstruction', ref='0x1100',
+                 rule='airs.swift-broad-error-flow-imports-v1', ruleVersion='1'),
+            dict(kind='decodedInstruction', ref='0x1104'),
+            dict(kind='decodedInstruction', ref='0x1108'),
+            dict(kind='loaderRecord', ref='indirectSymbol[2]@0x1100'),
+            dict(kind='loaderRecord', ref='indirectSymbol[3]@0x2000'),
+            dict(kind='loaderRecord', ref='undefinedSymbol[7]@0x0')])
         gap = result['frontier'][0]
         self.assertEqual(gap['gap'], 'unknownCalleeEffects')
         self.assertEqual(gap['detail'], 'imported_callee_abi_unqualified; symbol=_$sDemo; declaration=syntax_unresolved:unsupported_production')
@@ -113,6 +119,13 @@ class MappingTests(unittest.TestCase):
         self.assertEqual(result['primitiveVersion'], '1')
         self.assertEqual(result['budget'], {})
         independent_rules(self, result)
+
+    def test_missing_indirect_index(self):
+        for key in ('stub_indirect_index', 'pointer_indirect_index'):
+            with self.subTest(key=key):
+                DistrustTests().refuse_change(
+                    ['calls', 0, 'admission', 'import_provenance', key],
+                    None, True, reason='missing_indirect_index')
 
     def test_admitted_declaration(self):
         report = tiny()
@@ -289,6 +302,8 @@ class DistrustTests(unittest.TestCase):
             with self.subTest(path=path, mutation='missing'):
                 missing_reason = ('invalid_field_' + str(path[-1])
                                   if str(path[-1]).endswith('_proven') else expected)
+                if path[-1] in ('stub_indirect_index', 'pointer_indirect_index'):
+                    missing_reason = 'missing_indirect_index'
                 if path == base + ['model_version']:
                     missing_reason = 'unsupported_row_model'
                 self.refuse_change(path, None, True, reason=missing_reason, report=report)
@@ -330,6 +345,16 @@ class DistrustTests(unittest.TestCase):
         for i, word in enumerate(row['admission']['import_provenance']['stub_words']):
             word['pc'] = 4356 + 4*i
         self.refuse_change(['calls', 1], row, reason='overlapping_stubs', report=report)
+
+    def test_indirect_indices_must_agree_for_same_stub(self):
+        for key in ('stub_indirect_index', 'pointer_indirect_index'):
+            self.refuse_change(['calls', 1, 'admission', 'import_provenance', key],
+                               9, reason='conflicting_stub', report=many_rows(2))
+
+    def test_provenance_indices_and_pointer_are_nonnegative(self):
+        for key in ('stub_indirect_index', 'pointer_indirect_index', 'symbol_index', 'pointer_address'):
+            self.refuse_change(['calls', 0, 'admission', 'import_provenance', key],
+                               -1, reason='invalid_field_' + key)
 
     def test_conflicting_symbol_entry(self):
         base = ['calls', 1, 'admission']
@@ -630,6 +655,56 @@ class TransportTests(unittest.TestCase):
         self.assertEqual(meta['omitted_rows'], 0)
         self.assertTrue(meta['completed'])
         self.assertEqual(sum(f['facts'] for f in meta['files']), 514)
+
+    def test_exact_file_additions_boundary(self):
+        # One shared name + 511 calls + 511 call gaps + one scan disclosure = 1,024.
+        report = many_rows(511)
+        report['word_scan_complete'] = False
+        docs, meta = self.export(report)
+        self.assertEqual([f['name'] for f in meta['files']], ['part-0001.airsnav'])
+        self.assertEqual([(d['run']['factCount'], d['run']['frontierCount']) for d in docs],
+                         [(512, 512)])
+        # The next unit needs a call and gap, plus a repeated name in its new file.
+        report = many_rows(512)
+        report['word_scan_complete'] = False
+        docs, meta = self.export(report)
+        self.assertEqual([f['name'] for f in meta['files']],
+                         ['part-0001.airsnav', 'part-0002.airsnav'])
+        self.assertEqual([(d['run']['factCount'], d['run']['frontierCount']) for d in docs],
+                         [(512, 512), (2, 2)])
+
+    def test_loader_refs_use_indices_and_vm_addresses(self):
+        report = many_rows(512)
+        # Distinctive offsets cannot accidentally be substrings of call VM addresses.
+        for row in report['calls']:
+            row['admission']['import_provenance'].update(
+                stub_indirect_entry_offset=0xdef000,
+                pointer_indirect_entry_offset=0xdef004, nlist_offset=0xdef100)
+            for j, word in enumerate(row['admission']['import_provenance']['stub_words']):
+                word['slice_file_offset'] = 0xabc000 + 4*j
+                word['container_file_offset'] = 0xabc000 + 4*j
+        docs, _ = self.export(report)
+        offsets = {hex(p[key]) for row in report['calls']
+                   for p in [row['admission']['import_provenance']]
+                   for key in ('stub_indirect_entry_offset', 'pointer_indirect_entry_offset', 'nlist_offset')}
+        offsets.update(hex(w[key]) for row in report['calls']
+                       for w in row['admission']['import_provenance']['stub_words']
+                       for key in ('slice_file_offset', 'container_file_offset'))
+        def walk(value):
+            if isinstance(value, dict):
+                if 'ref' in value:
+                    for offset in offsets:
+                        self.assertNotIn(offset, value['ref'])
+                if value.get('kind') == 'loaderRecord':
+                    self.assertRegex(value['ref'],
+                        r'^(indirectSymbol|undefinedSymbol)\[(0|[1-9][0-9]*)\]@0x(0|[1-9a-f][0-9a-f]*)$')
+                for child in value.values():
+                    walk(child)
+            elif isinstance(value, list):
+                for child in value:
+                    walk(child)
+        for doc in docs:
+            walk(doc)
 
     def test_selection_order_and_stop(self):
         report = many_rows(4)
