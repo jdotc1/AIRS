@@ -1,0 +1,4495 @@
+{
+  "schema_version": 1,
+  "symbols": {
+    "_$s10Foundation11JSONDecoderC6decode_4fromxxm_AA4DataVtKSeRzlFTj": {
+      "broad": {
+        "detail": "unsupported grammar operator: m",
+        "identity": null,
+        "offset": 44,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s10Foundation11JSONDecoderCACycfc": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 28,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "class",
+              "name": "JSONDecoder"
+            }
+          ],
+          "entity": "initializer",
+          "module": "Foundation",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Foundation.JSONDecoder",
+            "nominal_kind": "class"
+          },
+          "symbol": "_$s10Foundation11JSONDecoderCACycfc",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s10Foundation11JSONDecoderCMa": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 28,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "class",
+              "name": "JSONDecoder"
+            }
+          ],
+          "entity": "metadata_accessor",
+          "module": "Foundation",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": null,
+          "symbol": "_$s10Foundation11JSONDecoderCMa",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s10Foundation3URLV15fileURLWithPathACSSh_tcfC": {
+      "broad": {
+        "detail": "unsupported grammar operator: h",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "struct",
+              "name": "URL"
+            }
+          ],
+          "entity": "allocating_initializer",
+          "module": "Foundation",
+          "name": "",
+          "parameter_labels": [
+            "fileURLWithPath"
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Swift.String",
+              "nominal_kind": "struct"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Foundation.URL",
+            "nominal_kind": "struct"
+          },
+          "symbol": "_$s10Foundation3URLV15fileURLWithPathACSSh_tcfC",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s10Foundation3URLVMa": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 19,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "struct",
+              "name": "URL"
+            }
+          ],
+          "entity": "metadata_accessor",
+          "module": "Foundation",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": null,
+          "symbol": "_$s10Foundation3URLVMa",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s10Foundation4DataV10contentsOf7optionsAcA3URLVh_So20NSDataReadingOptionsVtKcfC": {
+      "broad": {
+        "detail": "unsupported substitution encoding",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "unknown_substitution"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "struct",
+              "name": "Data"
+            }
+          ],
+          "entity": "allocating_initializer",
+          "module": "Foundation",
+          "name": "",
+          "parameter_labels": [
+            "contentsOf",
+            "options"
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Foundation.URL",
+              "nominal_kind": "struct"
+            },
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "__C.NSDataReadingOptions",
+              "nominal_kind": "struct"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Foundation.Data",
+            "nominal_kind": "struct"
+          },
+          "symbol": "_$s10Foundation4DataV10contentsOf7optionsAcA3URLVh_So20NSDataReadingOptionsVtKcfC",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": true
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth007caf_dmayS2iF": {
+      "broad": {
+        "detail": "Punycode identifier encoding is not implemented",
+        "identity": null,
+        "offset": 16,
+        "unsupported_reason": "unicode_identifier"
+      },
+      "imports": {
+        "detail": "Punycode identifier",
+        "identity": null,
+        "offset": 16,
+        "unsupported_reason": "unicode_identifier"
+      }
+    },
+    "_$s12GrammarSynth10containersySiSgAC_SaySiGSDySSSiGtF": {
+      "broad": {
+        "detail": "unknown standard type substitution",
+        "identity": null,
+        "offset": 43,
+        "unsupported_reason": "unknown_substitution"
+      },
+      "imports": {
+        "detail": "standard substitution outside the closed table",
+        "identity": null,
+        "offset": 42,
+        "unsupported_reason": "unknown_substitution"
+      }
+    },
+    "_$s12GrammarSynth10inoutValueyySizF": {
+      "broad": {
+        "detail": "",
+        "identity": {
+          "callable_kind": "free_function",
+          "context": [],
+          "function_name": "inoutValue",
+          "generic_parameter_counts": [],
+          "generic_requirements": [],
+          "module": "GrammarSynth",
+          "original_callable_kind": null,
+          "parameter_labels": [
+            null
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": true,
+              "label": null,
+              "name": "Swift.Int",
+              "nominal_kind": "struct"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Void",
+            "nominal_kind": null
+          },
+          "specialization": null,
+          "symbol": "_$s12GrammarSynth10inoutValueyySizF",
+          "syntax_model": "swift-broad-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: z",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth10rethrowingyS2iyKXEKF": {
+      "broad": {
+        "detail": "function/closure parameter type requires separate qualification; rethrows cannot be inferred",
+        "identity": null,
+        "offset": 34,
+        "unsupported_reason": "closure_type"
+      },
+      "imports": {
+        "detail": "throws marker not at entity function-type position",
+        "identity": null,
+        "offset": 33,
+        "unsupported_reason": "invalid_grammar"
+      }
+    },
+    "_$s12GrammarSynth10typedErrorSiyAA06SampleD0OYKF": {
+      "broad": {
+        "detail": "typed throws annotation requires separate qualification",
+        "identity": null,
+        "offset": 44,
+        "unsupported_reason": "typed_throws"
+      },
+      "imports": {
+        "detail": "typed throws",
+        "identity": null,
+        "offset": 44,
+        "unsupported_reason": "typed_throws"
+      }
+    },
+    "_$s12GrammarSynth10typedNeverSiyF": {
+      "broad": {
+        "detail": "",
+        "identity": {
+          "callable_kind": "free_function",
+          "context": [],
+          "function_name": "typedNever",
+          "generic_parameter_counts": [],
+          "generic_requirements": [],
+          "module": "GrammarSynth",
+          "original_callable_kind": null,
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Int",
+            "nominal_kind": "struct"
+          },
+          "specialization": null,
+          "symbol": "_$s12GrammarSynth10typedNeverSiyF",
+          "syntax_model": "swift-broad-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [],
+          "entity": "function",
+          "module": "GrammarSynth",
+          "name": "typedNever",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Int",
+            "nominal_kind": "struct"
+          },
+          "symbol": "_$s12GrammarSynth10typedNeverSiyF",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorO21__derived_enum_equalsySbAC_ACtFZ": {
+      "broad": {
+        "detail": "",
+        "identity": {
+          "callable_kind": "static_method",
+          "context": [
+            {
+              "kind": "enum",
+              "name": "SampleError"
+            }
+          ],
+          "function_name": "__derived_enum_equals",
+          "generic_parameter_counts": [],
+          "generic_requirements": [],
+          "module": "GrammarSynth",
+          "original_callable_kind": null,
+          "parameter_labels": [
+            null,
+            null
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "GrammarSynth.SampleError",
+              "nominal_kind": "enum"
+            },
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "GrammarSynth.SampleError",
+              "nominal_kind": "enum"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Bool",
+            "nominal_kind": "struct"
+          },
+          "specialization": null,
+          "symbol": "_$s12GrammarSynth11SampleErrorO21__derived_enum_equalsySbAC_ACtFZ",
+          "syntax_model": "swift-broad-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      },
+      "imports": {
+        "detail": "method in a non-struct context",
+        "identity": null,
+        "offset": 62,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorO4hash4intoys6HasherVz_tF": {
+      "broad": {
+        "detail": "unsupported Swift nominal type",
+        "identity": null,
+        "offset": 49,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: z",
+        "identity": null,
+        "offset": 50,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorO9hashValueSivg": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 43,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 42,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorO9hashValueSivpMV": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 43,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 42,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOACSHAAWL": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOACSHAAWl": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOACSQAAWL": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOACSQAAWl": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOACs0D0AAWL": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: W",
+        "identity": null,
+        "offset": 38,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOACs0D0AAWl": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: W",
+        "identity": null,
+        "offset": 38,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOMF": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOMa": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "enum",
+              "name": "SampleError"
+            }
+          ],
+          "entity": "metadata_accessor",
+          "module": "GrammarSynth",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": null,
+          "symbol": "_$s12GrammarSynth11SampleErrorOMa",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOMf": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOMn": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorON": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: N",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOSHAAMc": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOSHAAMcMK": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOSHAASH13_rawHashValue4seedS2i_tFTW": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOSHAASH4hash4intoys6HasherVz_tFTW": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOSHAASH9hashValueSivgTW": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOSHAASQWb": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOSQAAMc": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOSQAAMcMK": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOSQAASQ2eeoiySbx_xtFZTW": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOWV": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: W",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOs0D0AAMc": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 36,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOs0D0AAMcMK": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 36,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOs0D0AAsADP19_getEmbeddedNSErroryXlSgyFTW": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported X production",
+        "identity": null,
+        "offset": 62,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOs0D0AAsADP5_codeSivgTW": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 48,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOs0D0AAsADP7_domainSSvgTW": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 50,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOs0D0AAsADP9_userInfoyXlSgvgTW": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported X production",
+        "identity": null,
+        "offset": 51,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOwet": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOwst": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOwug": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOwui": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11SampleErrorOwup": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11autoclosureyS2iyXKF": {
+      "broad": {
+        "detail": "function/closure parameter type requires separate qualification; rethrows cannot be inferred",
+        "identity": null,
+        "offset": 34,
+        "unsupported_reason": "closure_type"
+      },
+      "imports": {
+        "detail": "function type operand",
+        "identity": null,
+        "offset": 34,
+        "unsupported_reason": "closure_type"
+      }
+    },
+    "_$s12GrammarSynth11bothEffectsSiyYaKF": {
+      "broad": {
+        "detail": "async/isolation/sendability annotation requires separate qualification",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "async_context"
+      },
+      "imports": {
+        "detail": "async, isolation or sendability annotation",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "async_context"
+      }
+    },
+    "_$s12GrammarSynth11bothEffectsSiyYaKFTY0_": {
+      "broad": {
+        "detail": "async/isolation/sendability annotation requires separate qualification",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "async_context"
+      },
+      "imports": {
+        "detail": "async, isolation or sendability annotation",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "async_context"
+      }
+    },
+    "_$s12GrammarSynth11bothEffectsSiyYaKFTu": {
+      "broad": {
+        "detail": "async/isolation/sendability annotation requires separate qualification",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "async_context"
+      },
+      "imports": {
+        "detail": "async, isolation or sendability annotation",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "async_context"
+      }
+    },
+    "_$s12GrammarSynth11classLayoutyyxRlzClF": {
+      "broad": {
+        "detail": "unsupported generic requirement",
+        "identity": null,
+        "offset": 33,
+        "unsupported_reason": "generic_requirements"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 31,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth11closureOnlyyS2iyKXEF": {
+      "broad": {
+        "detail": "function/closure parameter type requires separate qualification; rethrows cannot be inferred",
+        "identity": null,
+        "offset": 35,
+        "unsupported_reason": "closure_type"
+      },
+      "imports": {
+        "detail": "throws marker not at entity function-type position",
+        "identity": null,
+        "offset": 34,
+        "unsupported_reason": "invalid_grammar"
+      }
+    },
+    "_$s12GrammarSynth11compositionyyAA13OtherProtocol_AA05ValueE0pF": {
+      "broad": {
+        "detail": "unsupported grammar operator: p",
+        "identity": null,
+        "offset": 61,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: p",
+        "identity": null,
+        "offset": 60,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11conformancey7ElementQzx_ADtAA13ValueProtocolRzlF": {
+      "broad": {
+        "detail": "unsupported grammar operator: Q",
+        "identity": null,
+        "offset": 39,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 38,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth11existentialyyAA13ValueProtocol_pF": {
+      "broad": {
+        "detail": "unsupported grammar operator: p",
+        "identity": null,
+        "offset": 50,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: p",
+        "identity": null,
+        "offset": 49,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth11onMainActorSiyF": {
+      "broad": {
+        "detail": "",
+        "identity": {
+          "callable_kind": "free_function",
+          "context": [],
+          "function_name": "onMainActor",
+          "generic_parameter_counts": [],
+          "generic_requirements": [],
+          "module": "GrammarSynth",
+          "original_callable_kind": null,
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Int",
+            "nominal_kind": "struct"
+          },
+          "specialization": null,
+          "symbol": "_$s12GrammarSynth11onMainActorSiyF",
+          "syntax_model": "swift-broad-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [],
+          "entity": "function",
+          "module": "GrammarSynth",
+          "name": "onMainActor",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Int",
+            "nominal_kind": "struct"
+          },
+          "symbol": "_$s12GrammarSynth11onMainActorSiyF",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth11pairedPacksyyyx_q_txQpXE_x_q_txQptRvzRv_q_Rhzr0_lF": {
+      "broad": {
+        "detail": "unsupported grammar operator: Q",
+        "identity": null,
+        "offset": 39,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth12asynchronousSiyYaF": {
+      "broad": {
+        "detail": "async/isolation/sendability annotation requires separate qualification",
+        "identity": null,
+        "offset": 33,
+        "unsupported_reason": "async_context"
+      },
+      "imports": {
+        "detail": "async, isolation or sendability annotation",
+        "identity": null,
+        "offset": 33,
+        "unsupported_reason": "async_context"
+      }
+    },
+    "_$s12GrammarSynth12asynchronousSiyYaFTu": {
+      "broad": {
+        "detail": "async/isolation/sendability annotation requires separate qualification",
+        "identity": null,
+        "offset": 33,
+        "unsupported_reason": "async_context"
+      },
+      "imports": {
+        "detail": "async, isolation or sendability annotation",
+        "identity": null,
+        "offset": 33,
+        "unsupported_reason": "async_context"
+      }
+    },
+    "_$s12GrammarSynth13OperatorValueV1poiyA2C_ACtFZ": {
+      "broad": {
+        "detail": "unsupported grammar operator: o",
+        "identity": null,
+        "offset": 35,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: o",
+        "identity": null,
+        "offset": 34,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth13OperatorValueV1popyA2CFZ": {
+      "broad": {
+        "detail": "unsupported grammar operator: o",
+        "identity": null,
+        "offset": 35,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: o",
+        "identity": null,
+        "offset": 34,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth13OperatorValueV5valueSivg": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 40,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth13OperatorValueV5valueSivpMV": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 40,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth13OperatorValueVMF": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth13OperatorValueVMa": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "struct",
+              "name": "OperatorValue"
+            }
+          ],
+          "entity": "metadata_accessor",
+          "module": "GrammarSynth",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": null,
+          "symbol": "_$s12GrammarSynth13OperatorValueVMa",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth13OperatorValueVMf": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth13OperatorValueVMn": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth13OperatorValueVN": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: N",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth13OperatorValueVyACSicfC": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "struct",
+              "name": "OperatorValue"
+            }
+          ],
+          "entity": "allocating_initializer",
+          "module": "GrammarSynth",
+          "name": "",
+          "parameter_labels": [
+            null
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Swift.Int",
+              "nominal_kind": "struct"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "GrammarSynth.OperatorValue",
+            "nominal_kind": "struct"
+          },
+          "symbol": "_$s12GrammarSynth13OperatorValueVyACSicfC",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth13OtherProtocolMp": {
+      "broad": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 31,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth13OtherProtocol_pMF": {
+      "broad": {
+        "detail": "unsupported grammar operator: p",
+        "identity": null,
+        "offset": 33,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: p",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth13ValueProtocolMp": {
+      "broad": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 31,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth13ValueProtocolPAAE15extensionMethody7ElementQzAFF": {
+      "broad": {
+        "detail": "protocol declaration/requirement needs separate qualification",
+        "identity": null,
+        "offset": 31,
+        "unsupported_reason": "protocol_context"
+      },
+      "imports": {
+        "detail": "protocol extension context",
+        "identity": null,
+        "offset": 34,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth13ValueProtocolPAASQ7ElementRpzrlE5equalySbAE_AEtF": {
+      "broad": {
+        "detail": "protocol declaration/requirement needs separate qualification",
+        "identity": null,
+        "offset": 31,
+        "unsupported_reason": "protocol_context"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 34,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth13ValueProtocolTL": {
+      "broad": {
+        "detail": "thunk or specialization requires separate qualification",
+        "identity": null,
+        "offset": 31,
+        "unsupported_reason": "thunk_or_specialization"
+      },
+      "imports": {
+        "detail": "thunk or specialization",
+        "identity": null,
+        "offset": 31,
+        "unsupported_reason": "thunk_or_specialization"
+      }
+    },
+    "_$s12GrammarSynth13ValueProtocol_pMF": {
+      "broad": {
+        "detail": "unsupported grammar operator: p",
+        "identity": null,
+        "offset": 33,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: p",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth13isolatedActoryyxYiScARzlF": {
+      "broad": {
+        "detail": "unsupported grammar operator: Y",
+        "identity": null,
+        "offset": 35,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 33,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth16isolatedCallbackyyyyYAcYaF": {
+      "broad": {
+        "detail": "async/isolation/sendability annotation requires separate qualification",
+        "identity": null,
+        "offset": 38,
+        "unsupported_reason": "async_context"
+      },
+      "imports": {
+        "detail": "async, isolation or sendability annotation",
+        "identity": null,
+        "offset": 38,
+        "unsupported_reason": "async_context"
+      }
+    },
+    "_$s12GrammarSynth16isolatedCallbackyyyyYAcYaFTY0_": {
+      "broad": {
+        "detail": "async/isolation/sendability annotation requires separate qualification",
+        "identity": null,
+        "offset": 38,
+        "unsupported_reason": "async_context"
+      },
+      "imports": {
+        "detail": "async, isolation or sendability annotation",
+        "identity": null,
+        "offset": 38,
+        "unsupported_reason": "async_context"
+      }
+    },
+    "_$s12GrammarSynth16isolatedCallbackyyyyYAcYaFTY1_": {
+      "broad": {
+        "detail": "async/isolation/sendability annotation requires separate qualification",
+        "identity": null,
+        "offset": 38,
+        "unsupported_reason": "async_context"
+      },
+      "imports": {
+        "detail": "async, isolation or sendability annotation",
+        "identity": null,
+        "offset": 38,
+        "unsupported_reason": "async_context"
+      }
+    },
+    "_$s12GrammarSynth16isolatedCallbackyyyyYAcYaFTu": {
+      "broad": {
+        "detail": "async/isolation/sendability annotation requires separate qualification",
+        "identity": null,
+        "offset": 38,
+        "unsupported_reason": "async_context"
+      },
+      "imports": {
+        "detail": "async, isolation or sendability annotation",
+        "identity": null,
+        "offset": 38,
+        "unsupported_reason": "async_context"
+      }
+    },
+    "_$s12GrammarSynth19escapingAutoclosureySiycSiyXAF": {
+      "broad": {
+        "detail": "function/closure parameter type requires separate qualification; rethrows cannot be inferred",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "closure_type"
+      },
+      "imports": {
+        "detail": "function type operand; rethrows cannot be decided",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "closure_type"
+      }
+    },
+    "_$s12GrammarSynth3BoxV13unconstrainedxyF": {
+      "broad": {
+        "detail": "generic parameter lacks a supported binding signature (including generic parent contexts)",
+        "identity": null,
+        "offset": 39,
+        "unsupported_reason": "generic_requirements"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 36,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth3BoxV5valuexvM": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 29,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth3BoxV5valuexvM.resume.0": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 29,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth3BoxV5valuexvg": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 29,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth3BoxV5valuexvpMV": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 29,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth3BoxV5valuexvs": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 29,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth3BoxV8identityyqd__qd__lF": {
+      "broad": {
+        "detail": "generic parameter lacks a supported binding signature (including generic parent contexts)",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "generic_requirements"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 31,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth3BoxVAASQRzlE11constrainedySbxF": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth3BoxVMF": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth3BoxVMI": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth3BoxVMP": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth3BoxVMa": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "struct",
+              "name": "Box"
+            }
+          ],
+          "entity": "metadata_accessor",
+          "module": "GrammarSynth",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": null,
+          "symbol": "_$s12GrammarSynth3BoxVMa",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth3BoxVMi": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth3BoxVMn": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth3BoxVMr": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth3BoxVWV": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: W",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth3BoxVwCP": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth3BoxVwca": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth3BoxVwcp": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth3BoxVwet": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth3BoxVwst": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth3BoxVwta": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth3BoxVwtk": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth3BoxVwxx": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth3BoxVyACyxGxcfC": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 25,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth3BoxVyxGlWOc": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth3BoxVyxGlWOh": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth3pppoPyAA13OperatorValueVADF": {
+      "broad": {
+        "detail": "unsupported grammar operator: o",
+        "identity": null,
+        "offset": 21,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: o",
+        "identity": null,
+        "offset": 20,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth4BaseC6methodyS2iF": {
+      "broad": {
+        "detail": "",
+        "identity": {
+          "callable_kind": "class_instance_method",
+          "context": [
+            {
+              "kind": "class",
+              "name": "Base"
+            }
+          ],
+          "function_name": "method",
+          "generic_parameter_counts": [],
+          "generic_requirements": [],
+          "module": "GrammarSynth",
+          "original_callable_kind": null,
+          "parameter_labels": [
+            null
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Swift.Int",
+              "nominal_kind": "struct"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Int",
+            "nominal_kind": "struct"
+          },
+          "specialization": null,
+          "symbol": "_$s12GrammarSynth4BaseC6methodyS2iF",
+          "syntax_model": "swift-broad-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      },
+      "imports": {
+        "detail": "method in a non-struct context",
+        "identity": null,
+        "offset": 33,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth4BaseC6methodyS2iFTq": {
+      "broad": {
+        "detail": "unsupported thunk or specialization production",
+        "identity": null,
+        "offset": 34,
+        "unsupported_reason": "thunk_or_specialization"
+      },
+      "imports": {
+        "detail": "unconsumed suffix after F",
+        "identity": null,
+        "offset": 34,
+        "unsupported_reason": "thunk_or_specialization"
+      }
+    },
+    "_$s12GrammarSynth4BaseCACycfC": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "class",
+              "name": "Base"
+            }
+          ],
+          "entity": "allocating_initializer",
+          "module": "GrammarSynth",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "GrammarSynth.Base",
+            "nominal_kind": "class"
+          },
+          "symbol": "_$s12GrammarSynth4BaseCACycfC",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth4BaseCACycfCTq": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "function type operand; rethrows cannot be decided",
+        "identity": null,
+        "offset": 25,
+        "unsupported_reason": "closure_type"
+      }
+    },
+    "_$s12GrammarSynth4BaseCACycfc": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "class",
+              "name": "Base"
+            }
+          ],
+          "entity": "initializer",
+          "module": "GrammarSynth",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "GrammarSynth.Base",
+            "nominal_kind": "class"
+          },
+          "symbol": "_$s12GrammarSynth4BaseCACycfc",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth4BaseCMF": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth4BaseCMa": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "class",
+              "name": "Base"
+            }
+          ],
+          "entity": "metadata_accessor",
+          "module": "GrammarSynth",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": null,
+          "symbol": "_$s12GrammarSynth4BaseCMa",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth4BaseCMf": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth4BaseCMm": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth4BaseCMn": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth4BaseCN": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: N",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth4BaseCfD": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: f",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth4BaseCfd": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: f",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth4packyxxQp_txxQpRvzlF": {
+      "broad": {
+        "detail": "unsupported grammar operator: Q",
+        "identity": null,
+        "offset": 25,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth4sentyxxns8SendableRzlF": {
+      "broad": {
+        "detail": "unsupported grammar operator: n",
+        "identity": null,
+        "offset": 25,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 22,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth4thinyS3iXfF": {
+      "broad": {
+        "detail": "unsupported grammar operator: X",
+        "identity": null,
+        "offset": 26,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "function type operand",
+        "identity": null,
+        "offset": 25,
+        "unsupported_reason": "closure_type"
+      }
+    },
+    "_$s12GrammarSynth5ChildCAA13OtherProtocolAAMc": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 42,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth5ChildCAA13OtherProtocolAAWP": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: W",
+        "identity": null,
+        "offset": 42,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth5ChildCACycfC": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "class",
+              "name": "Child"
+            }
+          ],
+          "entity": "allocating_initializer",
+          "module": "GrammarSynth",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "GrammarSynth.Child",
+            "nominal_kind": "class"
+          },
+          "symbol": "_$s12GrammarSynth5ChildCACycfC",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth5ChildCACycfc": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "class",
+              "name": "Child"
+            }
+          ],
+          "entity": "initializer",
+          "module": "GrammarSynth",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "GrammarSynth.Child",
+            "nominal_kind": "class"
+          },
+          "symbol": "_$s12GrammarSynth5ChildCACycfc",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth5ChildCMF": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth5ChildCMa": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "class",
+              "name": "Child"
+            }
+          ],
+          "entity": "metadata_accessor",
+          "module": "GrammarSynth",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": null,
+          "symbol": "_$s12GrammarSynth5ChildCMa",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth5ChildCMf": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth5ChildCMm": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth5ChildCMn": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth5ChildCN": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: N",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth5ChildCfD": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: f",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth5ChildCfd": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: f",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth5blockyS3iXBF": {
+      "broad": {
+        "detail": "unsupported grammar operator: X",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "function type operand",
+        "identity": null,
+        "offset": 26,
+        "unsupported_reason": "closure_type"
+      }
+    },
+    "_$s12GrammarSynth5outeryS2iF": {
+      "broad": {
+        "detail": "",
+        "identity": {
+          "callable_kind": "free_function",
+          "context": [],
+          "function_name": "outer",
+          "generic_parameter_counts": [],
+          "generic_requirements": [],
+          "module": "GrammarSynth",
+          "original_callable_kind": null,
+          "parameter_labels": [
+            null
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Swift.Int",
+              "nominal_kind": "struct"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Int",
+            "nominal_kind": "struct"
+          },
+          "specialization": null,
+          "symbol": "_$s12GrammarSynth5outeryS2iF",
+          "syntax_model": "swift-broad-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [],
+          "entity": "function",
+          "module": "GrammarSynth",
+          "name": "outer",
+          "parameter_labels": [
+            null
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Swift.Int",
+              "nominal_kind": "struct"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Int",
+            "nominal_kind": "struct"
+          },
+          "symbol": "_$s12GrammarSynth5outeryS2iF",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth5outeryS2iF5localL_yS2iF": {
+      "broad": {
+        "detail": "unconsumed declaration suffix",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "unconsumed_suffix"
+      },
+      "imports": {
+        "detail": "unconsumed suffix after F",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "unconsumed_suffix"
+      }
+    },
+    "_$s12GrammarSynth5plain5label_Si5count_SS4texttSi_SStF": {
+      "broad": {
+        "detail": "non-type operand",
+        "identity": null,
+        "offset": 46,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "non-type tuple element",
+        "identity": null,
+        "offset": 45,
+        "unsupported_reason": "invalid_grammar"
+      }
+    },
+    "_$s12GrammarSynth5thickyS3icF": {
+      "broad": {
+        "detail": "function/closure parameter type requires separate qualification; rethrows cannot be inferred",
+        "identity": null,
+        "offset": 26,
+        "unsupported_reason": "closure_type"
+      },
+      "imports": {
+        "detail": "function type operand; rethrows cannot be decided",
+        "identity": null,
+        "offset": 26,
+        "unsupported_reason": "closure_type"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceO21__derived_enum_equalsySbAC_ACtFZ": {
+      "broad": {
+        "detail": "",
+        "identity": {
+          "callable_kind": "static_method",
+          "context": [
+            {
+              "kind": "enum",
+              "name": "Choice"
+            }
+          ],
+          "function_name": "__derived_enum_equals",
+          "generic_parameter_counts": [],
+          "generic_requirements": [],
+          "module": "GrammarSynth",
+          "original_callable_kind": null,
+          "parameter_labels": [
+            null,
+            null
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "GrammarSynth.Choice",
+              "nominal_kind": "enum"
+            },
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "GrammarSynth.Choice",
+              "nominal_kind": "enum"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Bool",
+            "nominal_kind": "struct"
+          },
+          "specialization": null,
+          "symbol": "_$s12GrammarSynth6ChoiceO21__derived_enum_equalsySbAC_ACtFZ",
+          "syntax_model": "swift-broad-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      },
+      "imports": {
+        "detail": "method in a non-struct context",
+        "identity": null,
+        "offset": 56,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceO4hash4intoys6HasherVz_tF": {
+      "broad": {
+        "detail": "unsupported Swift nominal type",
+        "identity": null,
+        "offset": 43,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: z",
+        "identity": null,
+        "offset": 44,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceO9hashValueSivg": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 37,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 36,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceO9hashValueSivpMV": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 37,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 36,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOACSHAAWL": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 26,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOACSHAAWl": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 26,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOACSQAAWL": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 26,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOACSQAAWl": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 26,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOMF": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOMa": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "enum",
+              "name": "Choice"
+            }
+          ],
+          "entity": "metadata_accessor",
+          "module": "GrammarSynth",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": null,
+          "symbol": "_$s12GrammarSynth6ChoiceOMa",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOMf": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOMn": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceON": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: N",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOSHAAMc": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOSHAAMcMK": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOSHAASH13_rawHashValue4seedS2i_tFTW": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOSHAASH4hash4intoys6HasherVz_tFTW": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOSHAASH9hashValueSivgTW": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOSHAASQWb": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOSQAAMc": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOSQAAMcMK": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOSQAASQ2eeoiySbx_xtFZTW": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOWV": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: W",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOwet": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOwst": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOwug": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOwui": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth6ChoiceOwup": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: w",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth6hidden33_0842F764CFA53BC4E8522376FF60C578LLyS2iF": {
+      "broad": {
+        "detail": "unsupported grammar operator: L",
+        "identity": null,
+        "offset": 59,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: L",
+        "identity": null,
+        "offset": 58,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth6opaqueQryF": {
+      "broad": {
+        "detail": "unsupported grammar operator: Q",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth6opaqueQryFQOMQ": {
+      "broad": {
+        "detail": "unsupported grammar operator: Q",
+        "identity": null,
+        "offset": 24,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 23,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth7inverseyyxRi_zlF": {
+      "broad": {
+        "detail": "unsupported generic requirement",
+        "identity": null,
+        "offset": 28,
+        "unsupported_reason": "generic_requirements"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 26,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth8borrowedySiAA3BoxVySiGF": {
+      "broad": {
+        "detail": "unsupported bound generic shape",
+        "identity": null,
+        "offset": 39,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "bound generic other than Swift.Array",
+        "identity": null,
+        "offset": 38,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth8consumedySiAA3BoxVySiGnF": {
+      "broad": {
+        "detail": "unsupported bound generic shape",
+        "identity": null,
+        "offset": 39,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "bound generic other than Swift.Array",
+        "identity": null,
+        "offset": 38,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth8noescapeyS3iXEF": {
+      "broad": {
+        "detail": "function/closure parameter type requires separate qualification; rethrows cannot be inferred",
+        "identity": null,
+        "offset": 29,
+        "unsupported_reason": "closure_type"
+      },
+      "imports": {
+        "detail": "function type operand",
+        "identity": null,
+        "offset": 29,
+        "unsupported_reason": "closure_type"
+      }
+    },
+    "_$s12GrammarSynth8sameTypeyyxAA13ValueProtocolRzSi7ElementRtzlF": {
+      "broad": {
+        "detail": "non-type operand",
+        "identity": null,
+        "offset": 46,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth8throwingSiyKF": {
+      "broad": {
+        "detail": "",
+        "identity": {
+          "callable_kind": "free_function",
+          "context": [],
+          "function_name": "throwing",
+          "generic_parameter_counts": [],
+          "generic_requirements": [],
+          "module": "GrammarSynth",
+          "original_callable_kind": null,
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Int",
+            "nominal_kind": "struct"
+          },
+          "specialization": null,
+          "symbol": "_$s12GrammarSynth8throwingSiyKF",
+          "syntax_model": "swift-broad-declaration-syntax-v1",
+          "throws": true
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [],
+          "entity": "function",
+          "module": "GrammarSynth",
+          "name": "throwing",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Int",
+            "nominal_kind": "struct"
+          },
+          "symbol": "_$s12GrammarSynth8throwingSiyKF",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": true
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth8variadicyS2id_tF": {
+      "broad": {
+        "detail": "unsupported grammar operator: d",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [],
+          "entity": "function",
+          "module": "GrammarSynth",
+          "name": "variadic",
+          "parameter_labels": [
+            null
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Swift.Int",
+              "nominal_kind": "struct"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Int",
+            "nominal_kind": "struct"
+          },
+          "symbol": "_$s12GrammarSynth8variadicyS2id_tF",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV10asyncValueSivg": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 42,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV10asyncValueSivgTu": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 42,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV10asyncValueSivpMV": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 42,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV10readModifySivM": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 42,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV10readModifySivM.resume.0": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 42,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV10readModifySivg": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 42,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV10readModifySivpMV": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 42,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV10readModifySivr": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 42,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV10readModifySivr.resume.0": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 42,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV10readModifySivs": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 42,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 41,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV1xSivg": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 31,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV1xSivpMV": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 32,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 31,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV4bothSivg": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 35,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 34,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV4bothSivgTY0_": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 35,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 34,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV4bothSivgTu": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 35,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 34,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV4bothSivpMV": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 35,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 34,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV6storedSivM": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 37,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 36,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV6storedSivM.resume.0": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 37,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 36,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV6storedSivW": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 37,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 36,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV6storedSivg": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 37,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 36,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV6storedSivpMV": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 37,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 36,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV6storedSivpfi": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 37,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 36,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV6storedSivs": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 37,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 36,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsV6storedSivw": {
+      "broad": {
+        "detail": "unsupported grammar operator: v",
+        "identity": null,
+        "offset": 37,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 36,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsVACycfC": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "struct",
+              "name": "Accessors"
+            }
+          ],
+          "entity": "allocating_initializer",
+          "module": "GrammarSynth",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "GrammarSynth.Accessors",
+            "nominal_kind": "struct"
+          },
+          "symbol": "_$s12GrammarSynth9AccessorsVACycfC",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth9AccessorsVMF": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsVMa": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "struct",
+              "name": "Accessors"
+            }
+          ],
+          "entity": "metadata_accessor",
+          "module": "GrammarSynth",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": null,
+          "symbol": "_$s12GrammarSynth9AccessorsVMa",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynth9AccessorsVMf": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsVMn": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsVN": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: N",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsVyS2icig": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "function type operand; rethrows cannot be decided",
+        "identity": null,
+        "offset": 31,
+        "unsupported_reason": "closure_type"
+      }
+    },
+    "_$s12GrammarSynth9AccessorsVyS2icipMV": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 27,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "function type operand; rethrows cannot be decided",
+        "identity": null,
+        "offset": 31,
+        "unsupported_reason": "closure_type"
+      }
+    },
+    "_$s12GrammarSynth9baseClassyyxAA4BaseCRbzlF": {
+      "broad": {
+        "detail": "unsupported generic requirement",
+        "identity": null,
+        "offset": 38,
+        "unsupported_reason": "generic_requirements"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 28,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$s12GrammarSynth9cFunctionyS3iXCF": {
+      "broad": {
+        "detail": "unsupported grammar operator: X",
+        "identity": null,
+        "offset": 31,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "function type operand",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "closure_type"
+      }
+    },
+    "_$s12GrammarSynth9metatypesyySim_AA13ValueProtocol_pmtF": {
+      "broad": {
+        "detail": "unsupported grammar operator: m",
+        "identity": null,
+        "offset": 31,
+        "unsupported_reason": "unsupported_production"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: m",
+        "identity": null,
+        "offset": 30,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s12GrammarSynth9useHiddenyS2iF": {
+      "broad": {
+        "detail": "",
+        "identity": {
+          "callable_kind": "free_function",
+          "context": [],
+          "function_name": "useHidden",
+          "generic_parameter_counts": [],
+          "generic_requirements": [],
+          "module": "GrammarSynth",
+          "original_callable_kind": null,
+          "parameter_labels": [
+            null
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Swift.Int",
+              "nominal_kind": "struct"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Int",
+            "nominal_kind": "struct"
+          },
+          "specialization": null,
+          "symbol": "_$s12GrammarSynth9useHiddenyS2iF",
+          "syntax_model": "swift-broad-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [],
+          "entity": "function",
+          "module": "GrammarSynth",
+          "name": "useHidden",
+          "parameter_labels": [
+            null
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Swift.Int",
+              "nominal_kind": "struct"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Int",
+            "nominal_kind": "struct"
+          },
+          "symbol": "_$s12GrammarSynth9useHiddenyS2iF",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$s12GrammarSynthMXM": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 16,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 16,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$s7Element12GrammarSynth13ValueProtocolPTl": {
+      "broad": {
+        "detail": "protocol type needs separate qualification",
+        "identity": null,
+        "offset": 40,
+        "unsupported_reason": "protocol_context"
+      },
+      "imports": {
+        "detail": "thunk or specialization",
+        "identity": null,
+        "offset": 40,
+        "unsupported_reason": "thunk_or_specialization"
+      }
+    },
+    "_$sSD6ValuesVySSSi_GAByxq__GSlsWL": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard substitution outside the closed table",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "unknown_substitution"
+      }
+    },
+    "_$sSD6ValuesVySSSi_GAByxq__GSlsWl": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard substitution outside the closed table",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "unknown_substitution"
+      }
+    },
+    "_$sSD6ValuesVySSSi_GMR": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard substitution outside the closed table",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "unknown_substitution"
+      }
+    },
+    "_$sSD6ValuesVySSSi_GMd": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard substitution outside the closed table",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "unknown_substitution"
+      }
+    },
+    "_$sSS10FoundationE8EncodingV4utf8ACvgZ": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 34,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$sSS10FoundationE8EncodingVMa": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "extension",
+              "name": "Swift.String"
+            },
+            {
+              "kind": "struct",
+              "name": "Encoding"
+            }
+          ],
+          "entity": "metadata_accessor",
+          "module": "Foundation",
+          "name": "",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": null,
+          "symbol": "_$sSS10FoundationE8EncodingVMa",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$sSa12GrammarSynthAA13ValueProtocolRzlE10firstOwnedxSgyF": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 35,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$sSaySiGMR": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 8,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$sSaySiGMd": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: M",
+        "identity": null,
+        "offset": 8,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$sSaySiGSayxGSlsWL": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 11,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$sSaySiGSayxGSlsWl": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 11,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$sSy10FoundationE5write2to10atomically8encodingyAA3URLV_SbSSAAE8EncodingVtKF": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "standard protocol substitution",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$ss11CommandLineO9argumentsSaySSGvgZ": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "accessor entity: effects are not encoded in accessor manglings",
+        "identity": null,
+        "offset": 33,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "unsupported grammar operator: m",
+        "identity": null,
+        "offset": 46,
+        "unsupported_reason": "unsupported_production"
+      }
+    },
+    "_$ss27_stringCompareWithSmolCheck__9expectingSbs11_StringGutsV_ADs01_G16ComparisonResultOtF": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [],
+          "entity": "function",
+          "module": "Swift",
+          "name": "_stringCompareWithSmolCheck",
+          "parameter_labels": [
+            null,
+            null,
+            "expecting"
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Swift._StringGuts",
+              "nominal_kind": "struct"
+            },
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Swift._StringGuts",
+              "nominal_kind": "struct"
+            },
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Swift._StringComparisonResult",
+              "nominal_kind": "enum"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Bool",
+            "nominal_kind": "struct"
+          },
+          "symbol": "_$ss27_stringCompareWithSmolCheck__9expectingSbs11_StringGutsV_ADs01_G16ComparisonResultOtF",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$ss5print_9separator10terminatoryypd_S2StF": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [],
+          "entity": "function",
+          "module": "Swift",
+          "name": "print",
+          "parameter_labels": [
+            null,
+            "separator",
+            "terminator"
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Any",
+              "nominal_kind": null
+            },
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Swift.String",
+              "nominal_kind": "struct"
+            },
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Swift.String",
+              "nominal_kind": "struct"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Void",
+            "nominal_kind": null
+          },
+          "symbol": "_$ss5print_9separator10terminatoryypd_S2StF",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$ss6HasherV5_seedABSi_tcfC": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "struct",
+              "name": "Hasher"
+            }
+          ],
+          "entity": "allocating_initializer",
+          "module": "Swift",
+          "name": "",
+          "parameter_labels": [
+            "_seed"
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Swift.Int",
+              "nominal_kind": "struct"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Hasher",
+            "nominal_kind": "struct"
+          },
+          "symbol": "_$ss6HasherV5_seedABSi_tcfC",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$ss6HasherV8_combineyySuF": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "struct",
+              "name": "Hasher"
+            }
+          ],
+          "entity": "function",
+          "module": "Swift",
+          "name": "_combine",
+          "parameter_labels": [
+            null
+          ],
+          "parameter_types": [
+            {
+              "arguments": [],
+              "generic_depth": null,
+              "generic_index": null,
+              "inout": false,
+              "label": null,
+              "name": "Swift.UInt",
+              "nominal_kind": "struct"
+            }
+          ],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Void",
+            "nominal_kind": null
+          },
+          "symbol": "_$ss6HasherV8_combineyySuF",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$ss6HasherV9_finalizeSiyF": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "",
+        "identity": {
+          "context": [
+            {
+              "kind": "struct",
+              "name": "Hasher"
+            }
+          ],
+          "entity": "function",
+          "module": "Swift",
+          "name": "_finalize",
+          "parameter_labels": [],
+          "parameter_types": [],
+          "result_type": {
+            "arguments": [],
+            "generic_depth": null,
+            "generic_index": null,
+            "inout": false,
+            "label": null,
+            "name": "Swift.Int",
+            "nominal_kind": "struct"
+          },
+          "symbol": "_$ss6HasherV9_finalizeSiyF",
+          "syntax_model": "swift-import-declaration-syntax-v1",
+          "throws": false
+        },
+        "offset": 0,
+        "unsupported_reason": null
+      }
+    },
+    "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "generic parameter, signature or opaque type",
+        "identity": null,
+        "offset": 57,
+        "unsupported_reason": "generic_requirements"
+      }
+    },
+    "_$ss9CodingKeyPsE11descriptionSSvg": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "protocol extension context",
+        "identity": null,
+        "offset": 15,
+        "unsupported_reason": "protocol_context"
+      }
+    },
+    "_$ss9CodingKeyPsE16debugDescriptionSSvg": {
+      "broad": {
+        "detail": "expected identifier literal length",
+        "identity": null,
+        "offset": 2,
+        "unsupported_reason": "invalid_grammar"
+      },
+      "imports": {
+        "detail": "protocol extension context",
+        "identity": null,
+        "offset": 15,
+        "unsupported_reason": "protocol_context"
+      }
+    }
+  }
+}
