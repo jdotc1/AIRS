@@ -1117,8 +1117,13 @@ enum SwiftBroadFlowReport {
         for item in c7.entries { if let symbol = item["symbol"] as? String { entryDecisions[symbol] = item["decision"] as? String } }
         for row in rows {
             guard let witness = row["value_witness_admission"] as? [String: Any], (witness["admitted"] as? NSNumber).map({ CFGetTypeID($0) == CFBooleanGetTypeID() && $0.boolValue }) == true,
-                  let symbol = witness["symbol"] as? String, let decision = entryDecisions[symbol], decision != "non_throwing" else { continue }
-            throw v4Fail("C7", "metadata accessor \(symbol) is admitted by the value-witness check but listed \(decision)")
+                  let symbol = witness["symbol"] as? String, let decision = entryDecisions[symbol] else { continue }
+            // Contract 4.5, amended 10: a C runtime metadata function is not a Swift declaration and is listed not_swift;
+            // a Swift metadata accessor is listed non_throwing.
+            let kind = witness["provenance_kind"] as? String
+            let expected = kind == "runtime_metadata_call" ? "not_swift" : "non_throwing"
+            guard decision != expected else { continue }
+            throw v4Fail("C7", "metadata symbol \(symbol) is admitted by the value-witness check as \(kind ?? "unknown") but listed \(decision)")
         }
 
         // D1 to D4, over the rows that carry effect_admission. A row with an import or GOT callsite model must carry it.

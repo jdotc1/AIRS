@@ -640,6 +640,11 @@ enum V4Fixture {
         return entries.firstIndex { $0["symbol"] as? String == symbol }!
     }
 
+    static func witnessRowIndex(_ report: [String: Any]) -> Int {
+        let rows = report["calls"] as! [[String: Any]]
+        return rows.firstIndex { $0["value_witness_admission"] is [String: Any] }!
+    }
+
     static func rowIndex(_ report: [String: Any], symbol: String, occurrence: Int = 0) -> Int {
         let rows = report["calls"] as! [[String: Any]]
         let matching = rows.indices.filter { (rows[$0]["admission"] as? [String: Any])?["symbol"] as? String == symbol }
@@ -734,6 +739,11 @@ enum V4Fixture {
         add("C6 undecided names differ from the reasons", "C6") { adding($0, "decision_summary.undecided_by_reason.accessor.names", 1) }
         add("C6 undecided calls differ from the grid", "C6") { adding($0, "decision_summary.undecided_by_reason.accessor.calls", 1) }
         add("C7 admitted metadata accessor listed as throwing", "C7") { changing($0, "\(entryW).decision", "throwing") }
+        let witness = "calls.\(witnessRowIndex(base)).value_witness_admission"
+        add("C7 runtime metadata call naming a symbol listed non_throwing", "C7") {
+            changing($0, "\(witness).provenance_kind", "runtime_metadata_call")
+        }
+        add("C7 Swift metadata accessor naming a symbol listed not_swift", "C7") { changing($0, "\(witness).symbol", "_swift_retain") }
         // D1: one symbol, one record.
         add("D1 two rows of one symbol with different records", "D1") {
             changing($0, "calls.\(secondA).admission.declaration.entity", "Method")
@@ -1334,6 +1344,20 @@ final class SwiftBroadExtendedV4ReportTests: XCTestCase {
         for rule in ["A1", "A2", "A3", "A4", "A5", "A6", "B1", "B2", "B3", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "D1", "E1"] {
             XCTAssertTrue(rules.contains(rule), rule)
         }
+    }
+
+    func testE9RuntimeMetadataCallListedNotSwiftIsAccepted() {
+        // Contract 4.5, amended 10: a C runtime metadata function (Maccy 2.8.0: `_swift_checkMetadataState`) is not a
+        // Swift declaration, so the import table lists it not_swift.
+        let symbol = "_swift_checkMetadataState"
+        let base = F.report(F.richEvents() + [.notSwift(symbol)], plain: 2, witnessRow: true, indirectOmitted: 1,
+                            directNotSwift: 2, directUnattributed: 1)
+        accept(base, "rich report with a runtime metadata import")
+        let witness = "calls.\(F.witnessRowIndex(base)).value_witness_admission"
+        let runtime = F.changing(F.changing(base, "\(witness).provenance_kind", "runtime_metadata_call"), "\(witness).symbol", symbol)
+        accept(runtime, "runtime metadata call listed not_swift")
+        assertRefused(F.changing(runtime, "\(witness).provenance_kind", "imported_metadata_accessor_call"), rule: "C7",
+                      "Swift accessor kind naming the not_swift runtime symbol")
     }
 
     func testE9PerCallerRowLimitAndSymbolSameness() {

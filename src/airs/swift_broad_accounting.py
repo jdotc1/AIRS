@@ -611,14 +611,21 @@ def _c6(report):
 
 
 def _c7(report):
+    """An admitted value-witness symbol that the import table lists must agree with it (contract 4.5, amended 10).
+
+    A Swift metadata accessor (`metadata_accessor_call`, `imported_metadata_accessor_call`) is a Swift declaration
+    and must be listed `non_throwing`. A `runtime_metadata_call` names one of the fixed C runtime metadata functions,
+    which is not a Swift declaration and must be listed `not_swift`.
+    """
     decisions = {item['symbol']: item['decision'] for item in _import_block(report, 'C7')['entries']}
     for row in _rows('C7', report):
         witness = row.get('value_witness_admission')
         if isinstance(witness, dict) and witness.get('admitted') is True:
             symbol = witness.get('symbol')
-            if symbol in decisions and decisions[symbol] != 'non_throwing':
-                _fail('C7', 'metadata accessor %r is admitted by the value-witness check but listed %s'
-                      % (symbol, decisions[symbol]))
+            expected = 'not_swift' if witness.get('provenance_kind') == 'runtime_metadata_call' else 'non_throwing'
+            if symbol in decisions and decisions[symbol] != expected:
+                _fail('C7', 'metadata symbol %r is admitted by the value-witness check as %s but listed %s'
+                      % (symbol, witness.get('provenance_kind'), decisions[symbol]))
 
 
 # ---- D ----
