@@ -67,6 +67,14 @@ is retained as unresolved `declaration_caller_disagreement` for review. No other
 combination changes declaration-based skipping or grants ABI admission. Earlier
 profiles and the `swift-sync-error-edges-v37` model retain their historical behavior.
 
+On the owned example `OwnedImports.macho` (27 imported Swift call sites, 7 of them
+to throwing functions), an independent derivation from disassembly text and the
+implementation agree: 2 sites are `postcall_test_only` and 25 are `none`. No site
+has `mov x21, xzr` within four instructions before the call; the throwing callers
+there restore x21 from a saved register or pass the incoming x21 on. So the full
+idiom, and with it `declaration_caller_disagreement`, does not occur on that
+example. The recognized shapes were not widened to fit it.
+
 ## Evidence
 
 The new synthetic tests are in `tests/test_swift_broad_imports.py`, 48 methods in total. 46 were written independently of the implementation, from the model description and from hand-built Mach-O bytes. The implementer added two more: one for the section-relocation refusal, and one, after review, for the section-metadata mismatch. They cover:
