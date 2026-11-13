@@ -1,0 +1,1834 @@
+{
+  "fixture": "OwnedImports.macho",
+  "source": "OwnedImports.swift",
+  "profile": "broad-extended-v4",
+  "report_model_version": "swift-broad-error-flow-extended-v4",
+  "effect_admission_model": "swift-import-effect-admission-v1",
+  "grammar": {
+    "model": "swift-declaration-syntax-v2",
+    "pin": "swift-6.4.2-RELEASE"
+  },
+  "binary_sha256": "ef13dd492b9ff8eda4843564fa03535789496eeaf31d089add3868f1980dbfb1",
+  "binary_sha256_source": "copied from expected.json; not recomputed",
+  "status": "hand-authored expectation (packet P1). Not generated from, and not to be regenerated from, engine output.",
+  "derivation": [
+    "Contract: the broad-extended-v4 design contract, sections 4, 5 and 7, with the decisions recorded in its section 10.",
+    "Decisions: xcrun swift-demangle (--tree-only and --compact) run on the 19 symbol strings as text only, never on or by running the binary; the grammar contract sections 3 and 5 applied by hand to the trees. Cross-read against FIXTURE_CASES in tests/test_swift_declaration_grammar.py, which records the same 10 / 3 / 6 split.",
+    "Call sites: the fixture read as bytes with Python -I: Mach-O load commands, __text and __stubs, LC_FUNCTION_STARTS, then every b, bl, blr and br word in __text. The 54 stub calls equal expected.json stub_calls exactly (pc, kind, symbol).",
+    "GOT calls and indirect sites: expected-got.json (7 blr, 3 attributed to ___chkstk_darwin, 4 declined) and expected-indirect-target.json (8 indirect instruction sites).",
+    "Caller shapes: expected-caller-error-test.json (27 Swift sites: 2 postcall_test_only, 25 none, 0 swifterror_idiom).",
+    "No AIRS engine, CLI or recover_swift_broad_flow was run and no engine output was read."
+  ],
+  "counts": {
+    "distinct_swift_symbols": 19,
+    "distinct_symbols_attributed": 30,
+    "distinct_non_swift_symbols": 11,
+    "stub_calls": 54,
+    "got_calls_attributed": 3,
+    "attributed_calls": 57,
+    "attributed_swift_calls": 27,
+    "swift_bl": 25,
+    "swift_tail_b": 2,
+    "retained_import_rows": 12,
+    "skipped_non_throwing": 15,
+    "omitted": 0
+  },
+  "observed_call_instructions": 89,
+  "observed_call_instructions_by_kind": {
+    "bl": 74,
+    "b_leaving_function": 7,
+    "blr": 7,
+    "br": 1
+  },
+  "selected_call_candidates": 17,
+  "selected_call_candidates_breakdown": {
+    "import_rows": 12,
+    "indirect_declined_got_blr": 4,
+    "indirect_br": 1
+  },
+  "calls_rows_expected": 17,
+  "calls_rows_import": 12,
+  "calls_rows_indirect_not_recorded_here": 5,
+  "unselected_call_counts": {
+    "skipped_non_throwing": 15,
+    "non_swift_import": 30,
+    "declined_stub": 0,
+    "direct_target_not_swift_function": 27,
+    "direct_target_unattributed": 0,
+    "other": 0
+  },
+  "unselected_total": 72,
+  "omission_causes": {
+    "analysis_work_budget": 0,
+    "per_function_limit": 0,
+    "total_row_limit": 0,
+    "output_budget": 0
+  },
+  "omitted_calls": 0,
+  "omitted_by_kind": {
+    "import_stub": 0,
+    "import_got": 0,
+    "local_swift_direct": 0,
+    "indirect": 0
+  },
+  "call_details_complete_from_omission": true,
+  "scan": {
+    "words_total": 715,
+    "words_scanned": 715,
+    "words_unscanned_per_function_ceiling": 0,
+    "words_unscanned_total_ceiling": 0,
+    "words_excluded_boundary": 0,
+    "functions_total": 40,
+    "functions_excluded_boundary": 0,
+    "functions_truncated": 0,
+    "candidates_in_unscanned_words": 0,
+    "candidates_in_unscanned_words_reason": null,
+    "word_scan_complete": true,
+    "scanned_words": 715
+  },
+  "import_calls": {
+    "complete": true,
+    "attributed_calls": 57,
+    "attributed_swift_calls": 27,
+    "distinct_symbols": 30,
+    "entries": [
+      {
+        "symbol": "_$s10Foundation11JSONDecoderC6decode_4fromxxm_AA4DataVtKSeRzlFTj",
+        "decision": "undecided",
+        "reason": "thunk_or_specialization",
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 1,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$s10Foundation11JSONDecoderCACycfc",
+        "decision": "non_throwing",
+        "reason": null,
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 1,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$s10Foundation11JSONDecoderCMa",
+        "decision": "non_throwing",
+        "reason": null,
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 1,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$s10Foundation3URLV15fileURLWithPathACSSh_tcfC",
+        "decision": "non_throwing",
+        "reason": null,
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 1,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$s10Foundation3URLVMa",
+        "decision": "non_throwing",
+        "reason": null,
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 1,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$s10Foundation4DataV10contentsOf7optionsAcA3URLVh_So20NSDataReadingOptionsVtKcfC",
+        "decision": "throwing",
+        "reason": null,
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 1,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$sSS10FoundationE8EncodingV4utf8ACvgZ",
+        "decision": "undecided",
+        "reason": "accessor",
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 1,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$sSS10FoundationE8EncodingVMa",
+        "decision": "non_throwing",
+        "reason": null,
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 1,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$sSy10FoundationE5write2to10atomically8encodingyAA3URLV_SbSSAAE8EncodingVtKF",
+        "decision": "throwing",
+        "reason": null,
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 1,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$ss11CommandLineO9argumentsSaySSGvgZ",
+        "decision": "undecided",
+        "reason": "accessor",
+        "calls": 2,
+        "stub_calls": 2,
+        "got_calls": 0,
+        "retained": 2,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF",
+        "decision": "throwing",
+        "reason": null,
+        "calls": 2,
+        "stub_calls": 2,
+        "got_calls": 0,
+        "retained": 2,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$ss27_stringCompareWithSmolCheck__9expectingSbs11_StringGutsV_ADs01_G16ComparisonResultOtF",
+        "decision": "non_throwing",
+        "reason": null,
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 1,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$ss5print_9separator10terminatoryypd_S2StF",
+        "decision": "non_throwing",
+        "reason": null,
+        "calls": 2,
+        "stub_calls": 2,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 2,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$ss6HasherV5_seedABSi_tcfC",
+        "decision": "non_throwing",
+        "reason": null,
+        "calls": 2,
+        "stub_calls": 2,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 2,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$ss6HasherV8_combineyySuF",
+        "decision": "non_throwing",
+        "reason": null,
+        "calls": 3,
+        "stub_calls": 3,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 3,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$ss6HasherV9_finalizeSiyF",
+        "decision": "non_throwing",
+        "reason": null,
+        "calls": 2,
+        "stub_calls": 2,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 2,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj",
+        "decision": "undecided",
+        "reason": "thunk_or_specialization",
+        "calls": 2,
+        "stub_calls": 2,
+        "got_calls": 0,
+        "retained": 2,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$ss9CodingKeyPsE11descriptionSSvg",
+        "decision": "undecided",
+        "reason": "accessor",
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 1,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "_$ss9CodingKeyPsE16debugDescriptionSSvg",
+        "decision": "undecided",
+        "reason": "accessor",
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 1,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 0,
+        "omitted": 0
+      },
+      {
+        "symbol": "___chkstk_darwin",
+        "decision": "not_swift",
+        "reason": null,
+        "calls": 3,
+        "stub_calls": 0,
+        "got_calls": 3,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 3,
+        "omitted": 0
+      },
+      {
+        "symbol": "_swift_allocBox",
+        "decision": "not_swift",
+        "reason": null,
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 1,
+        "omitted": 0
+      },
+      {
+        "symbol": "_swift_allocObject",
+        "decision": "not_swift",
+        "reason": null,
+        "calls": 3,
+        "stub_calls": 3,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 3,
+        "omitted": 0
+      },
+      {
+        "symbol": "_swift_bridgeObjectRelease",
+        "decision": "not_swift",
+        "reason": null,
+        "calls": 5,
+        "stub_calls": 5,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 5,
+        "omitted": 0
+      },
+      {
+        "symbol": "_swift_bridgeObjectRetain",
+        "decision": "not_swift",
+        "reason": null,
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 1,
+        "omitted": 0
+      },
+      {
+        "symbol": "_swift_errorRelease",
+        "decision": "not_swift",
+        "reason": null,
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 1,
+        "omitted": 0
+      },
+      {
+        "symbol": "_swift_getErrorValue",
+        "decision": "not_swift",
+        "reason": null,
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 1,
+        "omitted": 0
+      },
+      {
+        "symbol": "_swift_getTypeByMangledNameInContext",
+        "decision": "not_swift",
+        "reason": null,
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 1,
+        "omitted": 0
+      },
+      {
+        "symbol": "_swift_getWitnessTable",
+        "decision": "not_swift",
+        "reason": null,
+        "calls": 6,
+        "stub_calls": 6,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 6,
+        "omitted": 0
+      },
+      {
+        "symbol": "_swift_release",
+        "decision": "not_swift",
+        "reason": null,
+        "calls": 7,
+        "stub_calls": 7,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 7,
+        "omitted": 0
+      },
+      {
+        "symbol": "_swift_slowAlloc",
+        "decision": "not_swift",
+        "reason": null,
+        "calls": 1,
+        "stub_calls": 1,
+        "got_calls": 0,
+        "retained": 0,
+        "skipped_non_throwing": 0,
+        "not_swift_calls": 1,
+        "omitted": 0
+      }
+    ],
+    "residual": {
+      "symbols": 0,
+      "calls": 0,
+      "retained": 0,
+      "skipped_non_throwing": 0,
+      "not_swift_calls": 0,
+      "omitted": 0
+    }
+  },
+  "entries_order": "code-point order of the symbol string; the leading underscore is common to all, so the order is the same with or without it. Order: 19 names beginning _$s, then ___chkstk_darwin, then the 10 _swift_ names.",
+  "decision_by_shape": {
+    "non_throwing": {
+      "swifterror_idiom": 0,
+      "postcall_test_only": 0,
+      "precall_zero_only": 0,
+      "none": 15
+    },
+    "throwing": {
+      "swifterror_idiom": 0,
+      "postcall_test_only": 0,
+      "precall_zero_only": 0,
+      "none": 4
+    },
+    "async": {
+      "swifterror_idiom": 0,
+      "postcall_test_only": 0,
+      "precall_zero_only": 0,
+      "none": 0
+    },
+    "undecided": {
+      "swifterror_idiom": 0,
+      "postcall_test_only": 2,
+      "precall_zero_only": 0,
+      "none": 6
+    }
+  },
+  "decision_summary": {
+    "names": {
+      "non_throwing": 10,
+      "throwing": 3,
+      "async": 0,
+      "undecided": 6
+    },
+    "undecided_by_reason": {
+      "accessor": {
+        "names": 4,
+        "calls": 5
+      },
+      "thunk_or_specialization": {
+        "names": 2,
+        "calls": 3
+      }
+    },
+    "undecided_by_reason_note": "listed as present reasons only; see open question Q2"
+  },
+  "caller_relation_counts": {
+    "conflict": 0,
+    "corroborated": 0,
+    "no_signal": {
+      "retained_rows": 4,
+      "skipped_rows_not_in_calls": 15
+    },
+    "not_applicable": {
+      "retained_rows": 8,
+      "skipped_rows_not_in_calls": 0
+    }
+  },
+  "licence_counts": {
+    "by_symbol": {
+      "no_error_exit": 10,
+      "declared_error_exit": 3,
+      "none": 6,
+      "refused_unsupported_effect": 0
+    },
+    "by_call": {
+      "no_error_exit": 15,
+      "declared_error_exit": 4,
+      "none": 8,
+      "refused_unsupported_effect": 0
+    }
+  },
+  "reason_counts_import_rows": {
+    "imported_callee_outcome_unmodeled": 4,
+    "imported_callee_abi_unqualified": 8,
+    "declaration_caller_disagreement": 0,
+    "imported_callee_effect_unsupported": 0
+  },
+  "status_counts_import_rows": {
+    "unresolved": 12
+  },
+  "import_rows": [
+    {
+      "call_pc": "0x100000b5c",
+      "call_kind": "bl",
+      "callee_stub_pc": "0x1000016b0",
+      "symbol": "_$ss11CommandLineO9argumentsSaySSGvgZ",
+      "shape": "none",
+      "licence_class": "none",
+      "caller_relation": "not_applicable",
+      "status": "unresolved",
+      "reason": "imported_callee_abi_unqualified"
+    },
+    {
+      "call_pc": "0x100000b70",
+      "call_kind": "bl",
+      "callee_stub_pc": "0x1000016b0",
+      "symbol": "_$ss11CommandLineO9argumentsSaySSGvgZ",
+      "shape": "none",
+      "licence_class": "none",
+      "caller_relation": "not_applicable",
+      "status": "unresolved",
+      "reason": "imported_callee_abi_unqualified"
+    },
+    {
+      "call_pc": "0x100000d8c",
+      "call_kind": "bl",
+      "callee_stub_pc": "0x100001680",
+      "symbol": "_$s10Foundation4DataV10contentsOf7optionsAcA3URLVh_So20NSDataReadingOptionsVtKcfC",
+      "shape": "none",
+      "licence_class": "declared_error_exit",
+      "caller_relation": "no_signal",
+      "status": "unresolved",
+      "reason": "imported_callee_outcome_unmodeled"
+    },
+    {
+      "call_pc": "0x100000e88",
+      "call_kind": "bl",
+      "callee_stub_pc": "0x100001644",
+      "symbol": "_$s10Foundation11JSONDecoderC6decode_4fromxxm_AA4DataVtKSeRzlFTj",
+      "shape": "none",
+      "licence_class": "none",
+      "caller_relation": "not_applicable",
+      "status": "unresolved",
+      "reason": "imported_callee_abi_unqualified"
+    },
+    {
+      "call_pc": "0x100000f60",
+      "call_kind": "bl",
+      "callee_stub_pc": "0x10000168c",
+      "symbol": "_$sSS10FoundationE8EncodingV4utf8ACvgZ",
+      "shape": "none",
+      "licence_class": "none",
+      "caller_relation": "not_applicable",
+      "status": "unresolved",
+      "reason": "imported_callee_abi_unqualified"
+    },
+    {
+      "call_pc": "0x100000f88",
+      "call_kind": "bl",
+      "callee_stub_pc": "0x1000016a4",
+      "symbol": "_$sSy10FoundationE5write2to10atomically8encodingyAA3URLV_SbSSAAE8EncodingVtKF",
+      "shape": "none",
+      "licence_class": "declared_error_exit",
+      "caller_relation": "no_signal",
+      "status": "unresolved",
+      "reason": "imported_callee_outcome_unmodeled"
+    },
+    {
+      "call_pc": "0x1000011b0",
+      "call_kind": "b",
+      "callee_stub_pc": "0x10000171c",
+      "symbol": "_$ss9CodingKeyPsE16debugDescriptionSSvg",
+      "shape": "none",
+      "licence_class": "none",
+      "caller_relation": "not_applicable",
+      "status": "unresolved",
+      "reason": "imported_callee_abi_unqualified"
+    },
+    {
+      "call_pc": "0x1000011d8",
+      "call_kind": "b",
+      "callee_stub_pc": "0x100001710",
+      "symbol": "_$ss9CodingKeyPsE11descriptionSSvg",
+      "shape": "none",
+      "licence_class": "none",
+      "caller_relation": "not_applicable",
+      "status": "unresolved",
+      "reason": "imported_callee_abi_unqualified"
+    },
+    {
+      "call_pc": "0x100001274",
+      "call_kind": "bl",
+      "callee_stub_pc": "0x100001704",
+      "symbol": "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj",
+      "shape": "postcall_test_only",
+      "licence_class": "none",
+      "caller_relation": "not_applicable",
+      "status": "unresolved",
+      "reason": "imported_callee_abi_unqualified"
+    },
+    {
+      "call_pc": "0x10000128c",
+      "call_kind": "bl",
+      "callee_stub_pc": "0x1000016bc",
+      "symbol": "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF",
+      "shape": "none",
+      "licence_class": "declared_error_exit",
+      "caller_relation": "no_signal",
+      "status": "unresolved",
+      "reason": "imported_callee_outcome_unmodeled"
+    },
+    {
+      "call_pc": "0x100001408",
+      "call_kind": "bl",
+      "callee_stub_pc": "0x100001704",
+      "symbol": "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj",
+      "shape": "postcall_test_only",
+      "licence_class": "none",
+      "caller_relation": "not_applicable",
+      "status": "unresolved",
+      "reason": "imported_callee_abi_unqualified"
+    },
+    {
+      "call_pc": "0x100001420",
+      "call_kind": "bl",
+      "callee_stub_pc": "0x1000016bc",
+      "symbol": "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF",
+      "shape": "none",
+      "licence_class": "declared_error_exit",
+      "caller_relation": "no_signal",
+      "status": "unresolved",
+      "reason": "imported_callee_outcome_unmodeled"
+    }
+  ],
+  "direct_target_not_swift_function_sites": [
+    {
+      "pc": "0x100000b48",
+      "kind": "bl",
+      "target": "0x100000d28"
+    },
+    {
+      "pc": "0x100000b54",
+      "kind": "bl",
+      "target": "0x100000d68"
+    },
+    {
+      "pc": "0x100000bc4",
+      "kind": "bl",
+      "target": "0x100000d80"
+    },
+    {
+      "pc": "0x100000be8",
+      "kind": "bl",
+      "target": "0x100000d98"
+    },
+    {
+      "pc": "0x100000c0c",
+      "kind": "bl",
+      "target": "0x100000e24"
+    },
+    {
+      "pc": "0x100000c1c",
+      "kind": "bl",
+      "target": "0x100000eb4"
+    },
+    {
+      "pc": "0x100000c6c",
+      "kind": "bl",
+      "target": "0x100000ef4"
+    },
+    {
+      "pc": "0x100000c78",
+      "kind": "bl",
+      "target": "0x100000eb4"
+    },
+    {
+      "pc": "0x100000c90",
+      "kind": "bl",
+      "target": "0x100000d98"
+    },
+    {
+      "pc": "0x100000cc8",
+      "kind": "bl",
+      "target": "0x100000de8"
+    },
+    {
+      "pc": "0x100000e64",
+      "kind": "bl",
+      "target": "0x100000fc0"
+    },
+    {
+      "pc": "0x100000f64",
+      "kind": "bl",
+      "target": "0x100001000"
+    },
+    {
+      "pc": "0x10000119c",
+      "kind": "bl",
+      "target": "0x100001308"
+    },
+    {
+      "pc": "0x1000011c4",
+      "kind": "bl",
+      "target": "0x100001308"
+    },
+    {
+      "pc": "0x10000120c",
+      "kind": "bl",
+      "target": "0x100000d98"
+    },
+    {
+      "pc": "0x100001248",
+      "kind": "bl",
+      "target": "0x1000012e4"
+    },
+    {
+      "pc": "0x100001250",
+      "kind": "bl",
+      "target": "0x100001308"
+    },
+    {
+      "pc": "0x1000012b0",
+      "kind": "bl",
+      "target": "0x100001348"
+    },
+    {
+      "pc": "0x1000012dc",
+      "kind": "bl",
+      "target": "0x100001348"
+    },
+    {
+      "pc": "0x1000013a0",
+      "kind": "bl",
+      "target": "0x100000d98"
+    },
+    {
+      "pc": "0x1000013dc",
+      "kind": "bl",
+      "target": "0x1000012e4"
+    },
+    {
+      "pc": "0x1000013e4",
+      "kind": "bl",
+      "target": "0x100001308"
+    },
+    {
+      "pc": "0x100001444",
+      "kind": "bl",
+      "target": "0x100001348"
+    },
+    {
+      "pc": "0x100001470",
+      "kind": "bl",
+      "target": "0x100001348"
+    },
+    {
+      "pc": "0x100001578",
+      "kind": "b",
+      "target": "0x10000157c"
+    },
+    {
+      "pc": "0x1000015bc",
+      "kind": "b",
+      "target": "0x1000015c0"
+    },
+    {
+      "pc": "0x100001600",
+      "kind": "b",
+      "target": "0x100001604"
+    }
+  ],
+  "direct_target_not_swift_function_why": "All 40 functions other than _main are unnamed (sub_<address>); nm lists only _main and __mh_execute_header as defined. A direct call to an in-image function whose name is not a $s name is not selected. 24 bl and 3 b (a b to the start of the next function, from a 4-byte function, leaves its own function and counts as a call).",
+  "indirect_sites": {
+    "all": [
+      {
+        "pc": "0x100000cdc",
+        "kind": "blr"
+      },
+      {
+        "pc": "0x100000f40",
+        "kind": "blr"
+      },
+      {
+        "pc": "0x100000f9c",
+        "kind": "blr"
+      },
+      {
+        "pc": "0x10000122c",
+        "kind": "blr"
+      },
+      {
+        "pc": "0x1000012a4",
+        "kind": "blr"
+      },
+      {
+        "pc": "0x10000135c",
+        "kind": "br"
+      },
+      {
+        "pc": "0x1000013c0",
+        "kind": "blr"
+      },
+      {
+        "pc": "0x100001438",
+        "kind": "blr"
+      }
+    ],
+    "selected_candidates_not_import": [
+      {
+        "pc": "0x100000cdc",
+        "kind": "blr"
+      },
+      {
+        "pc": "0x100000f9c",
+        "kind": "blr"
+      },
+      {
+        "pc": "0x1000012a4",
+        "kind": "blr"
+      },
+      {
+        "pc": "0x10000135c",
+        "kind": "br"
+      },
+      {
+        "pc": "0x100001438",
+        "kind": "blr"
+      }
+    ],
+    "got_attributed_to_non_swift": [
+      {
+        "pc": "0x100000f40",
+        "symbol": "___chkstk_darwin"
+      },
+      {
+        "pc": "0x10000122c",
+        "symbol": "___chkstk_darwin"
+      },
+      {
+        "pc": "0x1000013c0",
+        "symbol": "___chkstk_darwin"
+      }
+    ],
+    "note": "The 3 attributed GOT sites are in import_calls (___chkstk_darwin, not_swift) and unselected non_swift_import. The 5 others are selected indirect candidates; their rows, reasons and statuses are the existing v3 behaviour and are not part of this expectation (expected-indirect-target.json covers them)."
+  },
+  "not_exercised_by_this_fixture": [
+    "swifterror_idiom (conflict, corroborated)",
+    "async",
+    "typed throws with a concrete error",
+    "throws(Never)",
+    "accessor with an effect",
+    "refused_unsupported_effect",
+    "any omission cause",
+    "a partly scanned image",
+    "a residual import table"
+  ],
+  "symbols": [
+    {
+      "symbol": "_$s10Foundation11JSONDecoderC6decode_4fromxxm_AA4DataVtKSeRzlFTj",
+      "swift": true,
+      "demangled_declaration": "dispatch thunk of Foundation.JSONDecoder.decode<A where A: Swift.Decodable>(_: A.Type, from: Foundation.Data) throws -> A",
+      "effects_in_demangled_text": {
+        "throws": true,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "undecided",
+      "reason": "thunk_or_specialization",
+      "licence_class": "none",
+      "expected_row_reason": "imported_callee_abi_unqualified",
+      "expected_compact_declaration": {
+        "entity": null,
+        "throws": null,
+        "is_async": null,
+        "typed_throws": null,
+        "identity_sha256": null,
+        "note": "grammar declined without an identity, so the five identity fields are null (contract 5.3)"
+      },
+      "reasoning": "The mangled name ends in the dispatch-thunk operator Tj (demangler node DispatchThunk). The grammar recognises thunk suffixes and declines them (contract section 3, global forms), so the decision is undecided with reason thunk_or_specialization although the demangled text shows throws. Licence none.",
+      "call_sites": [
+        {
+          "pc": "0x100000e88",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x100000e24",
+          "caller_role": "decodeItem (line 4)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$s10Foundation11JSONDecoderCACycfc",
+      "swift": true,
+      "demangled_declaration": "Foundation.JSONDecoder.init() -> Foundation.JSONDecoder",
+      "effects_in_demangled_text": {
+        "throws": false,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "non_throwing",
+      "reason": null,
+      "licence_class": "no_error_exit",
+      "expected_row_reason": null,
+      "expected_compact_declaration": {
+        "entity": "Constructor",
+        "throws": false,
+        "is_async": false,
+        "typed_throws": "none",
+        "identity_sha256": "not recorded (open question Q5)"
+      },
+      "reasoning": "The demangler tree shows no ThrowsAnnotation, TypedThrowsAnnotation or AsyncAnnotation on the outer FunctionType (or the entity is a type metadata accessor, whose manglings carry no function type). Decision non_throwing, licence no_error_exit.",
+      "call_sites": [
+        {
+          "pc": "0x100000e5c",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x100000e24",
+          "caller_role": "decodeItem (line 4)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$s10Foundation11JSONDecoderCMa",
+      "swift": true,
+      "demangled_declaration": "type metadata accessor for Foundation.JSONDecoder",
+      "effects_in_demangled_text": {
+        "throws": false,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "non_throwing",
+      "reason": null,
+      "licence_class": "no_error_exit",
+      "expected_row_reason": null,
+      "expected_compact_declaration": {
+        "entity": "TypeMetadataAccessFunction",
+        "throws": false,
+        "is_async": false,
+        "typed_throws": "none",
+        "identity_sha256": "not recorded (open question Q5)"
+      },
+      "reasoning": "The demangler tree shows no ThrowsAnnotation, TypedThrowsAnnotation or AsyncAnnotation on the outer FunctionType (or the entity is a type metadata accessor, whose manglings carry no function type). Decision non_throwing, licence no_error_exit.",
+      "call_sites": [
+        {
+          "pc": "0x100000e48",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x100000e24",
+          "caller_role": "decodeItem (line 4)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$s10Foundation3URLV15fileURLWithPathACSSh_tcfC",
+      "swift": true,
+      "demangled_declaration": "Foundation.URL.init(fileURLWithPath: __shared Swift.String) -> Foundation.URL",
+      "effects_in_demangled_text": {
+        "throws": false,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "non_throwing",
+      "reason": null,
+      "licence_class": "no_error_exit",
+      "expected_row_reason": null,
+      "expected_compact_declaration": {
+        "entity": "Allocator",
+        "throws": false,
+        "is_async": false,
+        "typed_throws": "none",
+        "identity_sha256": "not recorded (open question Q5)"
+      },
+      "reasoning": "The demangler tree shows no ThrowsAnnotation, TypedThrowsAnnotation or AsyncAnnotation on the outer FunctionType (or the entity is a type metadata accessor, whose manglings carry no function type). Decision non_throwing, licence no_error_exit.",
+      "call_sites": [
+        {
+          "pc": "0x100000bb0",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x100000b18",
+          "caller_role": "top-level code (OwnedImports.swift lines 6 and 7)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$s10Foundation3URLVMa",
+      "swift": true,
+      "demangled_declaration": "type metadata accessor for Foundation.URL",
+      "effects_in_demangled_text": {
+        "throws": false,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "non_throwing",
+      "reason": null,
+      "licence_class": "no_error_exit",
+      "expected_row_reason": null,
+      "expected_compact_declaration": {
+        "entity": "TypeMetadataAccessFunction",
+        "throws": false,
+        "is_async": false,
+        "typed_throws": "none",
+        "identity_sha256": "not recorded (open question Q5)"
+      },
+      "reasoning": "The demangler tree shows no ThrowsAnnotation, TypedThrowsAnnotation or AsyncAnnotation on the outer FunctionType (or the entity is a type metadata accessor, whose manglings carry no function type). Decision non_throwing, licence no_error_exit.",
+      "call_sites": [
+        {
+          "pc": "0x100000b34",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x100000b18",
+          "caller_role": "top-level code (OwnedImports.swift lines 6 and 7)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$s10Foundation4DataV10contentsOf7optionsAcA3URLVh_So20NSDataReadingOptionsVtKcfC",
+      "swift": true,
+      "demangled_declaration": "Foundation.Data.init(contentsOf: __shared Foundation.URL, options: __C.NSDataReadingOptions) throws -> Foundation.Data",
+      "effects_in_demangled_text": {
+        "throws": true,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "throwing",
+      "reason": null,
+      "licence_class": "declared_error_exit",
+      "expected_row_reason": "imported_callee_outcome_unmodeled",
+      "expected_compact_declaration": {
+        "entity": "Allocator",
+        "throws": true,
+        "is_async": false,
+        "typed_throws": "none",
+        "identity_sha256": "not recorded (open question Q5)"
+      },
+      "reasoning": "The demangler tree shows a ThrowsAnnotation directly under the outer FunctionType, with no AsyncAnnotation and no typed throws. Decision throwing; with is_async false and typed_throws none the licence is declared_error_exit.",
+      "call_sites": [
+        {
+          "pc": "0x100000d8c",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x100000d80",
+          "caller_role": "loadData (line 3)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$sSS10FoundationE8EncodingV4utf8ACvgZ",
+      "swift": true,
+      "demangled_declaration": "static (extension in Foundation):Swift.String.Encoding.utf8.getter : (extension in Foundation):Swift.String.Encoding",
+      "effects_in_demangled_text": {
+        "throws": false,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "undecided",
+      "reason": "accessor",
+      "licence_class": "none",
+      "expected_row_reason": "imported_callee_abi_unqualified",
+      "expected_compact_declaration": {
+        "entity": null,
+        "throws": null,
+        "is_async": null,
+        "typed_throws": null,
+        "identity_sha256": null,
+        "resolved_by": "contract section 10, amendment 7"
+      },
+      "reasoning": "The demangler entity is a Getter (variable accessor). Accessors stay undecided until an owned compiled example exists (grammar contract section 5), so undecided with reason accessor. Licence none. The symbol ends in the static suffix Z. See open question Q4 on its compact declaration record.",
+      "call_sites": [
+        {
+          "pc": "0x100000f60",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x100000ef4",
+          "caller_role": "writeText (line 5)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$sSS10FoundationE8EncodingVMa",
+      "swift": true,
+      "demangled_declaration": "type metadata accessor for (extension in Foundation):Swift.String.Encoding",
+      "effects_in_demangled_text": {
+        "throws": false,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "non_throwing",
+      "reason": null,
+      "licence_class": "no_error_exit",
+      "expected_row_reason": null,
+      "expected_compact_declaration": {
+        "entity": "TypeMetadataAccessFunction",
+        "throws": false,
+        "is_async": false,
+        "typed_throws": "none",
+        "identity_sha256": "not recorded (open question Q5)"
+      },
+      "reasoning": "The demangler tree shows no ThrowsAnnotation, TypedThrowsAnnotation or AsyncAnnotation on the outer FunctionType (or the entity is a type metadata accessor, whose manglings carry no function type). Decision non_throwing, licence no_error_exit.",
+      "call_sites": [
+        {
+          "pc": "0x100000f24",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x100000ef4",
+          "caller_role": "writeText (line 5)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$sSy10FoundationE5write2to10atomically8encodingyAA3URLV_SbSSAAE8EncodingVtKF",
+      "swift": true,
+      "demangled_declaration": "(extension in Foundation):Swift.StringProtocol.write(to: Foundation.URL, atomically: Swift.Bool, encoding: (extension in Foundation):Swift.String.Encoding) throws -> ()",
+      "effects_in_demangled_text": {
+        "throws": true,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "throwing",
+      "reason": null,
+      "licence_class": "declared_error_exit",
+      "expected_row_reason": "imported_callee_outcome_unmodeled",
+      "expected_compact_declaration": {
+        "entity": "Function",
+        "throws": true,
+        "is_async": false,
+        "typed_throws": "none",
+        "identity_sha256": "not recorded (open question Q5)"
+      },
+      "reasoning": "The demangler tree shows a ThrowsAnnotation directly under the outer FunctionType, with no AsyncAnnotation and no typed throws. Decision throwing; with is_async false and typed_throws none the licence is declared_error_exit.",
+      "call_sites": [
+        {
+          "pc": "0x100000f88",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x100000ef4",
+          "caller_role": "writeText (line 5)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$ss11CommandLineO9argumentsSaySSGvgZ",
+      "swift": true,
+      "demangled_declaration": "static Swift.CommandLine.arguments.getter : [Swift.String]",
+      "effects_in_demangled_text": {
+        "throws": false,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "undecided",
+      "reason": "accessor",
+      "licence_class": "none",
+      "expected_row_reason": "imported_callee_abi_unqualified",
+      "expected_compact_declaration": {
+        "entity": null,
+        "throws": null,
+        "is_async": null,
+        "typed_throws": null,
+        "identity_sha256": null,
+        "resolved_by": "contract section 10, amendment 7"
+      },
+      "reasoning": "The demangler entity is a Getter (variable accessor). Accessors stay undecided until an owned compiled example exists (grammar contract section 5), so undecided with reason accessor. Licence none. The symbol ends in the static suffix Z. See open question Q4 on its compact declaration record.",
+      "call_sites": [
+        {
+          "pc": "0x100000b5c",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x100000b18",
+          "caller_role": "top-level code (OwnedImports.swift lines 6 and 7)"
+        },
+        {
+          "pc": "0x100000b70",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x100000b18",
+          "caller_role": "top-level code (OwnedImports.swift lines 6 and 7)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$ss22KeyedDecodingContainerV6decode_6forKeyS2im_xtKF",
+      "swift": true,
+      "demangled_declaration": "Swift.KeyedDecodingContainer.decode(_: Swift.Int.Type, forKey: A) throws -> Swift.Int",
+      "effects_in_demangled_text": {
+        "throws": true,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "throwing",
+      "reason": null,
+      "licence_class": "declared_error_exit",
+      "expected_row_reason": "imported_callee_outcome_unmodeled",
+      "expected_compact_declaration": {
+        "entity": "Function",
+        "throws": true,
+        "is_async": false,
+        "typed_throws": "none",
+        "identity_sha256": "not recorded (open question Q5)"
+      },
+      "reasoning": "The demangler tree shows a ThrowsAnnotation directly under the outer FunctionType, with no AsyncAnnotation and no typed throws. Decision throwing; with is_async false and typed_throws none the licence is declared_error_exit.",
+      "call_sites": [
+        {
+          "pc": "0x10000128c",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x1000011dc",
+          "caller_role": "compiler-synthesised code (inferred; not written in OwnedImports.swift)"
+        },
+        {
+          "pc": "0x100001420",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x100001368",
+          "caller_role": "compiler-synthesised code (inferred; not written in OwnedImports.swift)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$ss27_stringCompareWithSmolCheck__9expectingSbs11_StringGutsV_ADs01_G16ComparisonResultOtF",
+      "swift": true,
+      "demangled_declaration": "Swift._stringCompareWithSmolCheck(_: Swift._StringGuts, _: Swift._StringGuts, expecting: Swift._StringComparisonResult) -> Swift.Bool",
+      "effects_in_demangled_text": {
+        "throws": false,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "non_throwing",
+      "reason": null,
+      "licence_class": "no_error_exit",
+      "expected_row_reason": null,
+      "expected_compact_declaration": {
+        "entity": "Function",
+        "throws": false,
+        "is_async": false,
+        "typed_throws": "none",
+        "identity_sha256": "not recorded (open question Q5)"
+      },
+      "reasoning": "The demangler tree shows no ThrowsAnnotation, TypedThrowsAnnotation or AsyncAnnotation on the outer FunctionType (or the entity is a type metadata accessor, whose manglings carry no function type). Decision non_throwing, licence no_error_exit.",
+      "call_sites": [
+        {
+          "pc": "0x100001138",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x1000010f8",
+          "caller_role": "compiler-synthesised code (inferred; not written in OwnedImports.swift)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$ss5print_9separator10terminatoryypd_S2StF",
+      "swift": true,
+      "demangled_declaration": "Swift.print(_: Any..., separator: Swift.String, terminator: Swift.String) -> ()",
+      "effects_in_demangled_text": {
+        "throws": false,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "non_throwing",
+      "reason": null,
+      "licence_class": "no_error_exit",
+      "expected_row_reason": null,
+      "expected_compact_declaration": {
+        "entity": "Function",
+        "throws": false,
+        "is_async": false,
+        "typed_throws": "none",
+        "identity_sha256": "not recorded (open question Q5)"
+      },
+      "reasoning": "The demangler tree shows no ThrowsAnnotation, TypedThrowsAnnotation or AsyncAnnotation on the outer FunctionType (or the entity is a type metadata accessor, whose manglings carry no function type). Decision non_throwing, licence no_error_exit.",
+      "call_sites": [
+        {
+          "pc": "0x100000c54",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x100000b18",
+          "caller_role": "top-level code (OwnedImports.swift lines 6 and 7)"
+        },
+        {
+          "pc": "0x100000cf4",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x100000b18",
+          "caller_role": "top-level code (OwnedImports.swift lines 6 and 7)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$ss6HasherV5_seedABSi_tcfC",
+      "swift": true,
+      "demangled_declaration": "Swift.Hasher.init(_seed: Swift.Int) -> Swift.Hasher",
+      "effects_in_demangled_text": {
+        "throws": false,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "non_throwing",
+      "reason": null,
+      "licence_class": "no_error_exit",
+      "expected_row_reason": null,
+      "expected_compact_declaration": {
+        "entity": "Allocator",
+        "throws": false,
+        "is_async": false,
+        "typed_throws": "none",
+        "identity_sha256": "not recorded (open question Q5)"
+      },
+      "reasoning": "The demangler tree shows no ThrowsAnnotation, TypedThrowsAnnotation or AsyncAnnotation on the outer FunctionType (or the entity is a type metadata accessor, whose manglings carry no function type). Decision non_throwing, licence no_error_exit.",
+      "call_sites": [
+        {
+          "pc": "0x100001064",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x10000104c",
+          "caller_role": "compiler-synthesised code (inferred; not written in OwnedImports.swift)"
+        },
+        {
+          "pc": "0x1000010c4",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x1000010b0",
+          "caller_role": "compiler-synthesised code (inferred; not written in OwnedImports.swift)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$ss6HasherV8_combineyySuF",
+      "swift": true,
+      "demangled_declaration": "Swift.Hasher._combine(Swift.UInt) -> ()",
+      "effects_in_demangled_text": {
+        "throws": false,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "non_throwing",
+      "reason": null,
+      "licence_class": "no_error_exit",
+      "expected_row_reason": null,
+      "expected_compact_declaration": {
+        "entity": "Function",
+        "throws": false,
+        "is_async": false,
+        "typed_throws": "none",
+        "identity_sha256": "not recorded (open question Q5)"
+      },
+      "reasoning": "The demangler tree shows no ThrowsAnnotation, TypedThrowsAnnotation or AsyncAnnotation on the outer FunctionType (or the entity is a type metadata accessor, whose manglings carry no function type). Decision non_throwing, licence no_error_exit.",
+      "call_sites": [
+        {
+          "pc": "0x100001070",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x10000104c",
+          "caller_role": "compiler-synthesised code (inferred; not written in OwnedImports.swift)"
+        },
+        {
+          "pc": "0x1000010a0",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x10000108c",
+          "caller_role": "compiler-synthesised code (inferred; not written in OwnedImports.swift)"
+        },
+        {
+          "pc": "0x1000010d0",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x1000010b0",
+          "caller_role": "compiler-synthesised code (inferred; not written in OwnedImports.swift)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$ss6HasherV9_finalizeSiyF",
+      "swift": true,
+      "demangled_declaration": "Swift.Hasher._finalize() -> Swift.Int",
+      "effects_in_demangled_text": {
+        "throws": false,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "non_throwing",
+      "reason": null,
+      "licence_class": "no_error_exit",
+      "expected_row_reason": null,
+      "expected_compact_declaration": {
+        "entity": "Function",
+        "throws": false,
+        "is_async": false,
+        "typed_throws": "none",
+        "identity_sha256": "not recorded (open question Q5)"
+      },
+      "reasoning": "The demangler tree shows no ThrowsAnnotation, TypedThrowsAnnotation or AsyncAnnotation on the outer FunctionType (or the entity is a type metadata accessor, whose manglings carry no function type). Decision non_throwing, licence no_error_exit.",
+      "call_sites": [
+        {
+          "pc": "0x100001078",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x10000104c",
+          "caller_role": "compiler-synthesised code (inferred; not written in OwnedImports.swift)"
+        },
+        {
+          "pc": "0x1000010d8",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x1000010b0",
+          "caller_role": "compiler-synthesised code (inferred; not written in OwnedImports.swift)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$ss7DecoderP9container7keyedBys22KeyedDecodingContainerVyqd__Gqd__m_tKs9CodingKeyRd__lFTj",
+      "swift": true,
+      "demangled_declaration": "dispatch thunk of Swift.Decoder.container<A where A1: Swift.CodingKey>(keyedBy: A1.Type) throws -> Swift.KeyedDecodingContainer<A1>",
+      "effects_in_demangled_text": {
+        "throws": true,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "undecided",
+      "reason": "thunk_or_specialization",
+      "licence_class": "none",
+      "expected_row_reason": "imported_callee_abi_unqualified",
+      "expected_compact_declaration": {
+        "entity": null,
+        "throws": null,
+        "is_async": null,
+        "typed_throws": null,
+        "identity_sha256": null,
+        "note": "grammar declined without an identity, so the five identity fields are null (contract 5.3)"
+      },
+      "reasoning": "The mangled name ends in the dispatch-thunk operator Tj (demangler node DispatchThunk). The grammar recognises thunk suffixes and declines them (contract section 3, global forms), so the decision is undecided with reason thunk_or_specialization although the demangled text shows throws. Licence none.",
+      "call_sites": [
+        {
+          "pc": "0x100001274",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x1000011dc",
+          "caller_role": "compiler-synthesised code (inferred; not written in OwnedImports.swift)"
+        },
+        {
+          "pc": "0x100001408",
+          "kind": "bl",
+          "route": "stub",
+          "caller_function": "0x100001368",
+          "caller_role": "compiler-synthesised code (inferred; not written in OwnedImports.swift)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$ss9CodingKeyPsE11descriptionSSvg",
+      "swift": true,
+      "demangled_declaration": "(extension in Swift):Swift.CodingKey.description.getter : Swift.String",
+      "effects_in_demangled_text": {
+        "throws": false,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "undecided",
+      "reason": "accessor",
+      "licence_class": "none",
+      "expected_row_reason": "imported_callee_abi_unqualified",
+      "expected_compact_declaration": {
+        "entity": "Getter",
+        "throws": false,
+        "is_async": false,
+        "typed_throws": "none",
+        "identity_sha256": "not recorded (open question Q5)"
+      },
+      "reasoning": "The demangler entity is a Getter (variable accessor). Accessors stay undecided until an owned compiled example exists (grammar contract section 5), so undecided with reason accessor. Licence none.",
+      "call_sites": [
+        {
+          "pc": "0x1000011d8",
+          "kind": "b",
+          "route": "stub",
+          "caller_function": "0x1000011b4",
+          "caller_role": "compiler-synthesised code (inferred; not written in OwnedImports.swift)"
+        }
+      ]
+    },
+    {
+      "symbol": "_$ss9CodingKeyPsE16debugDescriptionSSvg",
+      "swift": true,
+      "demangled_declaration": "(extension in Swift):Swift.CodingKey.debugDescription.getter : Swift.String",
+      "effects_in_demangled_text": {
+        "throws": false,
+        "is_async": false,
+        "typed_throws": false
+      },
+      "decision": "undecided",
+      "reason": "accessor",
+      "licence_class": "none",
+      "expected_row_reason": "imported_callee_abi_unqualified",
+      "expected_compact_declaration": {
+        "entity": "Getter",
+        "throws": false,
+        "is_async": false,
+        "typed_throws": "none",
+        "identity_sha256": "not recorded (open question Q5)"
+      },
+      "reasoning": "The demangler entity is a Getter (variable accessor). Accessors stay undecided until an owned compiled example exists (grammar contract section 5), so undecided with reason accessor. Licence none.",
+      "call_sites": [
+        {
+          "pc": "0x1000011b0",
+          "kind": "b",
+          "route": "stub",
+          "caller_function": "0x10000118c",
+          "caller_role": "compiler-synthesised code (inferred; not written in OwnedImports.swift)"
+        }
+      ]
+    },
+    {
+      "symbol": "___chkstk_darwin",
+      "swift": false,
+      "reasoning": "Not a $s symbol: never parsed, outside every Swift denominator. Reached only through the GOT: three attributed blr sites load the slot of this symbol (expected-got.json, outcome attributed). No stub exists for it.",
+      "call_sites": [
+        {
+          "pc": "0x100000f40",
+          "kind": "blr",
+          "route": "got"
+        },
+        {
+          "pc": "0x10000122c",
+          "kind": "blr",
+          "route": "got"
+        },
+        {
+          "pc": "0x1000013c0",
+          "kind": "blr",
+          "route": "got"
+        }
+      ]
+    },
+    {
+      "symbol": "_swift_allocBox",
+      "swift": false,
+      "reasoning": "Not a $s symbol: never parsed, outside every Swift denominator. Reached only through its import stub by direct bl or tail b; every call is counted in not_swift_calls.",
+      "call_sites": [
+        {
+          "pc": "0x100000e0c",
+          "kind": "bl",
+          "route": "stub"
+        }
+      ]
+    },
+    {
+      "symbol": "_swift_allocObject",
+      "swift": false,
+      "reasoning": "Not a $s symbol: never parsed, outside every Swift denominator. Reached only through its import stub by direct bl or tail b; every call is counted in not_swift_calls.",
+      "call_sites": [
+        {
+          "pc": "0x100000bf4",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x100000c9c",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x100000e54",
+          "kind": "bl",
+          "route": "stub"
+        }
+      ]
+    },
+    {
+      "symbol": "_swift_bridgeObjectRelease",
+      "swift": false,
+      "reasoning": "Not a $s symbol: never parsed, outside every Swift denominator. Reached only through its import stub by direct bl or tail b; every call is counted in not_swift_calls.",
+      "call_sites": [
+        {
+          "pc": "0x100000b64",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x100000b94",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x100000bb8",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x100001144",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x100001158",
+          "kind": "bl",
+          "route": "stub"
+        }
+      ]
+    },
+    {
+      "symbol": "_swift_bridgeObjectRetain",
+      "swift": false,
+      "reasoning": "Not a $s symbol: never parsed, outside every Swift denominator. Reached only through its import stub by direct bl or tail b; every call is counted in not_swift_calls.",
+      "call_sites": [
+        {
+          "pc": "0x100000b8c",
+          "kind": "bl",
+          "route": "stub"
+        }
+      ]
+    },
+    {
+      "symbol": "_swift_errorRelease",
+      "swift": false,
+      "reasoning": "Not a $s symbol: never parsed, outside every Swift denominator. Reached only through its import stub by direct bl or tail b; every call is counted in not_swift_calls.",
+      "call_sites": [
+        {
+          "pc": "0x100000d04",
+          "kind": "bl",
+          "route": "stub"
+        }
+      ]
+    },
+    {
+      "symbol": "_swift_getErrorValue",
+      "swift": false,
+      "reasoning": "Not a $s symbol: never parsed, outside every Swift denominator. Reached only through its import stub by direct bl or tail b; every call is counted in not_swift_calls.",
+      "call_sites": [
+        {
+          "pc": "0x100000cb8",
+          "kind": "bl",
+          "route": "stub"
+        }
+      ]
+    },
+    {
+      "symbol": "_swift_getTypeByMangledNameInContext",
+      "swift": false,
+      "reasoning": "Not a $s symbol: never parsed, outside every Swift denominator. Reached only through its import stub by direct bl or tail b; every call is counted in not_swift_calls.",
+      "call_sites": [
+        {
+          "pc": "0x100000dd4",
+          "kind": "bl",
+          "route": "stub"
+        }
+      ]
+    },
+    {
+      "symbol": "_swift_getWitnessTable",
+      "swift": false,
+      "reasoning": "Not a $s symbol: never parsed, outside every Swift denominator. Reached only through its import stub by direct bl or tail b; every call is counted in not_swift_calls.",
+      "call_sites": [
+        {
+          "pc": "0x100000fe8",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x100001028",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x100001330",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x1000015a4",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x1000015e8",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x10000162c",
+          "kind": "bl",
+          "route": "stub"
+        }
+      ]
+    },
+    {
+      "symbol": "_swift_release",
+      "swift": false,
+      "reasoning": "Not a $s symbol: never parsed, outside every Swift denominator. Reached only through its import stub by direct bl or tail b; every call is counted in not_swift_calls.",
+      "call_sites": [
+        {
+          "pc": "0x100000c28",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x100000c5c",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x100000cfc",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x100000e94",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x100000ed8",
+          "kind": "bl",
+          "route": "stub"
+        },
+        {
+          "pc": "0x100000eec",
+          "kind": "b",
+          "route": "stub"
+        },
+        {
+          "pc": "0x100001364",
+          "kind": "b",
+          "route": "stub"
+        }
+      ]
+    },
+    {
+      "symbol": "_swift_slowAlloc",
+      "swift": false,
+      "reasoning": "Not a $s symbol: never parsed, outside every Swift denominator. Reached only through its import stub by direct bl or tail b; every call is counted in not_swift_calls.",
+      "call_sites": [
+        {
+          "pc": "0x100000d4c",
+          "kind": "bl",
+          "route": "stub"
+        }
+      ]
+    }
+  ],
+  "open_questions": [
+    {
+      "id": "Q1",
+      "topic": "table symbol spelling",
+      "question": "Does import_calls.entries[].symbol carry the symbol exactly as attributed (leading underscore, as recorded here) or with one leading underscore removed? Contract 4.8 does not say. Sort order is the same either way.",
+      "recorded_as": "attributed spelling with the leading underscore",
+      "resolution": "Decided (contract section 10, item 9): attributed spelling, leading underscore kept."
+    },
+    {
+      "id": "Q2",
+      "topic": "undecided_by_reason keys",
+      "question": "Does decision_summary.undecided_by_reason list only the reasons that occur, or all 11 closed-list reasons with zeros? Contract 4.8 and 5.2 do not say. C6 holds either way.",
+      "recorded_as": "only the two reasons that occur (accessor, thunk_or_specialization)",
+      "resolution": "Decided (contract section 10, item 9): only reasons that occur."
+    },
+    {
+      "id": "Q3",
+      "topic": "GOT-only symbol in the section 7 totals",
+      "question": "Section 7 gives 29 stubs and 54 stub calls. Section 4.8 and C2 count every attributed imported symbol, and the existing GOT expectation attributes 3 blr sites to ___chkstk_darwin, which has no stub. This file therefore expects 30 distinct symbols, 57 attributed calls, 30 not-Swift calls and non_swift_import 30. Please confirm the contract wants GOT-attributed non-Swift calls in the table and in non_swift_import, as C4 and C5 imply, and reconcile the section 7 prose.",
+      "recorded_as": "30 entries, 57 attributed calls, non_swift_import 30",
+      "resolution": "Decided (contract section 10, item 8): 30 entries, 57 attributed calls, non_swift_import 30."
+    },
+    {
+      "id": "Q4",
+      "topic": "compact declaration of a static accessor",
+      "question": "Reading the grammar source (not its output), a symbol ending in the static suffix Z with an accessor entity (CommandLine.arguments, String.Encoding.utf8) is declined with reason accessor and no identity, because the Z handler replaces the identity with an annotation. Contract 5.3 says a record without an identity has a reason other than accessor or typed_throws, so those two rows would fail the native consistency check. The non-static accessors (CodingKey description, debugDescription) do carry an identity with entity Getter. By hand from the specification alone this cannot be settled: the expectation records both branches for the two static accessors. Decision needed: either the grammar returns an identity for static accessors, or 5.3 allows a missing identity with reason accessor.",
+      "recorded_as": "both branches; decision, reason and licence class are not affected",
+      "resolution": "Decided (contract section 10, item 7): a static accessor is declined as accessor with no identity; the five identity fields are null."
+    },
+    {
+      "id": "Q5",
+      "topic": "identity_sha256",
+      "question": "The 64-hex digest of each canonical identity JSON cannot be derived by hand without re-implementing the grammar identity serialiser, which would not be independent. It is not recorded. Row-level D1 sameness and the digest are left to the engine test, which can check that rows of one symbol share a digest and that a digest is 64 lowercase hex.",
+      "recorded_as": "not recorded"
+    },
+    {
+      "id": "Q6",
+      "topic": "effects recorded for entities without a function type",
+      "question": "Expected compact record for type metadata accessors is throws false, is_async false, typed_throws none, taking the grammar contract rule 3 (vacuous) at face value. If the grammar identity records the effects of these entities as null instead, the record differs although the decision does not.",
+      "recorded_as": "false / false / none"
+    },
+    {
+      "id": "Q7",
+      "topic": "reason_counts of the whole report",
+      "question": "This file records import-row reasons only. The five selected indirect rows add their own reasons under existing v3 behaviour, which is not re-derived here, so the full reason_counts and status_counts of the report are not recorded.",
+      "recorded_as": "import rows only"
+    },
+    {
+      "id": "Q8",
+      "topic": "origin of compiler-synthesised calls",
+      "question": "The source of 8 of the 12 retained rows and several skipped calls is compiler-synthesised code (Codable and CodingKeys conformances) that OwnedImports.swift does not spell out. The role given for those functions is inferred from the symbols called and is labelled inferred; no count depends on it.",
+      "recorded_as": "inferred, no effect on any count"
+    }
+  ]
+}
