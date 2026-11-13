@@ -21,6 +21,8 @@ literal in `src/airs/__init__.py`. Preflight then requires it to equal the bundl
 short version, so the engine, the bundle and the record carry one version.
 Records made before the field existed (0.4.0 build 33 and earlier) stay valid;
 the receipt reports them with `version_recorded` false and no `embedded_version`.
+For any later build the field is required: a record for build 34 or later without
+it does not match.
 The field is optional within schema `airs-source-build-record-v1`: the schema id
 did not change when it was added, so a reader must not treat its absence as
 malformed.

@@ -110,6 +110,21 @@ class ReleaseCandidateBoundaryTests(unittest.TestCase):
             fields = dict(original, version=recorded); path.write_text(json.dumps(fields))
             self.assertFalse(self.tool.embedded_provenance(app, 'a' * 40, 'dev.airs.app', '13', bundle)['matches_request'])
 
+    def test_builds_after_33_require_a_recorded_version(self):
+        import json
+        app = self.app(); path = app / 'Contents/Resources/AIRSBuildProvenance.json'
+        original = json.loads(path.read_text())
+        for build, optional in (('33', True), ('1', True), ('34', False), ('100', False),
+                                ('033a', False), ('', False), ('\u0663\u0663', False), ('9999999', False)):
+            self.assertIs(self.tool.version_optional(build), optional, build)
+        absent = dict(original, build='34'); path.write_text(json.dumps(absent))
+        self.assertFalse(self.tool.embedded_provenance(app, 'a' * 40, 'dev.airs.app', '34', '0.4.1')['matches_request'])
+        path.write_text(json.dumps(dict(absent, version='0.4.1')))
+        result = self.tool.embedded_provenance(app, 'a' * 40, 'dev.airs.app', '34', '0.4.1')
+        self.assertTrue(result['matches_request']); self.assertTrue(result['version_recorded'])
+        path.write_text(json.dumps(dict(original, build='33')))
+        self.assertTrue(self.tool.embedded_provenance(app, 'a' * 40, 'dev.airs.app', '33', '0.4.0')['matches_request'])
+
     def test_preflight_binds_recorded_version_to_bundle(self):
         import json
         app = self.app(); path = app / 'Contents/Resources/AIRSBuildProvenance.json'

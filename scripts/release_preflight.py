@@ -63,12 +63,23 @@ def candidate_metadata(app: Path) -> dict:
             'principal_sha256': read_file(app / 'Contents/MacOS' / label, MAX_EXECUTABLE_BYTES, digest=True)}
 
 
+# The last build whose record may omit the version field (0.4.0 build 33).
+LAST_BUILD_WITHOUT_VERSION = 33
+
+
+def version_optional(build: str) -> bool:
+    """True only for a plain decimal build number no later than build 33."""
+    return (isinstance(build, str) and 0 < len(build) <= 6 and build.isascii() and build.isdigit()
+            and int(build) <= LAST_BUILD_WITHOUT_VERSION)
+
+
 def embedded_provenance(app: Path, commit: str, bundle_id: str, build: str,
                         bundle_version: str | None = None) -> dict:
     """Read the builder's claim. A record made before the version field existed
     (0.4.0 build 33 and earlier) stays valid and is reported as recording no version;
-    a recorded version must be a semantic version equal to the bundle's
-    CFBundleShortVersionString, so a record with a version never matches without one."""
+    for any later build the field is required. A recorded version must be a semantic
+    version equal to the bundle's CFBundleShortVersionString, so a record with a
+    version never matches without one."""
     path = app / 'Contents/Resources/AIRSBuildProvenance.json'
     if not path.exists():
         return {'state': 'unavailable', 'matches_request': False}
@@ -87,6 +98,8 @@ def embedded_provenance(app: Path, commit: str, bundle_id: str, build: str,
     if recorded:
         matches = (matches and isinstance(version, str) and VERSION.fullmatch(version) is not None
                    and version == bundle_version)
+    elif not version_optional(build):
+        matches = False
     return {'state': 'recorded_unverified', 'matches_request': matches,
             'embedded_commit': fields.get('source_commit') if isinstance(fields, dict) else None,
             'version_recorded': recorded,
