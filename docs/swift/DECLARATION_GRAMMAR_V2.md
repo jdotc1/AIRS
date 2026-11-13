@@ -20,7 +20,11 @@ ASCII JSON text containing the kind/name pairs from its module through the type
 itself. For example, `Si` has path `[["module","Swift"],["struct","Int"]]`.
 The value is a JSON string within the serialized identity, preserving nominal
 kind without increasing identity depth. Bound generics retain the base nominal
-path; Optional, Array and Dictionary sugar use the same paths as explicit forms.
+path; the Optional shortcut uses the same path as its explicit bound generic.
+Debugger sugar (`XSq`, `XSa`, `XSD`) uses the explicit form's `bound_generic`
+node, retaining its name, arguments and base path, with the additional modifier
+`sugared`. This preserves its distinct identity. Ordinary bound-generic forms,
+including `Sg`, do not carry that modifier.
 Other kinds, builtins and the implicit `AnyObject` member synthesized by `Xl`
 have null paths. Explicit `Xc` nominal operands retain their paths.
 
@@ -38,10 +42,44 @@ including accessor kind, parameters and effects; other kinds have null
 name. Local, private and related-name discriminators have distinct `local:`,
 `private:` and `related:` prefixes.
 
+Protocol operands in protocol lists, existentials and conformance requirements
+must be plain protocol types, including standard protocol substitutions.
+Modified protocols, generic wrappers, nonempty bound generics and non-protocol
+types in those positions are `malformed_symbol`. An empty generic argument
+group leaves the original nominal node unchanged. Declaration contexts and
+generic nominal operands also obey their required demangler node kinds.
+Associated-type names and tuple labels require plain identifiers.
+
+Every typed entity applies parameter-label popping before consuming its name.
+This includes function-valued variables: their identity retains the popped
+labels and the complete property type, including when an accessor becomes a
+local context.
+
 Function types retain `Yb` as the `sendable` modifier. The modifier belongs to
 the nested function type and does not alter the enclosing declaration's effects.
 The allowed modifiers are `inout`, `shared`, `owned`, `sending`, `isolated`,
-`autoclosure`, `variadic`, `noDerivative` and, on function types, `sendable`.
+`autoclosure`, `variadic`, `noDerivative`, on function types `sendable`, and
+on result nodes `sending_result`, and on bound generics `sugared`.
+The `YT` function annotation contributes
+`sending_result`; a result type's `Yu` contributes `sending`. Both modifiers
+are retained when both occur.
+
+`Qa` uses the `associated_type_ref` kind, with the associated type name in
+`name` and the base as its single `args` element. Dependent-member forms such
+as `Qx`, `Qy` and `Qz` retain `dependent_member` with the same field layout.
+
+Global-actor isolation is `global_actor:` followed by canonical JSON of the
+complete actor TypeNode. Nominal kinds, generic arguments, modifiers and
+nested effects are retained. For `ScM`, the isolation string is:
+
+```text
+global_actor:{"args":[],"convention":null,"effects":null,"kind":"nominal","labels":[],"modifiers":[],"name":"Swift.MainActor","path":"[[\"module\",\"Swift\"],[\"class\",\"MainActor\"]]"}
+```
+
+This remains a scalar string in the identity; `isolated_any` and
+`isolated_parameter` are unchanged. Actor serialization consumes the text
+expansion budget before allocating each token, including repeated type nodes.
+
 Metatype representations use `convention` values `thin`, `thick` or `objc`;
 an unspecified representation remains null. A function convention with a C type
 spelling is encoded as `c:clang:<spelling>` or `block:clang:<spelling>`.
@@ -106,9 +144,10 @@ identity has no suitable field: protocol-qualified associated types, multiple
 nested generic argument groups, nonempty anonymous-context arguments, closure
 contexts, nested generic signatures in type operands, and nominal type operands
 with local, anonymous or constrained-extension contexts. Decorated names used
-as plain module/type names or labels, nested name discriminators, complex
-global-actor operands, and labelled or modified outer argument tuples also
-decline. Initializer and subscript function wrappers must have the ordinary
+as plain type names, nested name discriminators, and labelled or modified outer
+argument tuples also decline. A modifier outside a generic type wrapper declines
+with `modified_generic_type`, preserving its distinction from a modifier inside
+that wrapper. Initializer and subscript function wrappers must have the ordinary
 thick convention and no outer modifiers. Direct declaration-level `Yb`
 declines because only a function TypeNode can carry `sendable`.
 

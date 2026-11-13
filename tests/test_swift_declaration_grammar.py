@@ -256,7 +256,7 @@ class DeclarationGrammarTests(unittest.TestCase):
             ('$s1M1fyqd0__yrzz_lF', 'generic_param', 'τ_2_0'), # GENERIC-PARAM-INDEX
             ('$s1M1fyqd1__yrzzz_lF', 'generic_param', 'τ_3_0'), # GENERIC-PARAM-INDEX
             ('$s1M1fy1AQzylF', 'dependent_member', None), # assoc-type-name
-            ('$s1M1fyx1AQaylF', 'dependent_member', None), # associated-type
+            ('$s1M1fyx1AQaylF', 'associated_type_ref', None), # associated-type
             ('$s1M1fyQryF', 'opaque', None), # type / opaque result
             ('$s1M1fyxq_QpyRvzRv_r0_lF', 'pack_expansion', None), # type / generic-param-marker
         )
@@ -304,7 +304,7 @@ class DeclarationGrammarTests(unittest.TestCase):
             ('$s1M1fyyYas5NeverOYKF', 'undecided', 'typed_throws', False, True, None, 0),
             ('$s1M1fyyyyKXEF', 'non_throwing', '', False, False, None, 1),
             ('$s1M1fyyyyKXEKF', 'throwing', '', True, False, None, 1),
-            ('$s1M1fyyScMYcF', 'non_throwing', '', False, False, 'global_actor:Swift.MainActor', 0),
+            ('$s1M1fyyScMYcF', 'non_throwing', '', False, False, 'global_actor:{"args":[],"convention":null,"effects":null,"kind":"nominal","labels":[],"modifiers":[],"name":"Swift.MainActor","path":"[[\\"module\\",\\"Swift\\"],[\\"class\\",\\"MainActor\\"]]"}', 0),
             ('$s1M1fyyYAF', 'non_throwing', '', False, False, 'isolated_any', 0),
         )  # function-signature / throws / async / function-isolation
         for symbol, decision, reason, throws, is_async, isolation, count in cases:
@@ -609,6 +609,107 @@ class DeclarationGrammarTests(unittest.TestCase):
                          ('undecided', 'limit_exceeded'))
         self.assertIn('expanded_text', result.detail)
         self.assertIsNone(result.identity)
+
+    def test_protocol_operand_declines(self):
+        for symbol in ('$s4main3fooyyAA1PPz_pF', '$s4main3fooyyAA1PPySiG_pF',
+                       '$s4main3fooyyxAA1PPzRzlF'):
+            with self.subTest(symbol=symbol):
+                result = parse_declaration(symbol)
+                self.invariant(result)
+                self.assertEqual((result.throw_decision, result.reason),
+                                 ('undecided', 'malformed_symbol'))
+                self.assertIsNone(result.identity)
+        self.assertEqual(parse_declaration('$s4main3fooyyxAA1PPRzlF').throw_decision,
+                         'non_throwing')
+
+    def test_entity_label_pop(self):
+        result = parse_declaration('$s4main3fooySicvg3barL_yyF')
+        self.invariant(result)
+        self.assertEqual((result.throw_decision, result.reason),
+                         ('undecided', 'malformed_symbol'))
+        self.assertIsNone(result.identity)
+
+    def test_node_kinds_in_identity(self):
+        pairs = (
+            ('$s4main3fooyyAA1ACYcF', '$s4main3fooyyAA1AVYcF'),
+            ('$s4main3fooyyx1AQaF', '$s4main3fooyy1AQzF'),
+            ('$s4main3fooSiyYTF', '$s4main3fooSiYuyF'),
+        )
+        for left, right in pairs:
+            with self.subTest(left=left, right=right):
+                first, second = parse_declaration(left), parse_declaration(right)
+                for result in (first, second):
+                    self.invariant(result)
+                    self.assertNotEqual(result.throw_decision, 'undecided')
+                    self.assertIsNotNone(result.identity)
+                self.assertNotEqual(first.identity.serialize(), second.identity.serialize())
+        self.assertEqual(parse_declaration(pairs[1][0]).identity.parameters[0].kind,
+                         'associated_type_ref')
+        result_modifiers = parse_declaration(pairs[2][0]).identity.result.modifiers
+        type_modifiers = parse_declaration(pairs[2][1]).identity.result.modifiers
+        self.assertIn('sending_result', result_modifiers)
+        self.assertNotIn('sending', result_modifiers)
+        self.assertIn('sending', type_modifiers)
+        self.assertNotIn('sending_result', type_modifiers)
+
+    def test_round_four_audit(self):
+        # Each symbol has a separately observed tree at the pinned toolchain.
+        # Narrow pop operands reject wrappers and non-Identifier names.
+        for symbol in (
+            '$s1M1PPz1fyyF', '$s1M1fyySazySiGF', '$sSiz1ME1fyyF',
+            '$s1M1fyy1A1M1PPzQzF', '$s1M1fyy1ASiQzF',
+            '$s1M1fyyx1AL_QaF', '$s1M1fyy1AL_QzF',
+            '$s1M1fyySi1aL__tF', '$s1ML_1fyyF', '$s1M1fyy1M1PPlu_pF',
+        ):
+            with self.subTest(symbol=symbol):
+                result = parse_declaration(symbol)
+                self.assertEqual((result.throw_decision, result.reason, result.identity),
+                                 ('undecided', 'malformed_symbol', None))
+        # Debugger sugar retains its distinction from explicit bound generics.
+        for symbol, explicit in (
+            ('$s1M1fySiXSqyF', '$s1M1fySiSgyF'),
+            ('$s1M1fySiXSayF', '$s1M1fySaySiGyF'),
+            ('$s1M1fySiSSXSDyF', '$s1M1fySDySiSSGyF'),
+        ):
+            with self.subTest(symbol=symbol):
+                result = parse_declaration(symbol)
+                self.assertEqual(result.throw_decision, 'non_throwing')
+                self.assertEqual(result.identity.result.kind, 'bound_generic')
+                self.assertIn('sugared', result.identity.result.modifiers)
+                self.assertNotEqual(result.identity.serialize(),
+                                    parse_declaration(explicit).identity.serialize())
+        for symbol, detail in (
+            ('$s1M1xSiluzvg1fyyF', 'modified_generic_type'),
+        ):
+            with self.subTest(symbol=symbol):
+                result = parse_declaration(symbol)
+                self.assertEqual((result.throw_decision, result.reason, result.detail,
+                                  result.identity),
+                                 ('undecided', 'unsupported_production', detail, None))
+        for symbol in ('$s1M1fySiSgyF', '$s1M1fySaySiGyF',
+                       '$s1M1fySDySiSSGyF', '$s1M1xSizluvg1fyyF'):
+            self.assertEqual(parse_declaration(symbol).throw_decision, 'non_throwing')
+        # Function-valued variables retain the labels popped before their name.
+        for symbol, label in (('$s1M1x1aySicvg1fyyF', 'a'),
+                              ('$s1M1x1bySicvg1fyyF', 'b')):
+            result = parse_declaration(symbol)
+            self.assertEqual(result.throw_decision, 'non_throwing')
+            self.assertEqual(result.identity.context[-1].enclosing.labels, (label,))
+        # Actor identity retains generic arguments and outer type modifiers.
+        for symbol, argument in (('$s1M1fyySaySiGYcF', 'Swift.Int'),
+                                 ('$s1M1fyySaySSGYcF', 'Swift.String')):
+            result = parse_declaration(symbol)
+            self.assertEqual(result.throw_decision, 'non_throwing')
+            actor = json.loads(result.identity.effects.isolation.removeprefix('global_actor:'))
+            self.assertEqual(actor['args'][0]['name'], argument)
+        actor = parse_declaration('$s1M1fyyScMzYcF').identity.effects.isolation
+        self.assertEqual(json.loads(actor.removeprefix('global_actor:'))['modifiers'], ['inout'])
+        # An empty generic argument group leaves the nominal node unwrapped.
+        result = parse_declaration('$s1M1fyy1M1PPyG_pF')
+        self.assertEqual(result.throw_decision, 'non_throwing')
+        self.assertEqual(result.identity.parameters[0].args[0].kind, 'nominal')
+        self.assertEqual(parse_declaration('$s4main3fooSiYuyYTF').identity.result.modifiers,
+                         ('sending', 'sending_result'))
 
     def test_totality_and_determinism(self):
         rng = random.Random(20261113)

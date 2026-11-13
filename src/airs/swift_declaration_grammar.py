@@ -147,6 +147,7 @@ class _Type:
     signature: GenericSignature | None = None
     depth: int = 1
     size: int = 1
+    signature_wrapped: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -235,6 +236,43 @@ class _Parser:
         return json.dumps([(c.kind, c.name) for c in path],
                           sort_keys=True, separators=(',', ':'), ensure_ascii=True)
 
+    def type_text(self, node):
+        # Serialize a scalar-embedded type without first expanding a shared DAG
+        # into dictionaries. Charge every JSON token before allocating it.
+        pending, parts = [(False, node)], []
+        while pending:
+            literal, value = pending.pop()
+            if literal:
+                self.text_budget(len(value))
+                parts.append(value)
+            elif hasattr(type(value), '__dataclass_fields__'):
+                members = sorted(fields(value), key=lambda f: f.name)
+                pending.append((True, '}'))
+                for i in range(len(members) - 1, -1, -1):
+                    field = members[i]
+                    pending.extend(((False, getattr(value, field.name)),
+                                    (True, ':'), (False, field.name)))
+                    if i:
+                        pending.append((True, ','))
+                pending.append((True, '{'))
+            elif isinstance(value, tuple):
+                pending.append((True, ']'))
+                for i in range(len(value) - 1, -1, -1):
+                    pending.append((False, value[i]))
+                    if i:
+                        pending.append((True, ','))
+                pending.append((True, '['))
+            else:
+                if isinstance(value, str):
+                    size = 2 + sum(2 if c in '\"\\\b\f\n\r\t' else
+                                   6 if ord(c) < 32 or 126 < ord(c) <= 65535 else
+                                   12 if ord(c) > 65535 else 1 for c in value)
+                else:
+                    size = len(json.dumps(value))
+                self.text_budget(size)
+                parts.append(json.dumps(value, ensure_ascii=True))
+        return self.join_text(parts)
+
     def peek(self):
         return self.text[self.pos:self.pos + 1]
 
@@ -312,12 +350,12 @@ class _Parser:
     def context(self):
         value = self.pop()
         if isinstance(value, _Name):
-            self.bare_name(value, 'module_name_operand')
+            self.bare_name(value, 'module_name_operand', 'malformed_symbol')
             return _Context(self.path((ContextElement('module', value.text),)))
         if isinstance(value, _Context):
             return value
         if isinstance(value, _Type) and value.path:
-            self.nominal_operand(value, 'context_type_operand')
+            self.nominal_operand(value, 'context_type_operand', 'malformed_symbol')
             return _Context(self.path(value.path))
         if isinstance(value, DeclarationIdentity):
             if value.entity == 'TypeMetadataAccessFunction':
@@ -326,19 +364,21 @@ class _Parser:
                 (ContextElement('local', value.name, enclosing=value),)))
         self.fail()
 
-    def bare_name(self, value, detail):
+    def bare_name(self, value, detail, reason='unsupported_production'):
         if value.discriminator is not None or value.fixity is not None:
-            self.fail('unsupported_production', detail)
+            self.fail(reason, detail)
         return value.text
 
-    def nominal_operand(self, value, detail):
+    def nominal_operand(self, value, detail, reason='unsupported_production'):
         if (value.node.kind != 'nominal' or not value.path or
                 value.node.modifiers or value.signature is not None):
-            self.fail('unsupported_production', detail)
+            self.fail(reason, detail)
 
     def type_node(self, value, signature=False):
         # A wrapper's signature and rich declaration context cannot disappear
         # when only its TypeNode is retained. Entity wrappers keep signatures.
+        if value.signature_wrapped:
+            self.fail('unsupported_production', 'modified_generic_type')
         if value.signature is not None and not signature:
             self.fail('unsupported_production', 'nested_generic_signature')
         if any(c.enclosing is not None or c.generic_signature is not None or
@@ -370,7 +410,8 @@ class _Parser:
     def modify(self, modifier):
         value = self.pop(_Type)
         return replace(value, node=replace(value.node,
-                       modifiers=value.node.modifiers + (modifier,)))
+                       modifiers=value.node.modifiers + (modifier,)),
+                       signature_wrapped=value.signature_wrapped or value.signature is not None)
 
     def nominal(self, kind):
         name, context = self.pop(_Name), self.context()
@@ -548,7 +589,9 @@ class _Parser:
     def protocol(self):
         if self.top_is(_Type):
             value = self.pop(_Type)
-            if value.path and value.path[-1].kind == 'protocol':
+            if (value.node.kind == 'nominal' and not value.node.modifiers and
+                    value.signature is None and value.path and
+                    value.path[-1].kind == 'protocol'):
                 return value
             self.fail()
         name, context = self.pop(_Name), self.context()
@@ -563,7 +606,8 @@ class _Parser:
             while True:
                 first = self.marker(_FIRST)
                 variadic = kind == 'tuple' and self.marker(_VARIADIC)
-                label = (self.bare_name(self.pop(_Name), 'tuple_label_operand')
+                label = (self.bare_name(self.pop(_Name), 'tuple_label_operand',
+                                       'malformed_symbol')
                          if kind == 'tuple' and self.top_is(_Name) else None)
                 value = self.protocol() if kind == 'protocol' else self.pop(_Type)
                 if variadic:
@@ -584,9 +628,11 @@ class _Parser:
         names = []
         while True:
             first = self.marker(_FIRST) if compound else True
-            if self.top_is(_Type) and self.stack[-1].path and self.stack[-1].path[-1].kind == 'protocol':
+            if self.top_is(_Type):
+                self.protocol()
                 self.fail('unsupported_production', 'associated_type_protocol_qualifier')
-            names.append(self.bare_name(self.pop(_Name), 'associated_type_name_operand'))
+            names.append(self.bare_name(self.pop(_Name), 'associated_type_name_operand',
+                                        'malformed_symbol'))
             if first:
                 break
         if base is None:
@@ -696,9 +742,7 @@ class _Parser:
         isolation = None
         if 'c' in ann:
             actor = self.type_node(ann['c'])
-            if actor.kind != 'nominal' or actor.modifiers:
-                self.fail('unsupported_production', 'global_actor_operand')
-            isolation = self.join_text(('global_actor:', actor.name))
+            isolation = self.join_text(('global_actor:', self.type_text(actor)))
         elif 'A' in ann:
             isolation = 'isolated_any'
         elif any('isolated' in p.modifiers for p in params):
@@ -708,7 +752,7 @@ class _Parser:
                           self.type_node(typed) if typed else None, 'a' in ann, isolation)
         if 'T' in ann:
             result = replace(result, node=replace(result.node,
-                             modifiers=result.node.modifiers + ('sending',)))
+                             modifiers=result.node.modifiers + ('sending_result',)))
         return params, result, effects, argument, 'b' in ann
 
     def function_type(self, convention='thick'):
@@ -776,13 +820,25 @@ class _Parser:
 
     def accessor(self, subscript=False):
         value = self.pop(_Type)
+        # demangleEntity pops labels even for variables. Only ordinary and
+        # noescape function types supply a parameter count; EmptyList is popped
+        # for every type. Preserve property labels beside its complete type.
+        node = self.type_node(value, signature=True)
+        # Sendable is a function child, not an outer type wrapper.
+        function_labels = (node.kind == 'function' and
+                           node.modifiers in ((), ('sendable',)) and
+                           node.convention in ('thick', 'noescape'))
+        if function_labels:
+            labels = self.labels(len(node.args) - 1)
+        else:
+            self.marker(_EMPTY)
+            labels = ()
         if subscript:
             node = self.entity_function(value)
             params, result = node.args[:-1], node.args[-1]
-            labels = self.labels(len(params))
             name = _Name('subscript')
         else:
-            params, result, labels = (), self.type_node(value, signature=True), ()
+            params, result = (), node
             name = self.pop(_Name)
         context = self.context()
         c = self.take()
@@ -810,20 +866,23 @@ class _Parser:
             if not self.marker(_FIRST):
                 self.fail()
         nominal = self.pop(_Type)
-        self.nominal_operand(nominal, 'bound_generic_operand')
+        self.nominal_operand(nominal, 'bound_generic_operand', 'malformed_symbol')
         if len(lists) > sum(c.kind not in ('module', 'extension') for c in nominal.path):
             self.fail()
         if len(lists) != 1:
             self.fail('unsupported_production', 'nested_generic_argument_groups')
         self.type_node(nominal)
         args = tuple(a for group in reversed(lists) for a in group)
+        if not args:
+            return self.substitute(nominal)
         return self.substitute(self.ty('bound_generic', nominal.node.name, args,
                                       path=nominal.path))
 
-    def sugar(self, code, args):
+    def sugar(self, code, args, modifiers=()):
         kind, name = _STANDARD[code]
         path = (ContextElement('module', 'Swift'), ContextElement(kind, name))
-        return self.ty('bound_generic', self.join_text(('Swift.', name)), args, path=path)
+        return self.ty('bound_generic', self.join_text(('Swift.', name)), args,
+                       modifiers=modifiers, path=path)
 
     def special(self):
         # Types / FUNCTION-KIND, METATYPE-REPR, existential-layout, sugar.
@@ -855,9 +914,9 @@ class _Parser:
             code = self.take()
             if code not in 'qaD':
                 self.fail('unsupported_production', 'sugared type XS' + code)
-            right = self.pop(_Type)
-            args = (self.pop(_Type), right) if code == 'D' else (right,)
-            return self.sugar(code, args)
+            last = self.pop(_Type)
+            args = (self.pop(_Type), last) if code == 'D' else (last,)
+            return self.sugar(code, args, modifiers=('sugared',))
         if c == 'Z':
             arguments = self.sequence('pack')
             if arguments.node.args:
@@ -888,8 +947,8 @@ class _Parser:
             return self.substitute(self.associated(base, c in 'YZX'))
         if c == 'a':
             name, base = self.pop(_Name), self.pop(_Type)
-            self.bare_name(name, 'associated_type_name_operand')
-            return self.substitute(self.ty('dependent_member', name.text, (base,)))
+            self.bare_name(name, 'associated_type_name_operand', 'malformed_symbol')
+            return self.substitute(self.ty('associated_type_ref', name.text, (base,)))
         if c == 'p':
             count, pattern = self.pop(_Type), self.pop(_Type)
             return self.ty('pack_expansion', args=(pattern, count))
@@ -1001,7 +1060,7 @@ class _Parser:
                 module, extended = self.context(), self.pop(_Type)
                 if len(module.path) != 1 or module.path[0].kind != 'module' or not extended.path:
                     self.fail()
-                self.nominal_operand(extended, 'extension_type_operand')
+                self.nominal_operand(extended, 'extension_type_operand', 'malformed_symbol')
                 value = _Context(self.path((ContextElement('extension', module.path[0].name,
                                                           generic_signature=signature),)
                                            + extended.path))
