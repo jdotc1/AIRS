@@ -227,6 +227,11 @@ After 0.4.0, each milestone below that changes what a user sees ends in a releas
    four declines with this reason are value-witness calls. If the same holds on the
    panel, which nobody has checked, these are table calls and not GOT loads, and they
    leave the GOT candidate count.
+   State: checked on the panel ([SWIFT_BROAD_V4_PANEL.md](SWIFT_BROAD_V4_PANEL.md)).
+   Of the 3,170 sites in retained rows, 1,867 have a shape class and none of them is a
+   GOT or global-pointer load. 58% are value-witness calls. The other 41% are unresolved
+   and could be either. Removing table calls from `got_candidates` would change the
+   counter's meaning and needs a new model identity, which is not scheduled.
 5. **What turns a row into a result.** Two designs to examine, in this order, each
    needing a contract, an owned example and an independent expectation. (a) Evidence
    at the call site itself: what the caller does with the error register after the
