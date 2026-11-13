@@ -122,3 +122,4 @@ Older profiles are admitted exactly as before. The native view shows the recorde
 - [Declaration grammar contract](swift/DECLARATION_GRAMMAR_CONTRACT.md) and [declaration grammar v2](swift/DECLARATION_GRAMMAR_V2.md): the grammar whose decisions this profile reads.
 - [Import effect admission library](../src/airs/swift_import_effect_admission.py): the resolver that turns a decision into a licence (the contract of item 5a).
 - [Broad imports profile](SWIFT_BROAD_IMPORTS_PROFILE.md): the profile whose import rows this one extends.
+- [Panel measurement](SWIFT_BROAD_V4_PANEL.md): what this profile reports on the 12 corpus applications, and the stop-rule outcome.
