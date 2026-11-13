@@ -14,7 +14,20 @@ classifications, not claims about runtime behavior or ABI admission.
 The frozen identity includes context, declaration name, discriminator and fixity,
 parameter labels and types, result, generic signature and effects. Canonical
 JSON includes every field and uses sorted keys, compact separators and ASCII
-escaping. Historical declaration parsers and their consumers are independent.
+escaping. Every TypeNode has keys `args`, `convention`, `effects`, `kind`,
+`labels`, `modifiers`, `name` and `path`. A nominal type's `path` is canonical
+ASCII JSON text containing the kind/name pairs from its module through the type
+itself. For example, `Si` has path `[["module","Swift"],["struct","Int"]]`.
+The value is a JSON string within the serialized identity, preserving nominal
+kind without increasing identity depth. Bound generics retain the base nominal
+path; Optional, Array and Dictionary sugar use the same paths as explicit forms.
+Other kinds, builtins and the implicit `AnyObject` member synthesized by `Xl`
+have null paths. Explicit `Xc` nominal operands retain their paths.
+
+A metadata accessor's result is a `metatype` node with the accessed nominal type
+as its single argument. Its parameters remain empty; its context, name and
+oracle projection are unchanged. Historical declaration parsers and their
+consumers are independent.
 
 `fixity` is `prefix`, `postfix` or `infix` for an operator, and null otherwise.
 Each context element has `kind`, `name`, `generic_signature` and `enclosing`.
@@ -41,6 +54,11 @@ levels (16), retained type nodes (256), substitutions (128), parameters (64),
 type depth (16), generic parameters (32), and generic requirements (64).
 Serialized identities cannot exceed depth 27. Parsing uses an iterative stack;
 substitution expansion and retained occurrences are bounded independently.
+Materialized name text, including identifier expansion, qualified names and
+escaped paths, has a cumulative budget of 16 times `max_symbol_length`.
+Allocations are charged before construction, including word references before
+joining an identifier. Exceeding this bound declines with `limit_exceeded` and
+`expanded_text` in the detail; no additional limits field is introduced.
 
 Declines have an offset and one of these stable reasons:
 
@@ -97,4 +115,18 @@ declines because only a function TypeNode can carry `sendable`.
 The pinned demangler takes precedence when the reference grammar differs:
 standard floating types use `Swift.Double` and `Swift.Float`, `ScM` is a class,
 `Yu` is the sending parameter modifier, and layout-substitution requirements use
-`RL`. Punycode decoding translates both the Swift delimiter and digit alphabet.
+`RL`. Numeric parsing follows the pinned demangler's decimal accumulation and
+operand-specific index checks. Generic parameter coordinates require signed
+32-bit range after their index offsets; generic signature counts remain subject
+to the generic-parameter budget. Local discriminators, layout dimensions, inverse
+indexes and opaque ordinals retain the pinned toolchain's widened index values.
+Substitution repeats are limited to 2048; an explicit zero denotes one reference.
+Sized integer and floating builtins require sizes from 1 through 4096, inclusive;
+floating builtins use `Builtin.FPIEEE<N>`. Vector sizes receive the same range
+check before the existing unsupported-vector decline.
+
+Punycode uses `_` as delimiter and only `a`–`z` and `A`–`J` as encoded digits.
+Invalid digits, decoder arithmetic overflow and out-of-range Unicode scalars
+are malformed. Reserved surrogate encodings remain unsupported rather than
+receiving a guessed character mapping. Decimal overflow, generic coordinate
+overflow and invalid builtin sizes likewise decline as `malformed_symbol`.

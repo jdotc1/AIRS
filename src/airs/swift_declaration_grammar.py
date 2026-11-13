@@ -66,6 +66,7 @@ class TypeNode:
     modifiers: tuple[str, ...] = ()
     convention: str | None = None
     effects: Effects | None = None
+    path: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -200,6 +201,7 @@ class _Parser:
         self.text, self.limits, self.pos = text, limits, start
         self.stack, self.subs, self.words = [], [], []
         self.requirements = 0
+        self.expanded_text = 0
         self.completed = False
 
     def fail(self, reason='malformed_symbol', detail='', offset=None):
@@ -208,6 +210,30 @@ class _Parser:
     def budget(self, field, count):
         if count > getattr(self.limits, field):
             self.fail('limit_exceeded', field)
+
+    def text_budget(self, count):
+        # Charge before allocating, including transient concatenations and word
+        # table slices. Reusing a string reference does not materialize text.
+        self.expanded_text += count
+        if self.expanded_text > 16 * self.limits.max_symbol_length:
+            self.fail('limit_exceeded', 'expanded_text')
+
+    def join_text(self, parts, separator=''):
+        parts = tuple(parts)
+        self.text_budget(sum(map(len, parts)) + max(0, len(parts) - 1) * len(separator))
+        return separator.join(parts)
+
+    def path_text(self, path):
+        # Compute the ASCII JSON size before constructing escaped strings.
+        def quoted_size(text):
+            return 2 + sum(2 if c in '\"\\\b\f\n\r\t' else
+                           6 if ord(c) < 32 or 126 < ord(c) <= 65535 else
+                           12 if ord(c) > 65535 else 1 for c in text)
+        size = 2 + max(0, len(path) - 1)
+        size += sum(3 + quoted_size(c.kind) + quoted_size(c.name) for c in path)
+        self.text_budget(size)
+        return json.dumps([(c.kind, c.name) for c in path],
+                          sort_keys=True, separators=(',', ':'), ensure_ascii=True)
 
     def peek(self):
         return self.text[self.pos:self.pos + 1]
@@ -228,7 +254,14 @@ class _Parser:
     def number(self):
         start, n = self.pos, 0
         while self.peek() and self.peek().isdigit():
-            n = n * 10 + int(self.take())
+            # demangleNatural uses signed 32-bit arithmetic and rejects a
+            # step that decreases the accumulated value, including overflow.
+            value = (n * 10 + int(self.take())) & 0xffffffff
+            if value >= 0x80000000:
+                value -= 0x100000000
+            if value < n:
+                self.fail('malformed_symbol', 'natural overflow')
+            n = value
         if self.pos == start:
             self.fail('truncated' if not self.peek() else 'malformed_symbol')
         return n
@@ -239,6 +272,13 @@ class _Parser:
         n = self.number()
         if not self.eat('_'):
             self.fail('truncated' if not self.peek() else 'malformed_symbol')
+        # The pinned toolchain retains this widened value in Number nodes;
+        # generic parameter coordinates separately require signed int range.
+        return n + 1
+
+    def increment_index(self, n):
+        if n >= 0x7fffffff:
+            self.fail('malformed_symbol', 'index overflow')
         return n + 1
 
     def pop(self, cls=None):
@@ -310,9 +350,8 @@ class _Parser:
         if any(c.kind == 'extension' or '.' in c.name or ':' in c.name for c in path):
             # Encode the extending module as well as the nominal path. JSON
             # escaping keeps names containing punctuation unambiguous.
-            return 'context:' + json.dumps([(c.kind, c.name) for c in path],
-                                           separators=(',', ':'), ensure_ascii=True)
-        return '.'.join(c.name for c in path)
+            return self.join_text(('context:', self.path_text(path)))
+        return self.join_text((c.name for c in path), '.')
 
     def ty(self, kind, name='', args=(), labels=(), modifiers=(), convention=None,
            effects=None, path=(), signature=None):
@@ -323,7 +362,9 @@ class _Parser:
         # stops at max_nodes without expanding or serializing the whole DAG.
         # Temporary function wrappers and nominal contexts do not count.
         return _Type(TypeNode(kind, name, tuple(self.type_node(a) for a in args), tuple(labels),
-                              tuple(modifiers), convention, effects), tuple(path),
+                              tuple(modifiers), convention, effects,
+                              self.path_text(path) if path and kind in ('nominal', 'bound_generic')
+                              else None), tuple(path),
                      signature, depth, size)
 
     def modify(self, modifier):
@@ -349,6 +390,8 @@ class _Parser:
                 index = ord(code.lower()) - ord('a')
                 if index >= len(self.words):
                     self.fail('unknown_substitution', 'identifier word')
+                # Reserve the eventual identifier copy while collecting words.
+                self.text_budget(len(self.words[index]))
                 parts.append(self.words[index])
                 if code.isupper():
                     word_mode = False
@@ -362,33 +405,87 @@ class _Parser:
                 self.eat('_')
             if self.pos + n > len(self.text):
                 self.fail('truncated', offset=len(self.text))
+            self.text_budget(n)
             part = self.text[self.pos:self.pos + n]
             self.pos += n
             if puny:
-                # Identifiers / Punycode: delimiter and encoding digit alphabet
-                # differ from RFC 3492; basic characters remain unchanged.
-                head, sep, tail = part.rpartition('_')
-                encoded = tail if sep else part
-                encoded = encoded.translate(str.maketrans('ABCDEFGHIJ', '0123456789'))
-                part = (head + '-' + encoded if sep else encoded).encode('ascii').decode('punycode')
+                part = self.punycode(part)
             else:
                 start = None
                 for i in range(len(part) + 1):
                     char = part[i:i + 1]
-                    end = not char or char == '_' or (char.isupper() and i and not part[i - 1].isupper())
+                    end = not char or char in '_\0' or (char.isupper() and i and not part[i - 1].isupper())
                     if start is not None and end:
                         if i - start >= 2 and len(self.words) < 26:
+                            self.text_budget(i - start)
                             self.words.append(part[start:i])
                         start = None
-                    if start is None and char and char != '_' and not char.isdigit():
+                    if start is None and char and char not in '_\0' and not char.isdigit():
                         start = i
+            self.text_budget(len(part))
             parts.append(part)
             if not word_mode:
                 break
+        # Each part reserved its contribution before the final allocation.
         text = ''.join(parts)
         if not text:
             self.fail()
         return self.substitute(_Name(text))
+
+    def punycode(self, text):
+        # Identifiers / Punycode. Swift uses a-z/A-J digits and '_' as
+        # delimiter. Bound every decoder accumulator before multiplication.
+        head, separator, encoded = text.rpartition('_')
+        if not separator:
+            head, encoded = '', text
+        self.text_budget(len(head))
+        output = list(head)
+        position, value, bias, codepoint = 0, 0, 72, 128
+        maximum = 0xffffffff
+        while position < len(encoded):
+            previous, weight, k = value, 1, 36
+            while True:
+                if position == len(encoded):
+                    self.fail('malformed_symbol', 'punycode digit')
+                char = encoded[position]
+                position += 1
+                if 'a' <= char <= 'z':
+                    digit = ord(char) - ord('a')
+                elif 'A' <= char <= 'J':
+                    digit = ord(char) - ord('A') + 26
+                else:
+                    self.fail('malformed_symbol', 'punycode digit')
+                if digit > (maximum - value) // weight:
+                    self.fail('malformed_symbol', 'punycode overflow')
+                value += digit * weight
+                threshold = min(26, max(1, k - bias))
+                if digit < threshold:
+                    break
+                factor = 36 - threshold
+                if weight > maximum // factor:
+                    self.fail('malformed_symbol', 'punycode overflow')
+                weight *= factor
+                k += 36
+            count = len(output) + 1
+            delta = (value - previous) // (700 if previous == 0 else 2)
+            delta += delta // count
+            shift = 0
+            while delta > 455:
+                delta //= 35
+                shift += 36
+            bias = shift + 36 * delta // (delta + 38)
+            step, value = divmod(value, count)
+            if step > maximum - codepoint:
+                self.fail('malformed_symbol', 'punycode overflow')
+            codepoint += step
+            if codepoint > 0x10ffff:
+                self.fail('malformed_symbol', 'punycode scalar')
+            if 0xd800 <= codepoint <= 0xdfff:
+                self.fail('unsupported_production', 'punycode reserved scalar')
+            self.text_budget(1)
+            output.insert(value, chr(codepoint))
+            value += 1
+        return self.join_text(output)
 
     def substitutions(self):
         # Substitutions / substitution, including merged and repeated references.
@@ -398,9 +495,9 @@ class _Parser:
             if c == '_':
                 index, repeats, last = 26 if count is None else count + 27, 1, True
             elif c.isalpha():
-                if count == 0:
-                    self.fail()
-                index, repeats, last = ord(c.lower()) - ord('a'), 1 if count is None else count, c.isupper()
+                if count is not None and count > 2048:
+                    self.fail('malformed_symbol', 'substitution repeat count')
+                index, repeats, last = ord(c.lower()) - ord('a'), max(1, count or 0), c.isupper()
             else:
                 self.fail()
             if index >= len(self.subs):
@@ -417,10 +514,11 @@ class _Parser:
         if self.eat('C'):
             return _Context((ContextElement('module', '__C_Synthesized'),))
         if self.eat('g'):
-            return self.substitute(self.ty('bound_generic', 'Swift.Optional', (self.pop(_Type),)))
+            return self.substitute(self.sugar('q', (self.pop(_Type),)))
         count = self.number() if self.peek().isdigit() else 1
-        if count == 0:
-            self.fail()
+        if count > 2048:
+            self.fail('malformed_symbol', 'substitution repeat count')
+        count = max(1, count)
         code = self.take()
         if code == 'c':
             code += self.take()
@@ -428,7 +526,7 @@ class _Parser:
             self.fail('unknown_substitution', 'standard type')
         kind, name = _STANDARD[code]
         path = (ContextElement('module', 'Swift'), ContextElement(kind, name))
-        value = self.ty('nominal', 'Swift.' + name, path=path)
+        value = self.ty('nominal', self.join_text(('Swift.', name)), path=path)
         self.budget('max_nodes', count)
         self.stack.extend([value] * (count - 1))
         return value
@@ -436,14 +534,16 @@ class _Parser:
     def generic_param(self):
         # Types / GENERIC-PARAM-INDEX.
         if self.eat('d'):
-            depth, index = self.index() + 1, self.index()
+            depth, index = self.increment_index(self.index()), self.index()
+            if index > 0x7fffffff:
+                self.fail('malformed_symbol', 'index overflow')
         elif self.eat('z'):
             depth, index = 0, 0
         elif self.eat('s'):
             self.fail('unsupported_production', 'constrained existential Self')
         else:
-            depth, index = 0, self.index() + 1
-        return self.ty('generic_param', 'τ_%d_%d' % (depth, index))
+            depth, index = 0, self.increment_index(self.index())
+        return self.ty('generic_param', self.join_text(('τ', str(depth), str(index)), '_'))
 
     def protocol(self):
         if self.top_is(_Type):
@@ -527,7 +627,7 @@ class _Parser:
         elif kind == 'pack_marker':
             constraint = ''
         elif kind == 'inverse':
-            constraint = str(inverse)
+            constraint = self.join_text((str(inverse),))
         else:
             constraint = self.take()
             if constraint not in 'URNC DTB E e M m S'.replace(' ', ''):
@@ -536,7 +636,7 @@ class _Parser:
                 extra = [self.index()]
                 if constraint in 'EM':
                     extra.append(self.index())
-                constraint += ':' + ':'.join(map(str, extra))
+                constraint = self.join_text((constraint, *map(str, extra)), ':')
         self.requirements += 1
         self.budget('max_generic_requirements', self.requirements)
         return Requirement(kind, self.type_node(subject), constraint)
@@ -598,7 +698,7 @@ class _Parser:
             actor = self.type_node(ann['c'])
             if actor.kind != 'nominal' or actor.modifiers:
                 self.fail('unsupported_production', 'global_actor_operand')
-            isolation = 'global_actor:' + actor.name
+            isolation = self.join_text(('global_actor:', actor.name))
         elif 'A' in ann:
             isolation = 'isolated_any'
         elif any('isolated' in p.modifiers for p in params):
@@ -720,6 +820,11 @@ class _Parser:
         return self.substitute(self.ty('bound_generic', nominal.node.name, args,
                                       path=nominal.path))
 
+    def sugar(self, code, args):
+        kind, name = _STANDARD[code]
+        path = (ContextElement('module', 'Swift'), ContextElement(kind, name))
+        return self.ty('bound_generic', self.join_text(('Swift.', name)), args, path=path)
+
     def special(self):
         # Types / FUNCTION-KIND, METATYPE-REPR, existential-layout, sugar.
         c = self.take()
@@ -733,9 +838,10 @@ class _Parser:
             self.budget('max_identifier_length', n)
             if self.pos + n > len(self.text):
                 self.fail('truncated')
+            self.text_budget(n)
             clang_type = self.text[self.pos:self.pos + n]
             self.pos += n
-            return self.function_type(_CONVENTIONS[code] + ':clang:' + clang_type)
+            return self.function_type(self.join_text((_CONVENTIONS[code], ':clang:', clang_type)))
         if c in 'Mmp':
             representation = None
             if c in 'Mm':
@@ -751,8 +857,7 @@ class _Parser:
                 self.fail('unsupported_production', 'sugared type XS' + code)
             right = self.pop(_Type)
             args = (self.pop(_Type), right) if code == 'D' else (right,)
-            return self.ty('bound_generic', {'q': 'Swift.Optional', 'a': 'Swift.Array',
-                           'D': 'Swift.Dictionary'}[code], args)
+            return self.sugar(code, args)
         if c == 'Z':
             arguments = self.sequence('pack')
             if arguments.node.args:
@@ -776,7 +881,7 @@ class _Parser:
         if c == 'r':
             return self.ty('opaque')
         if c == 'R':
-            return self.ty('opaque', str(self.index()))
+            return self.ty('opaque', self.join_text((str(self.index()),)))
         if c in 'yzYZxX':
             base = (self.generic_param() if c in 'yY' else
                     self.ty('generic_param', 'τ_0_0') if c in 'zZ' else None)
@@ -801,12 +906,20 @@ class _Parser:
                  'O': 'UnknownObject', 'o': 'NativeObject', 'p': 'RawPointer',
                  't': 'SILToken', 'w': 'Word', 'A': 'ImplicitActor'}
         if c in 'if':
-            name = ('Int' if c == 'i' else 'Float') + str(self.index() - 1)
+            size = self.index() - 1
+            if not 0 < size <= 4096:
+                self.fail('malformed_symbol', 'builtin size')
+            name = self.join_text(('Int' if c == 'i' else 'FPIEEE', str(size)))
+        elif c == 'v':
+            size = self.index() - 1
+            if not 0 < size <= 4096:
+                self.fail('malformed_symbol', 'builtin size')
+            self.fail('unsupported_production', 'builtin Bv')
         elif c in names:
             name = names[c]
         else:
             self.fail('unsupported_production', 'builtin B' + c)
-        return self.ty('nominal', 'Builtin.' + name)
+        return self.ty('nominal', self.join_text(('Builtin.', name)))
 
     def impl_function(self):
         # Types / impl-function-type. Parse the attribute envelope so a global
@@ -921,7 +1034,8 @@ class _Parser:
                     nominal = self.pop(_Type)
                     self.nominal_operand(nominal, 'metadata_accessor_operand')
                     value = DeclarationIdentity('TypeMetadataAccessFunction', nominal.path[:-1],
-                                                 nominal.path[-1].name)
+                                                 nominal.path[-1].name,
+                                                 result=self.ty('metatype', args=(nominal,)).node)
                     if self.pos < len(self.text):
                         self.fail('malformed_symbol', 'non_entity_global_context')
                 else:
@@ -984,23 +1098,23 @@ class _Parser:
                     text = self.bare_name(discriminator, 'private_discriminator_operand')
                     if name.discriminator is not None:
                         self.fail('unsupported_production', 'nested_name_discriminator')
-                    value = replace(name, discriminator='private:' + text)
+                    value = replace(name, discriminator=self.join_text(('private:', text)))
                 elif self.eat('l'):
                     discriminator = self.pop(_Name)
                     text = self.bare_name(discriminator, 'private_discriminator_operand')
-                    value = _Name('', 'private:' + text)
+                    value = _Name('', self.join_text(('private:', text)))
                 elif self.peek() and self.peek() in 'abcdefghijABCDEFGHIJ':
                     relation = self.take()
                     name = self.pop(_Name)
                     if name.discriminator is not None:
                         self.fail('unsupported_production', 'nested_name_discriminator')
-                    value = replace(name, discriminator='related:' + relation)
+                    value = replace(name, discriminator=self.join_text(('related:', relation)))
                 else:
                     discriminator = str(self.index())
                     name = self.pop(_Name)
                     if name.discriminator is not None:
                         self.fail('unsupported_production', 'nested_name_discriminator')
-                    value = replace(name, discriminator='local:' + discriminator)
+                    value = replace(name, discriminator=self.join_text(('local:', discriminator)))
             elif c == 'o':
                 name = self.pop(_Name)
                 self.bare_name(name, 'operator_name_operand')
@@ -1008,7 +1122,7 @@ class _Parser:
                 spelling = {'a': '&', 'c': '@', 'd': '/', 'e': '=', 'g': '>',
                             'l': '<', 'm': '*', 'n': '!', 'o': '|', 'p': '+',
                             'q': '?', 'r': '%', 's': '-', 't': '~', 'x': '^', 'z': '.'}
-                operator = ''.join(spelling[ch] if ch.isascii() else ch for ch in name.text)
+                operator = self.join_text(spelling[ch] if ch.isascii() else ch for ch in name.text)
                 fixity = self.take()
                 if fixity not in 'ipP':
                     self.fail()

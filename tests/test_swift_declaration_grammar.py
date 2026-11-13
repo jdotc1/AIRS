@@ -353,7 +353,15 @@ class DeclarationGrammarTests(unittest.TestCase):
                     self.assertEqual(identity.result.name, 'M.S')
                 else:
                     self.assertEqual(identity.parameters, ())
-                    self.assertIsNone(identity.result)
+                    if entity == 'TypeMetadataAccessFunction':
+                        self.assertEqual(identity.result.kind, 'metatype')
+                        self.assertEqual(len(identity.result.args), 1)
+                        self.assertEqual(identity.result.args[0].kind, 'nominal')
+                        self.assertEqual(identity.result.args[0].name, 'M.S')
+                        self.assertEqual(identity.result.args[0].path,
+                                         '[["module","M"],["struct","S"]]')
+                    else:
+                        self.assertIsNone(identity.result)
 
     def test_nonfunction_and_unconsumed_input(self):
         # entity (nominal-type), global (type descriptor), ACCESSOR (storage).
@@ -493,11 +501,11 @@ class DeclarationGrammarTests(unittest.TestCase):
         # keys sorted, tuples arrays, None null, and no JSON whitespace.
         cases = (
             ('$s1M1fyyF', projection(),
-             b'{"context":[{"enclosing":null,"generic_signature":null,"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"Function","fixity":null,"generic_signature":null,"labels":[],"name":"f","name_discriminator":null,"parameters":[],"result":{"args":[],"convention":null,"effects":null,"kind":"void","labels":[],"modifiers":[],"name":""}}'),
+             b'{"context":[{"enclosing":null,"generic_signature":null,"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"Function","fixity":null,"generic_signature":null,"labels":[],"name":"f","name_discriminator":null,"parameters":[],"result":{"args":[],"convention":null,"effects":null,"kind":"void","labels":[],"modifiers":[],"name":"","path":null}}'),
             ('$s1M1fySiyF', projection(),
-             b'{"context":[{"enclosing":null,"generic_signature":null,"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"Function","fixity":null,"generic_signature":null,"labels":[],"name":"f","name_discriminator":null,"parameters":[],"result":{"args":[],"convention":null,"effects":null,"kind":"nominal","labels":[],"modifiers":[],"name":"Swift.Int"}}'),
+             b'{"context":[{"enclosing":null,"generic_signature":null,"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"Function","fixity":null,"generic_signature":null,"labels":[],"name":"f","name_discriminator":null,"parameters":[],"result":{"args":[],"convention":null,"effects":null,"kind":"nominal","labels":[],"modifiers":[],"name":"Swift.Int","path":"[[\\\"module\\\",\\\"Swift\\\"],[\\\"struct\\\",\\\"Int\\\"]]"}}'),
             ('$s1M1SVMa', projection('TypeMetadataAccessFunction', name='S'),
-             b'{"context":[{"enclosing":null,"generic_signature":null,"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"TypeMetadataAccessFunction","fixity":null,"generic_signature":null,"labels":[],"name":"S","name_discriminator":null,"parameters":[],"result":null}'),
+             b'{"context":[{"enclosing":null,"generic_signature":null,"kind":"module","name":"M"}],"effects":{"is_async":false,"isolation":null,"throws":false,"typed_throws":null},"entity":"TypeMetadataAccessFunction","fixity":null,"generic_signature":null,"labels":[],"name":"S","name_discriminator":null,"parameters":[],"result":{"args":[{"args":[],"convention":null,"effects":null,"kind":"nominal","labels":[],"modifiers":[],"name":"M.S","path":"[[\\\"module\\\",\\\"M\\\"],[\\\"struct\\\",\\\"S\\\"]]"}],"convention":null,"effects":null,"kind":"metatype","labels":[],"modifiers":[],"name":"","path":null}}'),
         )
         for symbol, expected_projection, expected_bytes in cases:
             with self.subTest(symbol=symbol):
@@ -553,6 +561,54 @@ class DeclarationGrammarTests(unittest.TestCase):
         self.assertIsNone(result.identity)
         self.positive('$s4main1SVMa', projection('TypeMetadataAccessFunction',
                                               [['module', 'main']], 'S'))
+
+    def test_nominal_kind_in_identity(self):
+        groups = (
+            ('$s4main1fyyAA1SVF', '$s4main1fyyAA1SCF',
+             '$s4main1fyyAA1SOF', '$s4main1fyyAA1SaF'),
+            ('$s4main1SVMa', '$s4main1SCMa', '$s4main1SOMa'),
+            ('$s4main1fyyAA1PP_XlF', '$s4main1fyyAA1PP_s9AnyObjectCXcF',
+             '$s4main1fyyAA1PP_s9AnyObjectaXcF'),
+        )
+        for group in groups:
+            identities = []
+            for symbol in group:
+                with self.subTest(symbol=symbol):
+                    result = parse_declaration(symbol)
+                    self.invariant(result)
+                    self.assertNotEqual(result.throw_decision, 'undecided')
+                    self.assertIsNotNone(result.identity)
+                    identities.append(result.identity.serialize())
+            self.assertEqual(len(set(identities)), len(group))
+        identity = self.positive('$s1M1fySiyF', projection())
+        self.assertEqual(identity.result.path, '[["module","Swift"],["struct","Int"]]')
+
+    def test_demangler_rejected_text_declines(self):
+        for symbol in (
+            '$s4main007caf_dMayyF', '$s4main004TDAXyyF',
+            '$s4main1fyyq2147483646_lF', '$s4main1fyyqd99999999999__lF',
+            '$s4main1fyyBi_F', '$s4main1fyyBi0_F', '$s4main1fyyBi4097_F',
+            '$s4main1fyyBf_F',
+        ):
+            with self.subTest(symbol=symbol):
+                result = parse_declaration(symbol)
+                self.invariant(result)
+                self.assertEqual((result.throw_decision, result.reason),
+                                 ('undecided', 'malformed_symbol'))
+                self.assertIsNone(result.identity)
+        self.positive('$s1M007caf_dmayyF', projection(name='café'))
+
+    def test_expanded_text_budget(self):
+        # identifier / word substitutions: the module supplies one 256-byte
+        # word; the function name references it 41 times before joining it.
+        symbol = '$s256' + 'a' * 256 + '0' + 'a' * 40 + 'A0yyF'
+        limits = dataclasses.replace(GrammarLimits(), max_symbol_length=len(symbol))
+        result = parse_declaration(symbol, limits=limits)
+        self.invariant(result)
+        self.assertEqual((result.throw_decision, result.reason),
+                         ('undecided', 'limit_exceeded'))
+        self.assertIn('expanded_text', result.detail)
+        self.assertIsNone(result.identity)
 
     def test_totality_and_determinism(self):
         rng = random.Random(20261113)
