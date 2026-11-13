@@ -400,7 +400,7 @@ final class AIRSFileOpen {
         inventoryReview = nil; signatureEvidenceReview = nil; decodeInventoryError=nil; decodeInventoryReview=nil; coverageReview=nil; savedReportTriage=nil; policyReview=nil; projectReview=nil; assessmentReview = nil; componentReview = nil; componentPairReview = nil; pendingComponentPair = nil
         return true
     }
-    func resumeAfterCancelledQuit() { isTerminating = false; inventoryWriteFailedDuringQuit = false }
+    func resumeAfterCancelledQuit() { isTerminating = false; inventoryWriteFailedDuringQuit = false; savedReportTriage?.reopen() }
 
     func chooseInventory(audit: AuditWorkspace, entitlements: EntitlementsWorkspace) {
         guard !blocksActions, !audit.blocksFileOpen, !entitlements.isBusy, !hasModal() else { return }
@@ -796,6 +796,11 @@ final class AIRSFileOpen {
             } catch {status="Source observation unavailable; sessions preserved. "+error.localizedDescription}
         }
         activeTask=task;return task
+    }
+    /// The sheet can go away without Done. Close the session and drop its in-flight work.
+    func triageSheetDisappeared(_ session: SavedReportTriageSession) {
+        session.close()
+        if savedReportTriage === session { closeCoverage() }
     }
     func closeCoverage() {
         guard !isWritingInventory else { return }

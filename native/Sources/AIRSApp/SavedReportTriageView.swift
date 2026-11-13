@@ -58,7 +58,7 @@ struct SavedReportTriageView: View {
             }
         }
         .padding(20).frame(minWidth: 820, idealWidth: 1040, minHeight: 680, idealHeight: 820)
-        .onDisappear { session.close() }
+        .onDisappear { owner.triageSheetDisappeared(session) }
         .onChange(of: audit.reportRevision) { _, revision in
             if revision != session.auditRevision { owner.closeCoverage() }
         }

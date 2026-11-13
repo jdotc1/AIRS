@@ -131,7 +131,8 @@ public struct SummaryOptions: Sendable, Equatable {
     var arguments: [String] {
         var result = (verdicts ?? []).flatMap { ["--verdict", $0.rawValue] }
         result += (reasons ?? []).flatMap { ["--reason", $0] }
-        if let nameContains { result += ["--name-contains", nameContains] }
+        if let nameContains { // One token: argparse would read a separate value that starts with "-" as an option.
+            result += ["--name-contains=" + nameContains] }
         if order == .verdict { result += ["--sort", order.rawValue] }
         if let limit { result += ["--limit", String(limit)] }
         return result

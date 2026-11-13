@@ -35,12 +35,17 @@ final class SavedReportTriageOptionsTests: XCTestCase {
         let options = try SummaryOptions(verdicts: [.unresolved, .agreement, .unresolved], reasons: ["b", "a"],
             nameContains: "e\u{301} ' space", order: .verdict, limit: 0)
         XCTAssertEqual(options.arguments, ["--verdict", "agreement", "--verdict", "unresolved", "--reason", "a", "--reason", "b",
-            "--name-contains", "e\u{301} ' space", "--sort", "verdict", "--limit", "0"])
+            "--name-contains=e\u{301} ' space", "--sort", "verdict", "--limit", "0"])
         XCTAssertThrowsError(try SummaryOptions(verdicts: []))
         for name in ["", "  ", "x\t", "x\u{7f}", String(repeating: "é", count: 129)] {
             XCTAssertThrowsError(try SummaryOptions(nameContains: name))
         }
         XCTAssertNoThrow(try SummaryOptions(nameContains: String(repeating: "é", count: 128)))
+    }
+    func testTriageNameQueryStartingWithDashStaysOneToken() throws {
+        for name in ["-[NSObject", "--limit", "--output", "-1"] {
+            XCTAssertEqual(try SummaryOptions(nameContains: name).arguments, ["--name-contains=" + name])
+        }
     }
     func testTriageAggregateLimitsCountDuplicateInputsAndNameEachRefusal() throws {
         XCTAssertNoThrow(try SavedReportInputBudget.validateCounts(reportCount: 128, byteCount: 128 * 1_048_576, findingCount: 200_000))

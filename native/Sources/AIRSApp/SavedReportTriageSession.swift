@@ -101,6 +101,8 @@ final class SavedReportTriageSession: ObservableObject, Identifiable {
     var protectedURLs: [URL] { observedSourceURLs + sources.compactMap(\.url) + inventorySources.compactMap(\.url) + [findings?.source.url, sourceURL, importedURL].compactMap { $0 } }
     func invalidate() { revision = UUID() }
     func close() { closed = true; invalidate() }
+    /// A cancelled quit keeps the sheet on screen, so the session it shows must accept work again.
+    func reopen() { closed = false; invalidate() }
     func replaceSources(_ sources: [SavedTriageSource]) { guard !closed else { return }; self.sources = sources; invalidate() }
     func removeSource(_ id: UUID) { replaceSources(sources.filter { $0.id != id }) }
     func submission() throws -> TriageSubmission {

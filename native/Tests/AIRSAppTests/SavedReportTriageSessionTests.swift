@@ -104,13 +104,17 @@ final class SavedReportTriageSessionTests: XCTestCase {
         XCTAssertFalse(session.isCurrent(token, audit: audit.reportRevision, entitlements: UUID()))
     }
     func testTriageCancellationPreservesDraftAndLastAcceptedInventory() async throws {
-        let output = try TriageTestFixture.inventory(), gate = TriageResultGate()
-        let (owner, audit, entitlements) = try await setup(output: output, gate: gate)
+        // The late reply differs byte-wise from the accepted inventory but would also be admissible,
+        // so accepting it after cancellation changes inventoryData.
+        let output = try TriageTestFixture.inventory(), late = output + Data(" \n".utf8), gate = TriageResultGate()
+        let (owner, audit, entitlements) = try await setup(output: late, gate: gate)
         let session = try XCTUnwrap(owner.savedReportTriage), token = try session.submission()
         XCTAssertTrue(session.acceptInventory(try CoverageInventory.decode(output), data: output, sources: session.sources, token: token, audit: audit.reportRevision, entitlements: entitlements.model.reportRevision))
         let job = owner.runTriageCoverage(audit: audit, entitlements: entitlements)
         await waitForEntry(gate); owner.cancel(); await gate.release(); await job?.value
-        XCTAssertEqual(session.inventoryData, output); XCTAssertEqual(session.minimumText, "1"); XCTAssertFalse(owner.isBusy)
+        XCTAssertEqual(session.inventoryData, output); XCTAssertNotEqual(session.inventoryData, late)
+        XCTAssertEqual(session.minimumText, "1"); XCTAssertFalse(owner.isBusy)
+        XCTAssertNil(session.message); XCTAssertTrue(owner.status.hasPrefix("Cancelled"))
     }
     func testTriageCloseAndSourceReplacementDropLateResults() async throws {
         for close in [false, true] {
@@ -138,6 +142,23 @@ final class SavedReportTriageSessionTests: XCTestCase {
         await gate.release(); await job?.value
         let finished = await quit.value
         XCTAssertTrue(finished); XCTAssertTrue(session.closed); XCTAssertNil(owner.savedReportTriage); XCTAssertNil(session.inventory)
+    }
+    func testCancelledQuitReopensTheVisibleSession() async throws {
+        let (owner, _, _) = try await setup(output: TriageTestFixture.inventory())
+        let session = try XCTUnwrap(owner.savedReportTriage)
+        session.close(); XCTAssertThrowsError(try session.submission())
+        owner.resumeAfterCancelledQuit()
+        XCTAssertFalse(session.closed); XCTAssertNoThrow(try session.submission()); XCTAssertNotNil(owner.savedReportTriage)
+    }
+    func testSheetDisappearanceCancelsInFlightRunAndClearsSession() async throws {
+        let output = try TriageTestFixture.inventory(), gate = TriageResultGate()
+        let (owner, audit, entitlements) = try await setup(output: output, gate: gate)
+        let session = try XCTUnwrap(owner.savedReportTriage), job = owner.runTriageCoverage(audit: audit, entitlements: entitlements)
+        await waitForEntry(gate)
+        owner.triageSheetDisappeared(session)
+        XCTAssertNil(owner.savedReportTriage); XCTAssertTrue(session.closed)
+        await gate.release(); await job?.value
+        XCTAssertNil(session.inventory); XCTAssertFalse(owner.isBusy); XCTAssertFalse(owner.blocksActions)
     }
     func testTriageFailedRerunPreservesResultAndNamesTheInvalidDraftLimit() async throws {
         let output = try TriageTestFixture.inventory()
