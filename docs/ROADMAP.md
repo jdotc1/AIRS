@@ -194,6 +194,10 @@ After 0.4.0, each milestone below that changes what a user sees ends in a releas
    from its publisher by recorded digest, never executes it, runs the profiles and
    publishes the counters. Exit: a table like the one in section 2 for all 12
    applications.
+   State: measured once with `broad-extended-v3` and `broad-extended-v4`
+   ([SWIFT_BROAD_V4_PANEL.md](SWIFT_BROAD_V4_PANEL.md)). Seven applications give a
+   report. The other five exceed an input bound that both profiles share, and the page
+   names the bound for each. The fetch and run scripts are not yet in the repository.
 2. **No silent truncation.** The retention limit stays at 8,192 rows: raising it to
    fit one application would fit the limit to the measurement. The successor profile
    instead reports which limit refused the omitted rows, what the omitted candidates
@@ -216,8 +220,9 @@ After 0.4.0, each milestone below that changes what a user sees ends in a releas
    Maccy 2.8.0 rows attributed to an imported Swift callee (494 distinct names), it
    decides 2,416 rows: 2,211 non-throwing, 195 throwing and 10 async. The demangler
    disagrees with none of them, on effects or on identity. Of the 280 names left
-   undecided, 174 are accessors, which this version does not decide. The rest of the
-   panel has not been measured.
+   undecided, 174 are accessors, which this version does not decide. With the profile
+   itself, the grammar decides 56% to 61% of the attributed Swift calls on the three
+   panel applications that make any (item 1).
 4. **GOT candidate screen.** Explain `got_base_not_adrp`. In the owned fixture the
    four declines with this reason are value-witness calls. If the same holds on the
    panel, which nobody has checked, these are table calls and not GOT loads, and they
@@ -228,6 +233,9 @@ After 0.4.0, each milestone below that changes what a user sees ends in a releas
    call, reported as a fact about the caller and with no claim about the callee. The
    first step is to read what the existing edge model already records at such sites.
    (b) ABI admission for imported callees from a complete declaration parse.
+   State: `broad-extended-v4` records (a) as a caller relation beside a licence taken
+   from the declaration. It gives no import a witness, because an imported callee has
+   no body to check against, so (b) admits no ABI. See the profile's declined scope.
 6. **Indirect calls.** A census of how the 5,263 unresolved indirect targets on Maccy
    are loaded (value witness, protocol witness, class table, closure context) before
    any design.
@@ -238,6 +246,11 @@ byte-identical.
 
 Stop rule: if items 3 and 5 are done and nearly every panel row is still unresolved,
 no further Swift profile work is scheduled, and the lane is maintained as it is.
+Outcome: on the six panel applications with candidates, at least 92% of the selected
+candidates are still unresolved. The other six were not evaluated: five are outside the
+profiles' input bounds and one has no candidates. The rule is applied on that subset as
+a maintainer's decision, and no further Swift profile work is scheduled. Items 4 and 6
+stay open as measurements, not as profile work.
 
 Still separate and not scheduled: Swift-frontend emission and runtime qualification
 for the CMP-based layouts, wider success arithmetic, async continuation
