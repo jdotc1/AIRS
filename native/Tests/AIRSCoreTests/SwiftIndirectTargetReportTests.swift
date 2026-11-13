@@ -108,7 +108,7 @@ final class SwiftIndirectTargetReportTests: XCTestCase {
         variants.append(mutateShape { $0["site_pc"] = "0x1010" })
         variants.append(mutateShape { $0["site_pc"] = "4108" })
         variants.append(mutateShape { $0["slot_offset"] = "8" })
-        variants.append(mutateShape { $0["slot_offset"] = -8 })
+        variants.append(mutateShape { $0["slot_offset"] = -0x1000 })
         variants.append(mutateShape { $0["site_kind"] = 7 })
         variants.append(mutateShape { $0["deciding_instructions"] = [["pc": "0x1000", "word": "94000005", "role": "metadata_call_result"]] })
         variants.append(mutateShape { $0["deciding_instructions"] = [["pc": "0x1000", "word": "0x94000005"]] })
@@ -150,6 +150,44 @@ final class SwiftIndirectTargetReportTests: XCTestCase {
         XCTAssertThrowsError(try decode(wrongReason))
         let runtime = mutateWitness { $0["provenance_kind"] = "runtime_metadata_call"; $0["symbol"] = "swift_getGenericMetadata" }
         XCTAssertTrue(try decode(runtime).supportsInterpretation)
+    }
+
+    func testNegativeSlotOnUnknownClassShapeAccepted() throws {
+        var object = withRow { row in
+            var admission = row["admission"] as! [String: Any]
+            admission["status"] = "unresolved"; admission["reason"] = "indirect_target_unresolved"; row["admission"] = admission
+            var shape = row["indirect_target_shape"] as! [String: Any]
+            shape["class"] = "unknown"; shape["slot_offset"] = -16; shape["unknown_reason"] = "value_witness_offset_not_function_slot"
+            row["indirect_target_shape"] = shape
+            var refused = row["value_witness_admission"] as! [String: Any]
+            refused["admitted"] = false; refused["first_failing_condition"] = 1; refused["reason"] = "value_witness_offset_not_function_slot"
+            refused["slot_offset"] = -16; refused["provenance_kind"] = "none"; row["value_witness_admission"] = refused
+        }
+        object["status_counts"] = ["unresolved": 1]; object["reason_counts"] = ["indirect_target_unresolved": 1]
+        object["indirect_target_shape_counts"] = ["unknown": 1]
+        object["value_witness_admission_counts"] = ["admitted": 0, "refused": 1]
+        object["value_witness_refusal_condition_counts"] = ["1": 1]
+        XCTAssertEqual(try decode(object).calls.first?.status, "unresolved")
+    }
+
+    func testAdmittedMetadataCopiedThroughMovAccepted() throws {
+        func copied(_ words: [(String, String)], register: String) -> [String: Any] {
+            withRow { row in
+                var shape = row["indirect_target_shape"] as! [String: Any]
+                var deciding = shape["deciding_instructions"] as! [[String: Any]]
+                for (pc, word) in words { deciding.append(["pc": pc, "word": word, "role": "metadata_copy"]) }
+                shape["deciding_instructions"] = deciding; row["indirect_target_shape"] = shape
+                var w = row["value_witness_admission"] as! [String: Any]
+                w["metadata_register"] = register; row["value_witness_admission"] = w
+            }
+        }
+        // mov x22, x0 ; add x23, x22, #0 ; the chain must end in the named register
+        XCTAssertTrue(try decode(copied([("0x1020", "0xaa0003f6")], register: "x22")).supportsInterpretation)
+        XCTAssertTrue(try decode(copied([("0x1020", "0xaa0003f6"), ("0x1024", "0x910002d7")], register: "x23")).supportsInterpretation)
+        XCTAssertThrowsError(try decode(mutateWitness { $0["metadata_register"] = "x22" }))
+        XCTAssertThrowsError(try decode(copied([("0x1020", "0xaa0003f6")], register: "x23")))
+        XCTAssertThrowsError(try decode(copied([("0x1020", "0xaa0103f6")], register: "x22")))
+        XCTAssertThrowsError(try decode(copied([("0x1020", "0x91000ad6")], register: "x22")))
     }
 
     func testCountersMustMatchRetainedRows() throws {

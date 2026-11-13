@@ -352,8 +352,11 @@ enum SwiftBroadFlowReport {
               shape["bounds"] is [String: Any] else { throw fail("malformed indirect target shape") }
         var slot: UInt64?
         if let value = shape["slot_offset"], !(value is NSNull) {
-            guard let number = unsigned(value), number <= 0xffff else { throw fail("malformed shape slot") }
-            slot = number
+            // The producer records the target load's signed offset for every class (ldur sign-extends imm9).
+            guard let number = value as? NSNumber, CFGetTypeID(number) != CFBooleanGetTypeID(),
+                  !["f", "d"].contains(String(cString: number.objCType)),
+                  number.int64Value >= -0x100, number.int64Value <= 0xffff else { throw fail("malformed shape slot") }
+            slot = number.int64Value >= 0 ? UInt64(number.int64Value) : nil
         }
         var words: [UInt64: (word: UInt64, role: String)] = [:]
         for item in deciding {
@@ -401,8 +404,22 @@ enum SwiftBroadFlowReport {
                 throw fail("admitted symbol is not a metadata accessor")
             }
         }
-        // The metadata is x0 from a direct bl recorded as the deciding metadata_call_result.
-        guard registerNumber == 0 else { throw fail("admitted metadata is not x0") }
+        // The metadata is x0 from a direct bl recorded as the deciding metadata_call_result, possibly
+        // carried through a recorded chain of mov / add #0 copies that ends in the named register.
+        let copies = words.filter { $0.value.role == "metadata_copy" }.sorted { $0.key < $1.key }
+        var carried = 0
+        for copy in copies {
+            let w = copy.value.word
+            let isMov = w & 0xffe0_ffe0 == 0xaa00_03e0           // orr xd, xzr, xm
+            let isAddZero = w & 0xffff_fc00 == 0x9100_0000        // add xd, xn, #0 (no shift)
+            guard isMov || isAddZero, copy.key % 4 == 0 else { throw fail("admitted metadata copy is not a mov") }
+            let source = isMov ? Int((w >> 16) & 0x1f) : Int((w >> 5) & 0x1f)
+            guard source == carried, w & 0x1f != 31, source != 31 else { throw fail("admitted metadata copy chain is broken") }
+            carried = Int(w & 0x1f)
+        }
+        guard registerNumber == carried, copies.isEmpty == (registerNumber == 0) else {
+            throw fail("admitted metadata register is not the recorded copy of x0")
+        }
         let calls = words.filter { $0.value.role == "metadata_call_result" }
         guard calls.count == 1, let found = calls.first, found.value.word & 0xfc00_0000 == 0x9400_0000, found.key % 4 == 0 else {
             throw fail("admitted site lacks a recorded direct metadata call")
