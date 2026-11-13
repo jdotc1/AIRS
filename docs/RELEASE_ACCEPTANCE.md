@@ -86,3 +86,22 @@ interpreter is the same Python release as the bundled one, so the comparison sho
 the bundle is intact and not that the engine agrees across Python versions; the
 source tests cover that. The launch check is that the process stays alive, nothing
 more.
+
+## Build 33 run
+
+Run 43374401949 on 2026-11-13 checked the published 0.4.0 build 33 archive on the hosted
+macOS 27 image (macOS 27.0.1). Every step passed:
+
+- the application archive, the source archive and the qualification record match the
+  published checksums;
+- the signature is valid, Gatekeeper accepts the application as a notarized Developer ID
+  build, and the stapled ticket validates;
+- the application declares macOS 27.0 as its minimum, and the host runs that major
+  version, so for this release the minimum-system step compares like with like;
+- the engine files in the application are identical to the tagged source;
+- the bundled interpreter and a separately installed Python 3.15.0 wrote identical audit
+  and Swift error-flow reports on the owned fixtures, both exiting 0;
+- the application process was running 15 seconds after it was started.
+
+The limits of the first run still apply: the second interpreter is the same Python
+release as the bundled one, and the launch check is that the process stays alive.

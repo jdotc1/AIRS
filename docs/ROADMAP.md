@@ -10,14 +10,19 @@ Written 2026-11-12 against main at commit f5eefd5.
 
 ## 1. Where things stand
 
-**Released.** AIRS 0.3.4, build 32 (tag v0.3.4-build32, application source db7347b),
-signed, notarized and stapled for Apple silicon. It includes Security Changes in
-Component Review and native Standard and Broad Swift analysis with the explicitly
-selected extended scan profile. See [RELEASE_0_3_4_BUILD32.md](RELEASE_0_3_4_BUILD32.md)
-and [RELEASE_NOTES.md](../RELEASE_NOTES.md).
+**Released.** AIRS 0.4.0, build 33 (tag v0.4.0-build33, application source 9a000f8),
+signed, notarized and stapled for Apple silicon, with macOS 27 as its minimum. Its
+acceptance run on a hosted macOS 27 runner passed. See
+[RELEASE_0_4_0_BUILD33.md](RELEASE_0_4_0_BUILD33.md) and
+[RELEASE_NOTES.md](../RELEASE_NOTES.md). Build 32 (0.3.4) remains the last release for
+macOS 14 to 26.
 
-**Merged and not released.** Twenty-one pull requests have merged since build 32. None
-is in a released build.
+**Merged and not released.** Three pull requests have merged since the 0.4.0 freeze: the
+Python and Swift model registries generated from one source file, the core module in
+Swift 6 language mode, and the contract for the complete declaration grammar
+([DECLARATION_GRAMMAR_CONTRACT.md](swift/DECLARATION_GRAMMAR_CONTRACT.md)).
+
+**New in 0.4.0.** Twenty-one pull requests merged between build 32 and the 0.4.0 freeze.
 
 - Swift: the `broad-imports-v1` profile
   ([SWIFT_BROAD_IMPORTS_PROFILE.md](SWIFT_BROAD_IMPORTS_PROFILE.md)), a declaration
@@ -132,8 +137,8 @@ others.
 
 ### 4.1 Release 0.4.0
 
-The next release is 0.4.0: the first with the macOS 27 minimum, carrying everything
-merged since build 32.
+Released on 2026-11-13: the first release with the macOS 27 minimum, carrying everything
+merged between build 32 and the freeze.
 
 1. Done: the deployment target in the package manifest and the bundle is macOS 27,
    and the native CI job runs on the hosted macOS 27 image with Xcode 27.2 (the
@@ -153,10 +158,12 @@ merged since build 32.
    image. Build 32 declares macOS 14, so that run shows nothing about its declared
    minimum; 0.4.0 will be the first release whose declared minimum is the system
    the run uses.
-3. Freeze the source, package, and probe the bundled engine.
-4. Maintainer: sign, notarize, staple, tag and publish.
-5. Run the acceptance workflow on the published archive and record the result in the
-   release document.
+3. Done: the source was frozen at 9a000f8, packaged, and the bundled engine probed.
+4. Done: signed, notarized, stapled, tagged `v0.4.0-build33` and published as a preview
+   on 2026-11-13.
+5. Done: acceptance run 43374401949 passed every step on the published archive, on a
+   host at the declared minimum major version
+   ([RELEASE_0_4_0_BUILD33.md](RELEASE_0_4_0_BUILD33.md)).
 
 Exit: a published 0.4.0 whose release document cites a green main run on the exact
 commit and a green acceptance run on the published archive.
