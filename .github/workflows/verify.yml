@@ -49,6 +49,8 @@ jobs:
           allowed = {
               ('test_private_python_reuse.RuntimeMetadataReuseTests.test_saved_observed_metadata_pair_without_runtime_access',
                'Saved diagnostic fixture not selected'),
+              ('test_swift_declaration_grammar_oracle.DeclarationGrammarOracleTests.test_differential',
+               'swift-demangle unavailable'),
               ('test_facts_export_contract.ExternalContractTests.test_exported_record_ids',
                'AIRS_NAVIGATOR_CONTRACT_DIR is unset; external contract unavailable'),
               ('test_facts_export_contract.ExternalContractTests.test_import_examples',
@@ -206,5 +208,39 @@ jobs:
             build/oracle/results/disagreements*.tsv
             build/oracle/generated.tsv
             build/oracle/tools.txt
+          if-no-files-found: error
+          retention-days: 14
+
+  declaration_grammar_oracle:
+    name: Swift declaration grammar differential (SDK)
+    runs-on: xcode-27
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_27.2.app/Contents/Developer
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Select Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.15.0'
+          architecture: arm64
+      - name: Record Swift toolchain
+        run: |
+          mkdir -p build/declaration-grammar
+          xcrun swift --version | tee build/declaration-grammar/swift.txt
+      - name: Run declaration grammar differential
+        env:
+          PYTHONPATH: src
+          AIRS_GRAMMAR_COVERAGE_OUT: build/declaration-grammar/coverage.json
+        run: python -B -m unittest discover -s tests -p test_swift_declaration_grammar_oracle.py -v
+      - name: Retain grammar coverage
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: swift-declaration-grammar-coverage
+          path: build/declaration-grammar/coverage.json
           if-no-files-found: error
           retention-days: 14
