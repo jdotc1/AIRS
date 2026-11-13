@@ -77,3 +77,51 @@ candidates. The v3 column uses the same arithmetic. "Attributed Swift calls" is 
   provides.
 - Five panel applications are outside the shared input bounds. A larger bound would be its own change and is not
   scheduled.
+
+## GOT window declines (roadmap section 4.3, item 4)
+
+The GOT window of the imports profiles treats a `BLR Xr` as a GOT candidate when the first word before it that is not
+an allowlisted gap is `LDR Xr, [Xb, #imm]`. It declines the candidate as `got_base_not_adrp` when `Xb` is the stack
+pointer or is not set by an `ADRP` just before the load. The question was whether these declines are GOT loads at
+all.
+
+Method:
+
+- Every such site is a selected candidate, and a retained one carries an `indirect_target_shape` record. The screen
+  takes each retained `BLR` row of the v4 reports above.
+- For each, it reads at most nine words before the recorded call from the same admitted input, as data. The call
+  word at the recorded file offset must equal the recorded word.
+- It applies the window's own load and base test, with the engine's gap allowlist and gap limit.
+- On the four applications with no omitted rows, the sites found equal the report's `got_base_not_adrp` count
+  exactly. On Maccy and Ice the rest of the sites were omitted for the output budget, and they are not classified.
+
+| Application | `got_base_not_adrp` | Sites in retained rows | `value_witness` | `protocol_witness_slot` | `unknown` | `got_or_global_fnptr` |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Maccy | 1,746 | 1,034 | 611 | 33 | 390 | 0 |
+| Ice | 1,503 | 939 | 498 | 6 | 435 | 0 |
+| TaskExplorer | 1,170 | 1,170 | 719 | 0 | 451 | 0 |
+| KnockKnock | 15 | 15 | 0 | 0 | 15 | 0 |
+| OverSight | 6 | 6 | 0 | 0 | 6 | 0 |
+| KeepingYouAwake | 6 | 6 | 0 | 0 | 6 | 0 |
+| Total | 4,446 | 3,170 | 1,828 | 39 | 1,303 | 0 |
+
+The `unknown` sites of the six applications break down as follows:
+
+- 479 load their base from memory;
+- 282 trace to a stack slot;
+- 542 have a base that the shape tier stops at (a join, a flow break, a call clobber, a window bound, an entry
+  register or a call result).
+
+What this shows:
+
+- 1,867 of the 3,170 sites have a class, and none of them is `got_or_global_fnptr`: 1,828 (58%) are value-witness
+  calls and 39 are protocol-witness calls.
+- The other 1,303 (41%) are `unknown`. The shape tier did not resolve where their target or its base comes from, so
+  they are not shown to be GOT loads or to be anything else. None has an `ADRP` base within the window's gap limit,
+  which is what the decline means. An earlier `ADRP` behind a join, a spill or a register copy is not excluded.
+- 629 of the value-witness sites (192 on Maccy, 288 on Ice, 149 on TaskExplorer) are already admitted as non-throwing
+  and left the unresolved set as `declined` rows.
+- The owned fixture's pattern holds for every classified site on the panel: those declines are table calls, not GOT
+  loads.
+- All of them are still counted in `got_candidates`. Removing even the classified ones from that count would change what the counter means, so it
+  would need a new GOT window model identity. Under the stop rule, that change is not scheduled.
