@@ -51,6 +51,21 @@ class ReleaseContentTests(unittest.TestCase):
 
 
 class LumenSourceTests(unittest.TestCase):
+    def test_public_package_gate_checks_only_compiled_lumen_products(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'Package.swift').write_text('package')
+            (root / 'LICENSE').write_text('MIT')
+            for name in ('LumenTokens', 'LumenUI'):
+                (root / 'Sources' / name).mkdir(parents=True)
+                (root / 'Sources' / name / 'Owned.swift').write_text('safe')
+            (root / '.git').mkdir()
+            (root / 'Docs').mkdir(); (root / 'Docs' / 'note').write_text('/Users' '/private')
+            release_content.check_public_lumen_source(root)
+            (root / 'Sources/LumenUI/Owned.swift').write_text('/Users' '/private/project')
+            with self.assertRaisesRegex(ValueError, 'Publication marker'):
+                release_content.check_public_lumen_source(root)
+
     def test_private_and_authorship_markers_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

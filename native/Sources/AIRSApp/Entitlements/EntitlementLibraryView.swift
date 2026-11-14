@@ -7,7 +7,7 @@ struct EntitlementLibraryView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            AppPageHeader(title: "Report Library",
+            LumenPageHeader( "Report Library",
                 subtitle: "Keep both complete snapshots for later review. Reopening recomputes their differences without reading the source apps. Saved metadata remains unverified.") {
                 Button("Refresh") { workspace.refreshLibrary() }.disabled(workspace.isBusy)
             }

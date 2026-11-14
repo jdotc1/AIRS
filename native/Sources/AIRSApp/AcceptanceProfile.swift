@@ -81,10 +81,6 @@ enum AIRSEntryPoint {
             let (preferences, report, comparison) = try profile.prepare()
             let workspace = AuditWorkspace(recents: SettingsReviewRecents(),
                 supportRoot: profile.root.appendingPathComponent("data"), preferences: preferences)
-            LumenThemeStore.install(LumenThemeStore(registry: LumenRegistry(packs: [.core]),
-                configuration: LumenStoreConfiguration(appName: "AIRS",
-                    themesDirectory: profile.root.appendingPathComponent("themes"),
-                    defaultThemeID: LumenThemes.standardID, defaultsSuiteName: profile.suite + ".lumen")))
             let app = NSApplication.shared
             let delegate = AcceptanceApplicationDelegate()
             app.delegate = delegate
@@ -98,7 +94,7 @@ enum AIRSEntryPoint {
             window.contentMinSize = NSSize(width: 960, height: 680)
             window.contentViewController = NSHostingController(rootView:
                 AcceptanceView(workspace: workspace, report: report, comparison: comparison, profile: profile.suite)
-                    .lumenPaletteRoot().lumenMetrics(.standard).lumenDensityRoot()
+                    .lumenMetrics(.standard)
                     .defaultAppStorage(preferences))
             delegate.window = window
             window.center()

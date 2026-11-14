@@ -1,4 +1,5 @@
 import SwiftUI
+import LumenTokens
 import LumenUI
 import AIRSCore
 
@@ -9,7 +10,7 @@ struct ImageBatchView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text("Image Batches").font(AppDesign.Layout.pageTitle)
+                Text("Image Batches").font(Lumen.Font.title2)
                 Spacer()
                 if workspace.isBusy && workspace.canCancel {
                     Button("Cancel Batch", action: workspace.cancel)
@@ -44,7 +45,7 @@ struct ImageBatchView: View {
             } else {
                 LumenEmptyState(systemImage: AppDesign.Symbol.batch, title: "No image batch",
                     message: "Select up to 16 images, or open a checkpoint from Batch History.",
-                    actionTitle: "Select Images…", action: workspace.chooseBatch)
+                    link: LumenAction("Select Images…") { workspace.chooseBatch() })
                     .disabled(workspace.isBusy || workspace.hasUnretainedBatchReports)
             }
             DisclosureGroup("Storage and workflow details") {

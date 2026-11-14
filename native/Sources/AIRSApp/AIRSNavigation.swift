@@ -7,6 +7,8 @@ final class AIRSNavigation {
     var showsEntitlements = false
     var showsSwiftFlow = false
     let swiftFlow: SwiftFlowWorkspace
+    private var rememberedUnwind: AIRSDestination = .audit
+    private var rememberedEntitlements: AIRSDestination = .entitlements
     init(swiftFlow: SwiftFlowWorkspace? = nil) { self.swiftFlow = swiftFlow ?? SwiftFlowWorkspace() }
     func allowsEntitlementNavigation(audit: AuditWorkspace, fileOpen: AIRSFileOpen) -> Bool {
         showsEntitlements && !showsSwiftFlow && !swiftFlow.isBusy && !audit.blocksFileOpen && !fileOpen.blocksActions && fileOpen.errorMessage == nil
@@ -18,6 +20,8 @@ final class AIRSNavigation {
         action()
     }
 }
+
+enum AIRSWorkspace: String, Sendable { case unwind, entitlements }
 
 enum AIRSDestination: String, Hashable, CaseIterable, Identifiable {
     case swiftFlow
@@ -50,6 +54,32 @@ enum AIRSDestination: String, Hashable, CaseIterable, Identifiable {
 }
 
 extension AIRSNavigation {
+    func remember(_ destination: AIRSDestination) {
+        switch destination {
+        case .entitlements, .entitlementBatch, .entitlementHistory, .entitlementLibrary, .entitlementRecovery:
+            rememberedEntitlements = destination
+        default:
+            rememberedUnwind = destination
+        }
+    }
+    func workspace(audit: AuditWorkspace, entitlements: EntitlementsWorkspace) -> AIRSWorkspace {
+        switch destination(audit: audit, entitlements: entitlements) {
+        case .entitlements, .entitlementBatch, .entitlementHistory, .entitlementLibrary, .entitlementRecovery: return .entitlements
+        default: return .unwind
+        }
+    }
+
+    func selectWorkspace(_ target: AIRSWorkspace, audit: AuditWorkspace,
+                         entitlements: EntitlementsWorkspace, fileOpen: AIRSFileOpen) {
+        guard canSelectDestination(audit: audit, entitlements: entitlements, fileOpen: fileOpen),
+              workspace(audit: audit, entitlements: entitlements) != target else { return }
+        let previous = destination(audit: audit, entitlements: entitlements)
+        let next = target == .unwind ? rememberedUnwind : rememberedEntitlements
+        select(next, audit: audit, entitlements: entitlements, fileOpen: fileOpen)
+        guard destination(audit: audit, entitlements: entitlements) == next else { return }
+        if target == .unwind { rememberedEntitlements = previous } else { rememberedUnwind = previous }
+    }
+
     func destination(audit: AuditWorkspace, entitlements: EntitlementsWorkspace) -> AIRSDestination {
         if showsSwiftFlow { return .swiftFlow }
         if showsEntitlements {
@@ -90,5 +120,6 @@ extension AIRSNavigation {
         case .entitlementLibrary: showsEntitlements = true; entitlements.openLibrary()
         case .entitlementRecovery: showsEntitlements = true; entitlements.openBatchRecovery()
         }
+        remember(destination)
     }
 }

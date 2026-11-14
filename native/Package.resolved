@@ -1,0 +1,15 @@
+{
+  "originHash" : "0c521d81b1d5953f29fad6a5eea41da68d4535c27091922600589dc06143b3ec",
+  "pins" : [
+    {
+      "identity" : "lumen",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jdotc1/Lumen.git",
+      "state" : {
+        "revision" : "3ffac7a51e8cf7a0d61a3cfc6289c927a535ce61",
+        "version" : "1.3.0"
+      }
+    }
+  ],
+  "version" : 3
+}

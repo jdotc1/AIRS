@@ -52,10 +52,8 @@ struct SettingsReviewConfiguration {
     }
 
     func preferences() throws -> UserDefaults {
-        guard let defaults = UserDefaults(suiteName: suite),
-              UserDefaults(suiteName: suite + ".lumen") != nil else { throw ReviewError.preferencesUnavailable }
-        guard defaults.persistentDomain(forName: suite)?.isEmpty != false,
-              UserDefaults(suiteName: suite + ".lumen")?.persistentDomain(forName: suite + ".lumen")?.isEmpty != false else {
+        guard let defaults = UserDefaults(suiteName: suite) else { throw ReviewError.preferencesUnavailable }
+        guard defaults.persistentDomain(forName: suite)?.isEmpty != false else {
             throw ReviewError.preferencesNotFresh
         }
         return defaults
@@ -117,7 +115,7 @@ struct SidebarReviewLauncher: View {
 
     var body: some View {
         AIRSWindowView(audit: workspace, entitlements: entitlements, navigation: navigation, fileOpen: fileOpen)
-            .lumenPaletteRoot().lumenMetrics(.standard).lumenDensityRoot()
+            .lumenMetrics(.standard)
             .frame(minWidth: 1000, minHeight: 660)
             .onAppear { NSApplication.shared.setActivationPolicy(.regular) }
     }
@@ -143,7 +141,7 @@ struct ComparisonReviewLauncher: View {
             WorkspaceView(workspace: workspace)
         }
         .frame(minWidth: 1000, minHeight: 760)
-        .lumenPaletteRoot().lumenMetrics(.standard).lumenDensityRoot()
+        .lumenMetrics(.standard)
     }
 }
 #endif

@@ -43,12 +43,6 @@ struct AIRSApp: App {
         _normalEntitlements = State(initialValue: normalEntitlementsValue)
         let normalFileOpenValue: AIRSFileOpen? = isNormalRun ? AIRSFileOpen() : nil
         _normalFileOpen = State(initialValue: normalFileOpenValue)
-        let lumenRegistry = LumenRegistry(packs: [.core])
-        let themesDirectory: URL? = review?.root.appendingPathComponent("themes", isDirectory: true)
-        let defaultsSuiteName: String? = review.map { $0.suite + ".lumen" }
-        let lumenConfiguration = LumenStoreConfiguration(appName: "AIRS", themesDirectory: themesDirectory,
-            defaultThemeID: LumenThemes.standardID, defaultsSuiteName: defaultsSuiteName)
-        LumenThemeStore.install(LumenThemeStore(registry: lumenRegistry, configuration: lumenConfiguration))
         #if DEBUG
         // Process-local review only; never changes system appearance or saved preferences.
         if ProcessInfo.processInfo.environment["AIRS_UI_REVIEW_APPEARANCE"] == "dark" {
@@ -62,9 +56,7 @@ struct AIRSApp: App {
             if settingsReview == nil {
             AIRSWindowView(audit: workspace, entitlements: entitlements,
                            navigation: navigation, fileOpen: fileOpen)
-                .lumenPaletteRoot()
                 .lumenMetrics(.standard)
-                .lumenDensityRoot()
                 .frame(minWidth: 1000, minHeight: 660)
                 .onAppear {
                     applicationDelegate.configureFileOpening(audit: workspace, entitlements: entitlements,
@@ -227,9 +219,7 @@ struct AIRSApp: App {
 
         Settings {
             EngineSettingsView(workspace: workspace).disabled(normalFileOpen?.blocksActions ?? false)
-                .lumenPaletteRoot()
                 .lumenMetrics(.standard)
-                .lumenDensityRoot()
         }
         .lumenSettingsScene()
         .defaultSize(width: LumenSettingsSidebarView.windowIdealWidth,

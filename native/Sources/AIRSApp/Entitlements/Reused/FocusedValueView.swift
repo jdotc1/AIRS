@@ -1,4 +1,5 @@
 import SwiftUI
+import LumenTokens
 import LumenUI
 import EntitlementDiffCore
 import EntitlementDiffModel
@@ -28,7 +29,7 @@ struct FocusedValueView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            AppDialogTitle(title: "Focused Value")
+            LumenPageHeader( "Focused Value")
             Divider()
             Text(EntitlementValue.string(selection.entitlementKey).preview(maxCharacters: 512))
                 .font(.system(.headline, design: .monospaced)).textSelection(.enabled)
@@ -108,7 +109,7 @@ struct FocusedValueView: View {
                     .disabled(actions.isWorking)
             }
         }
-        .padding(AppDesign.Space.page)
+        .padding(Lumen.Space.s7)
         .frame(minWidth: 880, idealWidth: 880, minHeight: 800, idealHeight: 800)
         .appDialogSurface()
         .interactiveDismissDisabled(actions.isWorking)
@@ -241,7 +242,7 @@ private struct LeafValuePane: View {
                                                 (showingDifference ? differenceRevision : search?.matchRevision))
                         .frame(minHeight: 80)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(palette[.bgInset], in: RoundedRectangle(cornerRadius: AppDesign.Layout.radius))
+                        .background(palette[.bgInset], in: RoundedRectangle(cornerRadius: Lumen.Radius.md))
                     if page.continuesBefore || page.continuesAfter {
                         Text(page.continuesBefore && page.continuesAfter ? "Match continues from the previous page and onto the next." :
                              page.continuesBefore ? "Match continues from the previous page." : "Match continues onto the next page.")
@@ -251,7 +252,7 @@ private struct LeafValuePane: View {
                     HighlightedStringPageView(text: document.text(onPage: navigation.index),
                                               pageIndex: navigation.index, revealRevision: dataDifferenceRevision)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(palette[.bgInset], in: RoundedRectangle(cornerRadius: AppDesign.Layout.radius))
+                    .background(palette[.bgInset], in: RoundedRectangle(cornerRadius: Lumen.Radius.md))
                     .id(DataPageIdentity(page: navigation.index, revision: dataDifferenceRevision))
                 }
                 if showingDifference, let position = differencePosition,

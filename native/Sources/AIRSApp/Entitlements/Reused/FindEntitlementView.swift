@@ -1,4 +1,6 @@
 import SwiftUI
+import LumenUI
+import LumenTokens
 import EntitlementDiffModel
 
 struct FindEntitlementView: View {
@@ -9,7 +11,7 @@ struct FindEntitlementView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            AppDialogTitle(title: "Find Entitlement")
+            LumenPageHeader( "Find Entitlement")
             Divider()
             Text("Enter the complete key. Matching uses exact UTF-8 bytes, including case and whitespace.")
                 .foregroundStyle(.secondary)
@@ -29,7 +31,7 @@ struct FindEntitlementView: View {
                 Spacer()
                 Button("Find") { result = find(input.value, false) }.keyboardShortcut(.defaultAction)
             }
-        }.padding(AppDesign.Space.page).frame(minWidth: 480, idealWidth: 480)
+        }.padding(Lumen.Space.s7).frame(minWidth: 480, idealWidth: 480)
         .appDialogSurface()
     }
 }

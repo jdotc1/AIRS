@@ -11,7 +11,7 @@ let package = Package(
         .library(name: "AIRSEntitlements", targets: ["AIRSEntitlements"])
     ],
     dependencies: [.package(path: "Vendor/EntitlementDiff"),
-                   .package(path: "Vendor/Lumen")],
+                   .package(url: "https://github.com/jdotc1/Lumen.git", exact: "1.3.0")],
     targets: [
         .executableTarget(name: "AIRSEntitlementCLI", dependencies: [
             "AIRSEntitlements",

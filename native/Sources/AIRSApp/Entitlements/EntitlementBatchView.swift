@@ -16,7 +16,7 @@ struct EntitlementBatchView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            AppPageHeader(title: "Comparison Queue",
+            LumenPageHeader( "Comparison Queue",
                 subtitle: "Ordered Previous → Current pairs, one comparison at a time. The primary comparison stays unchanged until you review and open a result.") {
                 Button("New Queue", action: workspace.clearBatch)
                     .disabled(!canStartNewQueue)

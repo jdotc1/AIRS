@@ -4,11 +4,12 @@ AIRS's original code is licensed under the [MIT License](LICENSE).
 Third-party components and platform resources retain their existing copyrights
 and license terms.
 
-## Bundled Lumen snapshot
+## Lumen
 
-The LumenTokens and LumenUI snapshot included with AIRS is also licensed under
-[MIT](native/Vendor/Lumen/LICENSE). Its source revision and ownership record are
-documented in [PROVENANCE.md](native/Vendor/Lumen/PROVENANCE.md).
+AIRS uses LumenTokens and LumenUI from the public [Lumen 1.3.0 release](https://github.com/jdotc1/Lumen/tree/v1.3.0),
+licensed under its [MIT license](https://github.com/jdotc1/Lumen/blob/v1.3.0/LICENSE).
+SwiftPM pins the public release revision in `native/Package.resolved`. The older
+`native/Vendor/Lumen` snapshot is retained for historical provenance and is not linked.
 
 ## EntitlementDiff
 

@@ -1,4 +1,5 @@
 import SwiftUI
+import LumenTokens
 import LumenUI
 import AIRSCore
 
@@ -10,7 +11,7 @@ struct ReportOverviewView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 VStack(alignment: .leading, spacing: 7) {
-                    Text(report.image.displayName).font(AppDesign.Layout.pageTitle)
+                    Text(report.image.displayName).font(Lumen.Font.title2)
                         .textSelection(.enabled)
                     Text("\(sourceLabel) · \(report.image.architecture)")
                         .foregroundStyle(.secondary)

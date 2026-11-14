@@ -1,4 +1,5 @@
 import SwiftUI
+import LumenTokens
 import LumenUI
 import AIRSCore
 
@@ -23,7 +24,7 @@ struct ComparisonView: View {
         VStack(spacing: 0) {
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
-                    AppDialogTitle(title: "Baseline comparison")
+                    LumenPageHeader( "Baseline comparison")
                     Text("\(document.report.comparison.baselineImage.displayName) → \(document.report.comparison.currentImage.displayName)")
                         .font(.callout).foregroundStyle(.secondary)
                 }
@@ -36,7 +37,7 @@ struct ComparisonView: View {
                 Button("Done") { dismiss() }.keyboardShortcut(.defaultAction)
                     .disabled(workspace.isBusy && !workspace.canCancel)
             }
-            .padding(AppDesign.Space.page)
+            .padding(Lumen.Space.s7)
             Divider()
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
@@ -115,7 +116,7 @@ struct ComparisonView: View {
                         }
                     }
                 }
-                .padding(AppDesign.Space.page)
+                .padding(Lumen.Space.s7)
             }
         }
         .frame(minWidth: 780, idealWidth: 940, minHeight: 600, idealHeight: 740)

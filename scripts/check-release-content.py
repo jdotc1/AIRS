@@ -34,6 +34,31 @@ def check_source(root):
     print(f'Lumen source content check passed: {count} files.')
 
 
+def check_public_lumen_source(root):
+    """Inspect the pinned public package inputs linked into AIRS, not its development tree."""
+    patterns = lumen_source_patterns()
+    # Keyboard guidance such as ↑/↓/Home/End is not an absolute home directory.
+    patterns[0] = re.compile(rb'/(?:Users|home)/[^/\x00\s]+/', re.I)
+    inputs = [root / 'Package.swift', root / 'LICENSE', root / 'Sources' / 'LumenTokens', root / 'Sources' / 'LumenUI']
+    for item in inputs:
+        if item.is_symlink() or not item.exists():
+            raise ValueError(f'Missing or linked Lumen input: {item.name}')
+    count = 0
+    for item in inputs:
+        entries = [item] if item.is_file() else item.rglob('*')
+        for entry in entries:
+            relative = entry.relative_to(root)
+            if entry.is_symlink() or any(part.startswith('.') for part in relative.parts):
+                raise ValueError(f'Unexpected hidden file or symlink: {relative}')
+            if entry.is_file():
+                if any(pattern.search(entry.read_bytes()) for pattern in patterns):
+                    raise ValueError(f'Publication marker in Lumen source: {relative}')
+                count += 1
+    if count < 4:
+        raise ValueError('Missing Lumen source payload')
+    print(f'Public Lumen source content check passed: {count} files.')
+
+
 def check(app):
     contents = app / 'Contents'
     if not (contents / 'Info.plist').is_file():
@@ -69,6 +94,8 @@ if __name__ == '__main__':
     try:
         if sys.argv[1] == '--lumen-source':
             check_source(Path(sys.argv[2]))
+        elif sys.argv[1] == '--public-lumen-source':
+            check_public_lumen_source(Path(sys.argv[2]))
         else:
             check(Path(sys.argv[1]))
     except (IndexError, OSError, ValueError) as error:

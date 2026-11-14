@@ -1,4 +1,5 @@
 import SwiftUI
+import LumenTokens
 import LumenUI
 import EntitlementDiffCore
 import EntitlementDiffModel
@@ -86,11 +87,8 @@ struct EntitlementsView: View {
 private struct EntitlementsHeader: View {
     @Bindable var workspace: EntitlementsWorkspace
     var body: some View {
-        VStack(alignment: .leading, spacing: AppDesign.Space.regular) {
-            HStack(spacing: AppDesign.Space.regular) {
-                Text(workspace.standaloneInspection == nil ? "Compare Entitlements" : "Inspect Entitlements")
-                    .font(AppDesign.Layout.pageTitle)
-                Spacer(minLength: AppDesign.Space.regular)
+        VStack(alignment: .leading, spacing: Lumen.Space.s5) {
+            LumenPageHeader(workspace.standaloneInspection == nil ? "Compare Entitlements" : "Inspect Entitlements") {
                 Picker("Architecture", selection: Binding(
                     get: { workspace.model.architecture }, set: workspace.setArchitecture
                 )) {
@@ -100,13 +98,13 @@ private struct EntitlementsHeader: View {
             Button("Inspection Baselines…") { workspace.openInspectionLibrary() }.disabled(workspace.isBusy)
             Text("Main executable and requested architecture only. Extraction is not signature validation, effective permissions, Gatekeeper evaluation or a trust verdict.")
                 .font(.caption).foregroundStyle(.secondary)
-            HStack(alignment: .top, spacing: AppDesign.Space.regular) {
+            HStack(alignment: .top, spacing: Lumen.Space.s5) {
                 capturePane(.previous, state: workspace.model.previous)
                 capturePane(.current, state: workspace.model.current)
             }
         }
-        .padding(.horizontal, AppDesign.Space.section)
-        .padding(.vertical, AppDesign.Space.regular)
+        .padding(.horizontal, Lumen.Space.s6)
+        .padding(.vertical, Lumen.Space.s5)
     }
     private func capturePane(_ side: ComparisonSide, state: InputState) -> some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -137,8 +135,8 @@ struct EntitlementsBrowser: View {
     var navigationAllowed = true
     var body: some View {
         @Bindable var model = workspace.model
-        VStack(spacing: AppDesign.Space.small) {
-            HStack(spacing: AppDesign.Space.medium) {
+        VStack(spacing: Lumen.Space.s2) {
+            HStack(spacing: Lumen.Space.s4) {
                 TextField("Filter entitlement keys", text: Binding(
                     get: { model.browser.query },
                     set: { model.browser.query = String($0.unicodeScalars.prefix(256)) }
@@ -161,12 +159,12 @@ struct EntitlementsBrowser: View {
                     Button("Reset View") { model.browser.reset() }
                 } label: { Image(systemName: "line.3.horizontal.decrease.circle") }
                 .menuStyle(.borderlessButton).fixedSize()
-            }.controlSize(.small).padding(.horizontal, AppDesign.Space.section).padding(.top, AppDesign.Space.medium)
+            }.controlSize(.small).padding(.horizontal, Lumen.Space.s6).padding(.top, Lumen.Space.s4)
             HStack {
                 Text("\(model.browser.visibleRows.count) keys shown · \(model.browser.count(.allChanges)) changes")
                 Spacer()
                 Text(model.browser.changePositionText).monospacedDigit()
-            }.font(.caption).foregroundStyle(.secondary).padding(.horizontal, AppDesign.Space.section)
+            }.font(.caption).foregroundStyle(.secondary).padding(.horizontal, Lumen.Space.s6)
             if let guidance = model.browser.recoveryGuidance {
                 EntitlementsRecoveryView(guidance: guidance,
                     disabled: !navigationAllowed || workspace.isBusy,
@@ -212,7 +210,7 @@ private struct EntitlementsRecoveryView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: AppDesign.Space.medium) {
+            VStack(alignment: .leading, spacing: Lumen.Space.s4) {
                 Text(guidance.title).font(.headline)
                 Text(guidance.message).foregroundStyle(.secondary)
                 if let action = guidance.action, let label = guidance.actionLabel {
@@ -220,7 +218,7 @@ private struct EntitlementsRecoveryView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(AppDesign.Space.section)
+            .padding(Lumen.Space.s6)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
@@ -235,7 +233,7 @@ private struct EntitlementsEmptyView: View {
                     LumenBanner(error, tone: .warning)
                         .textSelection(.enabled)
                 }
-                VStack(alignment: .leading, spacing: AppDesign.Space.medium) {
+                VStack(alignment: .leading, spacing: Lumen.Space.s4) {
                     LumenEmptyState(systemImage: "square.split.2x1", title: "Inspect one app or compare two builds",
                         message: "Choose or drop one app into either input to browse its typed entitlements. Load the other input to compare both captured dictionaries for the selected architecture.")
                     HStack(spacing: 8) {
@@ -254,7 +252,7 @@ private struct EntitlementsEmptyView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-            }.padding(AppDesign.Space.page)
+            }.padding(Lumen.Space.s7)
         }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }

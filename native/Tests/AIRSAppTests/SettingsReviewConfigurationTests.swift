@@ -3,6 +3,15 @@ import XCTest
 @testable import AIRSApp
 
 final class SettingsReviewConfigurationTests: XCTestCase {
+    func testMinimalPaletteDoesNotRequireUnusedLumenPreferencesSuite() throws {
+        let suite = "dev.airs.settings-review.test-\(UUID().uuidString.lowercased())"
+        let app = try XCTUnwrap(UserDefaults(suiteName: suite))
+        let oldLumen = try XCTUnwrap(UserDefaults(suiteName: suite + ".lumen"))
+        defer { app.removePersistentDomain(forName: suite); oldLumen.removePersistentDomain(forName: suite + ".lumen") }
+        oldLumen.set("old", forKey: "unused")
+        let config = SettingsReviewConfiguration(root: URL(fileURLWithPath: "/unused"), suite: suite)
+        XCTAssertNoThrow(try config.preferences())
+    }
     private func scratch() throws -> URL {
         let root = sidebarNavigationScratchRoot(environment: ProcessInfo.processInfo.environment)
             .resolvingSymlinksInPath()
