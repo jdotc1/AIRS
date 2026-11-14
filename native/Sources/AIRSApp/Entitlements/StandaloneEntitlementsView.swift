@@ -1,4 +1,5 @@
 import SwiftUI
+import LumenTokens
 import LumenUI
 import EntitlementDiffCore
 import EntitlementDiffModel
@@ -17,7 +18,7 @@ struct StandaloneEntitlementsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: AppDesign.Space.medium) {
+        VStack(alignment: .leading, spacing: Lumen.Space.s4) {
             Text("Browsing \(input.side.label) input · \(DisplayText.escaped(input.snapshot.sourceName)) · \(input.snapshot.architecture.rawValue)")
                 .font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
             if input.snapshot.isSavedBaseline {
@@ -69,7 +70,7 @@ struct StandaloneEntitlementsView: View {
                             Text("Select a key to inspect its typed value.")
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                                .padding(.top, AppDesign.Space.regular)
+                                .padding(.top, Lumen.Space.s5)
                                 .frame(minHeight: min(140, max(0, geometry.size.height * 0.5)))
                         }
                     }.frame(width: geometry.size.width, height: geometry.size.height)
@@ -79,8 +80,8 @@ struct StandaloneEntitlementsView: View {
             Text("Single-input inspection. Load the other input above to compare two captured snapshots.")
                 .font(.caption).foregroundStyle(.secondary)
         }
-        .padding(.horizontal, AppDesign.Space.section)
-        .padding(.vertical, AppDesign.Space.regular)
+        .padding(.horizontal, Lumen.Space.s6)
+        .padding(.vertical, Lumen.Space.s5)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .disabled(disabled)
         .onChange(of: input.id) { _, _ in browser.replaceInput(input) }
@@ -105,7 +106,7 @@ private struct StandaloneValueBrowser: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: AppDesign.Space.regular) {
+        VStack(alignment: .leading, spacing: Lumen.Space.s5) {
             Text(entry.keyPreview).font(.headline).lineLimit(3).textSelection(.enabled)
             EntitlementReferenceView(key: entry.key)
             if let leaf = navigator.root.leaf {
@@ -120,12 +121,12 @@ private struct StandaloneValueBrowser: View {
                 branchView
             }
         }
-        .padding(.top, AppDesign.Space.regular)
+        .padding(.top, Lumen.Space.s5)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 
     private var branchView: some View {
-        VStack(alignment: .leading, spacing: AppDesign.Space.medium) {
+        VStack(alignment: .leading, spacing: Lumen.Space.s4) {
             HStack {
                 Button("Up") { navigator.back(); resetLookup() }.disabled(!navigator.canGoBack)
                 Button("Root") { navigator.goToRoot(); resetLookup() }.disabled(!navigator.canGoBack)
@@ -165,7 +166,7 @@ private struct StandaloneValueBrowser: View {
                     .font(.caption).foregroundStyle(.secondary)
             }
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: AppDesign.Space.regular) {
+                LazyVStack(alignment: .leading, spacing: Lumen.Space.s5) {
                     if let exact = navigator.exactChild {
                         Text("Exact child match").font(.caption)
                         valueRow(exact)
@@ -184,8 +185,8 @@ private struct StandaloneValueBrowser: View {
     }
 
     private func valueRow(_ row: StandaloneValueRow) -> some View {
-        HStack(alignment: .top, spacing: AppDesign.Space.regular) {
-            VStack(alignment: .leading, spacing: AppDesign.Space.small) {
+        HStack(alignment: .top, spacing: Lumen.Space.s5) {
+            VStack(alignment: .leading, spacing: Lumen.Space.s2) {
                 Text(row.label).lineLimit(3).textSelection(.enabled)
                 Text("\(row.value.typeName) · \(row.value.preview(maxCharacters: 160))")
                     .foregroundStyle(.secondary).lineLimit(3).textSelection(.enabled)
@@ -214,7 +215,7 @@ private struct StandaloneLeafValuePane: View {
     @State private var failure: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: AppDesign.Space.regular) {
+        VStack(alignment: .leading, spacing: Lumen.Space.s5) {
             Text(leaf.value.typeName).font(.caption.weight(.semibold))
             if let document {
                 ScrollView([.horizontal, .vertical]) {

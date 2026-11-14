@@ -16,7 +16,7 @@ struct AIRSWindowView: View {
         VStack(spacing: 0) {
             NavigationSplitView {
                 AIRSSidebar(audit: audit, entitlements: entitlements, navigation: navigation, fileOpen: fileOpen)
-                    .navigationSplitViewColumnWidth(min: 200, ideal: 214, max: 250)
+                    .lumenSidebarColumn()
             } detail: {
                 VStack(spacing: 0) {
                     if navigation.showsSwiftFlow {
@@ -46,6 +46,10 @@ struct AIRSWindowView: View {
             .padding(.horizontal, Lumen.Space.s2)
             .padding(.vertical, Lumen.Space.s1)
 
+        }
+        .onChange(of: navigation.destination(audit: audit, entitlements: entitlements)) { old, new in
+            navigation.remember(old)
+            navigation.remember(new)
         }
         .sheet(item: $fileOpen.intakeReview) { review in
             AppIntakeView(review: review,
@@ -187,19 +191,29 @@ private struct AIRSSidebar: View {
     @Bindable var fileOpen: AIRSFileOpen
 
     var body: some View {
-        // Use the complete source list, including Lumen's toolbar-safe scroll layout
-        // and row input handling, rather than wrapping display rows in custom buttons.
-        LumenSourceList(sections: [
-            section("Swift", [.swiftFlow]),
-            section("Unwind", [.audit, .auditBatch, .auditHistory, .auditLibrary]),
-            section("Entitlements", [.entitlements, .entitlementBatch, .entitlementHistory,
-                                      .entitlementLibrary, .entitlementRecovery])
-        ], selection: Binding(
+        VStack(spacing: 0) {
+            LumenSidebarSection("Workspace") {
+                LumenSidebarSwitcher(selection: Binding(
+                    get: { navigation.workspace(audit: audit, entitlements: entitlements).rawValue },
+                    set: { value in
+                        guard let target = AIRSWorkspace(rawValue: value) else { return }
+                        navigation.selectWorkspace(target, audit: audit, entitlements: entitlements, fileOpen: fileOpen)
+                    }), items: [
+                        .init(id: "unwind", title: "Unwind Analysis", systemImage: AppDesign.Symbol.audit),
+                        .init(id: "entitlements", title: "Compare Entitlements", systemImage: AppDesign.Symbol.entitlements)
+                    ], shortcuts: false)
+            }
+            LumenSourceList(sections: navigation.workspace(audit: audit, entitlements: entitlements) == .unwind ? [
+                section("Swift", [.swiftFlow]),
+                section("Unwind", [.audit, .auditBatch, .auditHistory, .auditLibrary])
+            ] : [section("Entitlements", [.entitlements, .entitlementBatch, .entitlementHistory,
+                                           .entitlementLibrary, .entitlementRecovery])], selection: Binding(
             get: { navigation.destination(audit: audit, entitlements: entitlements).rawValue },
             set: { value in
                 guard let value, let destination = AIRSDestination(rawValue: value) else { return }
                 navigation.select(destination, audit: audit, entitlements: entitlements, fileOpen: fileOpen)
             }))
+        }
         .disabled(!navigation.canSelectDestination(audit: audit, entitlements: entitlements, fileOpen: fileOpen))
         .safeAreaInset(edge: .bottom) {
             Label("AIRS · Local evidence", systemImage: "internaldrive")

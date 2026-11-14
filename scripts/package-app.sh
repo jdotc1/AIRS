@@ -116,6 +116,11 @@ if [ "$EXTERNAL_PYTHON" -eq 0 ]; then
 fi
 
 # Release executables must not embed this machine's checkout or build paths.
+LUMEN_SOURCE="$PROJECT_DIR/native/.build/checkouts/Lumen"
+if [ ! -d "$LUMEN_SOURCE/.git" ] && [ ! -f "$LUMEN_SOURCE/.git" ]; then
+    swift package --package-path "$PROJECT_DIR/native" resolve
+fi
+python3 -I -B "$SCRIPT_DIR/lumen_checkout_admission.py" "$PROJECT_DIR/native/Package.resolved" "$LUMEN_SOURCE"
 BUILD_FLAGS=(--configuration "$CONFIGURATION" --jobs 2)
 # Report any expression or function body that takes 300 ms or more to type-check
 # (warnings only, never errors).
@@ -132,17 +137,15 @@ if re.fullmatch(r'[0-9a-f]{40}', accepted) is None:
     raise SystemExit('Expected an exact accepted vendor-source commit')
 def git(*args):
     return subprocess.check_output(['git', '-C', root, *args], text=True).strip()
-if git('rev-parse', accepted + ':native/Vendor/Lumen') != git('rev-parse', 'HEAD:native/Vendor/Lumen'):
-    raise SystemExit('Vendor source differs from accepted identity')
-if git('status', '--porcelain', '--untracked-files=all', '--', 'native/Vendor/Lumen'):
-    raise SystemExit('Vendor working tree differs from accepted identity')
-if git('ls-files', '--others', '--ignored', '--exclude-standard', '--',
-       'native/Vendor/Lumen/Sources', 'native/Vendor/Lumen/Package.swift'):
-    raise SystemExit('Ignored vendor compiler/resource inputs are not covered by the accepted identity')
-print('Reused accepted immutable Lumen source identity; no source scan repeated.')
+for path in ('native/Package.swift', 'native/Package.resolved'):
+    if git('rev-parse', accepted + ':' + path) != git('rev-parse', 'HEAD:' + path):
+        raise SystemExit('Lumen dependency pin differs from the accepted source identity')
+if git('status', '--porcelain', '--untracked-files=all', '--', 'native/Package.swift', 'native/Package.resolved'):
+    raise SystemExit('Lumen dependency metadata differs from the accepted identity')
+print('Reused accepted Lumen dependency identity; no source scan repeated.')
 PYVENDOR
     else
-        python3 -I -B "$SCRIPT_DIR/check-release-content.py" --lumen-source "$PROJECT_DIR/native/Vendor/Lumen"
+        python3 -I -B "$SCRIPT_DIR/check-release-content.py" --public-lumen-source "$LUMEN_SOURCE"
     fi
     BUILD_FLAGS+=(-Xswiftc -debug-prefix-map -Xswiftc "$PROJECT_DIR=/AIRS"
                  -Xswiftc -file-prefix-map -Xswiftc "$PROJECT_DIR=/AIRS")
@@ -185,7 +188,7 @@ cp "$PROJECT_DIR/airs_cli.py" "$ENGINE_DIR/airs_cli.py"
 cp "$PROJECT_DIR/LICENSE" "$CONTENTS/Resources/AIRS-LICENSE.txt"
 cp "$PROJECT_DIR/THIRD_PARTY_NOTICES.md" "$CONTENTS/Resources/THIRD_PARTY_NOTICES.md"
 mkdir -p "$CONTENTS/Resources/ThirdPartyNotices"
-cp "$PROJECT_DIR/native/Vendor/Lumen/LICENSE" "$CONTENTS/Resources/ThirdPartyNotices/Lumen-LICENSE.txt"
+cp "$LUMEN_SOURCE/LICENSE" "$CONTENTS/Resources/ThirdPartyNotices/Lumen-LICENSE.txt"
 cp "$PROJECT_DIR/native/Vendor/EntitlementDiff/LICENSE" "$CONTENTS/Resources/ThirdPartyNotices/EntitlementDiff-LICENSE.txt"
 cp "$PROJECT_DIR/third_party/EntitlementLens/LICENSE" "$CONTENTS/Resources/ThirdPartyNotices/EntitlementLens-LICENSE.txt"
 cp "$PROJECT_DIR/third_party/gimli/LICENSE-MIT" "$CONTENTS/Resources/ThirdPartyNotices/gimli-LICENSE-MIT.txt"

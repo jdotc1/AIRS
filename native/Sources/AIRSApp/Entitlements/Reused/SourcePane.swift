@@ -1,4 +1,5 @@
 import SwiftUI
+import LumenTokens
 import LumenUI
 import EntitlementDiffCore
 import EntitlementDiffModel
@@ -19,7 +20,7 @@ struct SourcePane: View {
 
     var body: some View {
         GroupBox {
-            VStack(alignment: .leading, spacing: AppDesign.Space.small) {
+            VStack(alignment: .leading, spacing: Lumen.Space.s2) {
                 HStack {
                     Text(side.label).font(.headline)
                     Spacer()
@@ -37,13 +38,13 @@ struct SourcePane: View {
                         .disabled(disabled)
                         .accessibilityLabel("Choose \(side.label.lowercased()) application")
                 }.controlSize(.small)
-                HStack(alignment: .top, spacing: AppDesign.Space.small) {
+                HStack(alignment: .top, spacing: Lumen.Space.s2) {
                     Text(state.sourceName.map(DisplayText.escaped) ?? "No application selected")
                         .font(.system(.body, design: .monospaced))
                         .foregroundStyle(state.isEmpty ? .secondary : .primary)
                         .lineLimit(2).textSelection(.enabled)
                 }
-                HStack(alignment: .top, spacing: AppDesign.Space.medium) {
+                HStack(alignment: .top, spacing: Lumen.Space.s4) {
                     stateDescription
                     Spacer(minLength: 0)
                     if !state.isEmpty {
@@ -92,7 +93,7 @@ struct SourcePane: View {
             LumenBanner(DisplayText.escaped(message), tone: .danger, spokenPrefix: "Inspection failed")
                 .textSelection(.enabled)
         case .ready(let snapshot):
-            VStack(alignment: .leading, spacing: AppDesign.Space.small) {
+            VStack(alignment: .leading, spacing: Lumen.Space.s2) {
                 if snapshot.isSavedBaseline {
                     Text("Saved report — unverified metadata; not a fresh inspection.")
                         .font(.caption).foregroundStyle(.secondary)

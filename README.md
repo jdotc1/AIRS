@@ -117,6 +117,8 @@ Owned regression fixtures and public schemas are included. `SOURCE_FILES.txt`,
 `SOURCE_EXPORT_SCOPE.json` and `SOURCE_SNAPSHOT.json` describe the original 0.3.3
 source import and are kept as records of it.
 
-AIRS and the bundled design-system snapshot are licensed under the
-[MIT License](LICENSE). EntitlementDiff keeps its MIT license, and Python's licenses
-accompany the packaged runtime. See [third-party notices](THIRD_PARTY_NOTICES.md).
+AIRS and Lumen are licensed under the [MIT License](LICENSE). AIRS uses the
+public Lumen 1.3.0 release pinned in `native/Package.resolved`; the older
+vendored snapshot remains for historical provenance and is not linked.
+EntitlementDiff keeps its MIT license, and Python's licenses accompany the
+packaged runtime. See [third-party notices](THIRD_PARTY_NOTICES.md).

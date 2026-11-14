@@ -1,0 +1,16 @@
+# Lumen 1.3.0 adoption and remaining UI gaps
+
+AIRS uses the public `LumenUI` and `LumenTokens` SwiftPM products at tag `v1.3.0`, resolved to `3ffac7a51e8cf7a0d61a3cfc6289c927a535ce61` in `native/Package.resolved`. The app uses Lumen's standard metrics and the nonpersisting core palette fallback; it does not install an app-owned theme store. The existing status-bar content slot owns the busy indicator and Cancel action, and the workspace switcher routes through AIRS's existing task and navigation guards. The older `native/Vendor/Lumen` snapshot remains in the repository for historical provenance and is not linked.
+
+The public tag contains the primitives, but not the `Docs/adoption` guides or the named `adoption-status-busy-cancel` golden. The locally available guide describes the intended composition; public 1.3.0 contains a `workspace-composition-status-busy-cancel` golden. These are documentation/test-artifact differences, not evidence that the controls are missing.
+
+## Remaining local UI workarounds and boundaries
+
+- **Literal metadata previews:** `LiteralMetadataText` and `BoundedMetadataLayout` provide fully selectable, character-wrapped metadata without inserted hyphens and size the popover to its content. The public code-listing rows are line-limited and do not expose that complete bounded selectable presentation.
+- **Highlighted paged text:** `HighlightedStringPageView` uses a bounded selectable text view with exact range highlighting and reveal. Lumen 1.3.0 does not expose the same selectable paged content and range-reveal combination.
+- **Exact entitlement keys:** `ExactKeyField` preserves raw edit distinctions that can be lost when SwiftUI string bindings coalesce canonically equivalent Unicode. No public Lumen text input exposes AIRS's exact-byte editing contract.
+- **Dialog surface:** `appDialogSurface()` applies the core palette's canvas and accent to dialogs. The requested no-store integration intentionally does not install Lumen's palette root, which otherwise supplies root-level appearance and tint behavior. This is an explicit minimal-integration tradeoff rather than a missing palette component.
+- **Native toolbar grouping:** `AIRSWindowToolbar` retains a single native toolbar item around related actions to prevent AppKit relocating them independently. This host-specific arrangement has not been demonstrated to be a missing Lumen primitive; it remains a candidate for a future targeted replacement after equivalent native behavior is verified.
+- **Comparison split sizing:** the entitlement comparison and standalone inspection views retain app-owned `GeometryReader`/`VSplitView` sizing for their table and detail panes. Lumen supplies column sizing, but this particular proportional vertical table/detail policy has not been shown to be covered by a public equivalent. This is an observed host adaptation, not a confirmed library defect.
+
+AIRS-owned destination identifiers, icons, evidence formatting, file panels, operation state and cancellation guards are domain and host responsibilities rather than Lumen gaps. The list above describes specific retained adapters; it does not assert that every app-specific view should be a framework component.

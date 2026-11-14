@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import LumenTokens
 import LumenUI
 import EntitlementDiffCore
 import EntitlementDiffModel
@@ -11,8 +12,8 @@ struct InputDetailsView: View {
     let reveal: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: AppDesign.Space.regular) {
-            AppDialogTitle(title: "Input Details")
+        VStack(alignment: .leading, spacing: Lumen.Space.s5) {
+            LumenPageHeader( "Input Details")
             Divider()
             BoundedMetadataLayout(maximumHeight: 360) {
                 metadata.fixedSize(horizontal: false, vertical: true).hidden()
@@ -24,12 +25,12 @@ struct InputDetailsView: View {
                 .font(.caption).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(AppDesign.Space.section).frame(width: 440)
+        .padding(Lumen.Space.s6).frame(width: 440)
         .appDialogSurface()
     }
 
     private var metadata: some View {
-        VStack(alignment: .leading, spacing: AppDesign.Space.regular) {
+        VStack(alignment: .leading, spacing: Lumen.Space.s5) {
             field("Selected location", sourceURL?.path, limit: 4_096)
             if let snapshot = state.snapshot {
                 if snapshot.isSavedBaseline {
@@ -52,7 +53,7 @@ struct InputDetailsView: View {
     }
 
     private func field(_ title: String, _ value: String?, limit: Int = 256) -> some View {
-        VStack(alignment: .leading, spacing: AppDesign.Space.small) {
+        VStack(alignment: .leading, spacing: Lumen.Space.s2) {
             Text(title).font(.caption.weight(.semibold))
             LiteralMetadataText(value: value.map { EntitlementValue.string($0).preview(maxCharacters: limit) } ?? "Unavailable")
                 .fixedSize(horizontal: false, vertical: true)

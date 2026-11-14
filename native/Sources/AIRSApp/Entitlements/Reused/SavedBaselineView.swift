@@ -1,4 +1,6 @@
 import SwiftUI
+import LumenUI
+import LumenTokens
 import EntitlementDiffCore
 
 struct SavedBaselineView: View {
@@ -11,7 +13,7 @@ struct SavedBaselineView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            AppDialogTitle(title: "Open Saved Report")
+            LumenPageHeader( "Open Saved Report")
             Divider()
             Text("Saved report — unverified metadata, not a fresh native inspection.")
                 .foregroundStyle(.secondary)
@@ -37,7 +39,7 @@ struct SavedBaselineView: View {
                 Button("Use as Previous") { adopt(selected) }.keyboardShortcut(.defaultAction)
                 Button("Open Saved Comparison", action: openComparison)
             }
-        }.padding(AppDesign.Space.page).frame(minWidth: 570, idealWidth: 640)
+        }.padding(Lumen.Space.s7).frame(minWidth: 570, idealWidth: 640)
         .appDialogSurface()
     }
 }

@@ -13,7 +13,7 @@ struct BatchHistoryView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            AppPageHeader(title: "Batch History",
+            LumenPageHeader( "Batch History",
                 subtitle: "Open a saved checkpoint to inspect every selected image and explicitly resume remaining work. Completed reports are never automatically analyzed again.") {
                 Button("Refresh", action: workspace.openBatchHistory).disabled(workspace.isBusy)
             }

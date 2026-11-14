@@ -8,7 +8,7 @@ struct EntitlementBatchHistoryView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            AppPageHeader(title: "Batch History",
+            LumenPageHeader( "Batch History",
                 subtitle: "Saved outcomes preserve pair order and requested architecture. Opening history never reads the apps or resumes work.") {
                 if workspace.selectedBatchHistory != nil {
                     Button("All History", action: workspace.backToBatchHistory).disabled(workspace.isBusy)

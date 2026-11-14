@@ -1,4 +1,6 @@
 import SwiftUI
+import LumenUI
+import LumenTokens
 import EntitlementDiffCore
 
 struct EntitlementBatchManifestReviewView: View {
@@ -8,7 +10,7 @@ struct EntitlementBatchManifestReviewView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            AppDialogTitle(title: "Review Batch Manifest")
+            LumenPageHeader( "Review Batch Manifest")
             Divider()
             Text(DisplayText.escaped(review.sourceURL.lastPathComponent)).textSelection(.enabled)
             Text("\(review.pairs.count) ordered pairs. Paths and architectures are selections only; app existence and contents have not been checked. Duplicate pairs remain visible and will be skipped by the existing runner.")
@@ -37,7 +39,7 @@ struct EntitlementBatchManifestReviewView: View {
                 Button(review.replacedPairCount == 0 ? "Use Manifest Selections" : "Replace Queue with Manifest", action: adopt)
                     .keyboardShortcut(.defaultAction)
             }
-        }.padding(AppDesign.Space.page).frame(minWidth: 700, idealWidth: 780, minHeight: 460, idealHeight: 580)
+        }.padding(Lumen.Space.s7).frame(minWidth: 700, idealWidth: 780, minHeight: 460, idealHeight: 580)
         .appDialogSurface()
     }
 }

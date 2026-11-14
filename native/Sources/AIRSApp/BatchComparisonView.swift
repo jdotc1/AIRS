@@ -1,4 +1,5 @@
 import SwiftUI
+import LumenTokens
 import LumenUI
 import AIRSCore
 
@@ -23,7 +24,7 @@ struct BatchComparisonView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                AppDialogTitle(title: "Saved-batch baseline comparison")
+                LumenPageHeader( "Saved-batch baseline comparison")
                 Spacer()
                 if workspace.isBusy { Button("Cancel", action: workspace.cancel).disabled(!workspace.canCancel) }
                 Button("Done") { dismiss() }.disabled(workspace.isBusy)
@@ -36,7 +37,7 @@ struct BatchComparisonView: View {
                 pairing
             }
         }
-        .padding(AppDesign.Space.page).frame(minWidth: 800, idealWidth: 980, minHeight: 620, idealHeight: 750)
+        .padding(Lumen.Space.s7).frame(minWidth: 800, idealWidth: 980, minHeight: 620, idealHeight: 750)
         .appDialogSurface()
         .interactiveDismissDisabled(workspace.isBusy)
         .sheet(item: $detail) { document in ComparisonView(document: document, workspace: workspace) }

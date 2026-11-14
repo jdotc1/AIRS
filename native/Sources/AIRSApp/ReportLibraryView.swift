@@ -8,7 +8,7 @@ struct ReportLibraryView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            AppPageHeader(title: "Report Library",
+            LumenPageHeader( "Report Library",
                 subtitle: "Retained copies preserve original JSON, image identity, model, configuration, and evidence. Opening a copy does not analyze its binary.") {
                 Button("Refresh", action: workspace.refreshLibrary).disabled(workspace.isBusy)
             }

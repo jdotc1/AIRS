@@ -1,4 +1,6 @@
 import SwiftUI
+import LumenUI
+import LumenTokens
 import AIRSCore
 
 @MainActor
@@ -11,7 +13,7 @@ struct BundleDiscoveryView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                AppDialogTitle(title: "Review App Images")
+                LumenPageHeader( "Review App Images")
                 Spacer()
                 Button("Done") { dismiss() }.disabled(workspace.isBusy)
             }
@@ -43,7 +45,7 @@ struct BundleDiscoveryView: View {
                     .disabled(workspace.isBusy || selected.isEmpty || selected.count > 16 || workspace.hasUnretainedBatchReports)
             }
         }
-        .padding(AppDesign.Space.page).frame(minWidth: 820, idealWidth: 980, minHeight: 620, idealHeight: 760)
+        .padding(Lumen.Space.s7).frame(minWidth: 820, idealWidth: 980, minHeight: 620, idealHeight: 760)
         .appDialogSurface()
         .interactiveDismissDisabled(workspace.isBusy)
     }

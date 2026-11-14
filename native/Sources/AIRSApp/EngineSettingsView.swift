@@ -68,7 +68,7 @@ private struct EngineRuntimeSettingsPane: View {
                             .disabled(!workspace.usesExternalPython)
                     }
                 }
-                .padding(AppDesign.Space.medium)
+                .padding(Lumen.Space.s4)
                 .background(.quaternary, in: RoundedRectangle(cornerRadius: 8))
                 SettingsExplanation("The private runtime runs analysis in an isolated child process and never silently falls back to system Python. A saved path applies only with the override enabled.")
                 DisclosureGroup("Source-only development builds") {

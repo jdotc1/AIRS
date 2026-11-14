@@ -27,13 +27,15 @@ The field is optional within schema `airs-source-build-record-v1`: the schema id
 did not change when it was added, so a reader must not treat its absence as
 malformed.
 
---accepted-vendor-source takes an exact retained accepted source commit, compares
-immutable Lumen tree identity and rejects tracked, untracked or ignored source
-input changes. It reuses accepted source inspection rather than rescanning the
-same vendor files. The caller must supply a genuinely accepted identity; choosing
-an unchecked baseline is forbidden. Newly assembled owned binaries/resources
-retain the separate content check. Three new malformed version/build/source
-argument controls refused before any build.
+--accepted-vendor-source takes an exact retained accepted AIRS source commit and
+compares its package manifest and lockfile with the current clean versions. The
+separate Lumen checkout admission requires the pinned public revision and rejects
+tracked, untracked or ignored compiler and resource input changes. Together these
+reuse accepted source inspection without rescanning unchanged Lumen files. The
+caller must supply a genuinely accepted identity; choosing an unchecked baseline
+is forbidden. Newly assembled owned binaries/resources retain the separate content
+check. Three malformed version/build/source argument controls refused before any
+build.
 
 Candidate work targets Apple silicon and includes the separately prepared private
 Python runtime. Runtime preparation receipts, source freeze, toolchain/dependency
@@ -62,7 +64,8 @@ fully qualified while required environment/platform evidence remains unavailable
 The helper requires matching accepted/current native source object identities,
 clean compiler inputs, build-root containment, both executable records, exact
 resource membership and matching file metadata. It rejects resource links, empty
-new bundles and missing/changed products. Sixteen new synthetic methods passed.
+new bundles and missing/changed products. Receipts must bind the SwiftPM lockfile;
+older receipts without it cannot establish the resolved dependency identity.
 It performs no source-content hashes or compiler invocations. Trusted local
 receipt custody is required; this is not adversarial artifact authentication.
 

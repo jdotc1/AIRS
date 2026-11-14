@@ -1,6 +1,7 @@
 import SwiftUI
 import AIRSCore
 import LumenUI
+import LumenTokens
 
 /// Keeps the sheet identity stable while an accepted comparison changes inside it.
 @MainActor
@@ -49,7 +50,7 @@ struct ManualPairReviewView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                AppDialogTitle(title: "Review Pairs")
+                LumenPageHeader("Review Pairs")
                 Spacer()
                 Button("Back to Result") { session.isEditing = false }
                     .disabled(workspace.isBusy)
@@ -105,7 +106,7 @@ struct ManualPairReviewView: View {
             }
             .frame(minHeight: 100, idealHeight: 160, maxHeight: 200)
         }
-        .padding(AppDesign.Space.page)
+        .padding(Lumen.Space.s7)
         .frame(minWidth: 900, idealWidth: 1080, minHeight: 680, idealHeight: 820)
         .appDialogSurface()
     }

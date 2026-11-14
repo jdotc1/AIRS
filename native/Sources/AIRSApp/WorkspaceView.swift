@@ -1,4 +1,5 @@
 import SwiftUI
+import LumenTokens
 import LumenUI
 import AIRSCore
 
@@ -108,11 +109,11 @@ struct WorkspaceView: View {
                     }
                     Section("Functions · \(workspace.visibleFindings.count) shown") {
                         if workspace.visibleFindings.isEmpty {
-                            VStack(alignment: .leading, spacing: AppDesign.Space.small) {
+                            VStack(alignment: .leading, spacing: Lumen.Space.s2) {
                                 Text("No matching functions").font(.headline)
                                 Text("Change the search or verdict filter. Report overview remains available above.")
                                     .font(.callout).foregroundStyle(.secondary)
-                            }.padding(.vertical, AppDesign.Space.small)
+                            }.padding(.vertical, Lumen.Space.s2)
                         }
                         ForEach(workspace.visibleFindings) { finding in
                             FindingRow(finding: finding)
@@ -144,16 +145,16 @@ private struct HiddenFindingNotice: View {
     let overview: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: AppDesign.Space.small) {
+        VStack(alignment: .leading, spacing: Lumen.Space.s2) {
             Text("Selected function is hidden by the current filters.").font(.callout.weight(.semibold))
             Text("Its evidence remains displayed below.").font(.callout).foregroundStyle(.secondary)
-            HStack(spacing: AppDesign.Space.medium) {
+            HStack(spacing: Lumen.Space.s4) {
                 Button("Show Selected Function", action: reveal)
                 Button("Report Overview", action: overview)
             }.controlSize(.small)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(AppDesign.Space.medium)
+        .padding(Lumen.Space.s4)
     }
 }
 
@@ -188,11 +189,11 @@ struct WelcomeView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                AppPageHeader(title: "Unwind Analysis",
+                LumenPageHeader( "Unwind Analysis",
                     subtitle: "Inspect compact-unwind metadata and bounded ARM64 evidence.") {
                     EmptyView()
                 }
-                VStack(alignment: .leading, spacing: AppDesign.Space.medium) {
+                VStack(alignment: .leading, spacing: Lumen.Space.s4) {
                     LumenEmptyState(systemImage: "waveform.path", title: "Open an image or a saved report",
                         message: "Choose a final ARM64 Mach-O image or app bundle. Review function coverage, modeled observations and the evidence behind each finding.")
                     HStack(spacing: 8) {
@@ -222,7 +223,7 @@ struct WelcomeView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .padding(AppDesign.Space.page)
+            .padding(Lumen.Space.s7)
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(maxWidth: .infinity, alignment: .center)
         }
@@ -275,7 +276,7 @@ struct SectionCard<Content: View>: View {
             content
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .lumenCard(padding: AppDesign.Space.section)
+        .lumenCard(padding: Lumen.Space.s6)
     }
 }
 

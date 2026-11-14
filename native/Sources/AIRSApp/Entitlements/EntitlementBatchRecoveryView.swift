@@ -8,7 +8,7 @@ struct EntitlementBatchRecoveryView: View {
     @State private var removing: UUID?
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            AppPageHeader(title: "Recovery",
+            LumenPageHeader( "Recovery",
                 subtitle: "Opening recovery never reads an app. Save completed reports before explicitly resuming remaining pairs. Clear the current queue or leave it for recovery before opening another batch.") {
                 Button("Refresh") { workspace.openBatchRecovery() }.disabled(workspace.isBusy)
             }
