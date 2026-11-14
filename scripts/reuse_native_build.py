@@ -15,7 +15,7 @@ import subprocess
 import sys
 from build_provenance import plain_path
 
-INPUTS = ('native/Sources', 'native/Package.swift', 'native/Vendor')
+INPUTS = ('native/Sources', 'native/Package.swift', 'native/Package.resolved', 'native/Vendor')
 PRODUCTS = frozenset(('AIRSApp', 'airs-entitlements'))
 MAX_RECEIPT_BYTES = 1024 * 1024
 MAX_ARTIFACTS = 20000

@@ -22,7 +22,7 @@ class NativeBuildReuseFirstTests(unittest.TestCase):
             (build / 'AIRSApp').write_bytes(b'owned'); (build / 'airs-entitlements').write_bytes(b'owned')
             (build / 'Lumen_LumenUI.bundle').mkdir(); (build / 'Lumen_LumenUI.bundle/theme.json').write_text('{}')
             for product in ('AIRSApp', 'airs-entitlements'): (build / product).chmod(0o755)
-            keys = ('native/Sources', 'native/Package.swift', 'native/Vendor')
+            keys = ('native/Sources', 'native/Package.swift', 'native/Package.resolved', 'native/Vendor')
             receipt = {'schema': 'airs-native-build-reuse-v1', 'source_commit': 'a' * 40,
                 'build_path': str(build), 'native_input_oids': dict.fromkeys(keys, 'b' * 40),
                 'artifacts': {str(p.relative_to(build)): tool.metadata(p) for p in build.rglob('*') if p.is_file()}}
@@ -51,6 +51,19 @@ class NativeBuildReuseBoundaryTests(unittest.TestCase):
     def git(self, root, *args): return 'b' * 40 if args[0] == 'rev-parse' else ''
     def reuse(self):
         with patch.object(self.tool, 'git', side_effect=self.git): return self.tool.reuse(self.root, self.receipt)
+
+    def test_lockfile_is_required_and_must_match_accepted_and_current_sources(self):
+        self.data['native_input_oids'].pop('native/Package.resolved', None); self.save()
+        with self.assertRaises(ValueError): self.reuse()
+        self.data['native_input_oids']['native/Package.resolved'] = 'b' * 40; self.save()
+        self.assertEqual(self.reuse(), self.build)
+        for revision in ('a' * 40, 'HEAD'):
+            def git(root, *args):
+                if args[0] == 'rev-parse' and args[1] == revision + ':native/Package.resolved':
+                    return 'c' * 40
+                return self.git(root, *args)
+            with patch.object(self.tool, 'git', side_effect=git):
+                with self.assertRaises(ValueError): self.tool.reuse(self.root, self.receipt)
 
     def test_dirty_and_ignored_compiler_inputs_refuse(self):
         for operation in ('status', 'ls-files'):
@@ -150,7 +163,7 @@ class NativeBuildReuseBoundaryTests(unittest.TestCase):
         with patch.object(self.tool, 'git', side_effect=git), patch.object(self.tool.subprocess, 'run') as run:
             self.assertEqual(self.tool.reuse(self.root, self.receipt), self.build)
             run.assert_not_called()
-        self.assertEqual(len([args for args in observed if args[0] == 'rev-parse']), 6)
+        self.assertEqual(len([args for args in observed if args[0] == 'rev-parse']), 8)
 
 
     def test_new_empty_bundle_is_not_silently_copied(self):
